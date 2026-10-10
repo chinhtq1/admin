@@ -1,6 +1,6 @@
 # H — Nghiên cứu UX/UI cho EMS đa site (PV + BESS + lưới + phụ tải + EV)
 
-[← Mục lục](../index.html) · [09 UX/UI](../09-ux-ui-specification.html) · [03 Chức năng](../03-functional-catalog.html) · [05 Domain](../05-domain-model.html) · [08 Tối ưu](../08-energy-optimization.md) · [10 An toàn](../10-security-and-reliability.md) · [14 Nguồn](../14-source-register.md)
+[← Mục lục](../index.html) · [09 UX/UI](../09-ux-ui-specification.html) · [03 Chức năng](../03-functional-catalog.html) · [05 Domain](../05-domain-model.html) · [08 Tối ưu](../08-energy-optimization.md) · [10 An toàn](../10-security-and-reliability.md) · [14 Nguồn](../14-source-register.md) · [15 Mô phỏng](../15-simulators-and-messaging.md)
 
 - Tác giả: Agent H (UX/UI Researcher) · Ngày: 2026-10-10 · Trạng thái: ghi chú nghiên cứu v1, đầu vào chính cho người viết `09-ux-ui-specification.html`.
 - Liên quan: [C-energy-domain](C-energy-domain.md) (quy ước dấu, KPI), [F-data-analytics](F-data-analytics.md) (cờ chất lượng dữ liệu), [B-competitors](B-competitors.md) (đối thủ), [E-device-integration](E-device-integration.md).

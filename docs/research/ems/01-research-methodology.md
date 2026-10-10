@@ -1,6 +1,6 @@
 # 01 — Phương pháp nghiên cứu
 
-[← Mục lục](index.html) · [00 Tóm tắt](00-executive-summary.html) · [02 Thị trường](02-market-and-competitor-analysis.html) · [03 Chức năng](03-functional-catalog.html) · [04 Yêu cầu](04-business-requirements.md) · [11 Lộ trình](11-mvp-and-roadmap.html) · [12 Truy vết](12-traceability-matrix.md) · [13 Rủi ro](13-open-questions-and-risks.md) · [14 Nguồn](14-source-register.md) · [K vòng 1](notes/K-review-round1.md)
+[← Mục lục](index.html) · [00 Tóm tắt](00-executive-summary.html) · [02 Thị trường](02-market-and-competitor-analysis.html) · [03 Chức năng](03-functional-catalog.html) · [04 Yêu cầu](04-business-requirements.md) · [11 Lộ trình](11-mvp-and-roadmap.html) · [12 Truy vết](12-traceability-matrix.md) · [13 Rủi ro](13-open-questions-and-risks.md) · [14 Nguồn](14-source-register.md) · [K vòng 1](notes/K-review-round1.md) · [15 Mô phỏng](15-simulators-and-messaging.md)
 
 - **Phiên bản:** 1.0 · **Ngày:** 2026-10-10 · **Trạng thái:** bản phát hành nội bộ.
 - **Người viết:** Source Registrar (sở hữu file này và [14-source-register.md](14-source-register.md)).

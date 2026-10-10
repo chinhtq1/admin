@@ -1,6 +1,6 @@
 # G — Tối ưu năng lượng: chiến lược, tầng điều khiển, lập kế hoạch điều độ
 
-[← Mục lục](../index.html) · [08 Tối ưu](../08-energy-optimization.md) · [04 Yêu cầu](../04-business-requirements.md) · [06 Kiến trúc](../06-system-architecture.html) · [07 Tích hợp](../07-device-integration.md) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md)
+[← Mục lục](../index.html) · [08 Tối ưu](../08-energy-optimization.md) · [04 Yêu cầu](../04-business-requirements.md) · [06 Kiến trúc](../06-system-architecture.html) · [07 Tích hợp](../07-device-integration.md) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md) · [15 Mô phỏng](../15-simulators-and-messaging.md)
 
 - Tác giả: Agent G (Energy Optimization Specialist). Ngày: 2026-10-10. Trạng thái: bản nghiên cứu v1.
 - **Giới hạn phương pháp (quan trọng).** Môi trường chặn tải trang trực tiếp. Hạn mức WebSearch của lượt chạy này **đã hết** trước khi Agent G bắt đầu (công cụ trả về "web search budget is used up"). Vì vậy:

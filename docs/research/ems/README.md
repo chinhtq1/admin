@@ -1,6 +1,6 @@
 # Nghiên cứu sản phẩm EMS (Energy Management System) C&I
 
-[← Mục lục](index.html) · [00 Tóm tắt](00-executive-summary.html) · [01 Phương pháp](01-research-methodology.md) · [14 Nguồn](14-source-register.md)
+[← Mục lục](index.html) · [00 Tóm tắt](00-executive-summary.html) · [01 Phương pháp](01-research-methodology.md) · [14 Nguồn](14-source-register.md) · [15 Mô phỏng](15-simulators-and-messaging.md)
 
 Bộ tài liệu nghiên cứu và đặc tả cho một EMS behind-the-meter, đa site, đa hãng (PV, BESS, lưới, phụ tải, EV tùy chọn) cho thị trường Việt Nam. Ngày 2026-10-10, bản nội bộ v1.0. Không chứa mã ứng dụng.
 

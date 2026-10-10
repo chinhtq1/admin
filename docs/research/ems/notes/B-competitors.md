@@ -1,6 +1,6 @@
 # B — Phân tích sản phẩm đối thủ EMS (Agent B)
 
-[← Mục lục](../index.html) · [02 Thị trường](../02-market-and-competitor-analysis.html) · [03 Chức năng](../03-functional-catalog.html) · [08 Tối ưu](../08-energy-optimization.md) · [14 Nguồn](../14-source-register.md)
+[← Mục lục](../index.html) · [02 Thị trường](../02-market-and-competitor-analysis.html) · [03 Chức năng](../03-functional-catalog.html) · [08 Tối ưu](../08-energy-optimization.md) · [14 Nguồn](../14-source-register.md) · [15 Mô phỏng](../15-simulators-and-messaging.md)
 
 - Người viết: Agent B (Competitor Product Analysis). Ngày: 2026-10-10. Trạng thái: ghi chú nghiên cứu, bản 1.
 - Phương pháp bằng chứng: môi trường **chặn tải trang trực tiếp** (WebFetch/curl). Toàn bộ bằng chứng mới lấy qua công cụ WebSearch. Mọi FACT mới trong file này là **"(qua kết quả tìm kiếm)"**, tức là nội dung tóm tắt/snippet do công cụ tìm kiếm trả về cho URL đó, không phải đọc toàn văn datasheet. Bằng chứng về Huawei/Sungrow/SolarEdge API lấy lại từ nghiên cứu FusionSolar trước (`docs/research/fusionsolar/04_ghi_chu_nghien_cuu/`) và được ghi rõ.

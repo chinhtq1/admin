@@ -1,6 +1,6 @@
 # I — Bảo mật, an toàn vận hành và độ tin cậy cho EMS điều khiển từ xa (Agent I)
 
-[← Mục lục](../index.html) · [04 Yêu cầu](../04-business-requirements.md) · [05 Domain](../05-domain-model.html) · [06 Kiến trúc](../06-system-architecture.html) · [07 Tích hợp](../07-device-integration.md) · [08 Tối ưu](../08-energy-optimization.md) · [10 An toàn](../10-security-and-reliability.md) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md)
+[← Mục lục](../index.html) · [04 Yêu cầu](../04-business-requirements.md) · [05 Domain](../05-domain-model.html) · [06 Kiến trúc](../06-system-architecture.html) · [07 Tích hợp](../07-device-integration.md) · [08 Tối ưu](../08-energy-optimization.md) · [10 An toàn](../10-security-and-reliability.md) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md) · [15 Mô phỏng](../15-simulators-and-messaging.md)
 
 - Người viết: Agent I (Security & Reliability Reviewer). Ngày: 2026-10-10. Trạng thái: ghi chú nghiên cứu bản 1. Đầu vào chính cho tài liệu **10 (An toàn)**, một phần cho 04, 05, 06, 13.
 - **Giới hạn bằng chứng của lượt này (đọc trước khi dùng):**

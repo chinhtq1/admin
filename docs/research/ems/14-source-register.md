@@ -1,6 +1,6 @@
 # 14 — Sổ đăng ký nguồn và evidence ledger
 
-[← Mục lục](index.html) · [00 Tóm tắt](00-executive-summary.html) · [01 Phương pháp](01-research-methodology.md) · [02 Thị trường](02-market-and-competitor-analysis.html) · [04 Yêu cầu](04-business-requirements.md) · [07 Tích hợp](07-device-integration.md) · [08 Tối ưu](08-energy-optimization.md) · [10 An toàn](10-security-and-reliability.md) · [13 Rủi ro](13-open-questions-and-risks.md) · [K vòng 1](notes/K-review-round1.md)
+[← Mục lục](index.html) · [00 Tóm tắt](00-executive-summary.html) · [01 Phương pháp](01-research-methodology.md) · [02 Thị trường](02-market-and-competitor-analysis.html) · [04 Yêu cầu](04-business-requirements.md) · [07 Tích hợp](07-device-integration.md) · [08 Tối ưu](08-energy-optimization.md) · [10 An toàn](10-security-and-reliability.md) · [13 Rủi ro](13-open-questions-and-risks.md) · [K vòng 1](notes/K-review-round1.md) · [15 Mô phỏng](15-simulators-and-messaging.md)
 
 - **Phiên bản:** 1.0 · **Ngày:** 2026-10-10 · **Trạng thái:** bản phát hành nội bộ, chờ lượt kiểm chứng pháp lý/tiêu chuẩn (xem §7).
 - **Người viết:** Source Registrar (sở hữu duy nhất file này và [01-research-methodology.md](01-research-methodology.md)).

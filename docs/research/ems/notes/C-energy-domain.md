@@ -1,6 +1,6 @@
 # C — Kiến thức miền năng lượng cho EMS: đại lượng, quy ước dấu, cân bằng năng lượng, pin, lưới, biểu giá và KPI
 
-[← Mục lục](../index.html) · [04 Yêu cầu](../04-business-requirements.md) · [05 Domain](../05-domain-model.html) · [07 Tích hợp](../07-device-integration.md) · [08 Tối ưu](../08-energy-optimization.md) · [10 An toàn](../10-security-and-reliability.md) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md)
+[← Mục lục](../index.html) · [04 Yêu cầu](../04-business-requirements.md) · [05 Domain](../05-domain-model.html) · [07 Tích hợp](../07-device-integration.md) · [08 Tối ưu](../08-energy-optimization.md) · [10 An toàn](../10-security-and-reliability.md) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md) · [15 Mô phỏng](../15-simulators-and-messaging.md)
 
 - Tác giả: Agent C (Energy Domain Expert)
 - Ngày: 2026-10-10 · Trạng thái: bản nghiên cứu v1. Đầu vào cho 04 (yêu cầu), 05 (domain model), 07 (tích hợp), 08 (tối ưu), 09 (UX: hiển thị số liệu), 10 (an toàn), 12/13.

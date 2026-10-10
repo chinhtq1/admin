@@ -54,6 +54,7 @@
   <a href="12-traceability-matrix.md">12 Truy vết</a>
   <a href="13-open-questions-and-risks.md">13 Rủi ro</a>
   <a href="14-source-register.md">14 Nguồn</a>
+  <a href="15-simulators-and-messaging.md">15 Mô phỏng</a>
 </div></nav>
 ```
 
@@ -61,7 +62,7 @@
 - Dữ liệu mẫu trong wireframe phải gắn nhãn `<span class="sample">Dữ liệu mẫu</span>`.
 
 ## Markdown
-- Dòng đầu là tiêu đề H1, ngay sau là dòng điều hướng: `[← Mục lục](index.html) · [00 Tóm tắt](00-executive-summary.html) · …` (rút gọn, chỉ các tài liệu liên quan).
+- Dòng đầu là tiêu đề H1, ngay sau là dòng điều hướng: `[← Mục lục](index.html) · [00 Tóm tắt](00-executive-summary.html) · …` (rút gọn, chỉ các tài liệu liên quan). Từ vòng nhất quán 2026-10-10, dòng điều hướng của mọi file Markdown kết thúc bằng `[15 Mô phỏng](15-simulators-and-messaging.md)` (trong `notes/` dùng `../`).
 - Liên kết chéo bằng đường dẫn tương đối tới file và anchor khi cần.
 
 ## Quyền sở hữu file

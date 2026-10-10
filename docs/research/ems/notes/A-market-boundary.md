@@ -1,6 +1,6 @@
 # A — Thị trường, phân khúc và ranh giới sản phẩm EMS
 
-[← Mục lục](../index.html) · [00 Tóm tắt](../00-executive-summary.html) · [02 Thị trường](../02-market-and-competitor-analysis.html) · [04 Yêu cầu](../04-business-requirements.md) · [08 Tối ưu](../08-energy-optimization.md) · [11 Lộ trình](../11-mvp-and-roadmap.html) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md)
+[← Mục lục](../index.html) · [00 Tóm tắt](../00-executive-summary.html) · [02 Thị trường](../02-market-and-competitor-analysis.html) · [04 Yêu cầu](../04-business-requirements.md) · [08 Tối ưu](../08-energy-optimization.md) · [11 Lộ trình](../11-mvp-and-roadmap.html) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md) · [15 Mô phỏng](../15-simulators-and-messaging.md)
 
 - Tác giả: Agent A (Industry & Market Research + Product Boundary)
 - Ngày: 2026-10-10 · Trạng thái: bản nghiên cứu v1, đầu vào cho các tài liệu 00, 02, 04, 11, 13

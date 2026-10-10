@@ -1,6 +1,6 @@
 # K — Phản biện bằng chứng, vòng 1 (Evidence Judge / Red Team)
 
-[← Mục lục](../index.html) · [00 Tóm tắt](../00-executive-summary.html) · [04 Yêu cầu](../04-business-requirements.md) · [05 Domain](../05-domain-model.html) · [06 Kiến trúc](../06-system-architecture.html) · [07 Tích hợp](../07-device-integration.md) · [08 Tối ưu](../08-energy-optimization.md) · [10 An toàn](../10-security-and-reliability.md) · [11 Lộ trình](../11-mvp-and-roadmap.html) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md)
+[← Mục lục](../index.html) · [00 Tóm tắt](../00-executive-summary.html) · [04 Yêu cầu](../04-business-requirements.md) · [05 Domain](../05-domain-model.html) · [06 Kiến trúc](../06-system-architecture.html) · [07 Tích hợp](../07-device-integration.md) · [08 Tối ưu](../08-energy-optimization.md) · [10 An toàn](../10-security-and-reliability.md) · [11 Lộ trình](../11-mvp-and-roadmap.html) · [13 Rủi ro](../13-open-questions-and-risks.md) · [14 Nguồn](../14-source-register.md) · [15 Mô phỏng](../15-simulators-and-messaging.md)
 
 - Người viết: Agent K (Evidence Judge / Red Team). Ngày: 2026-10-10. Trạng thái: vòng 1. File này **ràng buộc** mọi người viết tài liệu 00–14: khi ghi chú của agent mâu thuẫn với "Danh sách quyết định thống nhất" (§6), §6 thắng.
 - Phạm vi đã đọc toàn văn: `A-market-boundary.md`, `B-competitors.md`, `C-energy-domain.md`, `E-device-integration.md`, `F-data-analytics.md`, `G-optimization.md`, `H-ux-research.md`, `I-security-reliability.md`, `_conventions.md`. Không có ghi chú D trong thư mục `notes/`.
