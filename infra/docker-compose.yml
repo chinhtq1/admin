@@ -1,0 +1,153 @@
+# EMS infrastructure PoC — virtual site + PoC edge bridge + MQTT 5 broker + DB (+ EV, Grafana).
+# Usage: cp .env.example .env && docker compose up -d --build   (README.md: "Cách chạy")
+name: ${COMPOSE_PROJECT_NAME:-emspoc}
+
+x-build-secret: &build_secret
+  secrets: [ca]
+
+secrets:
+  ca:
+    file: ${BUILD_CA_FILE:-./empty-ca.pem}
+
+services:
+  mosquitto:
+    restart: unless-stopped
+    image: eclipse-mosquitto:2.0.20
+    entrypoint: ["/bin/sh", "/mosquitto/config/entrypoint.sh"]
+    environment:
+      MQTT_PASS_EDGE_VSITE01: ${MQTT_PASS_EDGE_VSITE01:?set in .env}
+      MQTT_PASS_EDGE_EV01: ${MQTT_PASS_EDGE_EV01:?set in .env}
+      MQTT_PASS_INGEST: ${MQTT_PASS_INGEST:?set in .env}
+      MQTT_PASS_DISPATCHER: ${MQTT_PASS_DISPATCHER:?set in .env}
+      MQTT_PASS_HEALTH: ${MQTT_PASS_HEALTH:?set in .env}
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/acl.conf:/mosquitto/config/acl.conf:ro
+      - ./mosquitto/entrypoint.sh:/mosquitto/config/entrypoint.sh:ro
+      - mosquitto-data:/mosquitto/data
+    ports: ["127.0.0.1:1883:1883"]
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -u health -P \"$$MQTT_PASS_HEALTH\" -t '$$SYS/broker/uptime' -C 1 -W 3 >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  db:
+    restart: unless-stopped
+    image: timescale/timescaledb:2.17.2-pg16
+    # Apache-2.0 subset only (hypertables); TSL features stay off — see README "Giấy phép".
+    command: ["postgres", "-c", "timescaledb.license=apache", "-c", "timescaledb.telemetry_level=off"]
+    environment:
+      POSTGRES_DB: ems
+      POSTGRES_USER: ems
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set in .env}
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/100_ems.sql:ro
+      - db-data:/var/lib/postgresql/data
+    ports: ["127.0.0.1:5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ems -d ems"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  vsite:
+    init: true
+    restart: unless-stopped
+    build: {context: ../simulators/vsite, <<: *build_secret}
+    image: ems-poc/vsite:0.1.0
+    environment:
+      SIM_SPEED: ${SIM_SPEED:-1}
+      SIM_START_LOCAL: ${SIM_START_LOCAL:-10:30}
+    volumes: ["./config/site.yaml:/config/site.yaml:ro"]
+    ports: ["127.0.0.1:8080:8080", "127.0.0.1:5030:5030", "127.0.0.1:5040:5040"]
+
+  bridge:
+    init: true
+    restart: unless-stopped
+    build:
+      context: ../edge/bridge
+      additional_contexts: {maps: ../simulators/vsite/maps}
+      <<: *build_secret
+    image: ems-poc/edge-bridge:0.1.0
+    environment:
+      EDGE_ID: edge-vsite01
+      MQTT_HOST: mosquitto
+      MQTT_USERNAME: edge-vsite01
+      MQTT_PASSWORD: ${MQTT_PASS_EDGE_VSITE01}
+      SITE_CONFIG: /config/site.yaml
+    volumes: ["./config/site.yaml:/config/site.yaml:ro", "bridge-data:/data"]
+    depends_on:
+      vsite: {condition: service_healthy}
+      mosquitto: {condition: service_healthy}
+
+  ingest:
+    init: true
+    restart: unless-stopped
+    build: {context: ../ingest, <<: *build_secret}
+    image: ems-poc/ingest:0.1.0
+    environment:
+      MQTT_HOST: mosquitto
+      MQTT_USERNAME: ingest
+      MQTT_PASSWORD: ${MQTT_PASS_INGEST}
+      DATABASE_URL: postgresql://ems:${DB_PASSWORD}@db:5432/ems
+      SITE_CONFIG: /config/site.yaml
+    volumes: ["./config/site.yaml:/config/site.yaml:ro"]
+    depends_on:
+      db: {condition: service_healthy}
+      mosquitto: {condition: service_healthy}
+
+  csms:
+    init: true
+    restart: unless-stopped
+    build: {context: ../simulators/evse/csms, <<: *build_secret}
+    image: ems-poc/csms-stub:0.1.0
+    environment:
+      EDGE_ID: edge-ev01
+      MQTT_HOST: mosquitto
+      MQTT_USERNAME: edge-ev01
+      MQTT_PASSWORD: ${MQTT_PASS_EDGE_EV01}
+      VSITE_URL: http://vsite:8080
+    depends_on:
+      mosquitto: {condition: service_healthy}
+      vsite: {condition: service_healthy}
+
+  evse:
+    restart: unless-stopped
+    build: {context: ../simulators/evse/sap, <<: *build_secret}
+    image: ems-poc/evse-sap:4.12.0-3c5b406
+    depends_on:
+      csms: {condition: service_healthy}
+
+  grafana:
+    restart: unless-stopped
+    image: grafana/grafana-oss:11.3.0
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set in .env}
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      EMS_DB_PASSWORD: ${DB_PASSWORD}
+    volumes: ["./grafana/provisioning:/etc/grafana/provisioning:ro", "./grafana/dashboards:/var/lib/grafana/dashboards:ro"]
+    ports: ["127.0.0.1:3000:3000"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://127.0.0.1:3000/api/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      db: {condition: service_healthy}
+
+  tools:                         # docker compose run --rm tools <subcommand>
+    profiles: ["tools"]
+    build: {context: ../tools, <<: *build_secret}
+    image: ems-poc/tools:0.1.0
+    environment:
+      MQTT_HOST: mosquitto
+      MQTT_PASSWORD: ${MQTT_PASS_DISPATCHER}
+      DATABASE_URL: postgresql://ems:${DB_PASSWORD}@db:5432/ems
+      VSITE_URL: http://vsite:8080
+
+volumes:
+  mosquitto-data:
+  db-data:
+  bridge-data:

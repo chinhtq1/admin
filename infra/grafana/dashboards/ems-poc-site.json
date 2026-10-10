@@ -1,0 +1,230 @@
+{
+ "uid": "ems-poc-site",
+ "title": "EMS PoC — Virtual site (MÔ PHỎNG)",
+ "tags": [
+  "poc",
+  "simulated"
+ ],
+ "timezone": "browser",
+ "schemaVersion": 39,
+ "version": 1,
+ "refresh": "10s",
+ "time": {
+  "from": "now-30m",
+  "to": "now"
+ },
+ "panels": [
+  {
+   "id": 1,
+   "type": "text",
+   "title": "",
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 24,
+    "h": 2
+   },
+   "options": {
+    "mode": "markdown",
+    "content": "**PoC — dữ liệu MÔ PHỎNG** từ virtual site (pymodbus/pvlib) qua edge bridge PoC → MQTT 5 → ingest. Không phải giao diện sản phẩm (xem docs/research/ems/09)."
+   }
+  },
+  {
+   "id": 2,
+   "type": "timeseries",
+   "title": "Công suất site (kW) — dấu: lưới + nhập, BESS + xả",
+   "datasource": {
+    "type": "grafana-postgresql-datasource",
+    "uid": "ems-poc-db"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 2,
+    "w": 24,
+    "h": 9
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "kwatt",
+     "custom": {
+      "lineWidth": 2,
+      "spanNulls": 120000
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-postgresql-datasource",
+      "uid": "ems-poc-db"
+     },
+     "format": "time_series",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT ts AS time,\n  CASE WHEN device_id='meter-poc' THEN 'P_grid (+ nhập)' WHEN device_id='meter-load' THEN 'P_load'\n       WHEN point_code='pv_inverter.p' THEN 'P_pv (7 inverter)' WHEN point_code='ess.p' THEN 'P_ess (+ xả)'\n       ELSE 'P_ev' END AS metric,\n  sum(value)/1000 AS value\nFROM telemetry\nWHERE $__timeFilter(ts) AND quality='GOOD'\n  AND point_code IN ('meter.p','pv_inverter.p','ess.p','evse.p')\nGROUP BY 1,2 ORDER BY 1"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "type": "timeseries",
+   "title": "BESS: setpoint, đo, giới hạn BMS (kW)",
+   "datasource": {
+    "type": "grafana-postgresql-datasource",
+    "uid": "ems-poc-db"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 11,
+    "w": 12,
+    "h": 9
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "kwatt",
+     "custom": {
+      "lineWidth": 2,
+      "spanNulls": 120000
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-postgresql-datasource",
+      "uid": "ems-poc-db"
+     },
+     "format": "time_series",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT ts AS time, point_code AS metric, value/1000 AS value FROM telemetry\nWHERE $__timeFilter(ts) AND quality='GOOD' AND device_id='ess-01'\n  AND point_code IN ('ess.p_setpoint','ess.p','ess.p_charge_max','ess.p_discharge_max') ORDER BY 1"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "type": "timeseries",
+   "title": "BESS SOC (%)",
+   "datasource": {
+    "type": "grafana-postgresql-datasource",
+    "uid": "ems-poc-db"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 11,
+    "w": 12,
+    "h": 9
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percent",
+     "custom": {
+      "lineWidth": 2,
+      "spanNulls": 120000
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-postgresql-datasource",
+      "uid": "ems-poc-db"
+     },
+     "format": "time_series",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT ts AS time, point_code AS metric, value FROM telemetry\nWHERE $__timeFilter(ts) AND quality='GOOD' AND device_id='ess-01' AND point_code='ess.soc' ORDER BY 1"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "type": "table",
+   "title": "Vòng đời lệnh (cmd-ack)",
+   "datasource": {
+    "type": "grafana-postgresql-datasource",
+    "uid": "ems-poc-db"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 20,
+    "w": 14,
+    "h": 9
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-postgresql-datasource",
+      "uid": "ems-poc-db"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT a.ts AS \"time\", left(a.command_id,13) AS command, c.type, a.state,\n  coalesce(a.payload->>'reason','') AS reason, a.payload->'effective_setpoint'->>'p_w' AS p_w\nFROM command_ack a LEFT JOIN command c USING (command_id) ORDER BY a.id DESC LIMIT 40"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "type": "table",
+   "title": "Quality 15 phút gần nhất",
+   "datasource": {
+    "type": "grafana-postgresql-datasource",
+    "uid": "ems-poc-db"
+   },
+   "gridPos": {
+    "x": 14,
+    "y": 20,
+    "w": 10,
+    "h": 9
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "grafana-postgresql-datasource",
+      "uid": "ems-poc-db"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT device_id, quality, count(*) AS n, max(ts) AS last\nFROM telemetry WHERE ts > now() - interval '15 minutes' GROUP BY 1,2 ORDER BY 1,2"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+# SunSpec DER inverter (models 1 + 701 + 704). Register IMAGE is built by pysunspec2 from the
+# official SunSpec model JSON (Apache-2.0); this file only says which points the edge reads/writes.
+# Addresses are on-the-wire, 0-based (07 §5.1.3). `sunspec:` is cross-checked against pysunspec2
+# at vsite startup, so a wrong address here fails fast.
+driver_id: sunspec.der.inverter
+version: 0.1.0
+applies_to: {standard: "SunSpec Information Model 7xx (DER)", models: [1, 701, 704]}
+verification_status: SIMULATED       # chỉ kiểm trên virtual site, chưa thử thiết bị thật
+connection:
+  protocol: MODBUS_TCP
+  unit_id: 1
+  sunspec_base: 40000
+  max_gap: 64                         # ảnh SunSpec liền mạch -> được đọc vắt qua điểm không dùng
+defaults: {fc: 3, word_order: BIG, access: R, evidence: LAB_TEST}
+registers:
+  - {point: pv_inverter.state,       address: 40073, type: ENUM16, kind: status, sunspec: 701.St}
+  - {point: pv_inverter.alarm_word,  address: 40076, type: BITFIELD32, kind: alarm, sunspec: 701.Alrm}
+  - {point: pv_inverter.p,           address: 40080, type: I16, scale_ref: _sf.w, unit_raw: W, kind: measurement, sunspec: 701.W, na_values: [-32768]}
+  - {point: pv_inverter.q,           address: 40082, type: I16, scale_ref: _sf.var, unit_raw: var, kind: measurement, sunspec: 701.Var, na_values: [-32768]}
+  - {point: pv_inverter.f,           address: 40087, type: U32, scale_ref: _sf.hz, unit_raw: Hz, kind: measurement, sunspec: 701.Hz}
+  - {point: pv_inverter.e_total,     address: 40089, type: U64, scale_ref: _sf.totwh, unit_raw: Wh, kind: counter, sunspec: 701.TotWhInj, register_wrap: 18446744073709551616}
+  - {point: pv_inverter.t_cabinet,   address: 40106, type: I16, scale_ref: _sf.tmp, unit_raw: degC, kind: measurement, sunspec: 701.TmpCab, na_values: [-32768]}
+  - {point: _sf.hz,                  address: 40185, type: SUNSSF, kind: nameplate, sunspec: 701.Hz_SF}
+  - {point: _sf.w,                   address: 40186, type: SUNSSF, kind: nameplate, sunspec: 701.W_SF}
+  - {point: _sf.var,                 address: 40189, type: SUNSSF, kind: nameplate, sunspec: 701.Var_SF}
+  - {point: _sf.totwh,               address: 40190, type: SUNSSF, kind: nameplate, sunspec: 701.TotWh_SF}
+  - {point: _sf.tmp,                 address: 40192, type: SUNSSF, kind: nameplate, sunspec: 701.Tmp_SF}
+  # 704 DER AC controls: giới hạn công suất phát theo % WMax
+  - {point: pv_inverter.p_limit_ena, address: 40239, type: ENUM16, kind: setting, access: RW, sunspec: 704.WMaxLimPctEna, persist: VOLATILE}
+  - {point: pv_inverter.p_limit_pct, address: 40240, type: U16, scale_ref: _sf.wmaxlimpct, unit_raw: "%", kind: setting, access: RW, readback_ref: pv_inverter.p_limit_pct, sunspec: 704.WMaxLimPct, persist: VOLATILE}
+  - {point: _sf.wmaxlimpct,          address: 40279, type: SUNSSF, kind: nameplate, sunspec: 704.WMaxLimPct_SF}

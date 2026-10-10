@@ -1,0 +1,18 @@
+# Kịch bản virtual site (Bình Dương, nhà máy C&I). Ghi đè bằng biến môi trường SIM_SPEED, SIM_START_LOCAL.
+clock:
+  speed: 1.0              # 1 = thời gian thật; 10 = 1 s thật = 10 s mô phỏng (năng lượng tích phân theo giờ mô phỏng)
+  start_local: "10:30"    # giờ địa phương mô phỏng lúc khởi động (để luôn có nắng khi demo)
+pv:
+  profile_csv: profiles/day_binhduong.csv   # sinh bởi profiles/gen_profiles.py (pvlib, 800 kWp DC / 7 x 100 kW)
+  inverter_p_ac_max_w: 100000
+bess:                     # 250 kW / 500 kWh
+  e_nom_wh: 500000
+  p_rated_w: 250000
+  eta_c: 0.95
+  eta_d: 0.95
+  soc: 55.0
+  soc_min: 10.0
+  soc_max: 95.0
+  taper_pct: 5.0
+  tau_s: 1.5
+  watchdog_s: 15

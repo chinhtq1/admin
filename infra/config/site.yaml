@@ -1,0 +1,183 @@
+# Point mapping theo site (07 §6.3) — PoC. Một file dùng chung cho: edge bridge (đọc gì, pid nào),
+# ingest (registry pid -> site/device/point_code), CSMS stub và virtual site (cổng Modbus của thiết bị).
+# Production: đây là một phần của EdgeConfigVersion có ký số (05 §6); ở PoC không ký.
+# sampling_class theo 07 §6.5: C1 đọc 1 s / gửi tổng hợp 5 s; C2 -> 60 s; C3 -> 300 s; C4 thanh ghi mỗi 60 s; C5 sự kiện.
+config_version: 1
+site_id: site-bd-01
+timezone: Asia/Ho_Chi_Minh
+edges:
+- edge_id: edge-vsite01
+  role: modbus-bridge (PoC)
+  devices:
+  - device_id: pv-inv-01
+    asset_id: pv-inv-01
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5021, unit_id: 1}
+    driver: sunspec.der.inverter@0.1.0
+    points:
+    - {code: pv_inverter.p, pid: 1101, sampling_class: C2}
+    - {code: pv_inverter.q, pid: 1102, sampling_class: C2}
+    - {code: pv_inverter.f, pid: 1103, sampling_class: C3}
+    - {code: pv_inverter.e_total, pid: 1104, sampling_class: C4}
+    - {code: pv_inverter.state, pid: 1105, sampling_class: C2}
+    - {code: pv_inverter.alarm_word, pid: 1106, sampling_class: C5}
+    - {code: pv_inverter.t_cabinet, pid: 1107, sampling_class: C3}
+    - {code: pv_inverter.p_limit_pct, pid: 1108, sampling_class: C2}
+    - {code: pv_inverter.p_limit_ena, pid: 1109, sampling_class: C3}
+    control: {write_enabled: false}
+  - device_id: pv-inv-02
+    asset_id: pv-inv-02
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5022, unit_id: 1}
+    driver: sunspec.der.inverter@0.1.0
+    points:
+    - {code: pv_inverter.p, pid: 1201, sampling_class: C2}
+    - {code: pv_inverter.q, pid: 1202, sampling_class: C2}
+    - {code: pv_inverter.f, pid: 1203, sampling_class: C3}
+    - {code: pv_inverter.e_total, pid: 1204, sampling_class: C4}
+    - {code: pv_inverter.state, pid: 1205, sampling_class: C2}
+    - {code: pv_inverter.alarm_word, pid: 1206, sampling_class: C5}
+    - {code: pv_inverter.t_cabinet, pid: 1207, sampling_class: C3}
+    - {code: pv_inverter.p_limit_pct, pid: 1208, sampling_class: C2}
+    - {code: pv_inverter.p_limit_ena, pid: 1209, sampling_class: C3}
+    control: {write_enabled: false}
+  - device_id: pv-inv-03
+    asset_id: pv-inv-03
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5023, unit_id: 1}
+    driver: sunspec.der.inverter@0.1.0
+    points:
+    - {code: pv_inverter.p, pid: 1301, sampling_class: C2}
+    - {code: pv_inverter.q, pid: 1302, sampling_class: C2}
+    - {code: pv_inverter.f, pid: 1303, sampling_class: C3}
+    - {code: pv_inverter.e_total, pid: 1304, sampling_class: C4}
+    - {code: pv_inverter.state, pid: 1305, sampling_class: C2}
+    - {code: pv_inverter.alarm_word, pid: 1306, sampling_class: C5}
+    - {code: pv_inverter.t_cabinet, pid: 1307, sampling_class: C3}
+    - {code: pv_inverter.p_limit_pct, pid: 1308, sampling_class: C2}
+    - {code: pv_inverter.p_limit_ena, pid: 1309, sampling_class: C3}
+    control: {write_enabled: false}
+  - device_id: pv-inv-04
+    asset_id: pv-inv-04
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5024, unit_id: 1}
+    driver: sunspec.der.inverter@0.1.0
+    points:
+    - {code: pv_inverter.p, pid: 1401, sampling_class: C2}
+    - {code: pv_inverter.q, pid: 1402, sampling_class: C2}
+    - {code: pv_inverter.f, pid: 1403, sampling_class: C3}
+    - {code: pv_inverter.e_total, pid: 1404, sampling_class: C4}
+    - {code: pv_inverter.state, pid: 1405, sampling_class: C2}
+    - {code: pv_inverter.alarm_word, pid: 1406, sampling_class: C5}
+    - {code: pv_inverter.t_cabinet, pid: 1407, sampling_class: C3}
+    - {code: pv_inverter.p_limit_pct, pid: 1408, sampling_class: C2}
+    - {code: pv_inverter.p_limit_ena, pid: 1409, sampling_class: C3}
+    control: {write_enabled: false}
+  - device_id: pv-inv-05
+    asset_id: pv-inv-05
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5025, unit_id: 1}
+    driver: sunspec.der.inverter@0.1.0
+    points:
+    - {code: pv_inverter.p, pid: 1501, sampling_class: C2}
+    - {code: pv_inverter.q, pid: 1502, sampling_class: C2}
+    - {code: pv_inverter.f, pid: 1503, sampling_class: C3}
+    - {code: pv_inverter.e_total, pid: 1504, sampling_class: C4}
+    - {code: pv_inverter.state, pid: 1505, sampling_class: C2}
+    - {code: pv_inverter.alarm_word, pid: 1506, sampling_class: C5}
+    - {code: pv_inverter.t_cabinet, pid: 1507, sampling_class: C3}
+    - {code: pv_inverter.p_limit_pct, pid: 1508, sampling_class: C2}
+    - {code: pv_inverter.p_limit_ena, pid: 1509, sampling_class: C3}
+    control: {write_enabled: false}
+  - device_id: pv-inv-06
+    asset_id: pv-inv-06
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5026, unit_id: 1}
+    driver: sunspec.der.inverter@0.1.0
+    points:
+    - {code: pv_inverter.p, pid: 1601, sampling_class: C2}
+    - {code: pv_inverter.q, pid: 1602, sampling_class: C2}
+    - {code: pv_inverter.f, pid: 1603, sampling_class: C3}
+    - {code: pv_inverter.e_total, pid: 1604, sampling_class: C4}
+    - {code: pv_inverter.state, pid: 1605, sampling_class: C2}
+    - {code: pv_inverter.alarm_word, pid: 1606, sampling_class: C5}
+    - {code: pv_inverter.t_cabinet, pid: 1607, sampling_class: C3}
+    - {code: pv_inverter.p_limit_pct, pid: 1608, sampling_class: C2}
+    - {code: pv_inverter.p_limit_ena, pid: 1609, sampling_class: C3}
+    control: {write_enabled: false}
+  - device_id: pv-inv-07
+    asset_id: pv-inv-07
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5027, unit_id: 1}
+    driver: sunspec.der.inverter@0.1.0
+    points:
+    - {code: pv_inverter.p, pid: 1701, sampling_class: C2}
+    - {code: pv_inverter.q, pid: 1702, sampling_class: C2}
+    - {code: pv_inverter.f, pid: 1703, sampling_class: C3}
+    - {code: pv_inverter.e_total, pid: 1704, sampling_class: C4}
+    - {code: pv_inverter.state, pid: 1705, sampling_class: C2}
+    - {code: pv_inverter.alarm_word, pid: 1706, sampling_class: C5}
+    - {code: pv_inverter.t_cabinet, pid: 1707, sampling_class: C3}
+    - {code: pv_inverter.p_limit_pct, pid: 1708, sampling_class: C2}
+    - {code: pv_inverter.p_limit_ena, pid: 1709, sampling_class: C3}
+    control: {write_enabled: false}
+  - device_id: ess-01
+    asset_id: ess-01
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5030, unit_id: 1}
+    driver: generic.bess.pcs@0.1.0
+    ts_src_point: ess.clock
+    points:
+    - {code: ess.p, pid: 2001, sampling_class: C1}
+    - {code: ess.soc, pid: 2002, sampling_class: C1}
+    - {code: ess.p_charge_max, pid: 2003, sampling_class: C1}
+    - {code: ess.p_discharge_max, pid: 2004, sampling_class: C1}
+    - {code: ess.p_setpoint, pid: 2005, sampling_class: C1}
+    - {code: ess.state, pid: 2006, sampling_class: C1}
+    - {code: ess.mode, pid: 2007, sampling_class: C2}
+    - {code: ess.soh, pid: 2008, sampling_class: C3}
+    - {code: ess.e_charge, pid: 2009, sampling_class: C4}
+    - {code: ess.e_discharge, pid: 2010, sampling_class: C4}
+    - {code: ess.alarm_word, pid: 2011, sampling_class: C5}
+    - {code: ess.cell_t_max, pid: 2012, sampling_class: C3}
+    - {code: ess.cell_v_min, pid: 2013, sampling_class: C3}
+    - {code: ess.cell_v_max, pid: 2014, sampling_class: C3}
+    control:
+      write_enabled: true
+      control_owner: EDGE
+      soe: {p_charge_max_w: 250000, p_discharge_max_w: 250000}
+  - device_id: meter-poc
+    asset_id: meter-poc
+    metering_point: MTR_POC
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5040, unit_id: 1}
+    driver: generic.meter.3ph@0.1.0
+    ts_src_point: meter.clock
+    points:
+    - {code: meter.p, pid: 3001, sampling_class: C1}
+    - {code: meter.q, pid: 3002, sampling_class: C1}
+    - {code: meter.u.l1, pid: 3003, sampling_class: C2}
+    - {code: meter.u.l2, pid: 3004, sampling_class: C2}
+    - {code: meter.u.l3, pid: 3005, sampling_class: C2}
+    - {code: meter.f, pid: 3006, sampling_class: C2}
+    - {code: meter.e_import, pid: 3007, sampling_class: C4}
+    - {code: meter.e_export, pid: 3008, sampling_class: C4}
+    - {code: meter.alarm_word, pid: 3009, sampling_class: C5}
+    control: {write_enabled: false}
+  - device_id: meter-load
+    asset_id: meter-load
+    metering_point: MTR_LOAD_1
+    endpoint: {protocol: MODBUS_TCP, host: vsite, port: 5041, unit_id: 1}
+    driver: generic.meter.3ph@0.1.0
+    ts_src_point: meter.clock
+    points:
+    - {code: meter.p, pid: 3101, sampling_class: C2}
+    - {code: meter.q, pid: 3102, sampling_class: C2}
+    - {code: meter.u.l1, pid: 3103, sampling_class: C3}
+    - {code: meter.e_import, pid: 3104, sampling_class: C4}
+    control: {write_enabled: false}
+- edge_id: edge-ev01
+  role: ocpp-csms-stub (PoC)
+  devices:
+  - device_id: evse-01
+    asset_id: evse-01
+    metering_point: MTR_EV_1
+    endpoint: {protocol: OCPP16J, charge_point_id: '*'}
+    driver: ocpp16.generic@0.1.0
+    points:
+    - {code: evse.p, pid: 4001, sampling_class: C1}
+    - {code: evse.i_limit_active, pid: 4002, sampling_class: C2}
+    - {code: evse.e_session, pid: 4003, sampling_class: C4, monotonic: false}
+    - {code: evse.state, pid: 4004, sampling_class: C5}
+    control: {write_enabled: true}

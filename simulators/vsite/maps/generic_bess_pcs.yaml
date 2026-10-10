@@ -1,0 +1,33 @@
+# Generic BESS (PCS + BMS as one logical device). CUSTOM, ILLUSTRATIVE map — not any vendor's.
+# Real cabinets (07 §10.7) need a map written from the vendor document (Q-16-04).
+# Sign: ess.p + = discharge, - = charge (05 / 07 §7.2). Holes between blocks answer exception 02.
+driver_id: generic.bess.pcs
+version: 0.1.0
+verification_status: SIMULATED
+connection:
+  protocol: MODBUS_TCP
+  unit_id: 1
+  max_gap: 0
+  watchdog_support: true
+  revert_timeout_s: 15                # heartbeat không đổi trong 15 s -> PCS tự về P = 0
+defaults: {fc: 3, word_order: BIG, access: R, evidence: LAB_TEST}
+registers:
+  - {point: ess.p,               address: 0,  type: I32, unit_raw: W, kind: measurement}
+  - {point: ess.soc,             address: 2,  type: U16, scale: 0.1, unit_raw: "%", kind: measurement, na_values: [65535]}
+  - {point: ess.soh,             address: 3,  type: U16, scale: 0.1, unit_raw: "%", kind: measurement, na_values: [65535]}
+  - {point: ess.p_charge_max,    address: 4,  type: U32, unit_raw: W, kind: measurement}
+  - {point: ess.p_discharge_max, address: 6,  type: U32, unit_raw: W, kind: measurement}
+  - {point: ess.e_charge,        address: 8,  type: U64, unit_raw: Wh, kind: counter, register_wrap: 18446744073709551616}
+  - {point: ess.e_discharge,     address: 12, type: U64, unit_raw: Wh, kind: counter, register_wrap: 18446744073709551616}
+  - {point: ess.state,           address: 16, type: ENUM16, kind: status}        # 0 STANDBY 1 RUNNING 2 FAULT 3 WATCHDOG_REVERT
+  - {point: ess.mode,            address: 17, type: ENUM16, kind: status}        # 0 LOCAL 1 REMOTE
+  - {point: ess.alarm_word,      address: 18, type: BITFIELD32, kind: alarm}
+  - {point: ess.cell_t_max,      address: 20, type: I16, scale: 0.1, unit_raw: degC, kind: measurement}
+  - {point: ess.cell_v_min,      address: 21, type: U16, scale: 0.001, unit_raw: V, kind: measurement}
+  - {point: ess.cell_v_max,      address: 22, type: U16, scale: 0.001, unit_raw: V, kind: measurement}
+  - {point: ess.clock,           address: 23, type: U32, unit_raw: s, kind: status}  # epoch UTC giây của thiết bị -> ts_src
+  # điều khiển (ghi FC16, một PDU cho cả giá trị 32 bit — 07 §5.1.2)
+  - {point: ess.p_setpoint,      address: 40, type: I32, unit_raw: W, kind: setting, access: RW, fc: 3, readback_ref: ess.p_setpoint, persist: VOLATILE, min_write_interval_ms: 1000}
+  - {point: _ess.heartbeat,      address: 42, type: U16, kind: setting, access: RW}
+  - {point: ess.p_rated,         address: 43, type: U32, unit_raw: W, kind: nameplate}
+  - {point: ess.e_nom,           address: 45, type: U32, unit_raw: Wh, kind: nameplate}

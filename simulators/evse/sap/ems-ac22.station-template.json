@@ -1,0 +1,41 @@
+{
+  "$schemaVersion": 1,
+  "idTagsFile": "idtags.json",
+  "baseName": "EVSE-BD",
+  "chargePointModel": "Virtual AC 2x22kW",
+  "chargePointVendor": "EMS-PoC",
+  "firmwareVersion": "0.1.0",
+  "power": 44160,
+  "powerUnit": "W",
+  "powerSharedByConnectors": false,
+  "currentOutType": "AC",
+  "numberOfPhases": 3,
+  "voltageOut": 230,
+  "numberOfConnectors": 2,
+  "randomConnectors": false,
+  "Configuration": {
+    "configurationKey": [
+      {"key": "MeterValuesSampledData", "readonly": false, "value": "Energy.Active.Import.Register,Power.Active.Import"},
+      {"key": "MeterValueSampleInterval", "readonly": false, "value": "5"},
+      {"key": "SupportedFeatureProfiles", "readonly": true, "value": "Core,SmartCharging,RemoteTrigger"},
+      {"key": "LocalAuthListEnabled", "readonly": false, "value": "false"},
+      {"key": "AuthorizeRemoteTxRequests", "readonly": false, "value": "false"},
+      {"key": "WebSocketPingInterval", "readonly": false, "value": "60"}
+    ]
+  },
+  "AutomaticTransactionGenerator": {
+    "enable": true,
+    "minDuration": 240,
+    "maxDuration": 600,
+    "minDelayBetweenTwoTransactions": 10,
+    "maxDelayBetweenTwoTransactions": 30,
+    "probabilityOfStart": 1,
+    "stopAfterHours": 24,
+    "requireAuthorize": true
+  },
+  "Connectors": {
+    "0": {},
+    "1": {"bootStatus": "Available", "MeterValues": [{"unit": "W", "measurand": "Power.Active.Import"}, {"unit": "Wh"}]},
+    "2": {"bootStatus": "Available", "MeterValues": [{"unit": "W", "measurand": "Power.Active.Import"}, {"unit": "Wh"}]}
+  }
+}

@@ -1,0 +1,22 @@
+# Generic 3-phase meter. CUSTOM, ILLUSTRATIVE map (SDM/SunSpec-20x-like quantities, own layout).
+# Word order CDAB on purpose: exercises the LITTLE_WORD path of the codec (07 §5.1.1).
+# Sign: meter.p + = import from grid at MTR_POC; consumption >= 0 at MTR_LOAD (07 §7.2).
+driver_id: generic.meter.3ph
+version: 0.1.0
+verification_status: SIMULATED
+connection:
+  protocol: MODBUS_TCP
+  unit_id: 1
+  max_gap: 0
+defaults: {fc: 3, word_order: LITTLE_WORD, access: R, evidence: LAB_TEST}
+registers:
+  - {point: meter.p,        address: 0,  type: I32, unit_raw: W, kind: measurement}
+  - {point: meter.q,        address: 2,  type: I32, unit_raw: var, kind: measurement}
+  - {point: meter.u.l1,     address: 4,  type: U16, scale: 0.1, unit_raw: V, kind: measurement, na_values: [65535]}
+  - {point: meter.u.l2,     address: 5,  type: U16, scale: 0.1, unit_raw: V, kind: measurement, na_values: [65535]}
+  - {point: meter.u.l3,     address: 6,  type: U16, scale: 0.1, unit_raw: V, kind: measurement, na_values: [65535]}
+  - {point: meter.f,        address: 7,  type: U16, scale: 0.01, unit_raw: Hz, kind: measurement, na_values: [65535]}
+  - {point: meter.e_import, address: 8,  type: U64, unit_raw: Wh, kind: counter, register_wrap: 18446744073709551616}
+  - {point: meter.e_export, address: 12, type: U64, unit_raw: Wh, kind: counter, register_wrap: 18446744073709551616}
+  - {point: meter.clock,    address: 16, type: U32, unit_raw: s, kind: status}      # epoch UTC giây -> ts_src
+  - {point: meter.alarm_word, address: 18, type: BITFIELD16, kind: alarm}
