@@ -431,7 +431,7 @@ img.wfthumb.m { width: 78px; }
 <div class="table-wrap"><table>
 <thead><tr><th>Loại số</th><th>Nhãn trên UI</th><th>Ví dụ</th></tr></thead>
 <tbody>
-<tr><td>Đo trực tiếp</td><td>Không nhãn</td><td>Nhập lưới 1.284,6 kWh hôm nay</td></tr>
+<tr><td>Đo trực tiếp</td><td>Không nhãn</td><td>Nhập lưới 1.377,5 kWh hôm nay</td></tr>
 <tr><td>Tính từ đo (cân bằng)</td><td>Tooltip công thức</td><td>Tiêu thụ site = nhập − xuất + PV + xả − sạc</td></tr>
 <tr><td>Phân bổ luồng, tiết kiệm, CO₂, PV bị cắt, hóa đơn bóng</td><td>"≈ ước tính" + link phương pháp + <code>attribution_version</code>/<code>calc_version</code>/<code>tariff_version</code></td><td>≈ 1,35 triệu ₫ tiết kiệm so với B1 (ước tính)</td></tr>
 <tr><td>Dự báo</td><td>"Dự báo (Thống kê)" hoặc "Dự báo (ML)" chỉ sau đánh giá (08 §17)</td><td>Dự báo tải P50</td></tr>
@@ -439,11 +439,66 @@ img.wfthumb.m { width: 78px; }
 <tr><td>Backtest, what-if, chạy bóng, site sandbox</td><td>"Mô phỏng"</td><td>Mô phỏng: chi phí tháng 9 nếu dùng luật v3</td></tr>
 <tr><td>Phát hiện bất thường</td><td>"Quy tắc cảnh báo" (L1) · "Phân tích thống kê" (L2, P1)</td><td>Không bao giờ "AI phát hiện"</td></tr>
 </tbody></table></div>
+
+<h3 id="s6-6">6.6 Định nghĩa KPI dùng trên giao diện: tự cung, tự tiêu thụ, PV bị cắt</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Nhãn UI (vi / en)</th><th>Mã</th><th>Định nghĩa</th><th>Nhãn phương pháp</th><th>Ví dụ BD-02 (00:00–10:20)</th></tr></thead>
+<tbody>
+<tr><td><b>Tự cung</b> / Self-sufficiency</td><td>K11 (05)</td><td><code>1 − E_imp / E_cons</code>, với <code>E_cons = E_imp − E_exp + E_pv + E_dis − E_ch</code>; đúng cả khi BESS sạc từ lưới. <code>E_cons ≤ 0</code> → N/A. Tỷ số tính lại từ tổng tử/mẫu của kỳ (RECOMPUTE_RATIO), không trung bình các tỷ số ngày. Trước đây wireframe ghi "tự cấp"; nhãn chuẩn là "Tự cung" theo bảng thuật ngữ 05.</td><td>Đo (không nhãn)</td><td>1 − 1.377,5 / 2.799,5 = 50,8%</td></tr>
+<tr><td><b>Tự tiêu thụ PV</b> / PV self-consumption</td><td>K10 (05)</td><td><code>(pv_to_load + pv_to_bess) / E_pv</code> theo phân bổ có <code>attribution_version</code>; bản đơn giản <code>1 − E_exp / E_pv</code> chỉ cho site không có BESS xuất lưới. <code>E_pv = 0</code> → N/A.</td><td>"≈ ước tính" khi dùng phân bổ</td><td>100% (zero-export)</td></tr>
+<tr><td><b>PV bị cắt</b> / Curtailed PV</td><td>K15</td><td>Điện năng PV khả dụng nhưng không phát do giới hạn (xuất, trần nhập, lệnh lưới, PV limit của EMS) trong khoảng <b>đã qua</b>; ước tính từ công suất khả dụng (inverter tham chiếu, dự báo hoặc mô hình) trừ công suất thực phát khi <code>p_limit_pct</code> &lt; 100% hoặc vòng giới hạn xuất đang tác động. Luôn ghi nguồn giới hạn.</td><td>Luôn "≈ ước tính"</td><td>≈ 0,2 kWh</td></tr>
+<tr><td><b>PV bị cắt dự kiến</b> / Forecast curtailed PV</td><td>(PlanSlot)</td><td>Σ theo slot của kế hoạch <b>tương lai</b>: <code>max(0, P_pv_forecast_P50 − (tải dự báo + EV + sạc BESS kế hoạch + xuất cho phép))</code> × Δt; phát sinh khi BESS đầy hoặc chạm giới hạn sạc ở site zero-export. Hiển thị trên UI-19 (vùng gạch chéo trên chuỗi PV và thẻ "PV bị cắt dự kiến 48 h"), UI-03 (vùng tương lai) và UI-09; không cộng vào K15 thực tế cho tới khi slot qua.</td><td>"Dự báo (Thống kê)" + "≈"</td><td>≈ 198 kWh (12:15–14:20)</td></tr>
+</tbody></table></div>
+
+<h3 id="s6-7">6.7 Mã lý do PDP từ chối lệnh → nhãn UI</h3>
+<p>Enum lấy nguyên từ <a href="10-security-and-reliability.md">10 §5.3</a> (kết quả <code>DENIED: …</code> của PDP-01…PDP-12 và lớp S1–S6 ở 10 §15); 09 chỉ cấp nhãn và hướng xử lý. Mã thay thế đề xuất trước đây trong X-09-02 được ánh xạ ở cột cuối. Lý do vô hiệu nút lấy từ <code>dry_run</code> của server (§6.4). <span class="tag proposal">PROPOSAL</span> cho nhãn; mã là của 10.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Mã (10)</th><th>Quy tắc</th><th>Nhãn vi</th><th>Hướng xử lý trên UI</th><th>Mã cũ X-09-02</th></tr></thead>
+<tbody>
+<tr><td><code>NO_PERMISSION</code></td><td>PDP-01</td><td>Bạn không có quyền gửi lệnh hạng này trên site</td><td>Ẩn nút nếu vai trò không bao giờ có quyền; nếu có thì hiện người có quyền (UI-31)</td><td><code>NOT_PERMITTED</code></td></tr>
+<tr><td><code>CONTROL_DISABLED</code></td><td>PDP-02</td><td>Điều khiển từ xa chưa bật cho site</td><td>Link UI-24 (hồ sơ Gate, đồng ý chủ tài sản)</td><td>—</td></tr>
+<tr><td><code>LOCAL_MODE</code></td><td>PDP-02</td><td>Site đang điều khiển tại chỗ (IL-01)</td><td>Chỉ quay REMOTE bằng thao tác tại chỗ</td><td>—</td></tr>
+<tr><td><code>SUSPENDED</code></td><td>PDP-02</td><td>Điều khiển từ xa đang tạm ngưng (site/tenant/nền tảng)</td><td>Hiện ai bật, lúc nào; bật lại là C3 (UI-22)</td><td><code>KILL_SWITCH_ENGAGED</code></td></tr>
+<tr><td><code>GATE</code></td><td>PDP-02, S3</td><td>Lệnh này cần Gate M2; site đang ở M1</td><td>Link hồ sơ Gate M2 (UI-24)</td><td><code>GATE_MISMATCH</code></td></tr>
+<tr><td><code>STEP_UP_REQUIRED</code></td><td>PDP-06, S1</td><td>Cần xác thực lại</td><td>Mở hộp step-up (UI-34), không phải lỗi</td><td><code>MFA_STEP_UP_REQUIRED</code></td></tr>
+<tr><td><code>TTL</code></td><td>PDP-07, S6</td><td>Hạn lệnh vượt mức tối đa của loại lệnh</td><td>Giảm hạn (setpoint ≤ 1 h; chế độ ≤ 24 h)</td><td>—</td></tr>
+<tr><td><code>OUT_OF_SOE</code></td><td>PDP-08, S3</td><td>Giá trị ngoài vùng an toàn đang hiệu lực trên edge</td><td>Hiện giới hạn SOE/M1StaticLimits cạnh ô nhập</td><td><code>OUT_OF_SOE</code></td></tr>
+<tr><td><code>DEVICE_NOT_ELIGIBLE</code></td><td>PDP-09, S3</td><td>Thiết bị chưa kiểm chứng hoặc chỉ cho đổi chế độ native</td><td>Link driver (UI-28); ẩn "Đặt công suất thủ công"</td><td><code>REQUIRES_NATIVE_FALLBACK</code></td></tr>
+<tr><td><code>EDGE_UNAVAILABLE</code></td><td>PDP-10</td><td>Edge mất kết nối hoặc đồng hồ chưa đồng bộ</td><td>Không cho gửi setpoint; kill switch engage vẫn cho</td><td>—</td></tr>
+<tr><td><code>RATE_LIMIT</code></td><td>PDP-11, S5</td><td>Quá nhiều lệnh trong thời gian ngắn</td><td>Nút vô hiệu kèm thời gian còn lại (ví dụ <code>mode_change_min_interval</code>)</td><td><code>RATE_LIMITED</code>, <code>GOVERNOR_BUDGET</code> (vượt ngân sách Governor không phải DENIED mà là xếp hàng + nâng C3, PDP-05)</td></tr>
+<tr><td><code>SOD</code></td><td>PDP-12</td><td>Không thể duyệt yêu cầu của chính mình / cùng vai trò</td><td>Nút Duyệt vô hiệu kèm lý do (UI-22)</td><td>—</td></tr>
+<tr><td><code>AUTH</code></td><td>S1</td><td>Phiên đăng nhập không hợp lệ</td><td>Đăng nhập lại; giữ bản nháp, không tự gửi</td><td>—</td></tr>
+</tbody></table></div>
+
+<h3 id="s6-8">6.8 Trạng thái connector OCPP → chip UI (UI-11, P1)</h3>
+<p>Ánh xạ dưới đây dựa trên tên trạng thái của OCPP 1.6J (<code>ChargePointStatus</code>) và OCPP 2.0.1 (<code>ConnectorStatusEnumType</code> + <code>ChargingStateEnumType</code> trong <code>TransactionEvent</code>) theo hiểu biết chung; chưa đối chiếu văn bản đặc tả trong dự án <span class="tag inference">INFERENCE</span>. 07 §5.9 chọn 1.6J là P1. Chip luôn có chữ tiếng Việt + tên gốc trong tooltip. <span class="tag proposal">PROPOSAL</span></p>
+<div class="table-wrap"><table>
+<thead><tr><th>OCPP 1.6J</th><th>OCPP 2.0.1</th><th>Chip vi</th><th>Kiểu</th><th>Ghi chú</th></tr></thead>
+<tbody>
+<tr><td><code>Available</code></td><td><code>Available</code></td><td>Sẵn sàng</td><td>trung tính</td><td></td></tr>
+<tr><td><code>Preparing</code></td><td><code>Occupied</code> + <code>EVConnected</code></td><td>Đã cắm, chờ sạc</td><td>trung tính</td><td></td></tr>
+<tr><td><code>Charging</code></td><td><code>Occupied</code> + <code>Charging</code></td><td>Đang sạc</td><td>trung tính + kW</td><td>kèm "giới hạn do EMS" nếu <code>i_limit_active</code></td></tr>
+<tr><td><code>SuspendedEVSE</code></td><td><code>Occupied</code> + <code>SuspendedEVSE</code></td><td>Tạm dừng do trụ/EMS</td><td>chữ + lý do</td><td>Thường do giới hạn EMS (<code>EV_THROTTLED_IMPORT_CAP</code>), không phải lỗi</td></tr>
+<tr><td><code>SuspendedEV</code></td><td><code>Occupied</code> + <code>SuspendedEV</code></td><td>Tạm dừng do xe</td><td>trung tính</td><td>Xe đầy hoặc xe tự dừng</td></tr>
+<tr><td><code>Finishing</code></td><td><code>Occupied</code> + <code>Idle</code></td><td>Đang kết thúc</td><td>trung tính</td><td></td></tr>
+<tr><td><code>Reserved</code></td><td><code>Reserved</code></td><td>Đã đặt trước</td><td>trung tính</td><td></td></tr>
+<tr><td><code>Unavailable</code></td><td><code>Unavailable</code></td><td>Không khả dụng</td><td>xám</td><td>Bảo trì hoặc tắt</td></tr>
+<tr><td><code>Faulted</code></td><td><code>Faulted</code></td><td>Lỗi</td><td>chip cảnh báo + mã lỗi</td><td>Sinh cảnh báo theo danh mục FR-ALM-001</td></tr>
+<tr><td colspan="2">(không phải trạng thái OCPP)</td><td>Không liên lạc</td><td>gạch chéo + "từ HH:MM"</td><td>Suy từ mất heartbeat/WebSocket; không hiện thành "Lỗi" (§UI-11)</td></tr>
+</tbody></table></div>
+
+<h3 id="s6-9">6.9 Ngày lễ trong lịch TOU</h3>
+<ul>
+  <li>Mô hình theo <a href="05-domain-model.html#e-tou">05 TouCalendar / TouRule / SpecialDay</a>: <code>TouRule.day_type ∈ {MON_SAT, SUNDAY, HOLIDAY, CUSTOM}</code>; ngày lễ là <code>SpecialDay</code> (<code>local_date</code>, <code>day_type_override</code>, <code>name</code>, <code>source</code>) thuộc <code>holiday_calendar_id</code> của <code>TouCalendarVersion</code>.</li>
+  <li>Cách QĐ 963 xử lý ngày lễ là <span class="tag unknown">UNKNOWN</span> (05 MQ-10). Mặc định theo 05: ngày lễ dùng <b>quy tắc của ngày trong tuần tương ứng</b> cho tới khi kiểm chứng; UI ghi rõ "Ngày lễ: theo quy tắc T2–T7 (mặc định, chờ kiểm chứng)" thay vì tự coi như Chủ nhật.</li>
+  <li>UI-25: hàng "Ngày đặc biệt" dưới lưới 24 × 7, mỗi ngày có tên, nguồn và quy tắc áp; Tết âm lịch nhập dưới dạng ngày Gregory. Sửa ngày lễ tạo phiên bản lịch mới; site có điều khiển thấy hộp xác nhận ảnh hưởng tới kế hoạch (BR-TAR-05).</li>
+  <li>UI-19/UI-03: dải TOU của ngày lễ lấy từ lịch có hiệu lực, có chip "Ngày lễ" trên trục; hóa đơn bóng (K25) dùng lịch hóa đơn (<code>BILLING</code>), tối ưu dùng lịch pháp lý (<code>LEGAL</code>) khi hai lịch khác nhau (FR-TAR-003).</li>
+</ul>
 </section>
 
 <section id="s7">
 <h2>7. Đặc tả trang</h2>
-<p>Mỗi trang có bảng đặc tả 9 dòng. "Thông tin chính" ghi nguồn dữ liệu bằng mã điểm (<a href="07-device-integration.md">07 §7.2</a>), thực thể (<a href="05-domain-model.html">05</a>) hoặc KPI (<a href="03-functional-catalog.html#exec-kpi">03 §6</a>) và FR (<a href="04-business-requirements.md">04</a>). Dữ liệu mẫu dùng một site giả định xuyên suốt: <b>BD-02 "Xưởng ép nhựa"</b>, PV 800 kWp DC / 700 kW AC, BESS 250 kW / 500 kWh, 2 trụ sạc EV, <code>export_mode = ZERO_EXPORT</code>, <code>import_cap_w = 900 000</code>, lúc 10:20:15 giờ site (Asia/Ho_Chi_Minh). Cân bằng mẫu: nhập 4 + PV 640 − sạc 116 = tiêu thụ 528 kW = tải 488 + EV 40. <span class="sample" style="color:var(--warn)">Dữ liệu mẫu</span></p>
+<p>Mỗi trang có bảng đặc tả 9 dòng. "Thông tin chính" ghi nguồn dữ liệu bằng mã điểm (<a href="07-device-integration.md">07 §7.2</a>), thực thể (<a href="05-domain-model.html">05</a>) hoặc KPI (<a href="03-functional-catalog.html#exec-kpi">03 §6</a>) và FR (<a href="04-business-requirements.md">04</a>). Dữ liệu mẫu dùng một site giả định xuyên suốt: <b>BD-02 "Xưởng ép nhựa"</b>, PV 800 kWp DC / 700 kW AC, BESS 250 kW / 500 kWh, 2 trụ sạc EV, <code>export_mode = ZERO_EXPORT</code>, <code>import_cap_w = 900 000</code>, lúc 10:20:15 giờ site (Asia/Ho_Chi_Minh). Cân bằng mẫu: nhập 4 + PV 640 − sạc 116 = tiêu thụ 528 kW = tải 488 + EV 40. Điện năng 00:00–10:20: nhập 1.377,5 kWh (thấp điểm 972,2 + bình thường 405,3), PV 1.544,4 kWh, BESS sạc 122,3 / xả 0,0 kWh, EV 98,5 kWh → tiêu thụ 2.799,5 kWh (tải 2.701,0 + EV 98,5); hóa đơn bóng = 972,2 × 1.190 + 405,3 × 1.833 ≈ 1.899.844 ₫ (QĐ 1279, cấp 22–&lt;110 kV). PV gồm 7 inverter × 100 kW AC (Σ P = 640,0 kW). Tải đêm 153 kW; SOC 20% lúc 00:00 (đã xả về mức dự phòng tối hôm trước), nạp lưới thấp điểm tới 30%, sạc PV dư từ 09:20. Mọi số mẫu trong §7 lấy từ cùng mô hình mẫu của wireframe (§16). <span class="sample" style="color:var(--warn)">Dữ liệu mẫu</span></p>
 
 <section id="s7-1">
 <h3>7.1 Danh mục và điều hướng</h3>
@@ -481,7 +536,7 @@ img.wfthumb.m { width: 78px; }
     <div class="wf-box span-12"><b>Cần chú ý (4)</b>
       <table><tbody>
         <tr><td><span class="chip bad">⬣ Khẩn cấp</span></td><td>LA-03 Nhà máy dệt</td><td>BMS báo nhiệt độ cell vượt ngưỡng bảo vệ (rack 2) · chưa xác nhận · 3 phút · BESS về P = 0 tại edge</td><td><span class="chip">Xác nhận</span> <span class="chip">Mở</span></td></tr>
-        <tr><td><span class="chip warn">▲ Cao</span></td><td>BD-05 Kho bao bì</td><td>Vượt giới hạn xuất 2 lần trong 1 giờ, tổng 9 s, đỉnh 14,2 kW</td><td><span class="chip">Mở</span></td></tr>
+        <tr><td><span class="chip warn">▲ Cao</span></td><td>BD-05 Kho bao bì</td><td>Vượt giới hạn xuất 1 lần (6 s, đỉnh 14,2 kW) và INV-02 mất kết nối từ 10:02</td><td><span class="chip">Mở</span></td></tr>
         <tr><td><span class="chip">⧗ Mất kết nối</span></td><td>DN-07 Kho lạnh</td><td>Cloud hãng chưa trả dữ liệu từ 09:41 (39 phút) · site chỉ giám sát</td><td><span class="chip">Mở</span></td></tr>
         <tr><td><span class="chip">↺ Dự phòng</span></td><td>TN-01 Xưởng gỗ</td><td>Edge mất cloud từ 08:15 · đang chạy kế hoạch #87 tới 23:45 · site vẫn điều khiển cục bộ</td><td><span class="chip">Mở</span></td></tr>
       </tbody></table></div>
@@ -537,7 +592,7 @@ img.wfthumb.m { width: 78px; }
 <li><b>Energy flow</b> mini (C-04) theo <code>attribution_version</code> (FR-MON-004, FR-HIST-009).</li>
 <li><b>Thanh giới hạn</b>: nhập hiện tại / <code>import_cap_w</code>; xuất / <code>export_limit_w</code> (ZERO_EXPORT hiện "Không xuất") (FR-GRID-007). Đồng hồ demand cửa sổ biểu giá chỉ khi biểu giá có thành phần công suất (P1, FR-GRID-010, K R-24).</li>
 <li><b>KPI hôm nay</b>: nhập, xuất, PV, BESS sạc/xả (kWh, cặp không âm từ thanh ghi), tiêu thụ, tự tiêu thụ %, hóa đơn bóng (≈), số lần vi phạm xuất (FR-DASH-006, 03 §6).</li>
-<li><b>Biểu đồ "Hôm nay: thực tế và kế hoạch"</b>: P lưới (nhập trên/xuất dưới trục), PV, BESS (xả trên/sạc dưới), SOC % trục phải, dải TOU nền, đường trần nhập/giới hạn xuất, phần tương lai nét đứt theo DispatchPlan (FR-DASH-005). Site PV-only ẩn chuỗi BESS/kế hoạch.</li>
+<li><b>Biểu đồ "Hôm nay: thực tế và kế hoạch"</b>: P lưới (nhập trên/xuất dưới trục), PV, BESS (xả trên/sạc dưới) ở panel kW; SOC % ở panel riêng bên dưới cùng trục thời gian (không dùng trục kép, C-05); dải TOU nền, đường trần nhập/giới hạn xuất, phần tương lai nét đứt theo DispatchPlan (FR-DASH-005). Site PV-only ẩn chuỗi BESS/kế hoạch.</li>
 <li><b>Cảnh báo đang mở</b> top 5 theo mức; <b>thẻ tài sản</b> BESS/PV/Lưới/EV dẫn tới L3.</li>
 </ul></td></tr>
 <tr><th>Bộ lọc &amp; thao tác</th><td>Chọn ngày (mặc định hôm nay theo giờ site); bật/tắt chuỗi; đổi chế độ energy flow "Hiện tại (kW)" / "Hôm nay (kWh)". Thao tác điều khiển <b>không</b> nằm ở đây; nút "Điều khiển" dẫn sang UI-24/UI-18 (BR-DASH-05).</td></tr>
@@ -567,13 +622,13 @@ img.wfthumb.m { width: 78px; }
       Xuất 0 kW · chế độ: Không xuất (ZERO_EXPORT) <div class="bar"><s style="left:0"></s></div>
       <div class="trace">import_cap_w=900 000 · export_limit_w=0 · SiteGridConfigVersion v3</div>
     </div>
-    <div class="wf-box span-3"><b>Nhập lưới hôm nay</b><span class="big">1.284,6 kWh</span><div class="trace">K01 · Δ meter.e_import</div></div>
-    <div class="wf-box span-3"><b>PV hôm nay</b><span class="big">1.512,4 kWh</span><div class="trace">K03 · Δ pv_inverter.e_total</div></div>
-    <div class="wf-box span-3"><b>BESS hôm nay</b>Sạc 198,4 kWh · Xả 0,0 kWh<div class="trace">Δ ess.e_charge / ess.e_discharge</div></div>
-    <div class="wf-box span-3"><b>Chi phí điện hôm nay</b><span class="big">≈ 1,69 triệu ₫</span><div class="trace">K25 hóa đơn bóng · tariff_version 2026-05 · ≈ ước tính</div></div>
-    <div class="wf-box span-12"><b>Hôm nay: thực tế và kế hoạch</b> · trục trái kW, trục phải SOC % · nền: <span class="chip">Thấp điểm 00:00–06:00</span> <span class="chip">Bình thường</span> <span class="chip">Cao điểm 17:30–22:30</span> · đường đỏ: trần nhập 900 kW · bên phải vạch "Bây giờ 10:20" là kế hoạch (nét đứt): Xả cao điểm 17:30–22:30 về SOC 20%
+    <div class="wf-box span-3"><b>Nhập lưới hôm nay</b><span class="big">1.377,5 kWh</span><div class="trace">K01 · Δ meter.e_import</div></div>
+    <div class="wf-box span-3"><b>PV hôm nay</b><span class="big">1.544,4 kWh</span><div class="trace">K03 · Δ pv_inverter.e_total</div></div>
+    <div class="wf-box span-3"><b>BESS hôm nay</b>Sạc 122,3 kWh · Xả 0,0 kWh<div class="trace">Δ ess.e_charge / ess.e_discharge</div></div>
+    <div class="wf-box span-3"><b>Chi phí điện hôm nay</b><span class="big">≈ 1,90 triệu ₫</span><div class="trace">K25 = 972,2 × 1.190 + 405,3 × 1.833 · tariff_version 2026-05 · ≈ ước tính</div></div>
+    <div class="wf-box span-12"><b>Hôm nay: thực tế và kế hoạch</b> · panel kW (trên) và panel SOC % (dưới), đồng bộ trục thời gian · nền: <span class="chip">Thấp điểm 00:00–06:00</span> <span class="chip">Bình thường</span> <span class="chip">Cao điểm 17:30–22:30</span> · đường đỏ: trần nhập 900 kW · bên phải vạch "Bây giờ 10:20" là kế hoạch (nét đứt): Sạc PV dư tới 95% (≈ 12:20), Giữ (PV bị cắt dự kiến ≈ 198 kWh), Xả cao điểm ≈ 68 kW 17:30–22:30 về SOC 20%
       <div class="trace">Chuỗi 5 phút từ C1 · PlanSlot v12 (Quy tắc) · TouCalendar QĐ 963 (lịch tối ưu) · khung giờ theo biểu giá hiệu lực, không vẽ cứng</div></div>
-    <div class="wf-box span-6"><b>Cảnh báo đang mở (1)</b> ◆ Trung bình · INV-03 string 2.4 dòng thấp hơn trung vị 38% từ 09:05 · chưa xác nhận</div>
+    <div class="wf-box span-6"><b>Cảnh báo đang mở (1)</b> ◆ Trung bình · INV-03 string 2.4 dòng thấp hơn trung vị 38% từ 09:05 · đã xác nhận (Lan 09:12) · ticket T-0412</div>
     <div class="wf-box span-6"><b>Tài sản</b> BESS 250 kW / 500 kWh · PV 7 inverter · Lưới MTR_POC · EV 2 trụ (chỉ công tơ)</div>
   </div>
 </div>
@@ -583,8 +638,8 @@ img.wfthumb.m { width: 78px; }
     <div class="wf-box span-12"><b>BD-02 ▾</b> ✓ Bình thường · Lịch TOU · đo lúc 10:20:15 · TOU Bình thường đến 17:30</div>
     <div class="wf-box span-12"><b>Dòng năng lượng</b> Lưới Nhập 4 kW · PV 640 kW · BESS Sạc 116 kW (46%) · Tải 488 kW · EV 40 kW</div>
     <div class="wf-box span-12"><b>Giới hạn</b> Nhập 4/900 kW · Không xuất</div>
-    <div class="wf-box span-12"><b>Hôm nay</b> Nhập 1.284,6 kWh · PV 1.512,4 kWh · ≈ 1,69 triệu ₫</div>
-    <div class="wf-box span-12"><b>Kế hoạch hôm nay (chỉ xem)</b> 10:00–15:00 Sạc PV dư · 17:30–22:30 Xả cao điểm</div>
+    <div class="wf-box span-12"><b>Hôm nay</b> Nhập 1.377,5 kWh · PV 1.544,4 kWh · ≈ 1,90 triệu ₫</div>
+    <div class="wf-box span-12"><b>Kế hoạch hôm nay (chỉ xem)</b> 09:20–12:20 Sạc PV dư · 12:20–17:30 Giữ · 17:30–22:30 Xả cao điểm</div>
   </div>
 </div>
 </section>
@@ -727,7 +782,7 @@ img.wfthumb.m { width: 78px; }
     <div class="wf-box span-4"><b>Sức khỏe</b> SOH 98% (BMS, định nghĩa hãng) · Cell 3,301–3,322 V (ΔV 21 mV) · Nhiệt 26,1–31,4 °C (ΔT 5,3 °C)<div class="trace">ess.soh · ess.cell_v_min/max · ess.cell_t_min/max</div></div>
     <div class="wf-box span-4"><b>An toàn (chỉ đọc)</b> PCCC: Bình thường · Khí/khói: Bình thường · Cửa tủ: Đóng · Interlock: không có<div class="trace">relay.fire_alarm · relay.estop_active · IL-01…IL-10</div></div>
     <div class="wf-box span-4"><b>Rack (2)</b> R1 SOC 46% · 31,4 °C max · R2 SOC 46% · 30,8 °C max <span class="chip">Chi tiết cell (P1)</span></div>
-    <div class="wf-box span-12"><b>24 h: P BESS (xả ↑ / sạc ↓) và SOC</b> · nền TOU · đường nét đứt: P cho phép · marker: 06:00 bắt đầu "Sạc PV dư", 00:00–05:00 "Nạp thấp điểm tới 40%"</div>
+    <div class="wf-box span-12"><b>24 h: P BESS (xả ↑ / sạc ↓) và SOC</b> · nền TOU · đường nét đứt: P cho phép · panel SOC riêng bên dưới · marker: 00:00–01:05 "Nạp thấp điểm tới 30%", 09:20 bắt đầu "Sạc PV dư", 17:30 "Xả cao điểm ≈ 68 kW"</div>
   </div>
 </div>
 </section>
@@ -771,15 +826,16 @@ img.wfthumb.m { width: 78px; }
 <div class="wf" role="img" aria-label="Wireframe UI-09 chi tiết PV">
   <div class="wf-bar"><b>PV · BD-02 (800 kWp DC / 700 kW AC, 7 inverter)</b> <span class="chip">640 kW · 80% kWp</span> <span class="chip">Đo lúc 10:20:15</span> <span class="chip">Giới hạn: không (100%)</span> <span class="sample">Dữ liệu mẫu</span></div>
   <div class="wf-grid">
-    <div class="wf-box span-3"><b>Sản lượng hôm nay</b><span class="big">1.512,4 kWh</span><div class="trace">K03 · Δ pv_inverter.e_total</div></div>
-    <div class="wf-box span-3"><b>Specific yield hôm nay</b><span class="big">1,89 kWh/kWp</span><div class="trace">K12 = 1.512,4 / 800</div></div>
-    <div class="wf-box span-3"><b>PV bị cắt hôm nay</b><span class="big">≈ 12,4 kWh</span><div class="trace">K15 · 08:40–09:05 · giới hạn xuất · ≈ ước tính</div></div>
+    <div class="wf-box span-3"><b>Sản lượng hôm nay</b><span class="big">1.544,4 kWh</span><div class="trace">K03 · Δ pv_inverter.e_total</div></div>
+    <div class="wf-box span-3"><b>Specific yield hôm nay</b><span class="big">1,93 kWh/kWp</span><div class="trace">K12 = 1.544,4 / 800</div></div>
+    <div class="wf-box span-3"><b>PV bị cắt hôm nay</b><span class="big">≈ 0,2 kWh</span><div class="trace">K15 · 09:15–09:20 · zero-export · ≈ ước tính · PV bị cắt dự kiến 12:15–14:20 ≈ 198 kWh (§6.6)</div></div>
     <div class="wf-box span-3"><b>PR</b><span class="big">N/A</span><div class="trace">không có cảm biến g_poa (K §6 #12)</div></div>
     <div class="wf-box span-12"><b>Inverter</b>
       <table><thead><tr><th>Inverter</th><th>Trạng thái</th><th class="num">P</th><th class="num">% định mức</th><th class="num">kWh/kWp hôm nay</th><th>Giới hạn (nguồn)</th><th>Cảnh báo</th></tr></thead><tbody>
-        <tr><td>INV-01</td><td>Đang phát</td><td class="num">93,1 kW</td><td class="num">93%</td><td class="num">1,93</td><td>100% (—)</td><td>—</td></tr>
-        <tr><td>INV-03</td><td>Đang phát</td><td class="num">84,6 kW</td><td class="num">85%</td><td class="num">1,71</td><td>100% (—)</td><td>◆ Trung bình</td></tr>
-        <tr><td>INV-06</td><td class="old">Mất kết nối từ 10:02</td><td class="num old">90,2 kW</td><td class="num old">—</td><td class="num old">1,62</td><td class="old">không rõ</td><td>▲ Cao</td></tr>
+        <tr><td>INV-01</td><td>Đang phát</td><td class="num">93,1 kW</td><td class="num">93%</td><td class="num">1,96</td><td>100% (—)</td><td>—</td></tr>
+        <tr><td>INV-03</td><td>Đang phát</td><td class="num">84,6 kW</td><td class="num">85%</td><td class="num">1,73</td><td>100% (—)</td><td>◆ Trung bình</td></tr>
+        <tr><td>INV-06</td><td>Đang phát</td><td class="num">91,9 kW</td><td class="num">92%</td><td class="num">1,94</td><td>100% (—)</td><td>—</td></tr>
+        <tr><td colspan="7" class="muted">INV-02, 04, 05, 07: 92,4 · 93,0 · 92,7 · 92,3 kW · Σ 7 inverter = 640,0 kW. Trạng thái "Mất kết nối" của một inverter: xem trạng thái không bình thường trong wireframe UI-09.</td></tr>
       </tbody></table></div>
     <div class="wf-box span-12"><b>String INV-03</b>
       <table><thead><tr><th>MPPT/String</th><th class="num">U</th><th class="num">I</th><th class="num">So với trung vị</th></tr></thead><tbody>
@@ -832,11 +888,11 @@ img.wfthumb.m { width: 78px; }
     <div class="wf-box span-6"><b>Xuất / giới hạn xuất</b><span class="big">Không xuất</span> · chế độ Không xuất (ZERO_EXPORT)<div class="bar"><s style="left:0"></s></div>Vi phạm hôm nay: <b>0 lần</b> · tháng 10: 1 lần, 3 s, đỉnh 9,6 kW<div class="trace">Event EXPORT_LIMIT_EXCEEDED · tol = max(1.000 W; 1% P_AC PV) = 7.000 W</div></div>
     <div class="wf-box span-6"><b>Điện năng theo khung hôm nay (đến 10:20)</b>
       <table><thead><tr><th>Khung</th><th class="num">Nhập</th><th class="num">Xuất</th><th class="num">≈ Tiền</th></tr></thead><tbody>
-        <tr><td>Thấp điểm 00:00–06:00</td><td class="num">1.020,3 kWh</td><td class="num">0,0 kWh</td><td class="num">1.214.157 ₫</td></tr>
-        <tr><td>Bình thường 06:00–10:20</td><td class="num">264,3 kWh</td><td class="num">0,0 kWh</td><td class="num">≈ 476.000 ₫</td></tr>
+        <tr><td>Thấp điểm 00:00–06:00</td><td class="num">972,2 kWh</td><td class="num">0,0 kWh</td><td class="num">≈ 1.156.878 ₫</td></tr>
+        <tr><td>Bình thường 06:00–10:20</td><td class="num">405,3 kWh</td><td class="num">0,0 kWh</td><td class="num">≈ 742.966 ₫</td></tr>
         <tr><td>Cao điểm</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
       </tbody></table>
-      <div class="trace">Δ meter.e_import theo bucket 5 phút × giá khung · ước tính, không phải hóa đơn EVN · đơn giá thấp điểm 1.190 đ/kWh lấy từ ví dụ 08 §15.4; đơn giá bình thường trong mẫu là số minh họa</div></div>
+      <div class="trace">Δ meter.e_import theo bucket 5 phút × giá khung · ước tính, không phải hóa đơn EVN · tiền = kWh × đơn giá khung QĐ 1279 cấp 22–&lt;110 kV (1.190 / 1.833 / 3.398 đ/kWh, 08 §16) · tổng ≈ 1.899.844 ₫ khớp UI-03</div></div>
     <div class="wf-box span-6"><b>Thông số điện</b> U 231 / 229 / 230 V · f 50,01 Hz · Q: vô công nhập 38 kvar · PF tức thời 0,10 <span class="chip warn">PF tức thời không có ý nghĩa khi P nhỏ</span><br><b>Tín hiệu</b> Rơ-le chống phát ngược: Không tác động · Máy cắt POC: ĐÓNG
       <div class="trace">meter.u.l1–l3 · meter.f · meter.q (+ = vô công đi vào site, K R-02) · relay.reverse_power_relay · relay.poc_breaker</div></div>
     <div class="wf-box span-12 hatch"><b>Đồng hồ demand 30 phút (P1)</b> Ẩn vì biểu giá hiện hành không có thành phần công suất. Pmax tháng 10 trong R3: 742 kW lúc 02/10 18:00–18:30.</div>
@@ -900,7 +956,7 @@ img.wfthumb.m { width: 78px; }
 <li>Lớp phủ: dải TOU (theo phiên bản lịch có hiệu lực ngày đó), ngưỡng (trần nhập, giới hạn xuất, SOC min/max), marker sự kiện (cảnh báo, lệnh, đổi chế độ, interlock, LOCAL/REMOTE).</li>
 <li>So sánh: nhiều thiết bị cùng điểm; cùng site hai khoảng (tuần này/tuần trước); thực tế với kế hoạch/dự báo; chuẩn hóa kWh/kWp giữa site (P1, FR-HIST-012).</li>
 </ul></td></tr>
-<tr><th>Bộ lọc &amp; thao tác</th><td>Preset: Hôm nay, Hôm qua, 7 ngày, Tháng này, Kỳ hóa đơn; khoảng tự do. Chọn chuỗi bằng danh sách có tìm kiếm (không giới hạn legend phân trang). Tối đa 2 đơn vị/panel; đơn vị thứ 3 tự tách panel mới, các panel đồng bộ trục thời gian và con trỏ. Lưu view và chia sẻ link trong tenant (P1, F-DASH-12). Xuất CSV/XLSX (FR-REP-006). Trên 8 chuỗi: cảnh báo hiệu năng (NFR-PERF-002 cho ≤ 8 chuỗi).</td></tr>
+<tr><th>Bộ lọc &amp; thao tác</th><td>Preset: Hôm nay, Hôm qua, 7 ngày, Tháng này, Kỳ hóa đơn; khoảng tự do. Chọn chuỗi bằng danh sách có tìm kiếm (không giới hạn legend phân trang). Mỗi panel một đơn vị (kW, %, °C…); đơn vị khác tự tách panel mới xếp chồng, các panel đồng bộ trục thời gian và con trỏ; không dùng trục kép. Lưu view và chia sẻ link trong tenant (P1, F-DASH-12). Xuất CSV/XLSX (FR-REP-006). Trên 8 chuỗi: cảnh báo hiệu năng (NFR-PERF-002 cho ≤ 8 chuỗi).</td></tr>
 <tr><th>Thành phần</th><td>C-05 biểu đồ chuỗi thời gian có lớp chất lượng (nhiều panel), bộ chọn chuỗi, bộ chọn thời gian, C-17 popover sự kiện.</td></tr>
 <tr><th>Trạng thái</th><td>Đang tải: khung panel + "Đang tải 3 chuỗi…" theo chuỗi. Rỗng: chưa chọn chuỗi → gợi ý bộ chuỗi mặc định theo loại tài sản; khoảng không có dữ liệu → vùng trống có lý do (edge mất kết nối từ… tới…). Dữ liệu trễ/tính lại: chip "dữ liệu tới muộn đã được tính lại lúc HH:MM" (cờ LATE/REVISED). Lỗi: lỗi từng chuỗi hiện ở legend chuỗi đó. Mất kết nối: phần gần hiện tại có vạch "dữ liệu sau HH:MM chưa tới cloud" (edge đang buffer).</td></tr>
 <tr><th>Responsive</th><td>Mobile: chỉ xem view đã lưu, một panel mỗi màn, nút zoom; không soạn view.</td></tr>
@@ -964,13 +1020,13 @@ img.wfthumb.m { width: 78px; }
     <thead><tr><th></th><th>Mức</th><th>Bắt đầu</th><th>Thời lượng</th><th>Site · tài sản</th><th>Mã · mô tả</th><th>Giá trị / ngưỡng</th><th>Bộ phát hiện</th><th>Ticket</th><th>Thao tác</th></tr></thead>
     <tbody>
       <tr><td>☐</td><td><span class="chip bad">⬣ Khẩn cấp</span></td><td>10:17:02</td><td>3 phút</td><td>LA-03 · BESS rack 2</td><td><b>BMS.CELL_OVERTEMP_PROTECT</b> Nhiệt độ cell vượt ngưỡng bảo vệ</td><td>58,2 °C / 55 °C</td><td>Thiết bị (BMS)</td><td>—</td><td><span class="chip">Xác nhận</span> <span class="chip">Tạo ticket</span> <span class="muted">Tạm gác: không cho phép (cảnh báo an toàn)</span></td></tr>
-      <tr><td>☐</td><td><span class="chip warn">▲ Cao</span></td><td>10:02:31</td><td>18 phút</td><td>BD-02 · INV-06</td><td><b>COMM.DEVICE_LOST</b> Mất kết nối thiết bị</td><td>3 lần đọc lỗi liên tiếp</td><td>Edge</td><td>—</td><td><span class="chip">Xác nhận</span> <span class="chip">Tạm gác…</span></td></tr>
-      <tr><td>☐</td><td><span class="chip warn">▲ Cao</span></td><td>09:58:40</td><td>đã hết sau 6 s</td><td>BD-05 · MTR_POC</td><td><b>GRID.EXPORT_LIMIT_EXCEEDED</b> Vượt giới hạn xuất</td><td>đỉnh 14,2 kW / 0 kW + tol 1 kW</td><td>Edge (tuân thủ lưới)</td><td>—</td><td><span class="chip">Xác nhận</span></td></tr>
+      <tr><td>☐</td><td><span class="chip warn">▲ Cao</span></td><td>10:02:31</td><td>18 phút</td><td>BD-05 · INV-02</td><td><b>COMM.DEVICE_LOST</b> Mất kết nối thiết bị</td><td>3 lần đọc lỗi liên tiếp</td><td>Edge</td><td>—</td><td><span class="chip">Xác nhận</span> <span class="chip">Tạm gác…</span></td></tr>
+      <tr><td>☐</td><td><span class="chip warn">▲ Cao</span></td><td>08:16:40</td><td>2 giờ 4 phút</td><td>TN-01 · EDGE-TN01</td><td><b>EDGE.OFFLINE</b> Edge lỡ 3 heartbeat; chạy kế hoạch #87</td><td>&gt; 90 s</td><td>Cloud (heartbeat)</td><td>—</td><td><span class="chip">Xác nhận</span></td></tr>
       <tr><td>☐</td><td><span class="chip warn">▲ Cao</span></td><td>09:41:10</td><td>39 phút</td><td>DN-07 · connector Huawei</td><td><b>COMM.CONNECTOR_STALE</b> Cloud hãng không trả dữ liệu</td><td>&gt; 30 phút</td><td>Cloud</td><td>—</td><td><span class="chip">Xác nhận</span> <span class="muted">· chặn 12 cảnh báo con</span></td></tr>
-      <tr><td>☐</td><td><span class="chip">◆ Trung bình</span></td><td>09:05:00</td><td>1 giờ 15 phút</td><td>BD-02 · INV-03 string 2.4</td><td><b>PV.STRING_LOW</b> Dòng string thấp hơn trung vị</td><td>6,1 A / trung vị 9,8 A (−38%)</td><td>Quy tắc cảnh báo v2</td><td>T-0412</td><td><span class="chip">Xác nhận</span></td></tr>
+      <tr><td>☐</td><td><span class="chip">◆ Trung bình</span></td><td>09:48:00</td><td>32 phút</td><td>HCM-04 · INV-04</td><td><b>PV.INVERTER_DERATE_TEMP</b> Inverter tự giảm công suất do nhiệt</td><td>P_limit 80% · 71 °C</td><td>Thiết bị</td><td>—</td><td><span class="chip">Xác nhận</span></td></tr>
     </tbody>
   </table>
-  <div class="trace">Mã cảnh báo là ví dụ minh họa theo danh mục chuẩn của FR-ALM-001; mức = enum Khẩn cấp/Cao/Trung bình/Thông tin; icon: ⬣ bát giác, ▲ tam giác, ◆ thoi, ● tròn chữ i</div>
+  <div class="trace">Mã cảnh báo là ví dụ minh họa theo danh mục chuẩn của FR-ALM-001; mức = enum Khẩn cấp/Cao/Trung bình/Thông tin; icon: ⬣ bát giác, ▲ tam giác, ◆ thoi, ● tròn chữ i · Tab "Đã hết · chưa xác nhận" chứa BD-05 GRID.EXPORT_LIMIT_EXCEEDED (đã hết sau 6 s); tab "Đã xác nhận" chứa BD-02 PV.STRING_LOW (Lan 09:12, T-0412) — BD-02 chỉ có 1 cảnh báo mở, khớp UI-01/UI-03/UI-09. Bộ đếm UI-02 chưa xác nhận: ⬣ 1 · ▲ 4 · ◆ 2 · ● 1</div>
   </div></div>
 </div>
 </section>
@@ -1111,16 +1167,16 @@ img.wfthumb.m { width: 78px; }
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-19 kế hoạch 48 giờ">
-  <div class="wf-bar"><b>Kế hoạch · BD-02</b> <span class="chip">v12 · Quy tắc (tầng 2) · tạo 05:30</span> <span class="chip ok">Đang chạy (EXECUTING)</span> <span class="chip">Edge đã nhận v12 lúc 05:31:04</span> <span class="chip">Lịch tại edge tới 12/10 05:30</span> <span class="chip">Validator: 192/192 slot đạt</span> <span class="chip">Chi phí dự kiến 48 h ≈ 3,9 triệu ₫ · B0 ≈ 9,6 triệu ₫</span> <span class="sample">Dữ liệu mẫu</span></div>
+  <div class="wf-bar"><b>Kế hoạch · BD-02</b> <span class="chip">v12 · Quy tắc (tầng 2) · tạo 05:30</span> <span class="chip ok">Đang chạy (EXECUTING)</span> <span class="chip">Edge đã nhận v12 lúc 05:31:04</span> <span class="chip">Lịch tại edge tới 12/10 05:30</span> <span class="chip">Validator: 192/192 slot đạt</span> <span class="chip">Chi phí dự kiến 48 h ≈ 12,8 triệu ₫ · B0 ≈ 28,2 triệu ₫</span> <span class="sample">Dữ liệu mẫu</span></div>
   <div class="tl">
     <div class="lab"></div><div>T7 00–04</div><div>04–08</div><div class="now">08–12 ▼10:20</div><div>12–16</div><div>16–20</div><div>20–24</div><div>CN 00–04</div><div>04–08</div><div>08–12</div><div>12–16</div><div>16–20</div><div>20–24</div>
     <div class="lab">TOU</div><div class="op">Thấp điểm</div><div class="op">Thấp → Bình thường 06:00</div><div>Bình thường</div><div>Bình thường</div><div class="pk">Cao điểm từ 17:30</div><div class="pk">Cao điểm tới 22:30</div><div class="op fut">Thấp điểm</div><div class="op fut">Thấp → BT</div><div class="fut">Bình thường</div><div class="fut">Bình thường</div><div class="fut">BT (CN không cao điểm)</div><div class="fut">Bình thường</div>
-    <div class="lab">Dự báo PV / tải</div><div>0 / 410</div><div>60 / 430</div><div>560 / 520</div><div class="fut">610 / 540</div><div class="fut">180 / 560</div><div class="fut">0 / 470</div><div class="fut">0 / 180</div><div class="fut">50 / 190</div><div class="fut">560 / 210</div><div class="fut">600 / 210</div><div class="fut">170 / 220</div><div class="fut">0 / 200</div>
-    <div class="lab">Kế hoạch BESS</div><div>Nạp lưới tới 40%</div><div>Nạp, rồi Giữ</div><div>Sạc PV dư</div><div class="fut">Sạc PV dư</div><div class="fut">Giữ cho cao điểm · Xả từ 17:30</div><div class="fut">Xả cao điểm tới 22:30</div><div class="fut">Chờ (CN: không nạp lưới)</div><div class="fut">Chờ</div><div class="fut">Sạc PV dư</div><div class="fut">Sạc PV dư</div><div class="fut">Tự dùng</div><div class="fut">Tự dùng</div>
-    <div class="lab">SOC dự kiến</div><div>10→38%</div><div>38→42%</div><div>42→71%</div><div class="fut">71→95%</div><div class="fut">95→78%</div><div class="fut">78→20%</div><div class="fut">20%</div><div class="fut">20%</div><div class="fut">20→75%</div><div class="fut">75→95%</div><div class="fut">95→62%</div><div class="fut">62→35%</div>
-    <div class="lab">Lưới dự kiến</div><div>Nhập ≤ 640</div><div>Nhập ≤ 600</div><div>Nhập ≈ 0–40</div><div class="fut">Nhập ≈ 0</div><div class="fut">Nhập ≤ 520</div><div class="fut">Nhập ≤ 340</div><div class="fut">Nhập ≈ 180</div><div class="fut">Nhập ≈ 150</div><div class="fut">Nhập ≈ 0</div><div class="fut">Nhập ≈ 0</div><div class="fut">Nhập ≈ 0</div><div class="fut">Nhập ≈ 0</div>
+    <div class="lab">Dự báo PV / tải</div><div>0 / 150</div><div>90 / 240</div><div>580 / 540</div><div class="fut">620 / 600</div><div class="fut">140 / 520</div><div class="fut">0 / 360</div><div class="fut">0 / 160</div><div class="fut">80 / 180</div><div class="fut">530 / 200</div><div class="fut">570 / 200</div><div class="fut">130 / 190</div><div class="fut">0 / 170</div>
+    <div class="lab">Kế hoạch BESS</div><div>Nạp lưới tới 30% (tới 01:05), rồi Giữ</div><div>Giữ</div><div>Giữ · Sạc PV dư từ 09:20</div><div class="fut">Sạc PV dư tới 95% (12:20) · Giữ, PV bị cắt ≈ 198 kWh</div><div class="fut">Giữ cho cao điểm · Xả ≈ 68 kW từ 17:30</div><div class="fut">Xả cao điểm tới 22:30 · Nghỉ</div><div class="fut">Nghỉ (CN: không nạp lưới)</div><div class="fut">Nghỉ · Sạc PV dư từ 07:15</div><div class="fut">Sạc PV dư tới 95% · Giữ (PV bị cắt)</div><div class="fut">Giữ (PV bị cắt)</div><div class="fut">Bám lưới ≈ 0 từ 17:15</div><div class="fut">Nghỉ</div>
+    <div class="lab">SOC dự kiến</div><div>20→31%</div><div>31%</div><div>31→84%</div><div class="fut">84→95%</div><div class="fut">95→58%</div><div class="fut">58→20%</div><div class="fut">20%</div><div class="fut">20→30%</div><div class="fut">30→95%</div><div class="fut">95%</div><div class="fut">95→20%</div><div class="fut">20%</div>
+    <div class="lab">Lưới dự kiến</div><div>Nhập 153–203</div><div>Nhập 139–170</div><div>Nhập 4–162</div><div class="fut">Nhập 4–200</div><div class="fut">Nhập 212–402</div><div class="fut">Nhập 180–402</div><div class="fut">Nhập ≈ 160</div><div class="fut">Nhập 4–193</div><div class="fut">Nhập ≈ 4</div><div class="fut">Nhập ≈ 4</div><div class="fut">Nhập 0–170</div><div class="fut">Nhập ≈ 170</div>
   </div>
-  <p style="margin:8px 0 0"><b>Popover slot 17:30–17:45:</b> <code>DISCHARGE_PEAK_TOU</code> — "Xả 180 kW vì đang giờ cao điểm (3.398 đ/kWh); dự báo đủ năng lượng tới 22:30 với dự phòng 20%." (câu mẫu theo 08 §12.1; đơn giá cao điểm lấy từ ví dụ 08, chưa đối chiếu QĐ 1279 gốc) <span class="sample">Dữ liệu mẫu</span></p>
+  <p style="margin:8px 0 0"><b>Popover slot 17:30–17:45:</b> <code>DISCHARGE_PEAK_TOU</code> — "Xả 68 kW vì đang giờ cao điểm (3.398 đ/kWh); 360 kWh khả dụng (95% → 20%) chia đều cho 17:30–22:30, giữ dự phòng 20%." (câu mẫu theo 08 §12.1; đơn giá QĐ 1279 qua 08 §16) <span class="sample">Dữ liệu mẫu</span></p>
   <div class="trace">Đơn vị cột: kW (dự báo, lưới), %. Khối = gộp slot 15 phút cùng slot_mode. PlanSlot.slot_mode / soc_end_planned / p_grid_target · ForecastRun F0/F1 · TouCalendar QĐ 963 (T2–T7 có cao điểm 17:30–22:30; CN không) · AC-OPT-03</div>
 </div>
 </section>
@@ -1214,19 +1270,19 @@ img.wfthumb.m { width: 78px; }
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-21 hộp lệnh hai bước">
-  <div class="wf-bar"><b>Đặt công suất BESS tại BD-02</b> <span class="chip warn">Hạng C2 (setpoint 84% SOE)</span> <span class="chip">Bước 2/2 · Xem lại</span> <span class="sample">Dữ liệu mẫu · 18:40</span></div>
+  <div class="wf-bar"><b>Đặt công suất BESS tại BD-02</b> <span class="chip warn">Hạng C2 (setpoint 88% SOE: 220 &gt; 200 kW)</span> <span class="chip">Bước 2/2 · Xem lại</span> <span class="sample">Dữ liệu mẫu · T6 09/10 18:40</span></div>
   <div class="wf-grid">
     <div class="wf-box span-6"><b>Thay đổi</b>
       <table><thead><tr><th></th><th>Hiện tại</th><th>Mới</th></tr></thead><tbody>
-        <tr><td>Công suất BESS</td><td>Xả 160 kW (lịch v12)</td><td><b>Xả 210 kW</b> (thủ công)</td></tr>
-        <tr><td>Hạn</td><td>—</td><td>15 phút, đến 18:55:02; sau đó về lịch v12</td></tr>
-        <tr><td>Lý do</td><td colspan="2">"Tải máy ép số 4 khởi động, giữ nhập dưới 500 kW" (bắt buộc với C2)</td></tr>
+        <tr><td>Công suất BESS</td><td>Xả 68 kW (lịch v11)</td><td><b>Xả 220 kW</b> (thủ công)</td></tr>
+        <tr><td>Hạn</td><td>—</td><td>15 phút, đến 18:55:02; sau đó về lịch v11</td></tr>
+        <tr><td>Lý do</td><td colspan="2">"Máy ép số 4 khởi động (tải 582 kW), giữ nhập dưới 400 kW" (bắt buộc với C2)</td></tr>
       </tbody></table></div>
     <div class="wf-box span-6"><b>Giới hạn sẽ áp</b> Edge giới hạn trong [Sạc 240; Xả 250] kW, SOC 10–95% (SOE v4). Nếu BMS cho phép thấp hơn, giá trị thấp hơn được dùng. Dự phòng 20% vẫn giữ.<br>
-      <b>Tác động dự kiến</b> Nhập lưới 512 → khoảng 462 kW · không chạm trần nhập 900 kW · SOC 81% → ≈ 78% khi hết hạn<br>
-      <b>Kiểm tra trước (dry_run)</b> PDP: cho phép, hạng C2 (&gt; 80% SOE) · Edge: không interlock, mức arbiter 7 thắng mức 11<div class="trace">ess.p_discharge_max=250 000 W · SoeVersion 4 · meter.p@MTR_POC=+512 000 W</div></div>
+      <b>Tác động dự kiến</b> Nhập lưới 514 → khoảng 362 kW · không chạm trần nhập 900 kW · không xuất · SOC 78% → ≈ 65% khi hết hạn<br>
+      <b>Kiểm tra trước (dry_run)</b> PDP: cho phép, hạng C2 (&gt; 80% SOE) · Edge: không interlock, mức arbiter 7 thắng mức 11<div class="trace">ess.p_discharge_max=250 000 W · SoeVersion 4 · meter.p@MTR_POC=+514 000 W · tải 582 kW, PV 0 kW</div></div>
     <div class="wf-box span-12"><span class="chip">◀ Quay lại</span> <span class="chip"><b>Hủy</b> (mặc định)</span> <span class="chip warn">Xác thực lại (khóa bảo mật) và gửi</span> <span class="muted">· Enter không gửi lệnh ở hạng C2/C3</span></div>
-    <div class="wf-box span-12"><b>Sau khi gửi (C-09)</b> Đã tạo 18:40:02 → Đã gửi 18:40:03 → Edge nhận 18:40:04 → Edge chấp nhận → Đã ghi thiết bị, đang chờ xác nhận → <b>Đã áp dụng (đọc lại 209,6 kW) 18:40:09</b> → … → Hết hạn 18:55:02, đã về lịch v12</div>
+    <div class="wf-box span-12"><b>Sau khi gửi (C-09)</b> Đã tạo 18:40:02 → Đã gửi 18:40:03 → Edge nhận 18:40:04 → Edge chấp nhận → Đã ghi thiết bị, đang chờ xác nhận → <b>Đã áp dụng (đọc lại 219,6 kW) 18:40:09</b> → … → Hết hạn 18:55:02, đã về lịch v11</div>
   </div>
 </div>
 </section>
@@ -1258,8 +1314,8 @@ img.wfthumb.m { width: 78px; }
       Người yêu cầu: Minh (Kỹ sư site) · Lý do: "MBA nâng lên 1.250 kVA, biên bản nghiệm thu 09/10" · dry_run edge: chữ ký và SOE v4 hợp lệ
       <div class="trace">SiteGridConfigVersion v3 → v4 (đề xuất) · import_cap_w 900 000 → 1 000 000</div>
       <span class="chip">Từ chối…</span> <span class="chip ok">Duyệt (khóa bảo mật)</span></div>
-    <div class="wf-box span-6"><b>Đặt công suất BESS · 6 site</b> <span class="chip info">C3 (nâng hạng: &gt; 10% MW BESS tenant)</span> <span class="chip warn">còn 04:10</span><br>
-      Xả 150 kW mỗi site, hạn 30 phút · Σ|ΔP| 1,2 MW = 12% MW BESS tenant · ngân sách Governor 5 phút còn 0,8 MW → phần vượt vào hàng đợi
+    <div class="wf-box span-6"><b>Đặt công suất BESS · 8 site</b> <span class="chip info">C3 (nâng hạng: &gt; 10% MW BESS tenant)</span> <span class="chip warn">còn 04:10</span><br>
+      Xả 150 kW mỗi site, hạn 30 phút · 8 × 150 kW: Σ|ΔP| 1,2 MW = 12% MW BESS tenant · ngân sách Governor 5 phút còn 0,8 MW → phần vượt 0,4 MW vào hàng đợi
       <div class="trace">FR-SEC-012 · tenant 10 MW BESS · ngưỡng 20%/5 phút</div>
       Người yêu cầu: Lan (Operator) · <span class="muted">Bạn có thể duyệt: khác người, khác vai trò</span><br><span class="chip">Từ chối…</span> <span class="chip ok">Duyệt (khóa bảo mật)</span></div>
   </div>
@@ -1658,7 +1714,7 @@ img.wfthumb.m { width: 78px; }
 </ul>
 <div class="wf" role="img" aria-label="Biến thể KPI tile">
   <div class="wf-grid">
-    <div class="wf-box span-3"><b>Nhập lưới hôm nay</b><span class="big">1.284,6 kWh</span><span class="sample">Dữ liệu mẫu</span></div>
+    <div class="wf-box span-3"><b>Nhập lưới hôm nay</b><span class="big">1.377,5 kWh</span><span class="sample">Dữ liệu mẫu</span></div>
     <div class="wf-box span-3"><b>Chi phí điện tháng 10</b><span class="big">≈ 48,7 triệu ₫</span><span class="chip warn">thiếu 2,1% dữ liệu</span></div>
     <div class="wf-box span-3"><b>PR tháng 10</b><span class="big">N/A</span><span class="muted">không có cảm biến bức xạ mặt phẳng tấm</span></div>
     <div class="wf-box span-3 hatch"><b>PV hiện tại</b><span class="big old">212 kW</span><span class="chip">Mất kết nối từ 09:41</span></div>
@@ -1676,7 +1732,7 @@ img.wfthumb.m { width: 78px; }
 
 <h4>C-05 · Biểu đồ chuỗi thời gian có lớp chất lượng</h4>
 <ul>
-  <li>Tối đa 2 đơn vị/panel; panel xếp chồng đồng bộ trục và con trỏ; tiêu đề trục luôn có đơn vị; kW vẽ đường, kWh vẽ cột theo bucket với khoảng <code>[start, start+Δ)</code>.</li>
+  <li>Một đơn vị mỗi panel (không trục kép); đại lượng khác đơn vị (ví dụ kW và SOC %) vẽ ở panel riêng xếp chồng, đồng bộ trục thời gian và con trỏ; tiêu đề trục luôn có đơn vị; kW vẽ đường, kWh vẽ cột theo bucket với khoảng <code>[start, start+Δ)</code>.</li>
   <li>Đại lượng có hướng vẽ hai phía trục 0 (Nhập trên/Xuất dưới; Xả trên/Sạc dưới) với nhãn chữ ở hai phía trục, không chỉ dựa vào dấu âm của trục.</li>
   <li>Lớp chất lượng: khoảng trống không nối; nét đứt cho ước tính/nội suy/thay thế; nền sọc cho SUSPECT/FROZEN; vùng tương lai nền nhạt và nét đứt; dự báo có dải P10–P90 nếu có.</li>
   <li>Lớp phủ: dải TOU có chữ trên nền (không chỉ màu), ngưỡng là đường có nhãn, sự kiện là marker có icon hình dạng; tooltip hiện giá trị, đơn vị, quality, <code>ts</code> giờ site.</li>
@@ -1761,17 +1817,18 @@ img.wfthumb.m { width: 78px; }
 <tr><td><code>--alarm-medium</code></td><td>#a21caf</td><td>#e879f9</td><td>Trung bình</td><td>Mới; thay amber <code>--sev-minor</code> để không trùng sắc với PV</td></tr>
 <tr><td><code>--alarm-info</code></td><td>#475569</td><td>#94a3b8</td><td>Thông tin</td><td>Mới; thay xanh <code>--sev-warning</code> để không trùng sắc với Tải</td></tr>
 <tr><td colspan="5"><b>Loại năng lượng</b> — cố định toàn sản phẩm, chỉ dùng cho chuỗi/nút/cạnh</td></tr>
-<tr><td><code>--energy-pv</code></td><td>#c48a00</td><td>#f5c04a</td><td>PV</td><td><code>--flow-pv</code> cũ</td></tr>
-<tr><td><code>--energy-grid</code></td><td>#6d4bc1</td><td>#b8a3f5</td><td>Lưới (nhập nét liền, xuất nét đứt + nhạt hơn)</td><td><code>--flow-grid</code> cũ</td></tr>
-<tr><td><code>--energy-bess</code></td><td>#17704a</td><td>#6fd6a0</td><td>BESS (xả nét liền, sạc nét đứt)</td><td><code>--flow-ess</code> cũ</td></tr>
-<tr><td><code>--energy-load</code></td><td>#1f6fa8</td><td>#7cc4f2</td><td>Tải</td><td><code>--flow-load</code> cũ</td></tr>
-<tr><td><code>--energy-ev</code></td><td>#0f8a8a</td><td>#5fd4d4</td><td>EV</td><td><code>--flow-ev</code> cũ</td></tr>
+<tr><td><code>--energy-pv</code></td><td>#b07a00</td><td>#bb8a20</td><td>PV</td><td><code>--flow-pv</code> cũ</td></tr>
+<tr><td><code>--energy-grid</code></td><td>#6d4bc1</td><td>#9a80e6</td><td>Lưới (nhập nét liền, xuất nét đứt + nhạt hơn)</td><td><code>--flow-grid</code> cũ</td></tr>
+<tr><td><code>--energy-bess</code></td><td>#17704a</td><td>#36a571</td><td>BESS (xả nét liền, sạc nét đứt)</td><td><code>--flow-ess</code> cũ</td></tr>
+<tr><td><code>--energy-load</code></td><td>#1f6fa8</td><td>#4596d4</td><td>Tải</td><td><code>--flow-load</code> cũ; tối chỉnh vào dải độ sáng</td></tr>
+<tr><td><code>--energy-ev</code></td><td>#e06b8b</td><td>#d46d94</td><td>EV</td><td>Đổi từ teal #0f8a8a: cặp Tải/EV cũ chỉ ΔE ≈ 10 với thị lực thường; hồng mới đạt kiểm tách màu với Tải, PV, Lưới ở cả sáng và tối</td></tr>
 <tr><td><code>--energy-gen</code></td><td>#7a4b2a</td><td>#d9a37a</td><td>Máy phát</td><td>Mới</td></tr>
 <tr><td colspan="5"><b>Nền ngữ cảnh</b></td></tr>
 <tr><td><code>--tou-offpeak</code> / <code>--tou-normal</code> / <code>--tou-peak</code></td><td>#e9eef5 / trong suốt / #f6efe3</td><td>#1d2633 / trong suốt / #2e2719</td><td>Dải TOU (luôn kèm chữ)</td><td>Mới; cao điểm không dùng đỏ vì không phải bất thường</td></tr>
 <tr><td><code>--hatch-offline</code></td><td colspan="2">sọc 135° giữa <code>--surface-2</code> và <code>--bg</code></td><td>Mất kết nối, không rõ</td><td>Mới</td></tr>
 <tr><td><code>--sim-border</code></td><td>#5a4ea8</td><td>#b0a6f0</td><td>Viền "Mô phỏng"</td><td>= <code>--info</code></td></tr>
 </tbody></table></div>
+<p><b>Kiểm bảng màu năng lượng (2026-10-10).</b> Bộ năm màu Lưới · PV · BESS · Tải · EV đã chạy bộ kiểm bảng màu (dải độ sáng, chroma, ΔE OKLab cho mù màu đỏ–lục/xanh–vàng, tương phản ≥ 3:1 với nền). Nền sáng: mọi cặp kề đạt (cặp Tải/EV ΔE mù màu 10,1, thị lực thường 27,6). Nền tối: cặp Tải/EV đạt (ΔE 10,1); cặp Lưới/Tải và BESS/EV dưới sàn nên không vẽ cạnh nhau mà không có nhãn trực tiếp hoặc nét khác. Quy tắc: mỗi chuỗi luôn có nhãn trực tiếp hoặc legend có nét, không chỉ màu (UXP-03). <span class="tag proposal">PROPOSAL</span></p>
 <p><b>Không dùng nữa:</b> <code>--st-normal</code> (xanh lá cho "bình thường") — trái UXP-02; <code>--obs</code>/<code>--man</code>/<code>--pro</code>/<code>--mark</code> của wireframe cũ là token chú thích nghiên cứu, không phải token sản phẩm. Bảng màu phải được kiểm bằng mô phỏng mù màu (đỏ–lục, xanh–vàng) và đo tương phản trước khi chốt; con số trên là điểm xuất phát. <span class="tag unknown">UNKNOWN</span> kết quả kiểm tra.</p>
 <h3 id="s9-2">9.2 Chữ, khoảng cách, mật độ, chuyển động</h3>
 <div class="table-wrap"><table>
@@ -1879,7 +1936,7 @@ img.wfthumb.m { width: 78px; }
 <tr><td>Định dạng số lẫn locale; năm Phật lịch lọt vào ngày (<code>08_home_list_view.jpg</code>, <code>03_logical_layout_module_level.jpg</code>)</td><td><span class="tag fact">FACT</span></td><td>Intl/ICU; lịch Gregory; không 3 số lẻ với số &lt; 10</td><td>§11.2</td></tr>
 <tr><td>Trạng thái site/thiết bị chỉ là chấm màu; mức báo động có icon hình dạng (<code>08_home_list_view.jpg</code>, <code>04_plant_device_list.jpg</code>)</td><td><span class="tag fact">FACT</span></td><td>Giữ icon hình dạng cho mức; thêm hình dạng + chữ cho mọi trạng thái</td><td>C-07, C-12, UXP-03</td></tr>
 <tr><td>"Cao" và "Nặng" cho cùng mức (<code>09_home_kpi_view.jpg</code>, <code>01_plant_overview.jpg</code>)</td><td><span class="tag fact">FACT</span></td><td>Một enum i18n: Khẩn cấp/Cao/Trung bình/Thông tin</td><td>UXP-13, K §6 #39</td></tr>
-<tr><td>Biểu đồ trục kép kW/%, legend phân trang "1/2"; lịch sử chỉ chọn một ngày, màu chuỗi gần nhau (<code>02_energy_revenue_charts.jpg</code>, <code>06_device_history.jpg</code>)</td><td><span class="tag fact">FACT</span></td><td>≤ 2 đơn vị/panel, panel xếp chồng, legend không phân trang, so sánh nhiều khoảng</td><td>UI-13, C-05</td></tr>
+<tr><td>Biểu đồ trục kép kW/%, legend phân trang "1/2"; lịch sử chỉ chọn một ngày, màu chuỗi gần nhau (<code>02_energy_revenue_charts.jpg</code>, <code>06_device_history.jpg</code>)</td><td><span class="tag fact">FACT</span></td><td>1 đơn vị/panel (không trục kép), panel xếp chồng, legend không phân trang, so sánh nhiều khoảng</td><td>UI-13, C-05</td></tr>
 <tr><td>Chi tiết thiết bị không thấy "cập nhật lúc" trên vùng realtime (<code>05_inverter_realtime_detail.jpg</code>; có thể nằm ngoài vùng chụp)</td><td><span class="tag fact">FACT</span> Med</td><td>"Đo lúc" theo nhóm và freshness</td><td>UI-04, UI-09, C-02</td></tr>
 <tr><td>Cây tổ chức trái cố định; cột bảng cấu hình được, lưu theo người dùng (<code>viewcfg</code>); menu theo vai trò</td><td><span class="tag fact">FACT</span></td><td>Breadcrumb tìm kiếm + Ctrl+K; cây trái tùy chọn; giữ lưu view (P1)</td><td>UI-02, F-DASH-12</td></tr>
 <tr><td>Alarm → "New Ticket" (UI v7.0, slide đào tạo); Kiosk công khai; dashboard màn lớn ≥ 1920×1080</td><td><span class="tag fact">FACT</span> Med (qua kết quả tìm kiếm)</td><td>Tạo ticket từ cảnh báo (MVP); kiosk P1; chế độ NOC P1</td><td>UI-15, UI-16, UI-35</td></tr>
@@ -1991,12 +2048,12 @@ img.wfthumb.m { width: 78px; }
 <thead><tr><th>Mã</th><th>Gửi</th><th>Vấn đề</th><th>Đề nghị</th></tr></thead>
 <tbody>
 <tr><td>X-09-01</td><td>05 Domain</td><td>Enum mức cảnh báo cần mã ổn định không dấu cho API và i18n</td><td><b>Đã đóng — 05 giải quyết:</b> <code>AlarmDefinition.default_severity</code> = <code>CRITICAL | HIGH | MEDIUM | INFO</code>, nhãn vi/en theo K §6 #39; 09 đã đổi mã và token sang <code>CRITICAL</code> / <code>--alarm-critical</code></td></tr>
-<tr><td>X-09-02</td><td>05, 10</td><td>Hộp lệnh cần danh mục mã lý do từ chối của PDP (ngoài <code>CONTROL_DISABLED</code>) để hiển thị hướng xử lý</td><td>Enum có phiên bản, ví dụ <code>CONTROL_DISABLED, KILL_SWITCH_ENGAGED, LOCAL_MODE, GATE_MISMATCH, OUT_OF_SOE, GOVERNOR_BUDGET, RATE_LIMITED, NOT_PERMITTED, REQUIRES_NATIVE_FALLBACK, MFA_STEP_UP_REQUIRED</code> (đề xuất của 09)</td></tr>
+<tr><td>X-09-02</td><td>05, 10</td><td>Hộp lệnh cần danh mục mã lý do từ chối của PDP (ngoài <code>CONTROL_DISABLED</code>) để hiển thị hướng xử lý</td><td>Enum có phiên bản, ví dụ <code>CONTROL_DISABLED, KILL_SWITCH_ENGAGED, LOCAL_MODE, GATE_MISMATCH, OUT_OF_SOE, GOVERNOR_BUDGET, RATE_LIMITED, NOT_PERMITTED, REQUIRES_NATIVE_FALLBACK, MFA_STEP_UP_REQUIRED</code> (đề xuất của 09). <b>Đã đóng:</b> 09 dùng enum <code>DENIED: …</code> của 10 §5.3 (PDP-01…PDP-12), ánh xạ nhãn và hướng xử lý ở <a href="#s6-7">§6.7</a></td></tr>
 <tr><td>X-09-03</td><td>06 Kiến trúc</td><td>Cần API "trạng thái hiện tại + freshness" theo site và kênh push cho L2; API <code>dry_run</code> trả hạng hiệu lực, giá trị dự kiến sau kẹp và tác động P lưới</td><td>Đưa vào thiết kế API và ADR cập nhật live (Q-09-02)</td></tr>
 <tr><td>X-09-04</td><td>08 Tối ưu</td><td>Câu mẫu giải thích cần cả bản en và tham số đơn vị rõ</td><td><code>explain_params</code> mang đơn vị (<code>_kw</code>, <code>_vnd_per_kwh</code>, <code>_pct</code>)</td></tr>
 <tr><td>X-09-05</td><td>10 An toàn</td><td>Q-H06 (lệnh C2/C3 và duyệt trên mobile); xác nhận tên hiển thị "Tạm ngưng điều khiển từ xa"/"Dừng vận hành từ xa"</td><td>Chốt trong 10; 09 mặc định: mobile chỉ C1 và kill switch engage</td></tr>
 <tr><td>X-09-06</td><td>11 Lộ trình</td><td>Dòng B0 trong R2 và trên UI-19 phụ thuộc GAP-05</td><td>Quyết định MVP/P1</td></tr>
-<tr><td>X-09-07</td><td>07 Tích hợp</td><td>Tập trạng thái OCPP hiển thị cho UI-11 theo phiên bản 1.6J</td><td>Liệt kê enum và ánh xạ nhãn vi</td></tr>
+<tr><td>X-09-07</td><td>07 Tích hợp</td><td>Tập trạng thái OCPP hiển thị cho UI-11 theo phiên bản 1.6J</td><td>Liệt kê enum và ánh xạ nhãn vi. <b>09 đã đề xuất ánh xạ</b> OCPP 1.6J/2.0.1 → chip ở <a href="#s6-8">§6.8</a>; 07 cần xác nhận tập trạng thái theo bản đặc tả OCPP</td></tr>
 <tr><td>X-09-08</td><td>12 Truy vết, 14 Nguồn</td><td>Mã UI-01…UI-37 mới cấp (UI-37 thêm ở vòng sửa theo GAP-12-10); URL ở §15 cần S-id</td><td>Thêm cột UI vào ma trận; cấp S-id</td></tr>
 </tbody></table></div>
 <p>Khoảng trống tính năng phát hiện khi viết 09 đã ghi vào <a href="notes/_catalog-gaps.md">notes/_catalog-gaps.md</a>: tùy chọn hiển thị của người dùng; trang phương pháp và thuật ngữ trong ứng dụng.</p>
@@ -2026,7 +2083,7 @@ img.wfthumb.m { width: 78px; }
   <li><b>Thư viện</b>: <a href="wireframes/index.html">wireframes/index.html</a> — sitemap có đánh dấu trang đã vẽ, ảnh thu nhỏ, danh sách truy vết, component catalog, design tokens, chú giải nhãn, dữ liệu mẫu.</li>
   <li><b>Bản in</b>: <a href="wireframes/Wireframe-EMS.pdf">wireframes/Wireframe-EMS.pdf</a> (A4 ngang, bìa + sitemap + 24 màn kèm trạng thái), sinh từ <a href="wireframes/print-all.html">wireframes/print-all.html</a>.</li>
   <li><b>Ảnh chụp</b>: Chromium headless, desktop 1440 px và mobile 390 px, toàn trang, JPEG (<code>wireframes/screenshots/</code>); không trang nào cuộn ngang ở 390 px (bảng và biểu đồ cuộn trong vùng riêng). Chế độ tối: <a href="wireframes/screenshots/UI-03-site-dashboard-desktop-dark.jpg">UI-03</a>, <a href="wireframes/screenshots/UI-19-dispatch-plan-48h-desktop-dark.jpg">UI-19</a>.</li>
-  <li><b>Dữ liệu mẫu</b>: cùng site BD-02 như §7, nhưng số được sinh bằng một mô hình nhất quán (cân bằng năng lượng và tiền khớp giữa các màn), nên vài số khác phác thảo low-fi ở §7 (ví dụ nhập lưới hôm nay 1.377,5 kWh thay cho 1.284,6 kWh; công suất tức thời và SOC 46% giữ nguyên). Khi hai nguồn khác nhau, dùng số trong wireframe. <span class="sample" style="color:var(--warn)">Dữ liệu mẫu</span></li>
+  <li><b>Dữ liệu mẫu</b>: cùng site BD-02 và cùng mô hình số với §7 (đã đồng bộ 2026-10-10): cân bằng năng lượng, tiền theo khung TOU, số inverter × định mức và số cảnh báo khớp giữa các phác thảo §7 và wireframe. <span class="sample" style="color:var(--warn)">Dữ liệu mẫu</span></li>
 </ul>
 <div class="table-wrap"><table>
 <thead><tr><th>Trang</th><th>Wireframe</th><th>Desktop 1440 px</th><th>Mobile 390 px</th></tr></thead>
@@ -2056,16 +2113,17 @@ img.wfthumb.m { width: 78px; }
 <tr><td><a href="#ui-31">UI-31</a></td><td><a href="wireframes/UI-31-users-roles-grants.html">Người dùng và grant</a><br><span class="muted">— · P0</span></td><td><a href="wireframes/screenshots/UI-31-users-roles-grants-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-31-users-roles-grants.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-31 Người dùng và grant" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-31-users-roles-grants-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-31-users-roles-grants-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-31" width="78" height="140"></a></td></tr>
 <tr><td><a href="#ui-33">UI-33</a></td><td><a href="wireframes/UI-33-audit-log.html">Lịch sử audit</a><br><span class="muted">L4 · P0 (xuất có bằng chứng hash P1)</span></td><td><a href="wireframes/screenshots/UI-33-audit-log-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-33-audit-log.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-33 Lịch sử audit" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-33-audit-log-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-33-audit-log-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-33" width="78" height="140"></a></td></tr>
 </tbody></table></div>
-<h3 id="s16-1">16.1 Khoảng trống và mâu thuẫn phát hiện khi vẽ</h3>
-<ul>
-  <li>Số mẫu §7 không cân: UI-10 "264,3 kWh ≈ 476.000 ₫" trong khi 264,3 × 1.833 = 484.462 ₫; tải đêm 410 kW (UI-19) không khớp nhập thấp điểm 1.020,3 kWh (UI-10); SOC đầu ngày 10% trái với xả về dự phòng 20% hôm trước; popover "Xả 180 kW" không khớp 360 kWh khả dụng chia cho 5 giờ cao điểm; UI-22 "6 site × 150 kW = 1,2 MW". <span class="tag inference">INFERENCE</span></li>
-  <li>UI-03 phác thảo có 1 cảnh báo mở ở BD-02 nhưng UI-09/UI-14 phác thảo có INV-06 của BD-02 mất kết nối (mức Cao). Wireframe chuyển cảnh báo này sang BD-05.</li>
-  <li>"Trục trái kW, trục phải SOC %" (UI-03, UI-07) và C-05 "tối đa 2 đơn vị/panel" dẫn tới trục kép khó đọc; wireframe dùng panel kW và panel SOC riêng, đồng bộ trục thời gian. Đề xuất sửa C-05 thành một đơn vị mỗi panel. <span class="tag proposal">PROPOSAL</span></li>
-  <li>Token §9.1: cặp <code>--energy-load</code> #1f6fa8 và <code>--energy-ev</code> #0f8a8a không đạt kiểm tách màu (ΔE ≈ 10, dưới sàn 15 với thị lực thường); bảng màu tối nằm ngoài dải độ sáng khuyến nghị. Wireframe dùng EV #c2557e (tối #d46d94) và bộ màu tối đã kiểm; cần cập nhật §9.1. <span class="tag proposal">PROPOSAL</span></li>
-  <li>Ở site zero-export, BESS 500 kWh đầy lúc ≈ 12:20 nên kế hoạch có PV bị cắt dự kiến (≈ 198 kWh T7, lớn hơn vào CN); §7 chưa đặc tả cách hiển thị "PV bị cắt dự kiến" trong UI-19.</li>
-  <li>Thiếu định nghĩa: "tự cấp" và "tự tiêu thụ" cho KPI UI-03; enum lý do từ chối PDP (X-09-02); tập trạng thái OCPP (X-09-07); ngày lễ/SpecialDay cho lưới TOU (UI-25).</li>
-  <li>Chưa có wireframe chi tiết: UI-02 (đã nằm trong khung mọi màn), UI-08, UI-12, UI-15 (khung phải trong UI-14), UI-17, UI-23, UI-28, UI-29, UI-32, UI-34 (hộp step-up trong UI-21), UI-35, UI-36, UI-37.</li>
-</ul>
+<h3 id="s16-1">16.1 Khoảng trống phát hiện khi vẽ và cách đã xử lý</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Vấn đề</th><th>Xử lý</th></tr></thead>
+<tbody>
+<tr><td>Số mẫu §7 không cân (264,3 kWh × 1.833 ≠ 476.000 ₫; tải đêm 410 kW không khớp nhập thấp điểm; SOC đầu ngày 10% trái với dự phòng 20%; "Xả 180 kW" trong 5 giờ cao điểm; "6 site × 150 kW = 1,2 MW")</td><td>Đã sửa: §7 dùng bộ số của wireframe (đoạn mở đầu §7, UI-03, UI-07, UI-09, UI-10, UI-19, UI-21, UI-22, C-01, §6.5)</td></tr>
+<tr><td>Số cảnh báo BD-02 lệch giữa UI-03 và UI-09/UI-14</td><td>Đã sửa: BD-02 chỉ có PV.STRING_LOW (đã xác nhận); INV-06 phát bình thường; cảnh báo mất kết nối chuyển sang BD-05 INV-02</td></tr>
+<tr><td>Trục kép kW/SOC % và C-05 "tối đa 2 đơn vị/panel"</td><td>Đã sửa: một đơn vị mỗi panel, panel xếp chồng (UI-03, UI-13, C-05, §12)</td></tr>
+<tr><td>Cặp màu Tải/EV không tách được</td><td>Đã sửa §9.1: EV #e06b8b / tối #d46d94, các màu năng lượng khác chỉnh theo kết quả kiểm; wireframe và ảnh chụp đã cập nhật</td></tr>
+<tr><td>Thiếu định nghĩa "PV bị cắt dự kiến", "tự cung", enum PDP, trạng thái OCPP, ngày lễ TOU</td><td>Đã bổ sung §6.6–§6.9; X-09-02 đóng, X-09-07 chờ 07 xác nhận</td></tr>
+<tr><td>Trang chưa có wireframe chi tiết: UI-08, UI-12, UI-15 (khung phải trong UI-14), UI-17, UI-23, UI-28, UI-29, UI-32, UI-34 (hộp step-up trong UI-21), UI-35, UI-36, UI-37; UI-02 nằm trong khung mọi màn</td><td>Còn mở</td></tr>
+</tbody></table></div>
 </section>
 
 </article>

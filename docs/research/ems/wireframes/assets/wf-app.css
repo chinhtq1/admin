@@ -5,7 +5,7 @@
 :root {
   /* energy series (validated: light surface, CVD adjacent ΔE ≥ 6.9 with direct labels) */
   --energy-grid: #6d4bc1; --energy-pv: #b07a00; --energy-bess: #17704a;
-  --energy-load: #1f6fa8; --energy-ev: #c2557e; --energy-gen: #7a4b2a;
+  --energy-load: #1f6fa8; --energy-ev: #e06b8b; --energy-gen: #7a4b2a;
   --s-soc: #3d4652;
   /* alarm severities (09 §9.1) */
   --alarm-critical: #b3261e; --alarm-high: #c2410c; --alarm-medium: #a21caf; --alarm-info: #475569;
