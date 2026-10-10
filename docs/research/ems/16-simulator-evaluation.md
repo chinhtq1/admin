@@ -228,3 +228,7 @@ Câu hỏi mở:
 | Q-16-04 | Lấy được tài liệu Modbus của tủ BESS/PCS mục tiêu (NDA) khi nào? | V3(c) |
 | Q-16-05 | Nguồn profile mây và tải C&I VN (PVGIS bị chặn trong lab; cần chạy từ máy có mạng) | V1, demo |
 | Q-16-06 | CitrineOS hay SteVe làm CSMS đối chứng ở HIL (2.0.1 vs 1.6 Security)? | HIL lab |
+
+---
+
+Liên kết PoC: hạ tầng chạy được (virtual site pymodbus `SimDevice` + pysunspec2, SAP simulator + CSMS `ocpp`, edge bridge PoC, Mosquitto MQTT 5, TimescaleDB) và kết quả chạy thử — [infra/README.md](../../../infra/README.md).
