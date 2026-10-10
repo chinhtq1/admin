@@ -370,7 +370,7 @@ Bài học [ẢNH THẬT]: #2 (lẫn công suất/điện năng), #3 (định d�
 | Chênh áp cell | | | mV | | 0 |
 
 - **Quy tắc vàng:** chữ "Công suất" **chỉ** đi với kW/MW/kVA/kvar; "Điện năng/Sản lượng/Dung lượng" **chỉ** đi với kWh/MWh. Lint i18n: kiểm tra tự động cặp nhãn–đơn vị.
-- **Định dạng theo locale:** vi = `1.234,5 kW`, en = `1,234.5 kW`. Dùng thư viện Intl/ICU của Angular, **không ghép chuỗi tay**. Khoảng trắng không ngắt giữa số và đơn vị. **Không bao giờ hiện 3 chữ số thập phân** sau dấu phẩy với số < 10 (tránh `8,800` bị đọc thành 8800, xem #3).
+- **Định dạng theo locale:** vi = `1.234,5 kW`, en = `1,234.5 kW`. Dùng `Intl` + ICU message format (ghi chú gốc nói Intl/ICU của Angular; frontend nay là React, dùng react-i18next theo [06 ADR-20](../06-system-architecture.html#adr-20)), **không ghép chuỗi tay**. Khoảng trắng không ngắt giữa số và đơn vị. **Không bao giờ hiện 3 chữ số thập phân** sau dấu phẩy với số < 10 (tránh `8,800` bị đọc thành 8800, xem #3).
 - Đơn vị kWh luôn đi với **khoảng thời gian** ("kWh hôm nay", "kWh tháng 10").
 - Ký hiệu SI: `kW` (k thường, W hoa), `kWh`, `MWh`, `kvar`; không viết `KW`, `Kwh`.
 - **Ngày giờ:** vi hiển thị `dd/MM/yyyy HH:mm` (24 h), en hiển thị `yyyy-MM-dd HH:mm` hoặc theo locale; **luôn lịch Gregory** (chặn năm Phật lịch/âm lịch ở input, #3); xuất dữ liệu ISO 8601 có `+07:00`. Việt Nam không có DST, nhưng hệ thống vẫn lưu UTC.

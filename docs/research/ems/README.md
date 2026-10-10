@@ -27,7 +27,7 @@ Bộ tài liệu nghiên cứu và đặc tả cho một EMS behind-the-meter, �
 
 ## Quan hệ với `docs/research/fusionsolar`
 
-- [`../fusionsolar/`](../fusionsolar/README.md) là nghiên cứu reverse-engineering Huawei FusionSolar trước đó (07/10/2026): báo cáo, wireframe 15 màn hình, ghi chú API/data model, ảnh demo. Hướng khi đó là nền tảng giám sát/O&M PV đa hãng, edge-first; Java/Spring Boot + Angular; TimescaleDB/PostgreSQL; MQTT.
+- [`../fusionsolar/`](../fusionsolar/README.md) là nghiên cứu reverse-engineering Huawei FusionSolar trước đó (07/10/2026): báo cáo, wireframe 15 màn hình, ghi chú API/data model, ảnh demo. Hướng khi đó là nền tảng giám sát/O&M PV đa hãng, edge-first; Java/Spring Boot + Angular; TimescaleDB/PostgreSQL; MQTT. EMS giữ backend Spring Boot nhưng frontend đổi sang React + TypeScript theo quyết định product owner ngày 2026-10-10 ([06 ADR-20](06-system-architecture.html#adr-20)).
 - Nghiên cứu EMS **mở rộng** hướng đó sang BESS, lưới, phụ tải và EV có điều khiển an toàn. Các điểm đổi hướng có lý do được ghi ở [00 §2.3](00-executive-summary.html#s2), [01 §1.3](01-research-methodology.md#13-kế-thừa-và-khác-biệt-so-với-hướng-cũ) và [06 §19](06-system-architecture.html#s19). Ví dụ: quy ước dấu lưới đổi sang + = nhập; dữ liệu edge 1 s; edge bắt buộc ở site có lệnh.
 - Các tệp FusionSolar được trích như nguồn S-388…S-403 trong [14 §3](14-source-register.md).
 

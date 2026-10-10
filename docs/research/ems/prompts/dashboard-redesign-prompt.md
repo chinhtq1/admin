@@ -101,6 +101,6 @@ KHÔNG ĐƯỢC
 ## Gợi ý dùng
 
 - **Muốn từng vòng nhỏ:** chạy riêng màn 1 hoặc màn 2 bằng cách xóa phần màn còn lại trong prompt.
-- **Muốn bám code Angular của team:** thay mục 5 "Đầu ra" bằng "Xuất component Angular standalone + SCSS, dùng CSS variables cho tokens, biểu đồ bằng SVG thuần".
+- **Muốn bám code React của team:** thay mục 5 "Đầu ra" bằng "Xuất component React + TypeScript (function component, hooks), CSS variables cho tokens theo 09 §9, biểu đồ bằng SVG thuần (energy flow, SOC) hoặc Apache ECharts (chuỗi thời gian); không nhúng logic tính KPI trong component" (stack theo [06 ADR-20](../06-system-architecture.html#adr-20)).
 - **Khi review kết quả của AI**, kiểm nhanh theo 10 nguyên tắc bắt buộc, đặc biệt: số không có dấu âm, có "đo lúc", không hiện 0 cho dữ liệu thiếu, cân bằng năng lượng khớp, site bình thường không có màu cảnh báo.
 - Nguồn đặc tả đầy đủ: [09 §7 UI-01 và UI-03](../09-ux-ui-specification.html), nguyên tắc UX ở 09 §4, wireframe tại [wireframes/](../wireframes/index.html).

@@ -47,7 +47,7 @@
 
 ### 0.1 Phạm vi
 
-Tài liệu này đặc tả các yêu cầu an toàn vận hành, bảo mật và độ tin cậy cho nền tảng EMS C&I behind-the-meter, đa site, đa hãng (K §6 #1). Nền tảng gồm ba phần: **cloud** (Java/Spring Boot, Angular, PostgreSQL/TimescaleDB, MQTT broker), **edge gateway** đặt tại site (kiểu OpenEMS) và các **connector cloud của hãng** (chỉ đọc). Site chỉ có PV là công dân hạng nhất. BESS và sạc EV là tùy chọn (K §6 #2).
+Tài liệu này đặc tả các yêu cầu an toàn vận hành, bảo mật và độ tin cậy cho nền tảng EMS C&I behind-the-meter, đa site, đa hãng (K §6 #1). Nền tảng gồm ba phần: **cloud** (Java/Spring Boot, SPA React + TypeScript theo [06 ADR-20](06-system-architecture.html#adr-20), PostgreSQL/TimescaleDB, MQTT broker), **edge gateway** đặt tại site (kiểu OpenEMS) và các **connector cloud của hãng** (chỉ đọc). Site chỉ có PV là công dân hạng nhất. BESS và sạc EV là tùy chọn (K §6 #2).
 
 Khác với nền tảng giám sát PV trong nghiên cứu FusionSolar trước (chỉ đọc), EMS **ghi lệnh** xuống PCS, inverter, logger hãng và charger. Rủi ro chính vì thế chuyển từ "lộ dữ liệu" sang **"tác động vật lý"**: xả/sạc sai, phát ngược trái phép, quá tải MBA, hỏng pin, mất dự phòng cho tải quan trọng, và ở quy mô đội là tác động đồng thời lên lưới. [INFERENCE]
 
@@ -239,7 +239,7 @@ Cột "Bằng chứng": **K** = kiến thức nền, chưa kiểm chứng URL; *
 
 | Hạng mục | Đặc tả | Nhãn |
 |---|---|---|
-| Giao thức | OIDC Authorization Code + PKCE cho SPA Angular và app di động. Access token JWT ký bất đối xứng, hạn 5–10 phút; refresh token xoay vòng (rotation) có phát hiện tái sử dụng (dùng lại refresh token cũ → thu hồi cả họ token, cảnh báo bảo mật) | [PROPOSAL] |
+| Giao thức | OIDC Authorization Code + PKCE cho SPA React (qua BFF mỏng giữ token phía server, hoặc public client dùng oidc-client-ts với token chỉ trong bộ nhớ — [06 ADR-20](06-system-architecture.html#adr-20)) và app di động. Access token JWT ký bất đối xứng, hạn 5–10 phút; refresh token xoay vòng (rotation) có phát hiện tái sử dụng (dùng lại refresh token cũ → thu hồi cả họ token, cảnh báo bảo mật) | [PROPOSAL] |
 | IdP | Tự host IdP chuẩn OIDC (ví dụ Keycloak, hợp stack Java và chạy được tại DC Việt Nam) hoặc IdP managed có vùng tại VN. Dịch vụ ứng dụng **không** lưu mật khẩu; chỉ lưu `idp_subject` ([05 §4](05-domain-model.html#s4)) | [PROPOSAL] |
 | Claim bắt buộc trong token | `sub`, `org` (home org), `auth_time`, `amr`, `acr`, `sid`; không nhúng danh sách quyền theo site (quyền tính ở PDP theo thời gian thực để thu hồi có hiệu lực ngay) | [PROPOSAL] |
 | Kiểm token tại API | Chữ ký, `iss`, `aud`, `exp`, `nbf`; allow-list thuật toán (chỉ RS256/ES256); từ chối `alg=none` và HS* với khóa công khai | [PROPOSAL] |
@@ -1235,7 +1235,7 @@ Gói bằng chứng theo (site, khoảng thời gian), tạo bằng một thao t
 | Hoạt động | Phạm vi | Tần suất | Cổng chặn | Mức |
 |---|---|---|---|---|
 | Threat model | Control plane, edge, driver ghi | Mỗi thay đổi lớn ở Command API, PDP, Signer, arbiter, driver ghi; rà soát mỗi quý | Review thiết kế | P0 |
-| SAST | Mã Java, Angular, edge | Mỗi PR | Không có phát hiện High/Critical mới chưa xử lý | P0 |
+| SAST | Mã Java, React/TypeScript (kèm quét phụ thuộc npm), edge | Mỗi PR | Không có phát hiện High/Critical mới chưa xử lý | P0 |
 | SCA + SBOM | Dependency cloud, edge, image | Mỗi build; SBOM (CycloneDX hoặc SPDX) đính kèm release | CVE Critical có bản vá → chặn release | P0 |
 | Quét secret | Repo, image, log mẫu | Pre-commit + CI | Chặn merge | P0 |
 | Quét IaC/container | Terraform/Helm, image | Mỗi PR | Cấu hình nguy hiểm (privileged, public bucket) chặn | P0 |

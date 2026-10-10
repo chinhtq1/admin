@@ -79,7 +79,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <!-- ============================================================ -->
 <h2 id="s1">1. Tóm tắt quyết định</h2>
 
-<p>Tài liệu này mô tả kiến trúc của nền tảng EMS (Energy Management System, hệ quản lý năng lượng) cho site C&amp;I sau công tơ (behind-the-meter), đa site, đa hãng: PV, BESS (hệ lưu trữ pin), lưới, phụ tải, tùy chọn sạc EV và máy phát (K §6 #1–#2). Kiến trúc mở rộng hướng cũ (giám sát/O&amp;M PV đa hãng, edge-first, Java/Spring Boot + Angular, PostgreSQL/TimescaleDB, MQTT) sang điều khiển có kiểm soát. Mọi lựa chọn công nghệ là <span class="tag proposal">PROPOSAL</span> trừ khi ghi khác.</p>
+<p>Tài liệu này mô tả kiến trúc của nền tảng EMS (Energy Management System, hệ quản lý năng lượng) cho site C&amp;I sau công tơ (behind-the-meter), đa site, đa hãng: PV, BESS (hệ lưu trữ pin), lưới, phụ tải, tùy chọn sạc EV và máy phát (K §6 #1–#2). Kiến trúc mở rộng hướng cũ (giám sát/O&amp;M PV đa hãng, edge-first, Java/Spring Boot, PostgreSQL/TimescaleDB, MQTT) sang điều khiển có kiểm soát. Frontend là React + TypeScript theo quyết định của product owner ngày 2026-10-10 (<a href="#adr-20">ADR-20</a>; hướng cũ giả định Angular). Mọi lựa chọn công nghệ là <span class="tag proposal">PROPOSAL</span> trừ khi ghi khác.</p>
 
 <div class="table-wrap">
 <table>
@@ -97,6 +97,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td>D-06-10</td><td><b>Tầng 1 và tầng 2 tối ưu viết bằng Java. Tầng 3 (P1) bắt đầu bằng OR-Tools Java sau <code>SolverPort</code>;</b> Python sidecar chỉ khi đạt điều kiện kích hoạt ghi trong ADR.</td><td>Quyết định K R-22 + <span class="tag proposal">PROPOSAL</span></td><td><a href="#adr-11">ADR-11</a></td></tr>
 <tr><td>D-06-11</td><td><b>Control plane fail-closed, monitoring plane fail-open có nhãn.</b> IdP, PDP, KMS hoặc <code>ctl-db</code> lỗi thì không có lệnh mới; giám sát vẫn chạy và hiển thị độ tươi rõ ràng.</td><td><span class="tag proposal">PROPOSAL</span> theo 10 D-10-09</td><td><a href="#adr-10">ADR-10</a></td></tr>
 <tr><td>D-06-12</td><td><b>Hosting tại Việt Nam là mặc định</b>; stateless trên Kubernetes, stateful (PostgreSQL, broker) trên VM chuyên dụng. Nhà cung cấp chưa đánh giá.</td><td><span class="tag inference">INFERENCE</span> (pháp lý chờ kiểm chứng) + <span class="tag proposal">PROPOSAL</span></td><td><a href="#adr-18">ADR-18</a></td></tr>
+<tr><td>D-06-13</td><td><b>Frontend: SPA React + TypeScript build bằng Vite</b>, server-state bằng TanStack Query, live qua SSE (<code>EventSource</code>), biểu đồ ECharts với giảm mẫu ở server, component headless (Radix) theo token 09, OIDC qua BFF mỏng. Backend Java/Spring Boot giữ nguyên.</td><td>Quyết định PO (framework) + <span class="tag proposal">PROPOSAL</span> (thư viện)</td><td><a href="#adr-20">ADR-20</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -165,7 +166,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 
 <h3>3.3 Giả định về đội và quy mô</h3>
 <ul>
-<li><span class="tag unknown">UNKNOWN</span> Quy mô đội thực tế. <span class="tag inference">INFERENCE</span> Các ghi chú nói về "đội mới" (K §3.8, 04 Q-D-07) và stack Java/Spring + Angular đã có; tài liệu giả định 6–10 kỹ sư trong 12–18 tháng đầu, gồm 1–2 người edge/firmware. Nếu đội lớn hơn đáng kể, ADR-01 có thể xem lại.</li>
+<li><span class="tag unknown">UNKNOWN</span> Quy mô đội thực tế. <span class="tag inference">INFERENCE</span> Các ghi chú nói về "đội mới" (K §3.8, 04 Q-D-07) và stack Java/Spring đã có (hướng cũ giả định thêm Angular; frontend nay là React theo <a href="#adr-20">ADR-20</a>, kỹ năng React của đội là một phần Q-43); tài liệu giả định 6–10 kỹ sư trong 12–18 tháng đầu, gồm 1–2 người edge/firmware. Nếu đội lớn hơn đáng kể, ADR-01 có thể xem lại.</li>
 <li>Mốc quy mô dùng cho thiết kế: <b>MVP 50–200 site</b>, <b>thiết kế cho 1.000 site</b> (NFR-PERF-004), <b>mở được tới 10.000 site</b> mà không đổi hợp đồng edge (NFR-PERF-004). Site tham chiếu 1.000 điểm, site lớn 5.000 điểm, site PV-only 200 điểm (K §3.5; 05 §19).</li>
 </ul>
 
@@ -255,7 +256,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <defs><marker id="m-cn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0,0 L10,5 L0,10 z"/></marker>
 <marker id="m-cn-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead ctl" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <!-- clients -->
-<rect class="box alt" x="30" y="16" width="230" height="52" rx="6"/><text class="title" x="145" y="38" text-anchor="middle">Angular SPA</text><text class="small" x="145" y="56" text-anchor="middle">web + mobile web, EventSource</text>
+<rect class="box alt" x="30" y="16" width="230" height="52" rx="6"/><text class="title" x="145" y="38" text-anchor="middle">React SPA (TypeScript)</text><text class="small" x="145" y="56" text-anchor="middle">web + mobile web, EventSource</text>
 <rect class="box ext" x="290" y="16" width="230" height="52" rx="6"/><text class="title" x="405" y="38" text-anchor="middle">API client bên thứ ba</text><text class="small" x="405" y="56" text-anchor="middle">OAuth2 client credentials (P1)</text>
 <!-- cloud zone -->
 <rect class="zone" x="10" y="86" width="1080" height="560" rx="8"/><text class="zl" x="22" y="104">CLOUD (VN) · Kubernetes cho stateless, VM cho stateful (ADR-18)</text>
@@ -318,7 +319,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <table>
 <thead><tr><th>Container</th><th>Mặt phẳng</th><th>Trách nhiệm</th><th>Trạng thái giữ</th><th>Mở rộng</th><th>Tính năng chính</th></tr></thead>
 <tbody>
-<tr><td>Angular SPA</td><td>—</td><td>UI web/mobile web; gọi REST; nhận SSE; không giữ logic quyền (chỉ ẩn/hiện)</td><td>Không</td><td>CDN/ingress</td><td>M-DASH, M-MON, 09</td></tr>
+<tr><td>React SPA (TypeScript, Vite)</td><td>—</td><td>UI web/mobile web; gọi REST qua client sinh từ OpenAPI; nhận SSE; không giữ logic quyền (chỉ ẩn/hiện); bộ thư viện ở <a href="#adr-20">ADR-20</a></td><td>Không</td><td>CDN/ingress</td><td>M-DASH, M-MON, 09</td></tr>
 <tr><td>API gateway + WAF</td><td>Biên</td><td>TLS, định tuyến theo đường dẫn, rate limit theo tenant/client, kích thước body, header bảo mật</td><td>Không</td><td>Ngang</td><td>F-SEC-22, NFR-SEC (CD-08)</td></tr>
 <tr><td>IdP (Keycloak)</td><td>Dùng chung</td><td>OIDC + PKCE, MFA, WebAuthn, step-up (<code>acr</code>), federation SSO (P1)</td><td>DB riêng</td><td>2 replica</td><td>F-SEC-01, F-SEC-02 (<a href="#adr-17">ADR-17</a>)</td></tr>
 <tr><td>mon-app</td><td>MON</td><td>REST đọc/ghi cấu hình không vật lý; SSE; truy vấn chuỗi; KPI; biểu giá; báo cáo; ticket; quản trị tenant</td><td>Không (stateless)</td><td>Ngang</td><td>M-ORG, M-DASH, M-MON, M-HIST, M-REP, M-TAR, M-ALM (UI)</td></tr>
@@ -1078,7 +1079,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <table>
 <thead><tr><th>Chủ đề</th><th>Quy ước</th><th>Nhãn / căn cứ</th></tr></thead>
 <tbody>
-<tr><td>Kiểu</td><td>REST/JSON, hợp đồng trước (OpenAPI 3.1), sinh client TypeScript cho Angular. Cập nhật trực tiếp bằng SSE (<a href="#adr-03">ADR-03</a>). Edge ↔ cloud không dùng REST mà dùng MQTT theo 07 §7–§8 (trừ <code>enroll</code> và tải OTA qua HTTPS mTLS)</td><td><span class="tag proposal">PROPOSAL</span></td></tr>
+<tr><td>Kiểu</td><td>REST/JSON, hợp đồng trước (OpenAPI 3.1), sinh client TypeScript cho SPA React (<a href="#adr-20">ADR-20</a>). Cập nhật trực tiếp bằng SSE (<a href="#adr-03">ADR-03</a>). Edge ↔ cloud không dùng REST mà dùng MQTT theo 07 §7–§8 (trừ <code>enroll</code> và tải OTA qua HTTPS mTLS)</td><td><span class="tag proposal">PROPOSAL</span></td></tr>
 <tr><td>Đường dẫn</td><td><code>/api/v1/…</code> → mon-app; <code>/api/v1/control/…</code> → ctl-app (gateway định tuyến theo tiền tố); <code>/public/v1/…</code> cho API công khai (P1) trên host riêng</td><td>AC-03</td></tr>
 <tr><td>Xác thực</td><td>Bearer JWT từ IdP (SPA dùng Authorization Code + PKCE); API client dùng client credentials (<code>private_key_jwt</code> ưu tiên). Quyền theo site tính ở server mỗi request, không nhúng trong token</td><td>10 §4.1</td></tr>
 <tr><td>Ngữ cảnh tenant</td><td>Suy ra từ tài nguyên trong đường dẫn (site thuộc tenant) và kiểm với <code>allowed_tenant_ids</code> của phiên; không có header tenant do client tự đặt</td><td>05 §2.3; 10 §6.2</td></tr>
@@ -1350,6 +1351,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td>Tải</td><td>Ingest, truy vấn, SSE</td><td>Edge ảo hàng loạt (07 §11.2); 1.000 site thường + đỉnh 10×; đo NFR-PERF-001…004</td><td>Trước Gate MVP và mỗi thay đổi lưu trữ</td><td>Có</td></tr>
 <tr><td>Migration</td><td>Schema mon-db, ctl-db</td><td>Chạy trên bản sao kích thước thật; đo thời gian khóa; migration không phá vỡ (expand/contract)</td><td>Mỗi release có migration</td><td>Có</td></tr>
 <tr><td>Đối soát dữ liệu</td><td>Cân bằng năng lượng</td><td>Residual cân bằng trên dữ liệu pilot (F-HIST-09)</td><td>Hằng ngày ở pilot</td><td>Không (cảnh báo)</td></tr>
+<tr><td>Frontend</td><td>SPA React (<a href="#adr-20">ADR-20</a>)</td><td>Vitest + React Testing Library; MSW mock REST/SSE theo ví dụ OpenAPI; Playwright E2E (đăng nhập, hộp lệnh C1–C3, mất SSE, đổi locale) + axe; eslint-plugin-jsx-a11y</td><td>Mỗi commit (unit/component), hằng đêm (E2E)</td><td>Có (lint a11y, unit); E2E chặn release UI</td></tr>
 <tr><td>HIL / game day</td><td>Edge + thiết bị thật</td><td>07 §11, 10 §19.3; game day mất cloud 4 h</td><td>Trước release edge và trước site M2 đầu tiên</td><td>Có</td></tr>
 </tbody>
 </table>
@@ -1384,6 +1386,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td><a href="#adr-17">ADR-17</a></td><td>IdP</td><td>Keycloak tự host tại VN</td><td>Proposed</td></tr>
 <tr><td><a href="#adr-18">ADR-18</a></td><td>Nền tảng triển khai, hosting</td><td>Kubernetes cho stateless, VM cho stateful, VN mặc định</td><td>Proposed – blocked (Q-I-04, Q-I-13)</td></tr>
 <tr><td><a href="#adr-19">ADR-19</a></td><td>Nền tảng phần cứng/OS edge</td><td>Gateway Linux công nghiệp, rootfs chỉ đọc, A/B, TPM</td><td>Proposed – blocked (K G-06)</td></tr>
+<tr><td><a href="#adr-20">ADR-20</a></td><td>Framework frontend</td><td>React + TypeScript (Vite, React Router, TanStack Query, SSE, RHF + Zod, ECharts, Radix + token, react-i18next, BFF/OIDC, Vitest/RTL/MSW/Playwright)</td><td>Accepted (PO 2026-10-10) / thư viện Proposed</td></tr>
 </tbody>
 </table>
 </div>
@@ -1393,7 +1396,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <h3>ADR-01 · Modular monolith theo mặt phẳng, không microservices ở MVP</h3>
 <dl>
 <dt>Trạng thái</dt><dd>Proposed</dd>
-<dt>Bối cảnh</dt><dd>Đội nhỏ (giả định 6–10 kỹ sư, <span class="tag unknown">UNKNOWN</span>), stack Java/Spring Boot + Angular đã chọn từ hướng cũ, ranh giới nghiệp vụ còn thay đổi (148 FR P0, 04 §7.1). Có yêu cầu bảo mật cứng: hai mặt phẳng tách danh tính, credential, DB, release (K §6 #26). Nhiều thao tác cần nhất quán trong một transaction: AUTHORIZED + ghi Governor ledger + audit; ghi lô telemetry + outbox sự kiện.</dd>
+<dt>Bối cảnh</dt><dd>Đội nhỏ (giả định 6–10 kỹ sư, <span class="tag unknown">UNKNOWN</span>), stack Java/Spring Boot đã chọn từ hướng cũ (frontend xem <a href="#adr-20">ADR-20</a>), ranh giới nghiệp vụ còn thay đổi (148 FR P0, 04 §7.1). Có yêu cầu bảo mật cứng: hai mặt phẳng tách danh tính, credential, DB, release (K §6 #26). Nhiều thao tác cần nhất quán trong một transaction: AUTHORIZED + ghi Governor ledger + audit; ghi lô telemetry + outbox sự kiện.</dd>
 <dt>Phương án</dt><dd>
 <div class="table-wrap"><table>
 <thead><tr><th>Phương án</th><th>Ưu</th><th>Nhược</th></tr></thead>
@@ -1724,6 +1727,44 @@ Ca kiểm thử "reconnect sau khi tạm ngưng" nằm trong chuỗi lệnh end-
 </div>
 
 
+<!-- ADR-20 -->
+<div class="adr" id="adr-20">
+<h3>ADR-20 · Framework frontend: React + TypeScript</h3>
+<dl>
+<dt>Trạng thái</dt><dd>Accepted (quyết định của product owner ngày 2026-10-10, 13 D-25) cho lựa chọn framework; các thư viện và cấu hình đi kèm là <span class="tag proposal">PROPOSAL</span>, chờ đội frontend duyệt sau spike đầu Phase 0.</dd>
+<dt>Bối cảnh</dt><dd>Hướng FusionSolar cũ và bản trước của 06/00/11 giả định Angular "đã quen" (K R-22 chỉ nói về Java cho backend/tối ưu, không chốt framework web). Ngày 2026-10-10 product owner quyết định sản phẩm EMS dùng <b>Spring Boot cho backend và React cho frontend</b>. Backend Java/Spring Boot, OpenAPI 3.1, SSE (<a href="#adr-03">ADR-03</a>), OIDC + Keycloak (<a href="#adr-17">ADR-17</a>) giữ nguyên. Yêu cầu UI chính: 37 trang (09), dashboard cập nhật ~5 s qua một kết nối SSE mỗi trang, trend explorer ≤ 8 chuỗi, raw 7 ngày p95 ≤ 3 s (NFR-PERF-002), vi/en, WCAG 2.2 AA (09 §10), hộp lệnh hai bước có step-up (C-08), dark mode và design tokens (09 §9).</dd>
+<dt>Phương án</dt><dd>
+<div class="table-wrap"><table>
+<thead><tr><th>Phương án</th><th>Ưu</th><th>Nhược</th></tr></thead>
+<tbody>
+<tr><td>A. Angular (giả định cũ)</td><td>Framework "đủ bộ" (router, DI, form, i18n, HTTP); cấu trúc đồng nhất cho đội lớn; khớp ghi chú FusionSolar cũ</td><td>Không còn là lựa chọn của product owner; i18n build-time theo locale phức tạp hơn khi đổi ngôn ngữ tại chỗ; hệ sinh thái biểu đồ/headless component nhỏ hơn React <span class="tag inference">INFERENCE</span></td></tr>
+<tr><td><b>B. React + TypeScript</b></td><td>Quyết định PO; hệ sinh thái lớn nhất cho dashboard, biểu đồ, component headless; tuyển dụng tại VN dễ hơn <span class="tag inference">INFERENCE</span>; client TypeScript sinh từ OpenAPI dùng được nguyên</td><td>Chỉ là thư viện view: đội phải tự chọn router, server-state, form, i18n → cần ADR này và lint/kiến trúc để tránh mỗi màn một kiểu</td></tr>
+<tr><td>C. Vue 3 + TypeScript</td><td>Đủ bộ chính thức (router, Pinia), học nhanh</td><td>Không phải lựa chọn PO; hệ sinh thái component doanh nghiệp/biểu đồ nhỏ hơn React <span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div></dd>
+<dt>Quyết định</dt><dd>Chọn B (Accepted). Bộ công cụ đi kèm <span class="tag proposal">PROPOSAL</span>:
+<div class="table-wrap"><table>
+<thead><tr><th>Mối quan tâm</th><th>Đề xuất</th><th>Lý do và ràng buộc</th></tr></thead>
+<tbody>
+<tr><td>Ngôn ngữ, build</td><td>TypeScript <code>strict</code>; <b>Vite</b> (SPA thuần, không SSR)</td><td>Ứng dụng nằm sau đăng nhập, không cần SEO/SSR; Vite cho dev server nhanh và build tĩnh phục vụ qua CDN/ingress như container "React SPA" ở §5. Không dùng meta-framework SSR để không thêm một runtime Node phải vận hành (ràng buộc "đội nhỏ", §3.2 #6)</td></tr>
+<tr><td>Routing</td><td><b>React Router</b> (chế độ data router), route lồng theo cây 09 §5.2 (<code>/sites/:siteId/...</code>), lazy-load theo nhóm trang</td><td>Route giữ ngữ cảnh tenant/site trong URL để chia sẻ link và deep-link từ thông báo; chia bundle theo nhóm 7.1…7.8 của 09</td></tr>
+<tr><td>Server-state</td><td><b>TanStack Query</b>; khóa cache gồm <code>[tenantId, siteId, resource, params chuẩn hóa (from, to, resolution)]</code>; <code>staleTime</code> theo lớp dữ liệu (latest ≈ 5 s, CAGG 5 phút ≈ 60 s, ngày/tháng ≈ 10 phút); hủy request khi đổi khoảng thời gian (AbortSignal)</td><td>Tránh gọi lặp cùng truy vấn từ nhiều widget, giới hạn tải đọc lên mon-db (§14) và giữ nhịp với ý tưởng ngân sách truy vấn/caching ở tầng API. Khóa luôn có tenant để đổi tenant/đăng xuất là xóa sạch cache, không lộ dữ liệu chéo tenant trên client. Không dùng store toàn cục cho dữ liệu server; trạng thái UI cục bộ dùng state React/URL, chỉ thêm store nhỏ (ví dụ Zustand) khi có nhu cầu đã chứng minh</td></tr>
+<tr><td>Live</td><td><b>SSE qua <code>EventSource</code></b> theo <a href="#adr-03">ADR-03</a>: một hook dùng chung mở <b>một</b> kết nối mỗi trang, phân phối sự kiện (<code>point</code>, <code>flow</code>, <code>status</code>, <code>freshness</code>…) bằng cách cập nhật cache TanStack Query (<code>setQueryData</code>) hoặc invalidate; nối lại với <code>Last-Event-ID</code>, lấy vé mới (API-AUTH-04) khi vé hết hạn</td><td>Không WebSocket, không MQTT tới trình duyệt. Khi mất luồng, UI hiện huy hiệu độ tươi (C-02) thay vì giữ số cũ như số live. Trạng thái lệnh không lạc quan (ADR-02)</td></tr>
+<tr><td>Form, validation</td><td><b>React Hook Form + Zod</b>; schema Zod sinh hoặc đối chiếu từ OpenAPI; lỗi server (<code>application/problem+json</code> + <code>reason_code</code>, <a href="#s13-1">§13.1</a>) gắn vào trường/ô tổng</td><td>Form cấu hình dài (SOE, biểu giá, commissioning) cần hiệu năng tốt và validation đồng nhất client/server; client chỉ validate để hỗ trợ người dùng, server luôn kiểm lại</td></tr>
+<tr><td>Biểu đồ</td><td><b>Apache ECharts</b> cho C-05, C-10 và biểu đồ báo cáo (canvas, <code>dataZoom</code>, nhiều trục/panel, <code>markArea</code> cho dải TOU, tooltip, lớp chất lượng); energy-flow (C-04) và SOC gauge (C-11) vẽ bằng <b>SVG tự viết</b> theo token. uPlot là phương án dự phòng cho trend raw rất dày nếu đo thấy ECharts không đạt</td><td>ECharts đủ tính năng cho lớp TOU/sự kiện/kế hoạch nét đứt và có chế độ tối/tiếp cận cơ bản; uPlot nhanh và nhẹ hơn nhưng phải tự làm nhiều lớp phủ. Bất kể thư viện: <b>giảm mẫu ở server</b> — API-TEL-02 trả theo <code>resolution</code> (CAGG) và đề xuất thêm tham số <code>max_points</code> với LTTB (Largest-Triangle-Three-Buckets) cho raw, giữ min/max trong bucket khi cần thấy đỉnh (X-06-10); trình duyệt không tải hàng trăm nghìn điểm</td></tr>
+<tr><td>Component library</td><td><b>Thư viện headless dựa trên Radix UI primitives</b> (dialog, popover, menu, tabs, tooltip…) + styling bằng <b>CSS variables theo token 09 §9</b> (CSS Modules hoặc Tailwind cấu hình từ token; chọn sau spike). Bảng dữ liệu C-18 dùng TanStack Table + ảo hóa dòng</td><td>Token của 09 (ba họ màu tách biệt, mật độ Compact/Comfortable, <code>tabular-nums</code>) là nguồn sự thật; MUI mang hệ thiết kế Material và theme riêng, phải ghi đè nhiều và dễ lệch token. Radix cho hành vi bàn phím/ARIA đúng sẵn, ta giữ toàn quyền hình thức. MUI chỉ cân nhắc nếu đội thiếu người làm UI nền</td></tr>
+<tr><td>i18n, định dạng</td><td><b>react-i18next</b> (vi mặc định, en), namespace theo nhóm trang, khóa enum có bản dịch (09 §11.3); số/ngày/tiền dùng <code>Intl.NumberFormat</code>/<code>Intl.DateTimeFormat</code> với múi giờ site; số nhiều theo ICU (plugin ICU của i18next)</td><td>Đổi ngôn ngữ tại chỗ không cần build lại; đúng quy tắc 09 §11.2 (vi <code>1.234,5 kW</code>, en <code>1,234.5 kW</code>, 24 h, lịch Gregory)</td></tr>
+<tr><td>Xác thực</td><td>OIDC Authorization Code + PKCE với Keycloak (<a href="#adr-17">ADR-17</a>). Mặc định đề xuất <b>BFF mỏng</b> (Spring Cloud Gateway hoặc Spring Security OAuth2 Client ở biên): token nằm ở server, trình duyệt chỉ giữ cookie phiên <code>Secure; HttpOnly; SameSite=Strict</code> + CSRF token (10 §4); SSE đi cùng cookie nên không cần vé. Phương án thay thế khi chưa có BFF: SPA public client dùng <b>oidc-client-ts</b>, access token chỉ trong bộ nhớ, refresh token xoay vòng, SSE dùng vé API-AUTH-04</td><td>BFF giảm rủi ro lộ token qua XSS và đơn giản hóa SSE; đổi lại thêm một thành phần biên (stateless, nằm trong ns-mon). Step-up (<code>acr</code>, API-AUTH-03) làm bằng redirect toàn trang có <code>returnTo</code>, giữ nháp lệnh trong state tạm. UI chỉ ẩn/hiện theo API-AUTH-02, không giữ logic quyền</td></tr>
+<tr><td>Kiểm thử</td><td><b>Vitest + React Testing Library</b> (unit/component); <b>MSW</b> mock API và luồng SSE ở mức component/story, handler sinh từ ví dụ OpenAPI; <b>Playwright</b> cho E2E (đăng nhập Keycloak test, hộp lệnh C1–C3, mất kết nối SSE, đổi locale), kèm kiểm tra a11y tự động (axe) trong E2E</td><td>Khớp chiến lược §16: test hợp đồng client sinh từ spec; luồng lệnh end-to-end vẫn do suite CTL chặn release</td></tr>
+<tr><td>Chất lượng mã, a11y</td><td>ESLint với <b>eslint-plugin-jsx-a11y</b>, react-hooks; Prettier; luật cấm import chéo giữa feature (ví dụ eslint-plugin-boundaries); client API sinh từ OpenAPI (ví dụ openapi-typescript), không viết tay kiểu DTO</td><td>Bắt lỗi tiếp cận sớm (09 §10); giữ ranh giới tính năng như RB-xx ở backend</td></tr>
+</tbody></table></div>
+Phiên bản: React 19.x là dòng ổn định mới nhất theo tra cứu 2026-10-10 (nguồn thứ cấp, §23); Vite 8.x (blog chính thức, §23). Phiên bản React Router, TanStack Query, React Hook Form, Zod, ECharts, Radix UI, react-i18next, oidc-client-ts, Vitest, MSW, Playwright: <span class="tag unknown">UNKNOWN</span> — chốt và khóa (lockfile) trong spike Phase 0, kiểm giấy phép từng gói (đều được biết là MIT/Apache-2.0 theo kiến thức nền, cần kiểm lại).</dd>
+<dt>Lý do</dt><dd>PO đã quyết framework; phần còn lại chọn để (1) giữ nguyên hợp đồng backend (REST + SSE, OIDC), (2) tôn trọng token và quy tắc hiển thị của 09 thay vì theo hệ thiết kế có sẵn, (3) giảm tải đọc bằng cache có khóa tenant/site/khoảng thời gian và giảm mẫu ở server, (4) ít thành phần phải vận hành (SPA tĩnh, không SSR).</dd>
+<dt>Hệ quả</dt><dd>(+) Không đổi API, không đổi kiến trúc backend; tuyển dụng dễ hơn. (−) Nếu đội hiện tại chỉ quen Angular, cần đào tạo/tuyển 1–2 người React và một spike 1–2 tuần ở Phase 0 (khung dự án, auth, SSE hook, một biểu đồ C-05 với dữ liệu thật) — ước lượng 11 không đổi vì tính theo năng lực tổng (A-05, Q-43). Mọi chỗ "Angular" trong tài liệu chỉ còn là bối cảnh lịch sử (hướng FusionSolar, OpenEMS UI).</dd>
+<dt>Xem lại khi</dt><dd>Cần SEO/trang công khai (xem SSR); trend raw không đạt NFR-PERF-002 với ECharts (đổi uPlot); BFF không triển khai kịp MVP (dùng phương án oidc-client-ts, ghi rủi ro).</dd>
+</dl>
+</div>
+
+
 <!-- ============================================================ -->
 <h2 id="s18">18. PoC bắt buộc trước khi chốt</h2>
 <div class="table-wrap">
@@ -1753,7 +1794,7 @@ Ca kiểm thử "reconnect sau khi tạm ngưng" nằm trong chuỗi lệnh end-
 <tr><td>Dấu lưới</td><td>+ = xuất</td><td>+ = nhập</td><td>K R-01</td></tr>
 <tr><td>Edge runtime</td><td>"Kiểu OpenEMS"</td><td>Hợp đồng trước; OpenEMS chỉ sau kiểm tra giấy phép</td><td>K R-21</td></tr>
 <tr><td>Lưu trữ</td><td>TimescaleDB + Parquet</td><td>Giữ, thêm điều kiện giấy phép + PoC; tách ctl-db</td><td>K §6 #25; cô lập lỗi</td></tr>
-<tr><td>Ngôn ngữ</td><td>Java/Spring + Angular</td><td>Giữ; Python sidecar chỉ theo điều kiện ADR-11</td><td>K R-22</td></tr>
+<tr><td>Ngôn ngữ</td><td>Java/Spring + Angular</td><td>Backend giữ Java/Spring Boot; Python sidecar chỉ theo điều kiện ADR-11. Frontend đổi sang React + TypeScript (<a href="#adr-20">ADR-20</a>)</td><td>K R-22; quyết định PO 2026-10-10</td></tr>
 <tr><td>Quyền</td><td>Company tree + Role + DataScope</td><td>Giữ cho monitoring; thêm PDP lệnh, grant có hạn, RLS</td><td>10 §1</td></tr>
 <tr><td>API ngoài</td><td>REST + webhook + MQTT out</td><td>REST + webhook (P1); không MQTT out ở MVP (Sparkplug B là P2)</td><td>K §6 #20</td></tr>
 </tbody>
@@ -1782,6 +1823,7 @@ Ca kiểm thử "reconnect sau khi tạm ngưng" nằm trong chuỗi lệnh end-
 <tr><td>ADR-15</td><td>F-SEC-03, F-SEC-06</td><td>NFR-SEC-006, 008</td><td>#28, #29</td></tr>
 <tr><td>ADR-17</td><td>F-SEC-01, F-SEC-02</td><td>NFR-SEC-005</td><td>—</td></tr>
 <tr><td>ADR-18, §10</td><td>F-SEC-18</td><td>NFR-DATA-010; NFR-SEC-026; NFR-REL-006</td><td>#31</td></tr>
+<tr><td>ADR-20</td><td>F-DASH-01…, F-MON-01, F-HIST-07 (trend), F-SEC-01, F-SEC-02</td><td>NFR-PERF-002, 003; NFR-SEC-005; 09 §10, §11</td><td>— (quyết định PO 2026-10-10)</td></tr>
 <tr><td>§13 API</td><td>Theo cột "Tính năng" của bảng §13.2</td><td>NFR-PERF-012; FR-INT-025, 026, 030</td><td>K G-11</td></tr>
 <tr><td>§16 kiểm thử</td><td>F-INT-24</td><td>NFR-SEC-030; NFR-DATA-006</td><td>K G-05</td></tr>
 </tbody>
@@ -1836,6 +1878,7 @@ Ca kiểm thử "reconnect sau khi tạm ngưng" nằm trong chuỗi lệnh end-
 <tr><td>X-06-06</td><td>11 Lộ trình</td><td>PoC-01…04 là điều kiện trước khi chốt kiến trúc MVP; PoC-05 trước Phase 1; mốc chọn edge runtime</td><td>Đưa vào kế hoạch</td></tr>
 <tr><td>X-06-07</td><td>13 Rủi ro</td><td>Q-06-01…07, R-06-01…07</td><td>Cấp mã chính thức</td></tr>
 <tr><td>X-06-08</td><td>14 Nguồn</td><td>URL ở §23 (không có URL mới)</td><td>Cấp S-xxx</td></tr>
+<tr><td>X-06-10</td><td>04 Yêu cầu, 09 UX/UI</td><td>ADR-20 đề xuất tham số <code>max_points</code> (LTTB, giữ min/max) cho API-TEL-02 để trend raw không tải quá nhiều điểm; thư viện component/biểu đồ phải hiện thực token 09 §9</td><td>Cấp FR/NFR nếu đồng ý; 09 §8.3</td></tr>
 <tr><td>X-06-09</td><td>03 Danh mục</td><td>Đã ghi vào <a href="notes/_catalog-gaps.md">notes/_catalog-gaps.md</a>: môi trường sandbox cho API công khai với dữ liệu "Mô phỏng"</td><td>Người viết 03 xử lý</td></tr>
 </tbody>
 </table>
@@ -1893,6 +1936,7 @@ Ca kiểm thử "reconnect sau khi tạm ngưng" nằm trong chuỗi lệnh end-
 <li>Định nghĩa chung EMS (InfinitePower chỉ dùng kèm nguồn thứ hai, K R-18): https://www.infinitepowerht.com/what-is-energy-management-system-ems-and-its-functions.html ; https://deye.com/nl/blog/bms-vs-ems-vs-pcs-bess-components/</li>
 <li>SolarEdge ONE Controller C&amp;I (tham chiếu cổng phần cứng): https://knowledge-center.solaredge.com/sites/kc/files/se-one-controller-commercial-and-industrial-datasheet-eng.pdf</li>
 <li>Forescout SUN:DOWN (nghiên cứu FS): https://forescout.com/press-releases/forescout-vedere-labs-uncovers-severe-systemic-security-risks-in-global-solar-power-infrastructure</li>
+<li>Phiên bản frontend (ADR-20, tra cứu 2026-10-10 qua kết quả tìm kiếm, chưa cấp S-ID): React 19.2.x — https://endoflife.date/react ; https://versionlog.com/react/ ; Vite 8 (12/03/2026) và 8.1 (23/06/2026) — https://vite.dev/blog.html ; https://vite.dev/releases.md</li>
 <li>Nghiên cứu FusionSolar trước: <code>docs/research/fusionsolar/04_ghi_chu_nghien_cuu/2_phan_ra_san_pham/competitors_rebuild.md</code> (kiến trúc rebuild tham chiếu), <code>1_tong_quan/api_integration.md</code>, <code>1_tong_quan/architecture_security.md</code></li>
 </ol>
 <p>Liên kết chéo: <a href="03-functional-catalog.html">03 Danh mục</a> · <a href="04-business-requirements.md">04 Yêu cầu</a> · <a href="05-domain-model.html">05 Domain</a> · <a href="07-device-integration.md">07 Tích hợp</a> · <a href="08-energy-optimization.md">08 Tối ưu</a> · <a href="09-ux-ui-specification.html">09 UX/UI</a> · <a href="10-security-and-reliability.md">10 An toàn</a> · <a href="11-mvp-and-roadmap.html">11 Lộ trình</a> · <a href="12-traceability-matrix.md">12 Truy vết</a> · <a href="13-open-questions-and-risks.md">13 Rủi ro</a> · <a href="14-source-register.md">14 Nguồn</a> · <a href="notes/K-review-round1.md">K-review vòng 1</a>.</p>

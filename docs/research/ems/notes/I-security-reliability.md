@@ -16,7 +16,7 @@
 
 ### 1.1 Phạm vi
 
-EMS đa site C&I (PV + BESS + lưới + tải + EV charger tùy chọn), kiến trúc **edge-first** (edge kiểu OpenEMS tại site, cloud Java/Spring Boot + Angular, PostgreSQL/TimescaleDB, MQTT). Khác với nền tảng giám sát PV trước đây (chủ yếu **chỉ đọc**), EMS này **ghi lệnh** vào PCS, inverter, charger và có thể vào logger của hãng. Rủi ro chuyển từ "lộ dữ liệu" sang **"tác động vật lý"**: xả/sạc sai, phát ngược trái phép, quá tải MBA, hỏng pin, mất điện tải quan trọng, và — ở quy mô đội (fleet) — tác động đồng thời lên lưới.
+EMS đa site C&I (PV + BESS + lưới + tải + EV charger tùy chọn), kiến trúc **edge-first** (edge kiểu OpenEMS tại site, cloud Java/Spring Boot + Angular, PostgreSQL/TimescaleDB, MQTT; *cập nhật 2026-10-10: frontend nay là React + TypeScript theo quyết định PO, xem [06 ADR-20](../06-system-architecture.html#adr-20)*). Khác với nền tảng giám sát PV trước đây (chủ yếu **chỉ đọc**), EMS này **ghi lệnh** vào PCS, inverter, charger và có thể vào logger của hãng. Rủi ro chuyển từ "lộ dữ liệu" sang **"tác động vật lý"**: xả/sạc sai, phát ngược trái phép, quá tải MBA, hỏng pin, mất điện tải quan trọng, và — ở quy mô đội (fleet) — tác động đồng thời lên lưới.
 
 Ngoài phạm vi: an toàn điện/cháy nổ ở mức thiết bị (do BMS/PCS/rơ-le/thiết kế lắp đặt đảm nhận), chứng nhận đấu nối (thuộc inverter/PCS), SCADA lưới của EVN.
 
@@ -101,7 +101,7 @@ Ký hiệu cột "Bằng chứng": **K** = kiến thức nền, chưa kiểm ch�
 
 | Hạng mục | Đề xuất | Lý do |
 |---|---|---|
-| Giao thức | **OIDC** (Authorization Code + PKCE cho SPA Angular và app mobile), access token JWT ngắn hạn (5–10 phút), refresh token xoay vòng (rotation + phát hiện tái sử dụng) | Chuẩn, hỗ trợ SSO doanh nghiệp |
+| Giao thức | **OIDC** (Authorization Code + PKCE cho SPA (ghi chú gốc: Angular; nay là React, [06 ADR-20](../06-system-architecture.html#adr-20)) và app mobile), access token JWT ngắn hạn (5–10 phút), refresh token xoay vòng (rotation + phát hiện tái sử dụng) | Chuẩn, hỗ trợ SSO doanh nghiệp |
 | IdP | Keycloak tự host (hợp stack Java, chạy được tại DC VN) hoặc IdP managed có vùng VN [PROPOSAL] | Lưu trú dữ liệu |
 | SSO doanh nghiệp | Federation OIDC/SAML theo tenant (Azure AD/Entra, Google Workspace) — V1 | Khách C&I lớn yêu cầu |
 | MFA | **Bắt buộc** cho mọi vai trò có quyền ghi (Operator trở lên) và mọi admin; khuyến nghị cho Viewer. Ưu tiên **WebAuthn/passkey**, TOTP là phương án phụ; **không** dùng SMS OTP làm yếu tố duy nhất | Lệnh vật lý |

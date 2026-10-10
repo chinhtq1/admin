@@ -28,7 +28,7 @@
 ### 1.1 Điểm xuất phát
 
 - [FACT] Dự án đã reverse-engineer Huawei FusionSolar ngày 07/10/2026. Kết quả ở `docs/research/fusionsolar/`: báo cáo, wireframe 15 màn hình, 11 ghi chú nghiên cứu, 9 ảnh demo thật (S-388…S-403 trong [14 §3](14-source-register.md#3-tệp-nghiên-cứu-trước-s-388s-403)).
-- [FACT] Hướng trước đó: nền tảng giám sát/O&M PV đa hãng, edge-first, cho installer và đơn vị O&M C&I tại Việt Nam; Java/Spring Boot + Angular; TimescaleDB/PostgreSQL; MQTT; edge kiểu OpenEMS (S-388).
+- [FACT] Hướng trước đó: nền tảng giám sát/O&M PV đa hãng, edge-first, cho installer và đơn vị O&M C&I tại Việt Nam; Java/Spring Boot + Angular; TimescaleDB/PostgreSQL; MQTT; edge kiểu OpenEMS (S-388). (Cập nhật 2026-10-10: frontend EMS là React + TypeScript theo quyết định product owner, [06 ADR-20](06-system-architecture.html#adr-20); backend Spring Boot giữ nguyên.)
 - Người dùng giao hai trang hạt giống: Ampowr Cosmos (S-080) và trang "What is EMS" của HT InfinitePower (S-095). Trang InfinitePower chỉ được dùng cho định nghĩa chung, có nguồn thứ hai đi kèm (S-330), theo phán quyết K R-18.
 
 ### 1.2 Phạm vi nghiên cứu EMS

@@ -149,7 +149,7 @@ Ba FR mang `⚠` vì 11 (bản 07:15) chưa theo kịp 04 (bản 07:52):
 | Tích hợp (I) | Dịch vụ + DB + broker thật trong container; hợp đồng REST/MQTT; cross-tenant | 07 L2; 06 §16 "Hợp đồng", "Cross-tenant" | Mỗi commit/build | Merge, release |
 | Mô phỏng (S) | Edge thật + driver + thiết bị ảo (Modbus, SunSpec, OCPP, master IEC 104), tiêm lỗi. Chạy trên **virtual site** và môi trường (b) CI của [15 §2–§3](15-simulators-and-messaging.md#2-bộ-simulator-theo-môi-trường): pymodbus server nạp register map YAML, mô hình PV/tải/BESS/POC, Toxiproxy, SAP/`ocpp` charger ảo, c104 | 07 L3–L4 (07 §11.2a); 10 §19.2 | CI hằng ngày/hằng đêm (ma trận lỗi 15 §3.4) | Release edge, release control plane |
 | HIL (H) | Edge + thiết bị thật trong lab (logger, inverter, công tơ, PCS/BMS, charger, DI LOCAL/REMOTE); virtual site chỉ bổ sung phần thiếu (môi trường (c) của 15 §2.1) | 07 L5; 10 §19.3; 06 §16 "HIL / game day" | Trước mỗi release edge; trước site Gate M2 đầu tiên | Release edge, Gate M2 |
-| E2E (E) | Trình duyệt → API → DB/edge mô phỏng theo luồng người dùng; gồm snapshot UI và kiểm nhãn i18n | 09 §6; 04 WF | Hằng đêm trên staging | Release web |
+| E2E (E) | Trình duyệt → API → DB/edge mô phỏng theo luồng người dùng; gồm snapshot UI và kiểm nhãn i18n. Công cụ đề xuất cho SPA React: Playwright + axe; mức component dùng Vitest + React Testing Library + MSW (tính vào loại U) ([06 ADR-20](06-system-architecture.html#adr-20)) | 09 §6, §8.3; 04 WF | Hằng đêm trên staging | Release web |
 
 NFR dùng thêm các loại: Tải (07 L7, 06 §16; edge ảo 1.000–10.000 kết nối của 15 §4.1), Game day/Diễn tập, Pen-test, Rà soát (tài liệu, cấu hình), PoC (06 §18), Đo SLI. Pilot hiện trường (07 L6) là bằng chứng `VERIFIED_FIELD` cho driver, không thay cho các tầng trên.
 

@@ -226,7 +226,7 @@ Bối cảnh Việt Nam: các hợp đồng EPC–ESCO lớn ở khu công nghi�
 
 ### 3.7 Chọn nhóm chính cho bản phát hành đầu
 
-Tiêu chí: tư liệu nguồn sẵn có (S), độ phức tạp triển khai (C, thấp là tốt), giá trị cho khách Việt Nam (V), khớp năng lực đội (Java/Spring, Angular, TimescaleDB, MQTT, edge kiểu OpenEMS) (T), rủi ro an toàn/pháp lý (R, thấp là tốt). Thang 1–5, [INFERENCE] chấm theo bằng chứng ở trên.
+Tiêu chí: tư liệu nguồn sẵn có (S), độ phức tạp triển khai (C, thấp là tốt), giá trị cho khách Việt Nam (V), khớp năng lực đội (Java/Spring, Angular, TimescaleDB, MQTT, edge kiểu OpenEMS — giả định tại thời điểm viết; frontend nay là React, [06 ADR-20](../06-system-architecture.html#adr-20)) (T), rủi ro an toàn/pháp lý (R, thấp là tốt). Thang 1–5, [INFERENCE] chấm theo bằng chứng ở trên.
 
 | Nhóm | S | C (5 = đơn giản) | V | T | R (5 = rủi ro thấp) | Tổng | Ghi chú |
 |---|---|---|---|---|---|---|---|

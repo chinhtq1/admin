@@ -26,7 +26,7 @@
 - Quyết định kiến trúc: `ADR-NN`. Rủi ro: `R-NN`. Câu hỏi mở: `Q-NN`. Trang UI: `UI-NN`. API: `API-<nhóm>-NN`. Test: `T-<FR id>`.
 
 ## Bối cảnh dự án đã có
-- Dự án đã nghiên cứu Huawei FusionSolar trước đó: `docs/research/fusionsolar/` (báo cáo, wireframe 15 màn hình, ghi chú API/data model/kiến trúc, ảnh demo). Hướng đề xuất trước đó: nền tảng giám sát/O&M PV đa hãng, edge-first, thị trường Việt Nam (installer/O&M C&I), team Java/Spring Boot + Angular, TimescaleDB/PostgreSQL, MQTT, edge kiểu OpenEMS.
+- Dự án đã nghiên cứu Huawei FusionSolar trước đó: `docs/research/fusionsolar/` (báo cáo, wireframe 15 màn hình, ghi chú API/data model/kiến trúc, ảnh demo). Hướng đề xuất trước đó: nền tảng giám sát/O&M PV đa hãng, edge-first, thị trường Việt Nam (installer/O&M C&I), team Java/Spring Boot + Angular, TimescaleDB/PostgreSQL, MQTT, edge kiểu OpenEMS. **Cập nhật 2026-10-10:** product owner chốt Spring Boot (backend) + React (frontend) cho EMS; "Angular" ở trên chỉ là bối cảnh lịch sử ([06 ADR-20](../06-system-architecture.html#adr-20)).
 - Nghiên cứu EMS mới **mở rộng** hướng đó sang BESS/EMS, không mâu thuẫn mà không giải thích. Nếu đề xuất khác hướng cũ thì ghi rõ lý do.
 
 ## HTML

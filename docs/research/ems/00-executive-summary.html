@@ -107,7 +107,7 @@ td.res.no { color: var(--bad); }
 <tr><td>Tần suất dữ liệu</td><td>1–5 phút</td><td>Edge 1 s; cloud nhận tổng hợp 5 s/60 s/300 s, thanh ghi điện năng ở mỗi mốc 5 phút, sự kiện ngay lập tức</td><td>Vòng giới hạn và bằng chứng tuân thủ cần độ phân giải giây (K §6 #19)</td></tr>
 <tr><td>Edge</td><td>Edge kiểu OpenEMS để thu thập</td><td>Edge bắt buộc ở site có lệnh; runtime (OpenEMS hay tự xây) chờ PoC-03 và kiểm tra giấy phép</td><td>An toàn lệnh; giấy phép OpenEMS <span class="tag unknown">UNKNOWN</span> (ADR-07)</td></tr>
 <tr><td>Lưu trữ</td><td>TimescaleDB</td><td>TimescaleDB + Parquet, có điều kiện kiểm tra giấy phép TSL và PoC 1.000 site</td><td>TSL cấm bán dạng DBaaS; SaaS của ta có bị cấm không là <span class="tag unknown">UNKNOWN</span> (EL-090, <a href="https://www.tigerdata.com/docs/about/latest/timescaledb-editions">S-348</a>)</td></tr>
-<tr><td>Stack</td><td>Java/Spring Boot + Angular</td><td>Giữ nguyên. Tầng 3 bắt đầu bằng OR-Tools Java; sidecar Python chỉ khi có ADR</td><td>Đội đã quen (K R-22)</td></tr>
+<tr><td>Stack</td><td>Java/Spring Boot + Angular</td><td>Backend giữ Java/Spring Boot; tầng 3 bắt đầu bằng OR-Tools Java, sidecar Python chỉ khi có ADR. <b>Frontend đổi sang React + TypeScript</b> (Vite, TanStack Query, SSE, ECharts)</td><td>Backend: đội đã quen (K R-22). Frontend: quyết định của product owner ngày 2026-10-10 (<a href="06-system-architecture.html#adr-20">06 ADR-20</a>, 13 D-25)</td></tr>
 </tbody></table></div>
 
 <!-- ============================================================ -->
@@ -182,7 +182,7 @@ td.res.no { color: var(--bad); }
 <text class="title" x="155" y="37" text-anchor="middle">API / webhook bên thứ ba</text>
 <text class="small" x="155" y="53" text-anchor="middle">P1 đọc · lệnh P2</text>
 <rect class="box" x="360" y="18" width="300" height="44" rx="6"/>
-<text class="title" x="510" y="37" text-anchor="middle">Web Angular (37 trang)</text>
+<text class="title" x="510" y="37" text-anchor="middle">Web React (37 trang)</text>
 <text class="small" x="510" y="53" text-anchor="middle">operator · installer · chủ C&amp;I · REST + SSE</text>
 <!-- cloud zone -->
 <rect class="zone" x="10" y="80" width="980" height="225" rx="8"/>
@@ -286,6 +286,7 @@ td.res.no { color: var(--bad); }
 <tr><td>Lưu trữ và retention</td><td>TimescaleDB + Parquet, có điều kiện. Raw 13 tháng; 5 phút 5 năm; giờ trở lên suốt đời dự án. Audit lệnh online ≥ 13 tháng, WORM ≥ 5 năm</td><td>Quyết định K, chặn bởi Q-14</td><td>06 ADR-06; 05</td></tr>
 <tr><td>Tenant</td><td>Shared schema + RLS FORCE + lớp lọc ứng dụng + test cross-tenant chặn build</td><td>Quyết định K</td><td>06 ADR-08</td></tr>
 <tr><td>Tối ưu</td><td>Tầng 1 (luật edge) và tầng 2 (lịch luật TOU, Java) ở MVP. Tầng 3 MILP/MPC 48 h, slot 15 phút là P1 và chỉ bật khi backtest thắng luật. Tầng 4 VPP/DR là P2</td><td>Quyết định K</td><td>08; 06 ADR-11</td></tr>
+<tr><td>Frontend</td><td>SPA React + TypeScript (Vite); React Router; TanStack Query với khóa cache theo tenant/site/khoảng thời gian; live qua SSE; React Hook Form + Zod; Apache ECharts với giảm mẫu ở server (LTTB); component headless (Radix) theo token 09; react-i18next vi/en; OIDC qua BFF mỏng; Vitest + RTL + MSW, Playwright</td><td>Quyết định PO (framework); <span class="tag proposal">PROPOSAL</span> (thư viện)</td><td>06 ADR-20</td></tr>
 <tr><td>Edge runtime và phần cứng</td><td>Hợp đồng trước, runtime sau. PoC OpenEMS Edge so với runtime Java tự xây; mặc định dự phòng là tự xây. Site M2 cần TPM/secure element</td><td><span class="tag unknown">UNKNOWN</span> giấy phép</td><td>06 ADR-07, ADR-19</td></tr>
 </tbody></table></div>
 
@@ -430,6 +431,9 @@ td.res.no { color: var(--bad); }
 <tr><td>13</td><td>CF-41, CF-42; D-22…D-24; R-55…R-58; Q-60…Q-62; mở rộng Q-14, Q-16</td><td>15 §10; điều phối viên</td></tr>
 <tr><td>14</td><td>S-404…S-548 (145 nguồn của 15, E2 và broker mở/TSL); V-15</td><td>X-E2-11</td></tr>
 <tr><td>05, 11, nav</td><td>05 dẫn API mới; 11 F0-1/F0-4/F0-9, G0, HIL Phase 2 theo 15 và ADR-04; mọi nav (trừ 09) có "15 Mô phỏng"</td><td>X-E2-08, X-E2-12</td></tr>
+<tr><td colspan="3"><b>Quyết định stack frontend 2026-10-10</b> — product owner chọn Spring Boot (backend) + React (frontend) thay Angular</td></tr>
+<tr><td>06</td><td>Thêm <a href="06-system-architecture.html#adr-20">ADR-20</a> (React + TypeScript, Accepted; thư viện đi kèm Proposed) và D-06-13; sơ đồ/bảng container đổi "Angular SPA" thành "React SPA"; thêm dòng kiểm thử frontend ở §16; X-06-10 (tham số <code>max_points</code>/LTTB)</td><td>Quyết định PO</td></tr>
+<tr><td>09, 11, 13, 00, prompts, ghi chú</td><td>09 §8.3 ghi chú hiện thực React và §11.2 dùng <code>Intl</code> + react-i18next; 11 kỹ năng đội và spike frontend trong Phase 0 (ước lượng không đổi); 13 D-25 (đã chốt), A-05 sửa, R-59; prompt redesign xuất component React; "Angular" chỉ còn là bối cảnh lịch sử (FusionSolar, OpenEMS UI)</td><td>ADR-20</td></tr>
 </tbody></table></div>
 
 <!-- ============================================================ -->
@@ -442,7 +446,7 @@ td.res.no { color: var(--bad); }
 <tr><td>03</td><td><a href="03-functional-catalog.html">Danh mục chức năng</a></td><td>270 tính năng, hạng phát hành, cờ điều khiển</td></tr>
 <tr><td>04</td><td><a href="04-business-requirements.md">Yêu cầu nghiệp vụ</a></td><td>268 FR, 85 NFR, persona, quyền, tiêu chí chấp nhận</td></tr>
 <tr><td>05</td><td><a href="05-domain-model.html">Mô hình miền</a></td><td>Thực thể, máy trạng thái, hợp đồng dữ liệu, KPI</td></tr>
-<tr><td>06</td><td><a href="06-system-architecture.html">Kiến trúc hệ thống</a></td><td>C4, luồng dữ liệu, 19 ADR, PoC, API</td></tr>
+<tr><td>06</td><td><a href="06-system-architecture.html">Kiến trúc hệ thống</a></td><td>C4, luồng dữ liệu, 20 ADR (ADR-20 frontend React), PoC, API</td></tr>
 <tr><td>07</td><td><a href="07-device-integration.md">Tích hợp thiết bị</a></td><td>Giao thức, edge, hợp đồng điểm/lệnh, driver, commissioning</td></tr>
 <tr><td>08</td><td><a href="08-energy-optimization.md">Tối ưu năng lượng</a></td><td>Chiến lược, tầng điều khiển, arbiter, lịch native M1</td></tr>
 <tr><td>09</td><td><a href="09-ux-ui-specification.html">Đặc tả UX/UI</a></td><td>37 trang, lệnh nguy hiểm, trạng thái dữ liệu</td></tr>

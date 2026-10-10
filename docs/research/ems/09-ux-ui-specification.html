@@ -1798,6 +1798,22 @@ img.wfthumb.m { width: 78px; }
   <li>Biến thể chuỗi giới hạn BESS: các vạch định mức PCS, SOE, BMS, lưới, setpoint, thực tế trên cùng trục, vạch đang kẹp có nhãn nguồn.</li>
   <li>Biến thể ngân sách Governor: Σ|ΔP| 5 phút / ngưỡng tenant.</li>
 </ul>
+<h3 id="s8-3">8.3 Ghi chú hiện thực (React + TypeScript)</h3>
+<p>Frontend là SPA React + TypeScript theo quyết định product owner ngày 2026-10-10 (<a href="06-system-architecture.html#adr-20">06 ADR-20</a>; bản trước giả định Angular). Bảng dưới ánh xạ component của §8.1 sang cách hiện thực đề xuất; mã <code>C-NN</code> giữ nguyên. <span class="tag proposal">PROPOSAL</span> — phiên bản thư viện <span class="tag unknown">UNKNOWN</span>, chốt ở spike Phase 0 (<a href="11-mvp-and-roadmap.html">11</a> F0-8).</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Component</th><th>Hiện thực đề xuất</th><th>Lưu ý</th></tr></thead>
+<tbody>
+<tr><td>Nền chung</td><td>Primitive headless dựa trên Radix UI (Dialog, Popover, DropdownMenu, Tabs, Tooltip) + CSS variables theo token §9 (CSS Modules hoặc Tailwind cấu hình từ token)</td><td>Không dùng theme Material (MUI) để không lệch ba họ màu §9.1 và mật độ Compact/Comfortable; dark mode bằng cùng tên token</td></tr>
+<tr><td>C-01, C-02, C-03, C-12</td><td>Component trình bày thuần, nhận props đã chuẩn hóa từ API; định dạng số/đơn vị bằng một hàm dùng chung theo §11</td><td>Không tự tính KPI, phân bổ hay dấu (đầu §8); <code>tabular-nums</code></td></tr>
+<tr><td>C-04 Energy-flow, C-11 SOC gauge, C-13 Thanh giới hạn</td><td>SVG tự viết trong React, màu lấy từ <code>--energy-*</code></td><td>Tắt hoạt ảnh khi <code>prefers-reduced-motion</code> và khi OLD; có văn bản thay thế/bảng số cho trình đọc màn hình</td></tr>
+<tr><td>C-05 Biểu đồ chuỗi thời gian, C-10 Timeline lịch</td><td>Apache ECharts (canvas): <code>dataZoom</code>, nhiều panel, <code>markArea</code> cho dải TOU, nét đứt cho tương lai/kế hoạch, lớp chất lượng; uPlot là dự phòng cho trend raw rất dày</td><td>Server trả dữ liệu đã giảm mẫu theo <code>resolution</code> (CAGG) và, nếu chấp nhận X-06-10, <code>max_points</code> với LTTB giữ min/max; mỗi chuỗi có nhãn trực tiếp hoặc legend có nét (UXP-03); bảng dữ liệu tương đương cho a11y</td></tr>
+<tr><td>C-06, C-18 Bảng</td><td>TanStack Table + ảo hóa dòng; cột cố định; chế độ thẻ trên mobile</td><td>Phân trang/sắp xếp ở server cho danh sách lớn (cảnh báo, audit)</td></tr>
+<tr><td>C-08 Hộp lệnh hai bước, C-19 Thẻ phê duyệt</td><td>Radix Dialog + React Hook Form + Zod; <code>dry_run</code> gọi qua TanStack Query mutation; step-up bằng redirect IdP có <code>returnTo</code>, giữ nháp tạm</td><td>Trạng thái lệnh không lạc quan: chỉ hiện "đã áp dụng" khi SSE/API báo <code>APPLIED</code> (06 ADR-02); mã lý do PDP → nhãn §6.7</td></tr>
+<tr><td>C-09 Theo dõi trạng thái lệnh, C-02 độ tươi</td><td>Hook SSE dùng chung (một <code>EventSource</code> mỗi trang, 06 ADR-03) cập nhật cache TanStack Query</td><td>Mất luồng → huy hiệu DELAYED/OLD, không giữ số cũ như số live</td></tr>
+<tr><td>C-15 Bộ chuyển site, C-14 Header site</td><td>React Router: ngữ cảnh tenant/site nằm trong URL (<code>/sites/:siteId/…</code>, §5.2); khóa cache TanStack Query gồm tenant, site, khoảng thời gian</td><td>Đổi tenant hoặc đăng xuất xóa sạch cache client</td></tr>
+<tr><td>C-16 Panel trạng thái</td><td>Error boundary theo widget + trạng thái query (loading/error/empty)</td><td>Hiện <code>trace_id</code> từ lỗi <code>application/problem+json</code> (06 §13.1)</td></tr>
+<tr><td>Kiểm thử, a11y</td><td>Vitest + React Testing Library; MSW mock REST/SSE; Playwright E2E + axe; eslint-plugin-jsx-a11y chặn build</td><td>Hỗ trợ tiêu chí §10 (WCAG 2.2 AA); vẫn cần kiểm thủ công với trình đọc màn hình</td></tr>
+</tbody></table></div>
 </section>
 
 <section id="s9">
@@ -1901,7 +1917,7 @@ img.wfthumb.m { width: 78px; }
 <tr><td>Tương đối</td><td>18 phút trước</td><td>18 min ago</td><td>—</td></tr>
 </tbody></table></div>
 <ul>
-  <li>Dùng Intl/ICU của Angular, không ghép chuỗi tay; số nhiều theo ICU message format (tiếng Việt không chia số nhiều, tiếng Anh có).</li>
+  <li>Dùng <code>Intl.NumberFormat</code>/<code>Intl.DateTimeFormat</code> của trình duyệt (múi giờ site) và react-i18next với ICU message format (<a href="06-system-architecture.html#adr-20">06 ADR-20</a>), không ghép chuỗi tay; số nhiều theo ICU (tiếng Việt không chia số nhiều, tiếng Anh có). Đổi ngôn ngữ tại chỗ, không tải lại trang.</li>
   <li><b>Luôn lịch Gregory</b>; chặn năm Phật lịch/âm lịch ở ô nhập (H #3: <span class="tag fact">FACT</span> năm "2565-01-29" lọt vào trường ngày của FusionSolar). Ngày lễ âm lịch (Tết) được khai báo là ngày Gregory trong lịch đặc biệt.</li>
   <li>Thời gian trên trang site luôn theo giờ site; hiện múi giờ khi khác trình duyệt. Danh mục nhiều múi giờ: "hôm nay" là ngày địa phương của từng site, có chú thích (BR-DASH-04). Việt Nam không có DST nhưng hệ thống vẫn lưu UTC (K §6 #7).</li>
   <li>Tiền tệ cấu hình theo tổ chức/site (mặc định VND); không quy đổi tỷ giá trong MVP.</li>
