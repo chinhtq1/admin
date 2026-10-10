@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MVP và lộ trình EMS</title>
+<link rel="stylesheet" href="assets/ems-docs.css">
+<style>
+svg .arrowhead { fill: var(--d-edge); }
+svg .gate { fill: var(--d-fill-2); stroke: var(--d-stroke); stroke-width: 2; }
+svg .lane { fill: var(--surface); stroke: none; }
+svg .grid { stroke: var(--border); stroke-width: 1; }
+svg .qline { stroke: var(--d-stroke); stroke-width: 1; stroke-dasharray: 4 4; }
+svg text.zl { font-size: 11px; font-weight: 600; fill: var(--muted); }
+svg text.pt { font-size: 10.5px; font-weight: 600; text-anchor: middle; }
+table.phase td:first-child { white-space: nowrap; }
+td.ids { font-family: var(--mono); font-size: 12px; }
+</style>
+</head>
+<body>
+<nav class="docnav"><div class="inner">
+  <a class="brand" href="index.html">EMS Research</a>
+  <a href="00-executive-summary.html">00 Tóm tắt</a>
+  <a href="01-research-methodology.md">01 Phương pháp</a>
+  <a href="02-market-and-competitor-analysis.html">02 Thị trường</a>
+  <a href="03-functional-catalog.html">03 Chức năng</a>
+  <a href="04-business-requirements.md">04 Yêu cầu</a>
+  <a href="05-domain-model.html">05 Domain</a>
+  <a href="06-system-architecture.html">06 Kiến trúc</a>
+  <a href="07-device-integration.md">07 Tích hợp</a>
+  <a href="08-energy-optimization.md">08 Tối ưu</a>
+  <a href="09-ux-ui-specification.html">09 UX/UI</a>
+  <a href="10-security-and-reliability.md">10 An toàn</a>
+  <a href="11-mvp-and-roadmap.html" aria-current="page">11 Lộ trình</a>
+  <a href="12-traceability-matrix.md">12 Truy vết</a>
+  <a href="13-open-questions-and-risks.md">13 Rủi ro</a>
+  <a href="14-source-register.md">14 Nguồn</a>
+</div></nav>
+<main>
+<header class="doc-header">
+  <div class="kicker">Tài liệu 11 · Product/Delivery Lead (phối hợp Agent J)</div>
+  <h1>MVP và lộ trình: từ giám sát đa hãng tới EMS vận hành và mở rộng thương mại</h1>
+  <div class="meta">Phiên bản 1.0 · Ngày 2026-10-10 · Trạng thái: bản nháp vòng 1, đã áp quyết định thống nhất của Evidence Judge (<a href="notes/K-review-round1.md">K-review-round1 §6</a>) · Mã tính năng theo <a href="03-functional-catalog.html">03</a>, mã FR/NFR theo <a href="04-business-requirements.md">04</a>, mã Q/R/D theo <a href="13-open-questions-and-risks.md">13</a> · Không có mốc lịch; mọi ước lượng là khoảng người-tuần kèm giả định</div>
+</header>
+
+<div class="layout-toc">
+<nav class="toc" aria-label="Mục lục">
+<ol>
+  <li><a href="#s1">1. Tóm tắt</a></li>
+  <li><a href="#s2">2. Cơ sở lập kế hoạch</a></li>
+  <li><a href="#s3">3. Điều chỉnh theo bằng chứng Việt Nam</a></li>
+  <li><a href="#s4">4. Tổng quan lộ trình và phụ thuộc</a></li>
+  <li><a href="#s5">5. Phase 0 — Foundation</a></li>
+  <li><a href="#s6">6. Phase 1 — Monitoring MVP (Gate M1)</a></li>
+  <li><a href="#s7">7. Phase 2 — Operational EMS (Gate M2)</a></li>
+  <li><a href="#s8">8. Phase 3 — Advanced EMS</a></li>
+  <li><a href="#s9">9. Phase 4 — Mở rộng thương mại/thị trường</a></li>
+  <li><a href="#s10">10. Giá trị so với công sức</a></li>
+  <li><a href="#s11">11. Lập luận khả thi của MVP</a></li>
+  <li><a href="#s12">12. Kiểm thử, lab và pilot theo phase</a></li>
+  <li><a href="#s13">13. Những gì sẽ KHÔNG xây</a></li>
+  <li><a href="#s14">14. Truy vết và vấn đề gửi agent khác</a></li>
+  <li><a href="#s15">15. Nguồn</a></li>
+</ol>
+</nav>
+<article>
+
+<!-- ============================================================ -->
+<h2 id="s1">1. Tóm tắt</h2>
+
+<p>Lộ trình chia sản phẩm EMS C&amp;I behind-the-meter, đa site, đa hãng (K §6 #1) thành năm phase. Phase sau chỉ bắt đầu khi phase trước ra cổng (G0…G4), trừ các track có điều kiện ở Phase 3–4 vốn chạy theo <b>trigger</b> từ bằng chứng thị trường và pháp lý chứ không theo thứ tự cố định. <span class="tag proposal">PROPOSAL</span></p>
+
+<div class="table-wrap"><table class="phase">
+<thead><tr><th>Phase</th><th>Mục tiêu một câu</th><th>Cổng ra</th><th>Cỡ</th><th>Người-tuần (khoảng)</th></tr></thead>
+<tbody>
+<tr><td>0 Foundation</td><td>Gỡ các điều kiện chặn (giấy phép, pháp lý, PoC, phần cứng edge, phỏng vấn, pilot) và dựng nền kỹ thuật</td><td>G0</td><td>L</td><td class="num">45–71</td></tr>
+<tr><td>1 Monitoring MVP</td><td>Giám sát đa hãng + tuân thủ giới hạn xuất qua controller native + minh bạch chi phí TOU + cảnh báo/ticket, có thể bán</td><td>G1 = Gate M1 phát hành</td><td>XL</td><td class="num">172–272</td></tr>
+<tr><td>2 Operational EMS</td><td>Edge của ta làm chủ vòng theo từng site (Gate M2) với bộ an toàn P0; gói vận hành O&amp;M</td><td>G2 = site M2 đầu tiên đạt 30 ngày</td><td>L–XL</td><td class="num">96–158 (+8–14 IEC 104 có điều kiện)</td></tr>
+<tr><td>3 Advanced EMS</td><td>Tối ưu dựa trên dự báo (tầng 3), demand, ngân sách xuất, EV, phân tích và API — theo trigger</td><td>G3 theo track</td><td>XL</td><td class="num">146–230 (nếu chạy mọi track)</td></tr>
+<tr><td>4 Commercial/Market</td><td>VPP-capable/DR, DPPA, giao thức P2, white-label, chứng nhận — theo trigger</td><td>G4 theo track</td><td>XL</td><td class="num">118–210</td></tr>
+</tbody></table></div>
+
+<p><b>Bốn quyết định chính của tài liệu này</b> (chi tiết và phương án ở <a href="13-open-questions-and-risks.md#5-quyết-định-cần-chốt-d-nn">13 §5</a>):</p>
+<ol>
+  <li><b>MVP theo K (Gate M1 + Gate M2) được giao trong hai phase.</b> Phase 1 phát hành giám sát và Gate M1; Phase 2 bật Gate M2 theo từng site. Lý do: giá trị số 1–3 ở Việt Nam đạt được ở Gate M1, còn bộ an toàn P0 của Gate M2 cần HIL, pen-test và trực ca 24/7 (D-01). <span class="tag proposal">PROPOSAL</span></li>
+  <li><b>Phân hạng lệnh C0–C4 và phê duyệt hai người C3 kéo vào Phase 1</b>, vì cấu hình lưới, cờ chủ vòng và OTA edge ở Gate M1 đã là C3 (CF-28, D-03). <span class="tag proposal">PROPOSAL</span></li>
+  <li><b>Baseline B0</b> ("chi phí nếu không có PV và BESS ≈ ước tính") vào Phase 1 trong báo cáo R2 (GAP-05, D-02). <span class="tag proposal">PROPOSAL</span></li>
+  <li><b>IEC 104, ngân sách xuất 50%, peak shaving theo demand, EV và tầng 3 có trigger rõ ràng</b> thay vì mốc cố định, vì bằng chứng Việt Nam hiện cho thấy giá trị của chúng còn hẹp (§3). <span class="tag inference">INFERENCE</span></li>
+</ol>
+
+<div class="callout warn"><b>Khả thi.</b> Phase 0 + 1 + 2 (MVP theo K) ước tính 313–501 người-tuần. Với đội 8 kỹ sư và hệ số tập trung 0,7, con số này tương đương khoảng 56–89 tuần đội; với 10 kỹ sư là 45–72 tuần. Phase 0 + 1 riêng là 217–343 người-tuần (khoảng 39–61 tuần đội với 8 kỹ sư). Đường găng là nhóm edge. Lập luận và danh sách cắt ở <a href="#s11">§11</a>. <span class="tag inference">INFERENCE</span></div>
+
+<!-- ============================================================ -->
+<h2 id="s2">2. Cơ sở lập kế hoạch</h2>
+
+<h3>2.1 Giả định đội và cách ước lượng</h3>
+<ul>
+  <li><b>Đội:</b> 6–10 kỹ sư trong 12–18 tháng đầu, gồm 1–2 người edge/firmware; stack Java/Spring Boot + Angular đã quen; cộng 1 PO, 1 UX, 0,5 QA chuyên trách lab (A-05, <a href="06-system-architecture.html#s3">06 §3.3</a>). <span class="tag inference">INFERENCE</span> Quy mô thật là Q-43.</li>
+  <li><b>Người-tuần (pw)</b> = một kỹ sư làm toàn thời gian một tuần cho thiết kế chi tiết, code, test tự động, tài liệu kỹ thuật và sửa lỗi của hạng mục. Không gồm: tư vấn luật bên ngoài, pen-test bên thứ ba, chi phí mua thiết bị, thời gian chờ nhà cung cấp.</li>
+  <li><b>Hệ số tập trung 0,7</b> khi đổi pw sang tuần đội (họp, hỗ trợ pilot, sự cố). Tuần đội = tổng pw ÷ (số kỹ sư × 0,7). Đây không phải mốc lịch.</li>
+  <li><b>Phương pháp:</b> chia mỗi phase thành workstream; mỗi workstream ước lượng khoảng thấp–cao bằng so sánh với khối lượng FR/AC ở 04 và độ khó kỹ thuật ở 06/07/08/10. Biên cao bao rủi ro đã biết (giấy phép buộc tự xây edge, driver thiếu tài liệu). <span class="tag inference">INFERENCE</span> Sai số ±30% là bình thường ở giai đoạn này.</li>
+</ul>
+
+<h3>2.2 Thang cỡ T-shirt</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Cỡ (T-shirt)</th><th>XS</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>XXL</th></tr></thead>
+<tbody><tr><td>Người-tuần</td><td class="num">&lt; 5</td><td class="num">5–15</td><td class="num">15–40</td><td class="num">40–100</td><td class="num">100–200</td><td class="num">&gt; 200</td></tr></tbody>
+</table></div>
+
+<h3 id="s2-3">2.3 Ánh xạ hạng phát hành của 03/04 sang phase lộ trình</h3>
+<p>03 và 04 dùng nhãn "MVP / Later (Phase 1) / Later (Phase 2)". Tài liệu này dùng Phase 0–4. Hai hệ trùng chữ "Phase" nên luôn ghi rõ "hạng 03" hay "lộ trình" (CF-29).</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Hạng ở 03/04</th><th>Số FR (04)</th><th>Phase lộ trình</th><th>Ghi chú</th></tr></thead>
+<tbody>
+<tr><td>MVP, không gắn Gate M2</td><td class="num">133</td><td>Phase 1 (trừ FR-OPT-002 → Phase 2)</td><td>Cộng FR-SEC-006/007 kéo lên (CF-28) và FR-BESS-011 (cấm C4, mọi phiên bản) → 135 FR ở Phase 1</td></tr>
+<tr><td>MVP, Gate M2</td><td class="num">13</td><td>Phase 2</td><td>FR-BESS-005, 007, 009; FR-GRID-005; FR-OPT-001, 004; FR-INT-018; FR-SEC-010, 012, 013, 021 (FR-SEC-006/007 đã lên Phase 1)</td></tr>
+<tr><td>Later (Phase 1)</td><td class="num">95</td><td>26 FR vào Phase 2 (vận hành O&amp;M, điều kiện an toàn M2); 3 FR có điều kiện ở Phase 2; còn lại Phase 3</td><td>Danh sách ở §7.2 và §8.2</td></tr>
+<tr><td>Later (Phase 2)</td><td class="num">24</td><td>Phase 4</td><td>§9.2</td></tr>
+<tr><td>Out of scope / CẤM</td><td>—</td><td>Không làm</td><td>§13</td></tr>
+</tbody></table></div>
+
+<h3>2.4 Nguyên tắc xếp phase</h3>
+<ol>
+  <li><b>Thứ tự giá trị Việt Nam</b> (K §6 #3): tuân thủ giới hạn xuất/trần nhập → minh bạch chi phí TOU → O&amp;M đa hãng → tối ưu BESS. <span class="tag inference">INFERENCE</span></li>
+  <li><b>Native trước, edge sau</b> (K §6 #15): Phase 1 dùng controller native có readback; vòng của edge chỉ ở Phase 2.</li>
+  <li><b>An toàn không bị cắt để giữ tiến độ.</b> Mọi FR/NFR an toàn của một gate phải xong trước khi gate đó bật cho bất kỳ site nào (04 §1.3).</li>
+  <li><b>Site chỉ có PV là công dân hạng nhất</b> (K §6 #2): Phase 1 phải bán được cho site không có BESS.</li>
+  <li><b>Trigger thay cho đoán</b>: tính năng có giá trị phụ thuộc văn bản chưa kiểm chứng (giá hai thành phần, trần 50%, IEC 104, DR) chỉ bắt đầu khi câu hỏi tương ứng ở 13 đóng.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2 id="s3">3. Điều chỉnh theo bằng chứng Việt Nam</h2>
+
+<p>Bảng dưới nêu bằng chứng (đều ghi nhận qua kết quả tìm kiếm của các agent, xem <a href="02-market-and-competitor-analysis.html">02 §3.3</a>) và hệ quả cho thứ tự phase so với khung chung "Monitoring → Operational → Advanced → Market".</p>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Bằng chứng</th><th>Nhãn</th><th>Hệ quả cho lộ trình</th></tr></thead>
+<tbody>
+<tr><td>VBHN 52 (NĐ 58 + 243) Điều 10(5) theo tóm tắt: hệ trung áp không bán dư phải có thiết bị bật/tắt phát ngược; hệ trung áp có bán dư phải kết nối hệ thống giám sát/điều khiển của cấp điều độ; hạ áp không cần cả hai</td><td><span class="tag fact">FACT</span> Med (theo nghiên cứu FS trước); yêu cầu hạ áp <span class="tag unknown">UNKNOWN</span> (Q-05)</td><td><b>Giới hạn xuất/zero-export lên Phase 1</b> (qua native) cùng bằng chứng tuân thủ F-REP-13 và test F-INT-27. Đọc rơ-le chống phát ngược (F-GRID-13) ở Phase 1</td></tr>
+<tr><td>28.254 hệ TSXTTT; chỉ khoảng 287 hệ đăng ký bán dư (<a href="https://vietnamnet.vn/en/rooftop-solar-saves-billions-of-dong-but-one-bottleneck-remains-2552186.html">vietnamnet</a>); đến 08/2026 chưa có giao dịch bán dư theo NĐ 243 (<a href="https://www.pv-magazine.com/2026/09/22/vietnam-pushes-provinces-to-accelerate-rooftop-solar-rollout/">pv-magazine</a>)</td><td><span class="tag fact">FACT</span>; hệ quả <span class="tag inference">INFERENCE</span></td><td><b>IEC 104 không kéo lên sớm vô điều kiện:</b> slave 104 trên edge là Phase 2 <i>có điều kiện</i> (khách trung áp bán dư hoặc PC yêu cầu, K R-10, D-07). <b>Ngân sách xuất 50%</b> ở Phase 3 có trigger (D-15)</td></tr>
+<tr><td>NĐ 243/2026: bán dư tối đa 50% sản lượng thực phát; điện xả BESS tính vào điện dư (<a href="https://luatvietnam.vn/tin-van-ban-moi/tu-26-6-2026-dien-mat-troi-mai-nha-duoc-ban-toi-da-50-san-luong-dien-du-186-109883-article.html">luatvietnam</a>, <a href="https://www.reccessary.com/en/news/vietnam-solar-grid-export-dppa">reccessary</a>)</td><td><span class="tag fact">FACT</span>; kỳ tính và mẫu số <span class="tag unknown">UNKNOWN</span> (Q-04)</td><td>Phân bổ luồng có <code>attribution_version</code> ở Phase 1 (F-HIST-06) để dữ liệu sẵn sàng; bộ đếm ngân sách và sổ cái nguồn gốc ở Phase 3D</td></tr>
+<tr><td>QĐ 963/QĐ-BCT: cao điểm 17h30–22h30 T2–T7, thấp điểm 0h–6h, Chủ nhật không cao điểm (<a href="https://thuvienphapluat.vn/van-ban/Tai-nguyen-Moi-truong/Quyet-dinh-963-QD-BCT-2026-khung-gio-cao-diem-thap-diem-cua-he-thong-dien-quoc-gia-703327.aspx">thuvienphapluat</a>); giá QĐ 1279: cao điểm ≈ 2,8× thấp điểm (<a href="https://thuvienphapluat.vn/phap-luat-nha-dat/toan-van-quyet-dinh-1279-qd-bct-2025-quy-dinh-ve-gia-ban-dien-3357.html">thuvienphapluat</a>)</td><td><span class="tag fact">FACT</span>; ngày áp vào hóa đơn <span class="tag unknown">UNKNOWN</span> (Q-01)</td><td><b>Hóa đơn bóng TOU và bộ sinh lịch luật tầng 2 lên Phase 1</b>, xuất ra lịch native cho BESS ở Gate M1. Hai lịch song song (pháp lý/hóa đơn) là bắt buộc từ Phase 1 vì ngày áp chưa chắc</td></tr>
+<tr><td>Giá hai thành phần: thí điểm cho khách ≥ 200.000 kWh/tháng, thanh toán thật 07/2026–07/2027 theo dự thảo (<a href="https://tapchicongthuong.vn/thi-diem-ap-dung-gia-dien-hai-thanh-phan-tu-1-1-2026-218800.htm">tapchicongthuong</a>); chu kỳ 30 phút</td><td><span class="tag fact">FACT</span> (lịch, chu kỳ); cơ sở tính <span class="tag unknown">UNKNOWN</span> (K R-16); "đại đa số C&amp;I chưa trả" <span class="tag inference">INFERENCE</span> (K R-17)</td><td><b>Peak shaving theo demand không ở MVP</b> (Phase 3C có trigger). <b>Trần nhập vật lý</b> (MBA/hợp đồng) vẫn ở Phase 1 (native) và Phase 2 (edge) vì có giá trị vận hành độc lập với biểu giá. R3 Phân tích công suất ở Phase 1 để khách thí điểm thấy dữ liệu trước khi có tối ưu</td></tr>
+<tr><td>Trạm sạc kinh doanh có biểu giá riêng và phải có công tơ riêng (<a href="https://vneconomy.vn/automotive/quy-dinh-moi-ve-gia-ban-dien-cho-tram-sac-xe-dien.htm">vneconomy</a>)</td><td><span class="tag fact">FACT</span></td><td>Đo EV qua công tơ (F-EV-01) và nhiều biểu giá theo điểm đo (F-TAR-04) ở Phase 1; điều khiển EV (OCPP/DLM) ở Phase 3E có trigger</td></tr>
+<tr><td>Không thấy chương trình DR có trả tiền cho C&amp;I; khung giá BESS chỉ cho FTM (08 §16.1)</td><td><span class="tag unknown">UNKNOWN</span> (Q-13)</td><td>VPP/DR ở Phase 4, chỉ ở dạng "VPP-capable" (K #23)</td></tr>
+<tr><td>Huawei SmartEMO đã có demand charge theo TOU, thiết lập giá điện, phân tích doanh thu (release note 31/03/2026, nghiên cứu FS trước); OEM cho dashboard miễn phí</td><td><span class="tag fact">FACT</span> Med</td><td>Phase 1 phải khác biệt bằng <b>đa hãng</b>, bằng chứng tuân thủ, hóa đơn bóng độc lập và O&amp;M đa hãng — không cạnh tranh bằng dashboard một hãng (R-40)</td></tr>
+<tr><td>Khung pháp lý dữ liệu/an ninh mạng VN chưa kiểm chứng (10 §3.3)</td><td><span class="tag unknown">UNKNOWN</span> (Q-08)</td><td>Quyết định hosting tại VN (ADR-18) là việc của Phase 0, không để tới Phase 1</td></tr>
+</tbody></table></div>
+
+<p><b>Khác hướng FusionSolar trước.</b> Nghiên cứu FS trước đề xuất nền tảng giám sát/O&amp;M PV chỉ đọc, dữ liệu 1–5 phút. Lộ trình này giữ toàn bộ lớp đó làm Phase 1 (nhóm sản phẩm 1 của 02) và thêm ghi qua native (Gate M1) ngay trong Phase 1, vì zero-export và khung cao điểm tối QĐ 963 làm giá trị chuyển sang cấu hình và lập lịch (04 §1.2). Tần suất dữ liệu đổi sang edge 1 s / cloud 5 s–300 s (K #19). Edge là bắt buộc ở site có lệnh, site chỉ giám sát dùng connector cloud chỉ đọc (K #13). <span class="tag proposal">PROPOSAL</span></p>
+
+<!-- ============================================================ -->
+<h2 id="s4">4. Tổng quan lộ trình và phụ thuộc</h2>
+
+<figure>
+<div class="diagram">
+<svg viewBox="0 0 1100 650" role="img" aria-labelledby="dep-t dep-d">
+<title id="dep-t">Sơ đồ phụ thuộc giữa các phase</title>
+<desc id="dep-d">Năm cột Phase 0 đến Phase 4. Các hạng mục Phase 0 (pháp lý, giấy phép, PoC, phần cứng edge, hợp đồng dữ liệu, phỏng vấn, lab) mở khóa Phase 1. Phase 1 hội tụ ở cổng G1 Gate M1. G1 mở Phase 2, hội tụ ở cổng G2 site M2 đầu tiên. Phase 3 và 4 là các track kích hoạt bởi trigger bên ngoài.</desc>
+<defs>
+<marker id="m-dep" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="lane" x="8" y="8" width="208" height="520" rx="6"/>
+<rect class="lane" x="226" y="8" width="226" height="520" rx="6"/>
+<rect class="lane" x="462" y="8" width="226" height="520" rx="6"/>
+<rect class="lane" x="698" y="8" width="196" height="520" rx="6"/>
+<rect class="lane" x="904" y="8" width="188" height="520" rx="6"/>
+<text class="zl" x="18" y="26">PHASE 0 · FOUNDATION</text>
+<text class="zl" x="236" y="26">PHASE 1 · MONITORING MVP</text>
+<text class="zl" x="472" y="26">PHASE 2 · OPERATIONAL EMS</text>
+<text class="zl" x="708" y="26">PHASE 3 · ADVANCED (trigger)</text>
+<text class="zl" x="914" y="26">PHASE 4 · MARKET (trigger)</text>
+
+<!-- Phase 0 -->
+<rect class="box" x="18" y="40" width="188" height="44" rx="5"/><text x="26" y="58">Kiểm chứng pháp lý G-13</text><text class="small" x="26" y="74">Q-01, Q-05, Q-08</text>
+<rect class="box" x="18" y="100" width="188" height="44" rx="5"/><text x="26" y="118">Giấy phép TSL/OpenEMS/broker</text><text class="small" x="26" y="134">Q-14, Q-15, Q-16</text>
+<rect class="box" x="18" y="160" width="188" height="44" rx="5"/><text x="26" y="178">PoC-01/02/04/06</text><text class="small" x="26" y="194">lưu trữ, broker, RLS, SSE</text>
+<rect class="box" x="18" y="220" width="188" height="44" rx="5"/><text x="26" y="238">PoC-03 edge + phần cứng</text><text class="small" x="26" y="254">ADR-07, ADR-19, Q-36</text>
+<rect class="box" x="18" y="280" width="188" height="44" rx="5"/><text x="26" y="298">Hợp đồng điểm/lệnh v1</text><text class="small" x="26" y="314">vector vàng + bộ mô phỏng</text>
+<rect class="box" x="18" y="340" width="188" height="44" rx="5"/><text x="26" y="358">Phỏng vấn + chọn pilot</text><text class="small" x="26" y="374">Q-18, Q-20, D-10</text>
+<rect class="box" x="18" y="400" width="188" height="44" rx="5"/><text x="26" y="418">Lab thiết bị L5</text><text class="small" x="26" y="434">07 §11.4</text>
+<rect class="gate" x="38" y="470" width="148" height="40" rx="5"/><text class="title" x="56" y="495">G0 · ra Foundation</text>
+
+<!-- Phase 1 -->
+<rect class="box" x="236" y="40" width="206" height="44" rx="5"/><text x="244" y="58">Tenant, IAM, audit, RLS</text><text class="small" x="244" y="74">W1 · F-ORG, F-SEC-01…04, 12</text>
+<rect class="box" x="236" y="100" width="206" height="44" rx="5"/><text x="244" y="118">Edge + MQTT + store-and-forward</text><text class="small" x="244" y="134">W2 · F-INT-01…12</text>
+<rect class="box" x="236" y="160" width="206" height="44" rx="5"/><text x="244" y="178">Driver 1–3 + commissioning</text><text class="small" x="244" y="194">W3, W11 · F-INT-03…07, 25…29</text>
+<rect class="box" x="236" y="220" width="206" height="44" rx="5"/><text x="244" y="238">Ingest, tổng hợp, quality</text><text class="small" x="244" y="254">W4 · F-HIST-01…07, 10</text>
+<rect class="box" x="236" y="280" width="206" height="44" rx="5"/><text x="244" y="298">Dashboard, biểu giá, R1–R3, R8</text><text class="small" x="244" y="314">W6, W7 · hóa đơn bóng + B0</text>
+<rect class="box" x="236" y="340" width="206" height="44" rx="5"/><text x="244" y="358">Cảnh báo L0/L1 + ticket</text><text class="small" x="244" y="374">W8 · F-ALM-01…14, 21</text>
+<rect class="box alt" x="236" y="400" width="206" height="44" rx="5"/><text x="244" y="418">Gate M1: native + C3 + tầng 2</text><text class="small" x="244" y="434">W9, W10 · lệnh ký, có hạn, readback</text>
+<rect class="gate" x="264" y="470" width="150" height="40" rx="5"/><text class="title" x="280" y="495">G1 · Gate M1 GA</text>
+
+<!-- Phase 2 -->
+<rect class="box" x="472" y="40" width="206" height="44" rx="5"/><text x="480" y="58">Arbiter 12 mức + tầng 1 + SOE</text><text class="small" x="480" y="74">V1 · F-OPT-01/03, F-BESS-06/08/10</text>
+<rect class="box" x="472" y="100" width="206" height="44" rx="5"/><text x="480" y="118">Bộ an toàn P0 của M2</text><text class="small" x="480" y="134">V2 · interlock, Governor, kill switch</text>
+<rect class="box" x="472" y="160" width="206" height="44" rx="5"/><text x="480" y="178">Driver 4 tủ BESS + watchdog</text><text class="small" x="480" y="194">V3 · F-INT-28, Q-27, Q-28</text>
+<rect class="box" x="472" y="220" width="206" height="44" rx="5"/><text x="480" y="238">HIL, game day, pen-test, 24/7</text><text class="small" x="480" y="254">V3, V4 · NFR-OBS-008</text>
+<rect class="box" x="472" y="280" width="206" height="44" rx="5"/><text x="480" y="298">Gói O&amp;M: work order, SLA, PM</text><text class="small" x="480" y="314">V7 · F-ALM-07…18</text>
+<rect class="box" x="472" y="340" width="206" height="44" rx="5"/><text x="480" y="358">PR/availability, DQ, đối soát</text><text class="small" x="480" y="374">V8–V10</text>
+<rect class="box ext" x="472" y="400" width="206" height="44" rx="5"/><text x="480" y="418">Slave IEC 104 (điều kiện)</text><text class="small" x="480" y="434">V12 · trigger D-07</text>
+<rect class="gate" x="500" y="470" width="150" height="40" rx="5"/><text class="title" x="512" y="495">G2 · site M2 đầu tiên</text>
+
+<!-- Phase 3 -->
+<rect class="box" x="708" y="40" width="176" height="44" rx="5"/><text x="716" y="58">3A Tầng 3 MILP/MPC</text><text class="small" x="716" y="74">backtest + chạy bóng</text>
+<rect class="box" x="708" y="100" width="176" height="44" rx="5"/><text x="716" y="118">3B Dự báo đa nguồn</text><text class="small" x="716" y="134">F-ADV-02…06</text>
+<rect class="box ext" x="708" y="160" width="176" height="44" rx="5"/><text x="716" y="178">3C Demand (điều kiện)</text><text class="small" x="716" y="194">F-OPT-16, F-TAR-07</text>
+<rect class="box ext" x="708" y="220" width="176" height="44" rx="5"/><text x="716" y="238">3D Ngân sách xuất 50%</text><text class="small" x="716" y="254">F-GRID-08, F-OPT-17</text>
+<rect class="box ext" x="708" y="280" width="176" height="44" rx="5"/><text x="716" y="298">3E EV OCPP/DLM</text><text class="small" x="716" y="314">F-EV-02…08</text>
+<rect class="box" x="708" y="340" width="176" height="44" rx="5"/><text x="716" y="358">3J API, webhook</text><text class="small" x="716" y="374">F-INT-19/20, F-SEC-22</text>
+<rect class="box" x="708" y="400" width="176" height="44" rx="5"/><text x="716" y="418">3I Báo cáo R7 B1/B2, ESG</text><text class="small" x="716" y="434">F-REP-07, 15…18</text>
+
+<!-- Phase 4 -->
+<rect class="box ext" x="914" y="40" width="168" height="44" rx="5"/><text x="922" y="58">4A VPP-capable/DR</text><text class="small" x="922" y="74">F-OPT-20</text>
+<rect class="box ext" x="914" y="100" width="168" height="44" rx="5"/><text x="922" y="118">4B DPPA, giá động</text><text class="small" x="922" y="134">F-TAR-11, F-ADV-11</text>
+<rect class="box" x="914" y="160" width="168" height="44" rx="5"/><text x="922" y="178">4C/4D Giao thức P2</text><text class="small" x="922" y="194">API lệnh bên thứ ba</text>
+<rect class="box" x="914" y="220" width="168" height="44" rx="5"/><text x="922" y="238">4E White-label, silo</text><text class="small" x="922" y="254">billing (khoảng trống)</text>
+<rect class="box" x="914" y="280" width="168" height="44" rx="5"/><text x="922" y="298">4F Chứng nhận</text><text class="small" x="922" y="314">ISO 27001 → 62443-4-2</text>
+<rect class="box" x="914" y="340" width="168" height="44" rx="5"/><text x="922" y="358">4G ML L3, microgrid</text><text class="small" x="922" y="374">F-ADV-07…10</text>
+
+<!-- triggers -->
+<rect class="box ext" x="226" y="560" width="160" height="40" rx="5"/><text x="234" y="578">Trigger: khách trung áp</text><text class="small" x="234" y="593">bán dư / PC yêu cầu (Q-06)</text>
+<rect class="box ext" x="400" y="560" width="160" height="40" rx="5"/><text x="408" y="578">≥ 3 site M2 × 90 ngày</text><text class="small" x="408" y="593">+ PoC-05, Q-17</text>
+<rect class="box ext" x="574" y="560" width="160" height="40" rx="5"/><text x="582" y="578">Q-03 đóng + khách</text><text class="small" x="582" y="593">đang trả phí công suất</text>
+<rect class="box ext" x="748" y="560" width="160" height="40" rx="5"/><text x="756" y="578">Q-04 đóng + khách bán dư</text><text class="small" x="756" y="593">/ khách EV vượt trần</text>
+<rect class="box ext" x="922" y="560" width="160" height="40" rx="5"/><text x="930" y="578">Q-13 DR trả tiền</text><text class="small" x="930" y="593">/ khách DPPA</text>
+<text class="small" x="18" y="585">Hộp nét đứt = chỉ chạy khi có trigger</text>
+
+<!-- edges P0 -> P1 -->
+<line class="edge" x1="206" y1="62" x2="236" y2="302" marker-end="url(#m-dep)"/>
+<line class="edge" x1="206" y1="70" x2="236" y2="415" marker-end="url(#m-dep)"/>
+<line class="edge" x1="206" y1="122" x2="236" y2="122" marker-end="url(#m-dep)"/>
+<line class="edge" x1="206" y1="128" x2="236" y2="238" marker-end="url(#m-dep)"/>
+<line class="edge" x1="206" y1="182" x2="236" y2="62" marker-end="url(#m-dep)"/>
+<line class="edge" x1="206" y1="188" x2="236" y2="245" marker-end="url(#m-dep)"/>
+<line class="edge" x1="206" y1="242" x2="236" y2="130" marker-end="url(#m-dep)"/>
+<line class="edge" x1="206" y1="302" x2="236" y2="182" marker-end="url(#m-dep)"/>
+<line class="edge" x1="206" y1="362" x2="236" y2="190" marker-end="url(#m-dep)"/>
+<line class="edge" x1="206" y1="422" x2="236" y2="196" marker-end="url(#m-dep)"/>
+<line class="edge dash" x1="112" y1="444" x2="112" y2="470"/>
+<!-- P1 internal -->
+<line class="edge" x1="339" y1="144" x2="339" y2="160" marker-end="url(#m-dep)"/>
+<line class="edge" x1="339" y1="264" x2="339" y2="280" marker-end="url(#m-dep)"/>
+<line class="edge" x1="339" y1="444" x2="339" y2="470" marker-end="url(#m-dep)"/>
+<line class="edge" x1="442" y1="362" x2="414" y2="478" marker-end="url(#m-dep)"/>
+<!-- G1 -> P2 -->
+<line class="edge" x1="414" y1="482" x2="472" y2="72" marker-end="url(#m-dep)"/>
+<line class="edge" x1="414" y1="488" x2="472" y2="300" marker-end="url(#m-dep)"/>
+<line class="edge" x1="442" y1="180" x2="472" y2="180" marker-end="url(#m-dep)"/>
+<line class="edge" x1="575" y1="84" x2="575" y2="100" marker-end="url(#m-dep)"/>
+<line class="edge" x1="575" y1="144" x2="575" y2="220" marker-end="url(#m-dep)"/>
+<line class="edge" x1="620" y1="204" x2="620" y2="220" marker-end="url(#m-dep)"/>
+<line class="edge" x1="678" y1="242" x2="650" y2="478" marker-end="url(#m-dep)"/>
+<line class="edge dash" x1="306" y1="560" x2="520" y2="444" marker-end="url(#m-dep)"/>
+<!-- G2 -> P3 -->
+<line class="edge" x1="650" y1="484" x2="708" y2="62" marker-end="url(#m-dep)"/>
+<line class="edge" x1="678" y1="362" x2="708" y2="418" marker-end="url(#m-dep)"/>
+<line class="edge dash" x1="480" y1="560" x2="708" y2="70" marker-end="url(#m-dep)"/>
+<line class="edge dash" x1="654" y1="560" x2="708" y2="190" marker-end="url(#m-dep)"/>
+<line class="edge dash" x1="828" y1="560" x2="796" y2="324" marker-end="url(#m-dep)"/>
+<line class="edge dash" x1="790" y1="560" x2="760" y2="264" marker-end="url(#m-dep)"/>
+<!-- P3 -> P4 -->
+<line class="edge" x1="884" y1="62" x2="914" y2="62" marker-end="url(#m-dep)"/>
+<line class="edge" x1="884" y1="362" x2="914" y2="182" marker-end="url(#m-dep)"/>
+<line class="edge dash" x1="1002" y1="560" x2="998" y2="144" marker-end="url(#m-dep)"/>
+</svg>
+</div>
+<figcaption>Hình 1. Phụ thuộc chính. Mũi tên nét liền = phụ thuộc bắt buộc; nét đứt = trigger bên ngoài. Chi tiết từng mũi tên ở bảng 4.1.</figcaption>
+</figure>
+
+<h3>4.1 Bảng phụ thuộc</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Từ</th><th>Tới</th><th>Vì sao</th><th>Mã 13</th></tr></thead>
+<tbody>
+<tr><td>Kiểm chứng pháp lý (Q-01, Q-05)</td><td>Biểu giá/hóa đơn bóng; Gate M1 giới hạn xuất</td><td>Mặc định lịch hóa đơn; định nghĩa vi phạm và vai trò của thiết bị chống phát ngược</td><td>Q-01, Q-05, Q-07</td></tr>
+<tr><td>Q-08 pháp lý dữ liệu</td><td>ADR-18 hosting, retention</td><td>Môi trường production phải đặt đúng nơi ngay từ Phase 1</td><td>Q-08, R-05</td></tr>
+<tr><td>Giấy phép TSL (Q-14), PoC-01, PoC-04</td><td>Ingest/tổng hợp (W4), RLS</td><td>ADR-06, ADR-08</td><td>Q-14, Q-38, R-08, R-18</td></tr>
+<tr><td>Giấy phép OpenEMS (Q-15), PoC-03, phần cứng</td><td>Edge (W2)</td><td>ADR-07, ADR-19; đường găng</td><td>Q-15, Q-36, R-11</td></tr>
+<tr><td>PoC-02 broker + Q-16</td><td>Uplink MQTT</td><td>ADR-04</td><td>Q-16</td></tr>
+<tr><td>Hợp đồng điểm/lệnh v1</td><td>Driver, ingest, lệnh</td><td>Edge và cloud phát triển song song theo hợp đồng (06 D-06-08)</td><td>—</td></tr>
+<tr><td>Phỏng vấn, thị phần</td><td>Thứ tự driver, ticket/work order</td><td>FR-INT-006; D-08</td><td>Q-18, Q-20, R-41</td></tr>
+<tr><td>Lab L5</td><td>Driver <code>VERIFIED_LAB</code></td><td>Không ghi xuống thiết bị qua driver chưa kiểm chứng (K #35)</td><td>R-12</td></tr>
+<tr><td>Edge + driver + command service</td><td>Gate M1</td><td>Mọi ghi native đi qua edge, có ký và readback (K R-11)</td><td>R-13</td></tr>
+<tr><td>G1</td><td>Phase 2</td><td>Vòng edge dựng trên edge, driver, lệnh đã chạy ổn ở M1</td><td>—</td></tr>
+<tr><td>Driver 4 tủ BESS + test watchdog</td><td>G2</td><td>Không có thiết bị đích đủ điều kiện thì không có site M2</td><td>Q-27, Q-28, R-25, R-45</td></tr>
+<tr><td>HIL, game day, pen-test, trực 24/7</td><td>G2</td><td>Điều kiện M2 của 10 (X-10-10)</td><td>R-32</td></tr>
+<tr><td>G2 + ≥ 90 ngày dữ liệu + PoC-05</td><td>3A tầng 3</td><td>Cổng bật tầng 3 (08 §14.4)</td><td>Q-50, Q-51, R-24</td></tr>
+<tr><td>Q-03 / Q-04 / khách EV</td><td>3C / 3D / 3E</td><td>Giá trị chưa chứng minh tới khi có văn bản và khách</td><td>D-14, D-15, D-16</td></tr>
+<tr><td>Q-13 / khách DPPA</td><td>4A / 4B</td><td>Không có cơ chế trả tiền đã biết</td><td>Q-13</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="s5">5. Phase 0 — Foundation</h2>
+
+<h3>5.1 Mục tiêu</h3>
+<ul>
+  <li>Đóng các câu hỏi chặn kiến trúc: giấy phép (Q-14, Q-15, Q-16), pháp lý dữ liệu (Q-08), RLS trên tổng hợp (Q-38), thông lượng (Q-39), edge runtime và phần cứng (Q-36).</li>
+  <li>Xác nhận thị trường bằng khách thật: phỏng vấn ≥ 5 đơn vị O&amp;M/installer và ≥ 2 chủ C&amp;I; thu ≥ 2 hóa đơn EVN; chốt danh sách pilot (D-10).</li>
+  <li>Đóng băng hợp đồng điểm/lệnh v1 (07 §7–§8) để edge và cloud làm song song.</li>
+  <li>Dựng nền kỹ thuật: repo, CI/CD, test kiến trúc, bộ test cross-tenant, IdP, môi trường dev/staging tại VN, bộ mô phỏng thiết bị lõi.</li>
+</ul>
+
+<h3>5.2 Bao gồm</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Workstream</th><th>Nội dung</th><th>Mã liên quan</th><th class="num">pw</th></tr></thead>
+<tbody>
+<tr><td>F0-1 Pháp lý và giấy phép</td><td>Điều phối tư vấn luật: K G-13 (NĐ 58/243, TT 29/2026, QĐ 963, thí điểm hai thành phần, QĐ 1570, luật dữ liệu), giấy phép TSL, OpenEMS, broker</td><td>Q-01, Q-03…Q-06, Q-08, Q-14…Q-16</td><td class="num">3–5</td></tr>
+<tr><td>F0-2 Khám phá khách hàng</td><td>Phỏng vấn O&amp;M/installer/chủ C&amp;I; thu hóa đơn EVN, danh mục thiết bị; kiểm thử khả dụng wireframe UI-01/03/14/16 với 5 operator (R-09-06)</td><td>Q-18…Q-20, Q-23, A-01</td><td class="num">6–10</td></tr>
+<tr><td>F0-3 PoC-01 lưu trữ</td><td>1.000 site giả lập, 35 k mẫu/s, đỉnh 350 k; CAGG; tính lại</td><td>ADR-06, NFR-PERF-004</td><td class="num">4–6</td></tr>
+<tr><td>F0-4 PoC-02 broker</td><td>10.000 edge mTLS, Message Expiry, ACL theo <code>edge_id</code></td><td>ADR-04</td><td class="num">3–4</td></tr>
+<tr><td>F0-5 PoC-03 edge runtime</td><td>OpenEMS Edge vs runtime Java tự xây trên 2–3 phần cứng ứng viên; chu kỳ p99 ≤ 200 ms với 5.000 điểm</td><td>ADR-07, ADR-19, NFR-PERF-006</td><td class="num">6–10</td></tr>
+<tr><td>F0-6 PoC-04, PoC-06</td><td>RLS + SECURITY DEFINER trên hypertable/CAGG; SSE 4.000 kết nối</td><td>ADR-08, ADR-03</td><td class="num">2–3</td></tr>
+<tr><td>F0-7 Hợp đồng v1</td><td>Schema telemetry/lệnh/ack (Protobuf + JSON Schema), vector vàng, quy ước dấu/đơn vị/bucket theo K #4–#8</td><td>NFR-DATA-003, FR-INT-003</td><td class="num">4–6</td></tr>
+<tr><td>F0-8 Nền kỹ thuật</td><td>CI/CD, test kiến trúc (ranh giới mặt phẳng), khung test cross-tenant, Keycloak, môi trường VN, quan sát cơ bản</td><td>ADR-01, ADR-17, NFR-SEC-007</td><td class="num">8–12</td></tr>
+<tr><td>F0-9 Bộ mô phỏng lõi</td><td>Modbus server nạp register map YAML; công tơ có dấu cấu hình được; SunSpec chain; edge ảo hàng loạt</td><td>F-INT-24, FR-INT-014</td><td class="num">6–10</td></tr>
+<tr><td>F0-10 Phần cứng và lab</td><td>RFQ 2–3 nhà cung cấp gateway; đặt mua lab theo 07 §11.4 (phần cho Phase 1)</td><td>Q-36, ADR-19</td><td class="num">3–5</td></tr>
+<tr><td colspan="3"><b>Tổng Phase 0 · cỡ L</b></td><td class="num"><b>45–71</b></td></tr>
+</tbody></table></div>
+
+<h3>5.3 Không bao gồm</h3>
+<ul>
+  <li>Tính năng cho người dùng cuối; mọi tính năng F- của Phase 1.</li>
+  <li>PoC-05 solver (để trước Phase 3A).</li>
+  <li>Pen-test bên thứ ba (để trước G2).</li>
+</ul>
+
+<h3>5.4 Phụ thuộc</h3>
+<p>Tư vấn luật bên ngoài; nhà cung cấp phần cứng; khách đồng ý phỏng vấn. Không phụ thuộc phase nào trước.</p>
+
+<h3>5.5 Cổng ra G0</h3>
+<ol>
+  <li>ADR-04, ADR-06, ADR-07, ADR-08, ADR-18, ADR-19 ở trạng thái Accepted, hoặc phương án dự phòng đã chọn (D-04, D-05, D-17).</li>
+  <li>PoC-01, 02, 03, 04 đạt tiêu chí của <a href="06-system-architecture.html#s18">06 §18</a> hoặc có báo cáo không đạt + phương án thay thế đã ước lượng lại.</li>
+  <li>Kết quả kiểm chứng pháp lý cho Q-08 (hosting) có văn bản; Q-01, Q-05 có câu trả lời hoặc quyết định "chạy hai lịch/ native trước" được ghi.</li>
+  <li>≥ 5 phỏng vấn O&amp;M/installer có biên bản; thứ tự driver xác nhận hoặc sửa (Q-20); quyết định D-08 (ticket/work order) và D-21 (vai trò TECHNICIAN).</li>
+  <li>≥ 2 site pilot Phase 1 có thư ý định (một PV zero-export Huawei SmartLogger; một đa hãng có công tơ PCC Modbus/SunSpec) + 1 site chỉ giám sát; ≥ 1 ứng viên pilot BESS cho Phase 2.</li>
+  <li>Hợp đồng v1 đóng băng, vector vàng và bộ mô phỏng chạy trong CI.</li>
+  <li>Năng lực đội xác nhận (Q-43); kế hoạch Phase 1 ước lượng lại theo đội thật.</li>
+</ol>
+
+<h3>5.6 Rủi ro</h3>
+<p>R-05, R-08, R-09, R-11, R-18, R-41, R-42 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
+
+<h3>5.7 Phần cứng, lab, pilot</h3>
+<ul>
+  <li>Bộ mô phỏng (phần mềm) là đủ cho F0-3…F0-9. Kết quả mô phỏng gắn nhãn "Mô phỏng" và không nâng trạng thái driver (07 D-07-13).</li>
+  <li>2–3 gateway ứng viên cho PoC-03.</li>
+  <li>Đặt mua lab Phase 1: Huawei SmartLogger (hoặc SmartLogger5000B) + 1 inverter SUN2000; EMMA + 1 hybrid; 2 công tơ 3 pha Modbus khác hãng; module DI/DO; nguồn tải giả lập (07 §11.4). Chi phí <span class="tag unknown">UNKNOWN</span> (Q-36).</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="s6">6. Phase 1 — Monitoring MVP (Gate M1)</h2>
+
+<h3>6.1 Mục tiêu</h3>
+<ul>
+  <li>Bán được cho site <b>chỉ có PV</b> và site PV + BESS: giám sát đa hãng qua edge, hoặc qua connector cloud Huawei cho site chỉ giám sát.</li>
+  <li><b>Giá trị số 1:</b> cấu hình và kiểm chứng giới hạn xuất/zero-export và trần nhập trên controller native, có readback, có bằng chứng tuân thủ.</li>
+  <li><b>Giá trị số 2:</b> hóa đơn bóng theo TOU có phiên bản biểu giá, kèm dòng B0.</li>
+  <li><b>Giá trị số 3:</b> cảnh báo đa hãng L0/L1 và ticket.</li>
+  <li><b>Giá trị số 4 (một phần):</b> bộ sinh lịch luật TOU tầng 2 xuất ra lịch native của BESS (Gate M1), chỉ trên driver có chế độ native đã kiểm chứng.</li>
+</ul>
+
+<h3>6.2 Milestone nội bộ</h3>
+<p>Theo 04 Q-D-07, Phase 1 chia ba milestone nội bộ để có bản chạy pilot sớm. Không có mốc lịch.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Milestone</th><th>Nội dung</th><th>Pilot</th></tr></thead>
+<tbody>
+<tr><td>1a · PV + tuân thủ lưới</td><td>Tenant/IAM, edge, driver công tơ + Huawei SmartLogger, ingest/tổng hợp, dashboard L1–L3, R1/R8, biểu giá + hóa đơn bóng R2 (+ B0), cảnh báo + ticket, cấu hình giới hạn xuất native + test F-INT-27 + bằng chứng F-REP-13, commissioning (phép thử dấu)</td><td>Site PV zero-export; site chỉ giám sát</td></tr>
+<tr><td>1b · BESS native</td><td>Giám sát BESS, mô hình pin, chế độ native, chọn <code>site_strategy</code>, dự phòng SOC, trần nhập native, tầng 2 → lịch native, kế hoạch 48 h, thực tế/kế hoạch, giải thích slot, dự báo F0/F1, tín hiệu PCCC, R3</td><td>Site PV + BESS dùng EMMA/LUNA hoặc tủ có chế độ native đã kiểm chứng</td></tr>
+<tr><td>1c · Cứng hóa và phát hành</td><td>Test tải L7, HIL L5 cho driver M1, quy trình phát triển an toàn phần P0 (SAST/SCA/secret/SBOM), diễn tập khôi phục PITR, tài liệu vận hành</td><td>Mọi site Phase 1</td></tr>
+</tbody></table></div>
+
+<h3>6.3 Bao gồm (F- và FR-)</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Module</th><th>Tính năng (03)</th><th>Yêu cầu (04)</th><th>Ghi chú</th></tr></thead>
+<tbody>
+<tr><td>M-ORG</td><td class="ids">F-ORG-01…05, 07, 08, 09, 11, 15</td><td class="ids">FR-ORG-001…011, 018</td><td>Thêm vai trò <code>TECHNICIAN</code>, <code>PLATFORM_ADMIN</code> (D-21)</td></tr>
+<tr><td>M-DASH</td><td class="ids">F-DASH-01…07</td><td class="ids">FR-DASH-001…008</td><td>KPI "sức khỏe thiết bị" và "SOC danh mục" theo <code>_catalog-gaps</code></td></tr>
+<tr><td>M-MON</td><td class="ids">F-MON-01…09</td><td class="ids">FR-MON-001…010</td><td>F-MON-02 = Huawei Northbound (D-20)</td></tr>
+<tr><td>M-HIST</td><td class="ids">F-HIST-01…07, 10</td><td class="ids">FR-HIST-001…011</td><td>Một thuật toán phân bổ có <code>attribution_version</code></td></tr>
+<tr><td>M-REP</td><td class="ids">F-REP-01, 02, 03, 08, 10, 11, 13</td><td class="ids">FR-REP-001…008</td><td>R2 có dòng B0 (D-02); trang phương pháp tĩnh (<code>_catalog-gaps</code>)</td></tr>
+<tr><td>M-TAR</td><td class="ids">F-TAR-01…06</td><td class="ids">FR-TAR-001…007</td><td>QĐ 963 + TT 16/2014 (lịch sử); hai lịch song song; ngày đặc biệt</td></tr>
+<tr><td>M-BESS</td><td class="ids">F-BESS-01, 03, 04, 05, 07, 09, 18 (cấm: 19, 20)</td><td class="ids">FR-BESS-001…004, 006, 008, 010, 011</td><td>FR-BESS-008 hiển thị giới hạn native; chuỗi giới hạn đầy đủ ở Phase 2</td></tr>
+<tr><td>M-PV</td><td class="ids">F-PV-01…05</td><td class="ids">FR-PV-001…005</td><td>F-PV-03 giới hạn PV qua native</td></tr>
+<tr><td>M-GRID</td><td class="ids">F-GRID-01, 02, 03, 04, 06, 07, 13</td><td class="ids">FR-GRID-001…004, 006, 007, 008</td><td><code>MTR_POC</code> bắt buộc cho chức năng lưới</td></tr>
+<tr><td>M-EV</td><td class="ids">F-EV-01</td><td class="ids">FR-EV-001</td><td>Chỉ đo qua công tơ</td></tr>
+<tr><td>M-OPT</td><td class="ids">F-OPT-02, 04, 05, 06, 07, 08, 10, 11</td><td class="ids">FR-OPT-003, 005…011</td><td>Tầng 2 → lịch native; nhãn UI "Quy tắc"</td></tr>
+<tr><td>M-ALM</td><td class="ids">F-ALM-01…06, 08, 09, 13, 14, 21</td><td class="ids">FR-ALM-001…011</td><td>Chi tiết cảnh báo có liên hệ trực ca của site (GAP-08)</td></tr>
+<tr><td>M-INT</td><td class="ids">F-INT-01…12, 23, 24, 25, 26, 27, 29</td><td class="ids">FR-INT-001…017, 019, 020</td><td>Driver 1–3 theo FR-INT-006; quy trình phát hành driver (<code>_catalog-gaps</code>)</td></tr>
+<tr><td>M-SEC</td><td class="ids">F-SEC-01…07, 09, 12, 14…19</td><td class="ids">FR-SEC-001…009, 011, 014…020, 022</td><td>FR-SEC-006/007 kéo lên (CF-28); bản ghi đồng ý của chủ tài sản (<code>_catalog-gaps</code>)</td></tr>
+<tr><td>M-ADV</td><td class="ids">F-ADV-01</td><td class="ids">FR-ADV-001, 002</td><td>F0/F1 nhãn "Thống kê"</td></tr>
+</tbody></table></div>
+<p>Tổng: 135 FR. NFR theo cột Gate M1 của <a href="10-security-and-reliability.md">10 §20.4</a>: NFR-SEC-001…007, 011, 015…018, 020, 023, 026; NFR-REL-001, 003, 004 (mục tiêu), 005, 008, 009, 011, 012; NFR-PERF-001…011; NFR-DATA-001…013; NFR-OBS-001, 002, 003, 006 (phần P0), 007.</p>
+
+<h3>6.4 Không bao gồm</h3>
+<ul>
+  <li>Bất kỳ setpoint P cưỡng bức nào từ edge (F-BESS-06), vòng giới hạn xuất do edge làm chủ (F-GRID-05), arbiter 12 mức chạy vòng (F-OPT-01, 03). Site không có chức năng native tương ứng chỉ được giám sát ở Phase 1.</li>
+  <li>Work order, SLA, bảo trì định kỳ, leo thang, Zalo (Phase 2).</li>
+  <li>PR/availability, R4–R7 (trừ dòng B0), đối soát hóa đơn EVN (Phase 2–3).</li>
+  <li>Connector cloud ngoài Huawei; API công khai; webhook (Phase 3).</li>
+  <li>Peak shaving theo demand, ngân sách xuất, EV điều khiển, IEC 104 trên edge.</li>
+  <li>Engine tính phí thuê bao (FR-ORG-011: không thuộc MVP).</li>
+</ul>
+
+<h3>6.5 Độ phức tạp</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Workstream</th><th>Phạm vi</th><th class="num">pw</th></tr></thead>
+<tbody>
+<tr><td>W1 Tenant, IAM, audit, bí mật, phân loại dữ liệu, lưu giữ</td><td>F-ORG P0, F-SEC-01…04, 12, 16, 18, 19</td><td class="num">14–22</td></tr>
+<tr><td>W2 Edge runtime và uplink</td><td>F-INT-01, 02, 04, 05, 08…12, F-MON-07</td><td class="num">24–40</td></tr>
+<tr><td>W3 Framework driver + driver 1–3 + trang thiết bị hỗ trợ + xác minh map</td><td>F-INT-03, 06, 07, 23</td><td class="num">14–24</td></tr>
+<tr><td>W4 Ingest, chuỗi, điện năng từ thanh ghi, tổng hợp, quality, phân bổ</td><td>F-MON-01, F-HIST-01…07, 10</td><td class="num">20–32</td></tr>
+<tr><td>W5 Connector Huawei Northbound</td><td>F-MON-02</td><td class="num">4–6</td></tr>
+<tr><td>W6 UI dashboard, giám sát, lịch sử</td><td>F-DASH-01…07, F-MON-03…06, 08, 09, F-PV-01…05, F-BESS-01, F-GRID-07, F-EV-01</td><td class="num">18–28</td></tr>
+<tr><td>W7 Biểu giá, hóa đơn bóng, báo cáo, xuất, bằng chứng tuân thủ</td><td>F-TAR-01…06, F-REP-01, 02, 03, 08, 10, 11, 13</td><td class="num">14–22</td></tr>
+<tr><td>W8 Cảnh báo, thông báo, ticket</td><td>F-ALM-01…06, 08, 09, 13, 14, 21</td><td class="num">12–18</td></tr>
+<tr><td>W9 Đường lệnh Gate M1</td><td>Command service, signer, envelope, hạn, readback, PDP, duyệt C3, giới hạn tốc độ, trang trạng thái điều khiển; chế độ native, giới hạn xuất, trần nhập, giới hạn PV, dự phòng SOC, <code>control_owner</code> (F-SEC-03, 05, 06, 07, 09, 14, 15; F-BESS-03…05, 07; F-GRID-01…04, 06, 13; F-PV-03; F-OPT-02)</td><td class="num">22–34</td></tr>
+<tr><td>W10 Tầng 2 + ánh xạ lịch native + màn kế hoạch + F0/F1</td><td>F-OPT-04…08, 10, 11, F-ADV-01</td><td class="num">10–16</td></tr>
+<tr><td>W11 Commissioning</td><td>F-INT-25, 26, 27, 29, F-ORG-05</td><td class="num">8–12</td></tr>
+<tr><td>W12 Kiểm thử và cứng hóa</td><td>Mở rộng bộ mô phỏng, L4 tiêm lỗi, L5 HIL driver M1, L7 tải, SAST/SCA/SBOM, diễn tập PITR</td><td class="num">12–18</td></tr>
+<tr><td colspan="2"><b>Tổng Phase 1 · cỡ XL</b> (biên cao chạm XXL)</td><td class="num"><b>172–272</b></td></tr>
+</tbody></table></div>
+
+<h3>6.6 Cổng ra G1 (Gate M1 phát hành)</h3>
+<ol>
+  <li>Mọi FR ở §6.3 đạt tiêu chí chấp nhận AC-&lt;MODULE&gt;-NN của 04; test <code>T-&lt;FR id&gt;</code> do 12 sinh chạy trong CI.</li>
+  <li>Test tải L7 với 1.000 site giả lập đạt NFR-PERF-001…004, 007, 008 (06 §16).</li>
+  <li>NFR-DATA-001: rút WAN 7 ngày trên HIL (hoặc tăng tốc thời gian), 0 mẫu sự kiện mất.</li>
+  <li>Bộ test cross-tenant 100% đạt và chặn build (NFR-SEC-007).</li>
+  <li>Tại mỗi site pilot có ghi native: phép thử dấu <code>MTR_POC</code> đạt (FR-INT-016); test giới hạn xuất đạt — 0 sự kiện vi phạm theo định nghĩa 04 §2, đáp ứng ≤ 5 s (FR-INT-017, NFR-REL-009); báo cáo bằng chứng F-REP-13 sinh được.</li>
+  <li>Mọi ghi native đi qua edge có chữ ký, có <code>expires_at</code>, trạng thái <code>APPLIED</code> chỉ sau readback; ca <code>FAILED_NO_EFFECT</code> được kiểm bằng mô phỏng.</li>
+  <li>≥ 2 site pilot <code>active</code> ≥ 30 ngày liên tục; R2 đã đối chiếu thủ công với hóa đơn EVN của ít nhất một kỳ, chênh lệch có giải thích (công tơ điều khiển vs công tơ thanh toán, lịch đã dùng).</li>
+  <li>Rà soát UI/báo cáo: không chỗ nào gọi là "AI"; mọi số ước tính có "≈"; không hiển thị 0 thay cho "không có dữ liệu" (04 §1.3).</li>
+  <li>Trang "Thiết bị được hỗ trợ" chỉ liệt kê model + firmware + trạng thái kiểm chứng; không có câu "tương thích mọi inverter/BESS".</li>
+  <li>Diễn tập khôi phục PITR đạt RPO/RTO của NFR-REL-005.</li>
+</ol>
+
+<h3>6.7 Rủi ro</h3>
+<p>R-01, R-03, R-07, R-12, R-13, R-14, R-16, R-17, R-31, R-35, R-37, R-38, R-39, R-43, R-44 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
+
+<h3>6.8 Phần cứng, lab, pilot</h3>
+<ul>
+  <li><b>Thiết bị thật bắt buộc:</b> lab L5 theo §5.7; edge phần cứng tham chiếu cho mỗi site pilot có edge (FR-INT-001). Edge thiếu TPM chỉ được dùng theo D-12.</li>
+  <li><b>Bộ mô phỏng:</b> mọi ca lỗi (L4), test tải (L7), site sandbox "Mô phỏng" cho đào tạo.</li>
+  <li><b>Pilot:</b> (a) site PV zero-export có Huawei SmartLogger; (b) site đa hãng có công tơ PCC Modbus/SunSpec; (c) site chỉ giám sát qua Huawei Northbound; (d) cho milestone 1b: một site PV + BESS có chế độ native đã kiểm chứng (EMMA/LUNA hoặc tủ tương đương). Nếu không có (d), milestone 1b chỉ chạy trên lab và phát hành với nhãn "đang thử nghiệm" cho BESS.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="s7">7. Phase 2 — Operational EMS (Gate M2 + vận hành O&amp;M)</h2>
+
+<h3>7.1 Mục tiêu</h3>
+<ul>
+  <li>Edge của ta làm chủ vòng (<code>control_owner = EDGE</code>) và nhận setpoint/lịch envelope ở <b>từng site</b> đạt hồ sơ sẵn sàng FR-SEC-021, khi native không có chức năng cần thiết.</li>
+  <li>Đưa bộ an toàn P0 của Gate M2 vào vận hành: arbiter 12 mức, SOE ký số, interlock, LOCAL/REMOTE, Fleet Dispatch Governor, kill switch, trực ca 24/7.</li>
+  <li>Hoàn thiện quy trình O&amp;M cho persona P3 (người dùng hằng ngày): work order, SLA, bảo trì định kỳ, leo thang, Zalo (nếu D-09 xác nhận).</li>
+  <li>Cung cấp phân tích O&amp;M PV và BESS có giá trị lặp lại hằng tháng: PR (chỉ khi có POA), availability, KPI BESS, đối soát hóa đơn.</li>
+</ul>
+
+<h3 id="s7-2">7.2 Bao gồm</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Nhóm</th><th>Tính năng (03)</th><th>Yêu cầu (04)</th><th>Lý do ở Phase 2</th></tr></thead>
+<tbody>
+<tr><td>Gate M2 (MVP theo K)</td><td class="ids">F-BESS-06, 08, 10; F-GRID-05; F-OPT-01, 03; F-INT-28; F-SEC-08, 10, 11</td><td class="ids">FR-BESS-005, 007, 009; FR-GRID-005; FR-OPT-001, 002, 004; FR-INT-018; FR-SEC-010, 012, 013, 021</td><td>Bộ P0 của M2 (K #27, #30)</td></tr>
+<tr><td>Điều kiện an toàn M2 kéo từ hạng P1</td><td class="ids">F-MON-11; F-ALM-22; F-SEC-13, 20, 21</td><td class="ids">FR-MON-012; FR-ALM-022; FR-SEC-023, 024, 025</td><td>HMI cục bộ khi mất Internet (CF-33); phát hiện điều khiển ngoài (R-13, R-30); neo WORM, hỗ trợ từ xa có kiểm soát, observability cho trực ca</td></tr>
+<tr><td>Gói O&amp;M</td><td class="ids">F-ALM-07, 10, 12, 15, 16, 17, 18</td><td class="ids">FR-ALM-012, 013, 015…019</td><td>Giá trị số 3; GAP-01, GAP-08; mệt mỏi cảnh báo (R-44)</td></tr>
+<tr><td>Phân tích O&amp;M và vận hành dữ liệu</td><td class="ids">F-PV-06, 07; F-REP-04, 05, 06; F-BESS-11; F-HIST-09, 11, 12; F-ORG-06, 12, 13</td><td class="ids">FR-PV-006, 007; FR-REP-009, 010, 011; FR-BESS-013; FR-HIST-013, 014, 015; FR-ORG-012, 014, 015</td><td>Báo cáo tháng cho O&amp;M; mở rộng onboarding nhiều site</td></tr>
+<tr><td>Minh bạch chi phí</td><td class="ids">F-TAR-10; F-INT-22</td><td class="ids">FR-TAR-011; FR-INT-027</td><td>Giá trị số 2; nhập lịch sử cho backtest sau này (GAP-14)</td></tr>
+<tr><td>Có điều kiện</td><td class="ids">F-INT-16, F-GRID-12; F-INT-13 (connector theo Q-20)</td><td class="ids">FR-INT-023, FR-GRID-013; FR-INT-021</td><td>Trigger D-07; connector chỉ khi phỏng vấn cho thấy thị phần</td></tr>
+</tbody></table></div>
+<p>Tổng: 38 FR (+3 có điều kiện). Bổ sung khoảng trống catalog: hồ sơ sẵn sàng M2 theo site, theo dõi đáp ứng vật lý <code>tracking_state</code>, gói bằng chứng sự cố (forensic bundle), sổ sự cố nền tảng (<code>_catalog-gaps</code>). NFR theo cột Gate M2 của <a href="10-security-and-reliability.md">10 §20.4</a>: NFR-SEC-008…010, 012…014 và các mã đề xuất của 10 (NFR-SEC-028…030, NFR-REL-013, 017, NFR-OBS-008, 009); NFR-REL-002, 007, 010.</p>
+
+<h3>7.3 Không bao gồm</h3>
+<ul>
+  <li>Tầng 3 MILP/MPC, dự báo đa nguồn, backtest (Phase 3A/3B).</li>
+  <li>Peak shaving theo demand, ngân sách xuất 50%, EV OCPP/DLM (Phase 3, có trigger).</li>
+  <li>Dừng/khởi động PCS từ xa (F-BESS-16) và phân bổ nhiều PCS (F-BESS-14): Phase 3F, chỉ sau khi M2 chạy ổn.</li>
+  <li>Điều khiển Q/PF, phụ tải, máy phát (Phase 4).</li>
+  <li>E-stop từ xa, sửa thông số bảo vệ (cấm, mọi phase).</li>
+</ul>
+
+<h3>7.4 Phụ thuộc</h3>
+<ul>
+  <li>G1 đạt; edge, driver và đường lệnh M1 đã chạy ổn ở pilot.</li>
+  <li>Một dòng tủ BESS có map theo hợp đồng (Q-28) và câu trả lời watchdog/reversion cho từng model đích (Q-27).</li>
+  <li>KMS/HSM cho khóa ký đạt yêu cầu (Q-44, R-21).</li>
+  <li>Đơn vị pen-test bên thứ ba; mô hình trực ca 24/7 (D-18, Q-24).</li>
+  <li>Chủ tài sản đồng ý bật điều khiển (Q-23); phần cứng edge có TPM/secure element cho site M2 (D-12).</li>
+</ul>
+
+<h3>7.5 Độ phức tạp</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Workstream</th><th>Phạm vi</th><th class="num">pw</th></tr></thead>
+<tbody>
+<tr><td>V1 Arbiter, tầng 1, limit chain, SOE, máy trạng thái ESS, vòng giới hạn xuất edge</td><td>F-OPT-01, 03, F-BESS-06, 08, 09 (đầy đủ), 10, F-GRID-05</td><td class="num">18–30</td></tr>
+<tr><td>V2 Bộ an toàn: interlock + LOCAL/REMOTE, Governor, kill switch, hồ sơ sẵn sàng, bản ghi đồng ý</td><td>F-SEC-08, 10, 11, FR-SEC-021</td><td class="num">12–20</td></tr>
+<tr><td>V3 Kiểm chứng: driver 4 lên <code>VERIFIED_LAB</code>, test watchdog/fail-safe, HIL 10 §19.3, game day, điều phối pen-test và sửa lỗi</td><td>F-INT-28, NFR-REL-001, 002, 007</td><td class="num">14–24</td></tr>
+<tr><td>V4 Sẵn sàng vận hành: SLO, trực ca, runbook, forensic bundle, sổ sự cố</td><td>F-SEC-21, NFR-OBS-008, 009</td><td class="num">6–10</td></tr>
+<tr><td>V5 Phát hiện điều khiển ngoài, <code>tracking_state</code></td><td>F-ALM-22</td><td class="num">3–5</td></tr>
+<tr><td>V6 HMI cục bộ trên edge</td><td>F-MON-11</td><td class="num">4–6</td></tr>
+<tr><td>V7 Gói O&amp;M</td><td>F-ALM-07, 10, 12, 15…18</td><td class="num">14–22</td></tr>
+<tr><td>V8 Phân tích O&amp;M PV, vận hành dữ liệu, mẫu site, thay thiết bị</td><td>F-PV-06, 07, F-REP-04, 06, F-HIST-09, 11, 12, F-ORG-06, 12, 13</td><td class="num">12–20</td></tr>
+<tr><td>V9 KPI BESS + R5</td><td>F-BESS-11, F-REP-05</td><td class="num">4–6</td></tr>
+<tr><td>V10 Đối soát hóa đơn + nhập CSV/load profile</td><td>F-TAR-10, F-INT-22</td><td class="num">4–7</td></tr>
+<tr><td>V11 Neo WORM + hỗ trợ từ xa có kiểm soát</td><td>F-SEC-13, 20</td><td class="num">5–8</td></tr>
+<tr><td colspan="2"><b>Tổng Phase 2 · cỡ L–XL</b></td><td class="num"><b>96–158</b></td></tr>
+<tr><td>V12 (điều kiện) Slave IEC 104 + lệnh <code>GRID_OPERATOR</code></td><td>F-INT-16, F-GRID-12; master 104 mô phỏng</td><td class="num">8–14</td></tr>
+<tr><td>V13 (điều kiện) Mỗi connector cloud thêm</td><td>F-INT-13</td><td class="num">4–8 / hãng</td></tr>
+</tbody></table></div>
+
+<h3>7.6 Cổng ra G2</h3>
+<p><b>G2a — được bật M2 cho site pilot đầu tiên:</b></p>
+<ol>
+  <li>Hồ sơ sẵn sàng FR-SEC-021 đạt đủ 13 điều kiện tại site.</li>
+  <li>Mọi ca HIL bắt buộc của <a href="10-security-and-reliability.md">10 §19.3</a> đạt; T-FR-INT-018 (rút cáp edge↔PCS, mất <code>MTR_POC</code>, chặn broker, chuyển LOCAL, tắt nguồn edge) đạt; game day mất cloud 4 h đạt NFR-REL-001.</li>
+  <li>Pen-test bên thứ ba không còn lỗi Critical/High mở.</li>
+  <li>Kill switch lan truyền ≤ 60 s (NFR-REL-010); Governor chặn đúng khi vượt ngân sách (mô phỏng).</li>
+  <li>Trực ca 24/7 hoạt động với runbook; người có quyền lệnh tại site đã đăng ký MFA.</li>
+  <li>Driver tủ BESS ở <code>VERIFIED_LAB</code>; thiết bị không có watchdog được đánh dấu <code>requires_native_fallback</code>.</li>
+</ol>
+<p><b>G2b — ra Phase 2</b> (sau ≥ 30 ngày vận hành M2 tại pilot):</p>
+<ol>
+  <li>0 sự kiện vi phạm giới hạn xuất; 0 lần vượt SOE; 0 lệnh thi hành sau <code>expires_at</code> (NFR-REL-012).</li>
+  <li>Thực tế so với kế hoạch được báo cáo hằng ngày; mọi lệch &gt; ngưỡng có mã nguyên nhân.</li>
+  <li>Driver tủ BESS lên <code>VERIFIED_FIELD</code>.</li>
+  <li>Đội O&amp;M pilot dùng luồng cảnh báo → ticket → work order → đóng có nguyên nhân gốc; báo cáo SLA sinh được.</li>
+  <li>Mọi sự cố trong 30 ngày có postmortem.</li>
+</ol>
+<p>Sau G2b, M2 được bật cho site tiếp theo <b>theo từng site</b> khi đạt FR-SEC-021; không có "bật hàng loạt".</p>
+
+<h3>7.7 Rủi ro</h3>
+<p>R-13, R-15, R-21, R-25, R-26, R-27, R-29, R-30, R-32, R-33, R-34, R-45 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
+
+<h3>7.8 Phần cứng, lab, pilot</h3>
+<ul>
+  <li><b>Thêm vào lab:</b> 1 PCS hoặc tủ BESS nhỏ của dòng được chọn; công tắc LOCAL/REMOTE phần cứng; module DI/DO cho E-stop/PCCC (chỉ đọc); proxy mạng gây lỗi; nguồn tải giả lập đủ để tạo bước tải/PV.</li>
+  <li><b>Thiết bị thật bắt buộc</b> cho mọi ca an toàn; bộ mô phỏng chỉ dùng cho CI và tiêm lỗi.</li>
+  <li><b>Pilot:</b> 1 site PV + BESS có tủ cung cấp map theo hợp đồng, có công tắc LOCAL/REMOTE (hoặc chế độ native đọc được có biên bản, K §3.8), chủ tài sản đồng ý bằng văn bản (Q-23), đơn vị O&amp;M nhận trực ca.</li>
+  <li><b>Có điều kiện:</b> master IEC 104 mô phỏng và một PC đồng ý thử bảng điểm (V12).</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="s8">8. Phase 3 — Advanced EMS</h2>
+
+<h3>8.1 Mục tiêu</h3>
+<p>Mở rộng giá trị BESS và phạm vi tài sản khi có bằng chứng: tối ưu dựa trên dự báo (tầng 3) chỉ khi thắng luật; demand và ngân sách xuất chỉ khi văn bản và khách có; EV khi khách có trụ sạc gây vượt trần; phân tích, báo cáo và API cho khách lớn. Mỗi track có trigger và cổng riêng. <span class="tag proposal">PROPOSAL</span></p>
+
+<h3 id="s8-2">8.2 Track, bao gồm, trigger</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Track</th><th>Tính năng (03)</th><th>Yêu cầu (04)</th><th>Trigger bắt đầu</th><th class="num">pw</th></tr></thead>
+<tbody>
+<tr><td>3A Tầng 3 MILP/MPC</td><td class="ids">F-OPT-09, 12, 13, 14, 15, 18 + chạy bóng + quản lý phiên bản chiến lược (<code>_catalog-gaps</code>)</td><td class="ids">FR-OPT-012…016, 019</td><td>≥ 3 site M2 có ≥ 90 ngày dữ liệu ≤ 5 phút; PoC-05 đạt; Q-17 đóng</td><td class="num">24–38</td></tr>
+<tr><td>3B Dự báo và what-if</td><td class="ids">F-ADV-02, 03, 04, 06</td><td class="ids">FR-ADV-003…006</td><td>Cùng 3A; Q-50 có kết quả thử song song</td><td class="num">14–22</td></tr>
+<tr><td>3C Demand (giá hai thành phần)</td><td class="ids">F-TAR-07, F-GRID-09, 10, F-OPT-16</td><td class="ids">FR-TAR-008, FR-GRID-010, 011, FR-OPT-017</td><td>Q-03 đóng <b>và</b> có khách đang trả phí công suất (D-16)</td><td class="num">8–14</td></tr>
+<tr><td>3D Ngân sách xuất 50%</td><td class="ids">F-TAR-08, F-GRID-08, F-OPT-17, F-REP-14, F-BESS-15</td><td class="ids">FR-TAR-009, FR-GRID-009, FR-OPT-018, FR-REP-015, FR-BESS-017</td><td>Q-04 đóng <b>và</b> có khách bán dư (D-15)</td><td class="num">8–12</td></tr>
+<tr><td>3E EV</td><td class="ids">F-EV-02…08</td><td class="ids">FR-EV-002…008</td><td>Khách pilot có trụ sạc làm vượt trần nhập/MBA (D-14); Q-34 có kết quả lab</td><td class="num">18–28</td></tr>
+<tr><td>3F BESS nâng cao</td><td class="ids">F-BESS-02, 12, 13, 14, 16</td><td class="ids">FR-BESS-012, 014, 015, 016, 018</td><td>G2b; site nhiều PCS/tủ</td><td class="num">10–16</td></tr>
+<tr><td>3G Lưới và phụ tải</td><td class="ids">F-GRID-11, 14, 15, 16, 17, F-TAR-09</td><td class="ids">FR-GRID-012, 014…017, FR-TAR-010</td><td>Nhu cầu từ pilot; Q-10 cho PF</td><td class="num">10–16</td></tr>
+<tr><td>3H PV nâng cao</td><td class="ids">F-PV-08, 09, 12</td><td class="ids">FR-PV-008, 009, 010</td><td>Đủ site cùng hướng để so đồng cấp</td><td class="num">8–12</td></tr>
+<tr><td>3I Báo cáo và sản phẩm dữ liệu</td><td class="ids">F-REP-07 (B1/B2), 09, 12, 15…18, F-HIST-14</td><td class="ids">FR-REP-012, 013, 014, 016…019, FR-HIST-017</td><td>Khách ESCO/PPA; Q-12 cho CO₂; Q-53 cho cách diễn đạt tiết kiệm</td><td class="num">12–20</td></tr>
+<tr><td>3J Bề mặt tích hợp</td><td class="ids">F-INT-13 (nếu chưa làm), 15, 17, 19, 20, F-SEC-22 + sandbox API (<code>_catalog-gaps</code>)</td><td class="ids">FR-INT-021, 022, 024, 025, 026, FR-SEC-026</td><td>Đối tác/khách cần API; Q-25</td><td class="num">12–18</td></tr>
+<tr><td>3K UX và vận hành P1</td><td class="ids">F-DASH-08, 10, 11, 12, F-ORG-10, 16, F-MON-10, 12, F-HIST-08, 13, F-ALM-11, 19, 20</td><td class="ids">FR-DASH-009…012, FR-ORG-013, 016, FR-MON-011, 013, FR-HIST-012, 016, FR-ALM-014, 020, 021</td><td>Theo phản hồi pilot; tùy chọn hiển thị người dùng (<code>_catalog-gaps</code>)</td><td class="num">22–34</td></tr>
+<tr><td colspan="4"><b>Tổng nếu chạy mọi track · cỡ XL</b></td><td class="num"><b>146–230</b></td></tr>
+</tbody></table></div>
+
+<h3>8.3 Không bao gồm</h3>
+<ul>
+  <li>Bất kỳ "AI/ML" nào chưa là mô hình học đã đánh giá; dự báo F2 gradient boosting chỉ được gọi là mô hình học khi có đánh giá hằng đêm (F-ADV-03) (K #33).</li>
+  <li>Tuyên bố tiết kiệm phần trăm; B1/B2 luôn là hóa đơn bóng so với baseline phản thực, cùng phiên bản biểu giá (K #34).</li>
+  <li>Tầng 4 (VPP/DR), giao dịch thị trường, giao thức P2.</li>
+</ul>
+
+<h3>8.4 Phụ thuộc</h3>
+<p>G2b đạt cho 3A/3E/3F (cần site M2). 3C/3D/3E phụ thuộc trigger ở §8.2. 3I phụ thuộc Q-12, Q-53. Ngôn ngữ tầng 3 theo ADR-11 (OR-Tools Java trước, Python sidecar chỉ khi PoC-05 không đạt, D-13).</p>
+
+<h3>8.5 Cổng ra G3 (theo track)</h3>
+<ul>
+  <li><b>3A:</b> đạt đủ 5 điều kiện cổng bật tầng 3 của <a href="08-energy-optimization.md">08 §14.4</a> cho từng site (backtest ≥ 90 ngày; chi phí thấp hơn luật ≥ X% sau <code>c_deg</code>; không tăng vi phạm; không có lần giải infeasible không fallback; chạy bóng ≥ 7 ngày). Tầng 3 bật <b>theo site</b>, không mặc định.</li>
+  <li><b>3B:</b> báo cáo đánh giá dự báo hằng đêm có MAE/nMAE ghi mẫu số; tầng 3 chỉ dùng nhà cung cấp có kết quả tốt hơn F1.</li>
+  <li><b>3C:</b> hóa đơn bóng thành phần công suất khớp hóa đơn song song của khách thí điểm trong dung sai đã thỏa thuận; cảnh báo sớm khi dự báo cuối cửa sổ vượt mục tiêu.</li>
+  <li><b>3D:</b> bộ đếm ngân sách theo đúng kỳ và mẫu số của văn bản (Q-04); sổ cái nguồn gốc năng lượng kiểm được bằng dữ liệu thanh ghi.</li>
+  <li><b>3E:</b> OCPP 1.6J Security Profile ≥ 2 (NFR-SEC-021); T-FR-EV-005 (mất kết nối → TxDefaultProfile an toàn) đạt trên charger thật.</li>
+  <li><b>3I–3K:</b> AC của 04 cho từng FR; API công khai có hạn mức công bố và versioning.</li>
+</ul>
+
+<h3>8.6 Rủi ro</h3>
+<p>R-02, R-10, R-22, R-23, R-24, R-36, R-38 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
+
+<h3>8.7 Phần cứng, lab, pilot</h3>
+<ul>
+  <li>3A/3B: chủ yếu dữ liệu và mô phỏng (backtest có quy tắc chống nhìn trước, 08 §14.3); kết quả gắn nhãn "Mô phỏng".</li>
+  <li>3E: 1 charger AC OCPP 1.6J thật trong lab + charger mô phỏng có quirk; site pilot có trụ sạc.</li>
+  <li>3G/3H: cảm biến POA và công tơ PQ nếu khách có; không mua thay khách.</li>
+  <li>3C: một khách thí điểm giá hai thành phần cho hóa đơn song song.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="s9">9. Phase 4 — Mở rộng thương mại và thị trường</h2>
+
+<h3>9.1 Mục tiêu</h3>
+<p>Mở các kênh doanh thu và phân khúc mới khi thị trường Việt Nam có cơ chế: DR/VPP, DPPA, khách cần giao thức công nghiệp P2, đối tác cần API lệnh, installer cần white-label, khách lớn cần silo/on-prem và chứng nhận. Mọi track có trigger. <span class="tag proposal">PROPOSAL</span></p>
+
+<h3>9.2 Track, bao gồm, trigger</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Track</th><th>Tính năng (03)</th><th>Yêu cầu (04)</th><th>Trigger</th><th class="num">pw</th></tr></thead>
+<tbody>
+<tr><td>4A VPP-capable/DR</td><td class="ids">F-OPT-20; OpenADR/IEEE 2030.5 trong F-INT-18</td><td class="ids">FR-OPT-021, một phần FR-INT-029</td><td>Q-13: có chương trình DR trả tiền; kill switch DR tự động (10 X-10-07)</td><td class="num">16–28</td></tr>
+<tr><td>4B DPPA và giá động</td><td class="ids">F-TAR-11, F-ADV-11</td><td class="ids">FR-TAR-012, FR-ADV-012</td><td>Khách tham gia DPPA (NĐ 57/2025, NĐ 243 mở rộng bên mua)</td><td class="num">8–14</td></tr>
+<tr><td>4C Giao thức P2</td><td class="ids">F-INT-18 (IEC 61850 MMS client, DNP3 outstation)</td><td class="ids">FR-INT-029</td><td>Khách trạm trung áp/nhà máy yêu cầu</td><td class="num">12–24</td></tr>
+<tr><td>4D API lệnh và ghi qua cloud hãng</td><td class="ids">F-INT-21, F-INT-14</td><td class="ids">FR-INT-030, FR-INT-028</td><td>Đối tác cần điều khiển qua API; Q-33 cho quyền cloud hãng</td><td class="num">10–18</td></tr>
+<tr><td>4E Đóng gói thương mại</td><td class="ids">F-ORG-14, F-DASH-09, F-SEC-24 + engine tính phí (khoảng trống, chưa có F-)</td><td class="ids">FR-ORG-017, FR-DASH-013, FR-SEC-028</td><td>Installer bán lại; khách lớn yêu cầu silo; D-11 đã kiểm bằng doanh thu</td><td class="num">16–28</td></tr>
+<tr><td>4F Chứng nhận</td><td class="ids">F-SEC-23</td><td class="ids">FR-SEC-027</td><td>Khách doanh nghiệp/nhà nước yêu cầu; Q-48. Thứ tự: ISO/IEC 27001 (vận hành cloud) → IEC 62443-4-2 (edge)</td><td class="num">12–24 (+ chi phí đánh giá bên ngoài)</td></tr>
+<tr><td>4G Phân tích nâng cao</td><td class="ids">F-ADV-05, 07, 08, 09, 10, F-EV-09</td><td class="ids">FR-ADV-007…011, FR-EV-009</td><td>ML L3 chỉ khi đủ nhãn từ F-ALM-18; microgrid/PQ theo khách</td><td class="num">20–34</td></tr>
+<tr><td>4H Điều khiển mở rộng</td><td class="ids">F-GRID-18, 19, F-PV-10, 11, 13, F-OPT-19, F-BESS-17, F-EV-10</td><td class="ids">FR-GRID-018, 019, FR-PV-011, 012, 013, FR-OPT-020, FR-BESS-019, FR-EV-010</td><td>Q-10 (Q/PF); hãng cho phép reset lỗi từ xa; khách có máy phát/phụ tải điều khiển được</td><td class="num">24–40</td></tr>
+<tr><td colspan="4"><b>Tổng nếu chạy mọi track · cỡ XL</b></td><td class="num"><b>118–210</b></td></tr>
+</tbody></table></div>
+
+<h3>9.3 Không bao gồm</h3>
+<p>Giao dịch thị trường điện (F-OPT-21), SCADA/EMS cấp lưới, chuyển đảo/black start, nền tảng ESG/carbon (K #1). Ngay cả ở Phase 4, tầng 4 chỉ ở mức "VPP-capable" cho tới khi có cơ chế pháp lý và hợp đồng. Giao dịch thị trường chỉ được xem xét lại sau 18 tháng và cần quyết định mới của PO.</p>
+
+<h3>9.4 Phụ thuộc, cổng ra, rủi ro, lab</h3>
+<ul>
+  <li><b>Phụ thuộc:</b> G2b (mọi điều khiển mở rộng dựa trên bộ an toàn M2); Governor và kill switch phải bao phủ lệnh DR.</li>
+  <li><b>Cổng ra G4 (theo track):</b> 4A — mô phỏng sự kiện DR với Governor, kill switch DR tự động hoạt động, hợp đồng với aggregator/EVN; 4F — chứng chỉ có số, phạm vi, hạn (trước đó không tuyên bố tuân thủ); 4C — test với master/IED thật hoặc công cụ test được chấp nhận; 4E — test cô lập silo và xuất toàn tenant.</li>
+  <li><b>Rủi ro:</b> R-04, R-40, R-46.</li>
+  <li><b>Lab:</b> công cụ test IEC 61850/DNP3 (chọn sau, <span class="tag unknown">UNKNOWN</span>); đối tác DR thử nghiệm.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="s10">10. Giá trị so với công sức</h2>
+
+<p>Điểm giá trị (1–5) là đánh giá của nhóm viết theo thứ tự giá trị Việt Nam (K #3) và bằng chứng §3 <span class="tag inference">INFERENCE</span>; công sức là trung điểm khoảng pw ở §5–§9 (trục log). Hạng mục có giá trị phụ thuộc trigger được chấm ở mức <b>hiện tại</b> (10/2026).</p>
+
+<figure>
+<div class="diagram">
+<svg viewBox="0 0 1060 470" role="img" aria-labelledby="ve-t ve-d">
+<title id="ve-t">Ma trận giá trị so với công sức</title>
+<desc id="ve-d">Biểu đồ phân tán 19 hạng mục. Trục ngang: công sức người-tuần, thang log từ 3 đến 80. Trục dọc: giá trị từ 1 đến 5. Bốn vùng: làm ngay, đầu tư lớn có chủ đích, làm khi có trigger, hoãn. Bảng 10.1 liệt kê đầy đủ số liệu.</desc>
+<rect class="lane" x="80" y="30" width="920" height="380"/>
+<line class="grid" x1="80" y1="40" x2="1000" y2="40"/>
+<line class="grid" x1="80" y1="130" x2="1000" y2="130"/>
+<line class="grid" x1="80" y1="220" x2="1000" y2="220"/>
+<line class="grid" x1="80" y1="310" x2="1000" y2="310"/>
+<line class="grid" x1="80" y1="400" x2="1000" y2="400"/>
+<line class="qline" x1="674" y1="30" x2="674" y2="410"/>
+<line class="qline" x1="80" y1="197" x2="1000" y2="197"/>
+<text class="zl" x="90" y="190">LÀM NGAY</text>
+<text class="zl" x="684" y="190">ĐẦU TƯ LỚN CÓ CHỦ ĐÍCH</text>
+<text class="zl" x="90" y="215">LÀM KHI CÓ TRIGGER / NHỎ</text>
+<text class="zl" x="684" y="215">HOÃN</text>
+<text class="small" x="70" y="44" text-anchor="end">5</text>
+<text class="small" x="70" y="134" text-anchor="end">4</text>
+<text class="small" x="70" y="224" text-anchor="end">3</text>
+<text class="small" x="70" y="314" text-anchor="end">2</text>
+<text class="small" x="70" y="404" text-anchor="end">1</text>
+<text class="small" x="223" y="428" text-anchor="middle">5</text>
+<text class="small" x="418" y="428" text-anchor="middle">10</text>
+<text class="small" x="612" y="428" text-anchor="middle">20</text>
+<text class="small" x="806" y="428" text-anchor="middle">40</text>
+<text class="small" x="1000" y="428" text-anchor="middle">80</text>
+<text x="540" y="458" text-anchor="middle">Công sức (người-tuần, trung điểm, thang log)</text>
+<text x="20" y="220" transform="rotate(-90 20 220)" text-anchor="middle">Giá trị (1–5)</text>
+<!-- points -->
+<circle class="box" cx="418" cy="40" r="11"/><text class="pt" x="418" y="44">1</text>
+<circle class="box" cx="1000" cy="40" r="11"/><text class="pt" x="1000" y="44">2</text>
+<circle class="box" cx="468" cy="85" r="11"/><text class="pt" x="468" y="89">3</text>
+<circle class="box" cx="531" cy="130" r="11"/><text class="pt" x="531" y="134">4</text>
+<circle class="box" cx="612" cy="130" r="11"/><text class="pt" x="612" y="134">5</text>
+<circle class="box alt" cx="915" cy="175" r="11"/><text class="pt" x="915" y="179">6</text>
+<circle class="box alt" cx="582" cy="175" r="11"/><text class="pt" x="582" y="179">7</text>
+<circle class="box alt" cx="549" cy="220" r="11"/><text class="pt" x="549" y="224">8</text>
+<circle class="box alt" cx="250" cy="220" r="11"/><text class="pt" x="250" y="224">9</text>
+<circle class="box ext" cx="444" cy="310" r="11"/><text class="pt" x="444" y="314">10</text>
+<circle class="box ot" cx="734" cy="265" r="11"/><text class="pt" x="734" y="269">11</text>
+<circle class="box ext" cx="444" cy="355" r="11"/><text class="pt" x="444" y="359">12</text>
+<circle class="box ext" cx="404" cy="355" r="11"/><text class="pt" x="404" y="359">13</text>
+<circle class="box ext" cx="651" cy="310" r="11"/><text class="pt" x="651" y="314">14</text>
+<circle class="box ot" cx="531" cy="265" r="11"/><text class="pt" x="531" y="269">15</text>
+<circle class="box ext" cx="638" cy="400" r="11"/><text class="pt" x="638" y="404">16</text>
+<circle class="box ext" cx="531" cy="400" r="11"/><text class="pt" x="531" y="404">17</text>
+<circle class="box ot" cx="582" cy="265" r="11"/><text class="pt" x="582" y="269">18</text>
+<circle class="box ot" cx="638" cy="333" r="11"/><text class="pt" x="638" y="337">19</text>
+</svg>
+</div>
+<figcaption>Hình 2. Giá trị so với công sức. Hình dạng nền: nền đậm = Phase 1; nền phụ = Phase 2; nền OT = Phase 3/4 không trigger; viền đứt = có trigger. Số hiệu khớp bảng 10.1 (bảng là dạng đọc chính xác).</figcaption>
+</figure>
+
+<h3>10.1 Bảng số liệu</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>Hạng mục</th><th>Phase</th><th class="num">Giá trị</th><th class="num">pw (trung điểm)</th><th>Lý do chấm giá trị</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Giới hạn xuất native + bằng chứng tuân thủ</td><td>1</td><td class="num">5</td><td class="num">10</td><td>Giá trị số 1; nghĩa vụ hệ trung áp không bán dư; NĐ 133 có chế tài</td></tr>
+<tr><td>2</td><td>Giám sát đa hãng lõi (edge, driver, ingest, dashboard)</td><td>1</td><td class="num">5</td><td class="num">≈ 100 (vẽ ở mép trục)</td><td>Nền của mọi thứ; khác biệt so với OEM là đa hãng</td></tr>
+<tr><td>3</td><td>Hóa đơn bóng TOU + B0</td><td>1</td><td class="num">4,5</td><td class="num">12</td><td>Giá trị số 2; chênh cao/thấp ≈ 2,8×</td></tr>
+<tr><td>4</td><td>Cảnh báo L0/L1 + ticket</td><td>1</td><td class="num">4</td><td class="num">15</td><td>Giá trị số 3; P3 dùng hằng ngày</td></tr>
+<tr><td>5</td><td>Tầng 2 TOU → lịch native BESS</td><td>1</td><td class="num">4</td><td class="num">20</td><td>Phần lớn giá trị BESS dưới QĐ 963 (A-15)</td></tr>
+<tr><td>6</td><td>Gate M2: vòng edge + bộ an toàn</td><td>2</td><td class="num">3,5</td><td class="num">59</td><td>Cần cho thiết bị thiếu chức năng native; công sức lớn vì an toàn</td></tr>
+<tr><td>7</td><td>Gói O&amp;M (work order, SLA, PM, Zalo)</td><td>2</td><td class="num">3,5</td><td class="num">18</td><td>P3; chưa phỏng vấn nên chưa chấm 4</td></tr>
+<tr><td>8</td><td>PR/availability + chất lượng dữ liệu</td><td>2</td><td class="num">3</td><td class="num">16</td><td>Báo cáo O&amp;M tháng; PR chỉ khi có POA</td></tr>
+<tr><td>9</td><td>Đối soát hóa đơn EVN</td><td>2</td><td class="num">3</td><td class="num">5,5</td><td>Tăng tin cậy hóa đơn bóng</td></tr>
+<tr><td>10</td><td>Slave IEC 104</td><td>2 (điều kiện)</td><td class="num">2</td><td class="num">11</td><td>Bắt buộc cho số ít site trung áp bán dư</td></tr>
+<tr><td>11</td><td>Tầng 3 MILP/MPC</td><td>3A</td><td class="num">2,5</td><td class="num">31</td><td>Chỉ giá trị phần vượt luật; chưa chứng minh</td></tr>
+<tr><td>12</td><td>Peak shaving theo demand</td><td>3C</td><td class="num">1,5</td><td class="num">11</td><td>Chỉ khách thí điểm; cơ sở tính UNKNOWN</td></tr>
+<tr><td>13</td><td>Ngân sách xuất 50%</td><td>3D</td><td class="num">1,5</td><td class="num">10</td><td>Chưa có giao dịch bán dư (08/2026)</td></tr>
+<tr><td>14</td><td>EV OCPP/DLM</td><td>3E</td><td class="num">2</td><td class="num">23</td><td>Giá trị khi EV vượt trần</td></tr>
+<tr><td>15</td><td>API công khai + webhook</td><td>3J</td><td class="num">2,5</td><td class="num">15</td><td>Khách lớn và đối tác</td></tr>
+<tr><td>16</td><td>VPP-capable/DR</td><td>4A</td><td class="num">1</td><td class="num">22</td><td>Chưa thấy cơ chế trả tiền (Q-13)</td></tr>
+<tr><td>17</td><td>Phát hiện bất thường ML L3</td><td>4G</td><td class="num">1</td><td class="num">15</td><td>Chưa có nhãn; không gọi là AI khi chưa đánh giá</td></tr>
+<tr><td>18</td><td>Chứng nhận ISO 27001 → IEC 62443-4-2</td><td>4F</td><td class="num">2,5</td><td class="num">18</td><td>Điều kiện bán cho doanh nghiệp lớn</td></tr>
+<tr><td>19</td><td>White-label, silo SKU</td><td>4E</td><td class="num">1,75</td><td class="num">22</td><td>Kênh installer bán lại; khách lớn</td></tr>
+</tbody></table></div>
+<p><b>Đọc kết quả.</b> Năm hạng mục góc "Làm ngay" (1, 3, 4, 5 và nền 2 dù lớn) đều ở Phase 1 — khớp thứ tự giá trị K #3. Hạng mục 6 (Gate M2) là đầu tư lớn có chủ đích: giá trị của nó là mở khóa thiết bị thiếu chức năng native và nền cho 11, 14, 16. Các hạng mục 10, 12, 13 nhỏ nhưng giá trị hiện tại thấp, nên chờ trigger thay vì làm sớm. <span class="tag inference">INFERENCE</span></p>
+
+<!-- ============================================================ -->
+<h2 id="s11">11. Lập luận khả thi của MVP</h2>
+
+<h3>11.1 Phạm vi</h3>
+<p>MVP theo K (Gate M1 + Gate M2) gồm 146 FR P0 ở 04, cộng NFR P0. Lộ trình giao 135 FR ở Phase 1 và 12 FR M2 + 26 FR kéo từ hạng P1 ở Phase 2. Kéo P1 vào Phase 2 là có chủ đích: một số mục là điều kiện an toàn của M2 (HMI cục bộ, phát hiện điều khiển ngoài, observability), số còn lại là giá trị O&amp;M lặp lại (work order, PR, đối soát).</p>
+
+<h3>11.2 Năng lực</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Kịch bản</th><th class="num">pw</th><th class="num">Tuần đội, 6 kỹ sư</th><th class="num">Tuần đội, 8 kỹ sư</th><th class="num">Tuần đội, 10 kỹ sư</th></tr></thead>
+<tbody>
+<tr><td>Phase 0 + 1 (phát hành Gate M1)</td><td class="num">217–343</td><td class="num">52–82</td><td class="num">39–61</td><td class="num">31–49</td></tr>
+<tr><td>Phase 0 + 1 + 2 (MVP theo K)</td><td class="num">313–501</td><td class="num">75–119</td><td class="num">56–89</td><td class="num">45–72</td></tr>
+</tbody></table></div>
+<p>Công thức: tuần đội = pw ÷ (N × 0,7). Không phải mốc lịch; chưa tính thời gian chờ pháp lý, phần cứng, pilot. <span class="tag inference">INFERENCE</span></p>
+
+<h3>11.3 Lập luận</h3>
+<ol>
+  <li><b>Phase 1 khả thi trong 12–18 tháng với 8–10 kỹ sư</b> (39–61 hoặc 31–49 tuần đội), vì nó dựa vào controller native cho mọi tác động vật lý: không có vòng nhanh của ta, không có arbiter chạy vòng, không cần HIL an toàn đầy đủ. Với 6 kỹ sư, Phase 1 chạm biên trên 18 tháng; cần áp danh sách cắt §11.4. <span class="tag inference">INFERENCE</span></li>
+  <li><b>MVP đầy đủ theo K khó vừa 18 tháng với dưới 10 kỹ sư.</b> Đây là lý do của D-01: phát hành Gate M1 để có doanh thu và dữ liệu pilot, rồi bật M2 theo site. Không cắt bộ an toàn để kịp mốc. <span class="tag proposal">PROPOSAL</span></li>
+  <li><b>Đường găng là edge.</b> Phần edge của F0-5, W2, một phần W9/W11, V1 và phần edge của V2 cộng lại khoảng 66–98 pw. Với 2 kỹ sư edge và hệ số 0,7, riêng phần này mất 47–70 tuần đội, dài hơn các workstream cloud. Đòn bẩy: (a) thêm kỹ sư edge thứ ba; (b) nếu Q-15 cho phép, dùng OpenEMS Edge cho lớp driver/scheduler (D-04) — chỉ quyết sau PoC-03; (c) native trước làm giảm logic edge ở Phase 1. <span class="tag inference">INFERENCE</span></li>
+  <li><b>Các lựa chọn kiến trúc giảm công sức:</b> modular monolith, không Kafka, REST + SSE, một DB chuỗi thời gian (06 ADR-01/03/05); driver khai báo YAML thay cho code theo hãng (07 §6.2); tầng 2 là luật xác định, không solver. <span class="tag proposal">PROPOSAL</span></li>
+  <li><b>Điều kiện làm lập luận sai:</b> giấy phép buộc tự xây cả edge lẫn bỏ TimescaleDB (R-08 + R-09 cùng xảy ra, biên cao +20–30 pw); không có pilot BESS có map (R-45, G2 trễ không xác định); đội &lt; 6 kỹ sư (R-43).</li>
+</ol>
+
+<h3 id="s11-4">11.4 Danh sách cắt khi Phase 1 trễ (theo thứ tự)</h3>
+<p>Chỉ cắt sang Phase 2; không cắt mục an toàn, cô lập tenant, audit, phép thử dấu, bằng chứng tuân thủ, nhãn ước tính.</p>
+<ol>
+  <li>Connector Huawei Northbound (F-MON-02, D-20) → Phase 2. Tiết kiệm 4–6 pw.</li>
+  <li>R3 Phân tích công suất (F-REP-03) rút gọn còn top-N cửa sổ 30 phút. 2–3 pw.</li>
+  <li>Dự báo tải F1 → chỉ F0 (FR-ADV-001), chấp nhận SOC đích kém chính xác hơn. 1–2 pw.</li>
+  <li>Milestone 1b (BESS native) chỉ hỗ trợ một họ thiết bị (Huawei EMMA/LUNA) thay vì hai. 4–8 pw.</li>
+  <li>Cảm biến thời tiết (F-MON-08) chỉ đọc G_POA và T_module. 1–2 pw.</li>
+  <li>Bảng site cho chủ một site (F-DASH-07) dùng lại L2. 1–2 pw.</li>
+</ol>
+<p><b>Không bao giờ cắt:</b> F-SEC-01…07, 12, 14, 16…19; F-INT-02, 08…12, 26, 27; F-HIST-02, 05; F-REP-10, 13; FR-ADV-002; F-BESS-19/20 ở trạng thái cấm.</p>
+
+<!-- ============================================================ -->
+<h2 id="s12">12. Kiểm thử, lab và pilot theo phase</h2>
+<p>Đáp ứng phần lộ trình của K G-05. Tầng kiểm thử theo <a href="07-device-integration.md">07 §11.1</a> (L1 giải mã driver … L7 tải), kiểm thử kiến trúc theo <a href="06-system-architecture.html#s16">06 §16</a>, an toàn/bảo mật theo <a href="10-security-and-reliability.md">10 §19</a>, backtest theo <a href="08-energy-optimization.md">08 §14</a>.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Phase</th><th>Bộ mô phỏng (nhãn "Mô phỏng")</th><th>Thiết bị thật / HIL</th><th>Kiểm thử chặn cổng</th><th>Pilot</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>Modbus server từ register map YAML, công tơ có dấu cấu hình được, SunSpec chain, edge ảo hàng loạt</td><td>2–3 gateway ứng viên</td><td>PoC-01…04, 06; test hợp đồng L2; cross-tenant</td><td>Chọn và ký thư ý định</td></tr>
+<tr><td>1</td><td>PCS/BMS có/không watchdog, "ghi không tác dụng", tiêm lỗi L4</td><td>Lab L5: SmartLogger + SUN2000, EMMA + hybrid, 2 công tơ, DI/DO</td><td>L1–L5 cho driver 1–3; T-FR-INT-007, 008, 009, 016, 017; L7 1.000 site; PITR</td><td>2–3 site + 1 site chỉ giám sát</td></tr>
+<tr><td>2</td><td>Master 104 (điều kiện); kịch bản Governor đội</td><td>+ PCS/tủ BESS nhỏ, công tắc LOCAL/REMOTE, proxy lỗi</td><td>10 §19.3 toàn bộ; T-FR-INT-018; T-NFR-SEC-004, 011; game day 4 h; pen-test</td><td>1 site PV + BESS M2</td></tr>
+<tr><td>3</td><td>Charger OCPP có quirk; backtest no look-ahead; chạy bóng</td><td>+ charger AC OCPP 1.6J</td><td>Cổng tầng 3 (08 §14.4); T-FR-EV-005</td><td>Site có ≥ 90 ngày dữ liệu; site EV; khách thí điểm hai thành phần (điều kiện)</td></tr>
+<tr><td>4</td><td>Sự kiện DR mô phỏng</td><td>Công cụ test 61850/DNP3 (UNKNOWN)</td><td>Theo track; đánh giá chứng nhận</td><td>Đối tác DR/DPPA (điều kiện)</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="s13">13. Những gì sẽ KHÔNG xây</h2>
+<p>Danh sách này ràng buộc mọi phase. Mục có dấu * có thể xem lại sau 18 tháng bằng quyết định mới của PO.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Không xây</th><th>Lý do</th><th>Căn cứ</th></tr></thead>
+<tbody>
+<tr><td>API, nút hoặc lệnh sửa thông số bảo vệ BMS/PCS/rơ-le/grid code (F-BESS-19)</td><td>Hạng C4; cloud không bao giờ ở trong vòng bảo vệ</td><td>K #14, FR-BESS-011</td></tr>
+<tr><td>E-stop từ xa (F-BESS-20) hoặc bỏ qua interlock</td><td>C4; E-stop là phần cứng tại chỗ</td><td>K #28</td></tr>
+<tr><td>Cloud ghi trực tiếp vào thiết bị, hoặc vòng điều khiển nhanh chạy trên cloud</td><td>Cloud gửi ý định có hạn; edge quyết định</td><td>K #14, ADR-12</td></tr>
+<tr><td>Hai vòng điều khiển trên cùng một biến</td><td>Dao động (R-14)</td><td>K #15</td></tr>
+<tr><td>Setpoint P cưỡng bức tới thiết bị không có watchdog</td><td>Setpoint treo khi edge chết</td><td>K #17</td></tr>
+<tr><td>Giao dịch thị trường điện (F-OPT-21)*</td><td>Không áp dụng cho C&amp;I BTM ở VN</td><td>K #1, 08 §16.1</td></tr>
+<tr><td>SCADA/EMS cấp lưới (F-ADV-13)*, chuyển đảo/black start (F-ADV-12)*</td><td>Ngoài nhóm sản phẩm đã chọn</td><td>K #1</td></tr>
+<tr><td>Nền tảng ESG/carbon (F-ADV-14)*</td><td>Chỉ xuất dữ liệu cho ESG (F-REP-16)</td><td>K #1</td></tr>
+<tr><td>Trợ lý "AI" không đánh giá (F-ADV-15); gọi luật cố định là AI</td><td>Không gọi AI/ML thứ không phải mô hình học đã đánh giá</td><td>K #33</td></tr>
+<tr><td>Digital twin 3D (F-PV-14)</td><td>Không có giá trị tương xứng trong thứ tự giá trị VN</td><td>03</td></tr>
+<tr><td>Thanh toán, roaming EV, vận hành CPO (F-EV-11)</td><td>Ngoài phạm vi EMS</td><td>03</td></tr>
+<tr><td>Firmware BMS/PCS/inverter của riêng ta; ghi CAN tới BMS</td><td>CAN chỉ listen-only (F-INT-15)</td><td>07 §5.3</td></tr>
+<tr><td>Thay thế công tơ thanh toán của EVN</td><td>Hóa đơn bóng không thay hóa đơn EVN</td><td>08 §15.6</td></tr>
+<tr><td>Quảng cáo phần trăm tiết kiệm; tuyên bố tuân thủ tiêu chuẩn khi chưa có chứng chỉ</td><td>Chỉ hóa đơn bóng so với baseline phản thực</td><td>K #34</td></tr>
+<tr><td>Trang "tương thích mọi inverter/BESS"; driver dùng thanh ghi từ diễn đàn</td><td>Chỉ model + firmware + trạng thái kiểm chứng</td><td>K #35</td></tr>
+<tr><td>SQL truy cập trực tiếp cho khách vào DB</td><td>Chờ ý kiến pháp lý về TSL</td><td>K §3.5, Q-14</td></tr>
+<tr><td>Tái dùng UI OpenEMS khi chưa có ý kiến pháp lý</td><td>Có thể là AGPL-3.0</td><td>K R-21</td></tr>
+<tr><td>Microservices, Kafka, MQTT tới trình duyệt ở MVP*</td><td>Đội nhỏ, quy mô MVP 50–200 site</td><td>ADR-01, 03, 05</td></tr>
+<tr><td>Ghi lệnh qua cloud hãng ở MVP (F-INT-14 là Phase 4)</td><td>Cloud API hãng là pull 5 phút có hạn mức, không phù hợp điều khiển</td><td>K R-09</td></tr>
+<tr><td>Bật Gate M2 hàng loạt hoặc mặc định</td><td>Điều khiển tắt mặc định; M2 theo từng site đạt FR-SEC-021</td><td>K #26, #27</td></tr>
+<tr><td>App mobile native riêng trong MVP</td><td>Giao diện mobile (F-DASH-10) là responsive web ở Phase 3K</td><td>03</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="s14">14. Truy vết và vấn đề gửi agent khác</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Gửi</th><th>Nội dung</th></tr></thead>
+<tbody>
+<tr><td><a href="04-business-requirements.md">04</a></td><td>CF-28: FR-SEC-006/007 nên là <code>C3·M1</code>. Phân bổ FR theo phase ở §6.3, §7.2, §8.2, §9.2 để thêm cột "Phase lộ trình" nếu muốn.</td></tr>
+<tr><td><a href="03-functional-catalog.html">03</a></td><td>Ánh xạ hạng phát hành ↔ phase (§2.3); engine tính phí thuê bao là khoảng trống của Phase 4E (chưa có F-).</td></tr>
+<tr><td><a href="12-traceability-matrix.md">12</a></td><td>Thêm cột "Phase lộ trình" cho mỗi F-/FR- theo các bảng trên; cổng G0…G4 tham chiếu <code>T-&lt;FR id&gt;</code>.</td></tr>
+<tr><td><a href="06-system-architecture.html">06</a></td><td>PoC-01…04, 06 thuộc Phase 0; PoC-05 trước Phase 3A (X-06-06 đã xử lý).</td></tr>
+<tr><td><a href="07-device-integration.md">07</a></td><td>Lab §11.4 tách thành phần Phase 1 và Phase 2 như §5.7, §7.8 (X-07-07 đã xử lý).</td></tr>
+<tr><td><a href="08-energy-optimization.md">08</a></td><td>B0 vào Phase 1 (X-08-07, D-02); tầng 3 ở Phase 3A theo trigger (CF-37).</td></tr>
+<tr><td><a href="09-ux-ui-specification.html">09</a></td><td>Dòng B0 trong R2 và UI-19 ở Phase 1 (X-09-06). UI-24 (trạng thái điều khiển) có ở Phase 1 với nội dung M1; phần M2 ở Phase 2.</td></tr>
+<tr><td><a href="10-security-and-reliability.md">10</a></td><td>Điều kiện M2 (X-10-10) nằm ở G2a; chứng nhận ở Phase 4F; D-12 (không M2 trên edge thiếu TPM) chặt hơn D-10-13.</td></tr>
+<tr><td><a href="13-open-questions-and-risks.md">13</a></td><td>Mã Q/R/D/CF dùng trong tài liệu này do 13 cấp.</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="s15">15. Nguồn</h2>
+<p>Mọi URL dưới đây đã xuất hiện trong ghi chú nghiên cứu hoặc tài liệu 02–10; tài liệu này không mở trực tiếp URL nào, nội dung ghi nhận qua kết quả tìm kiếm của các agent. Mã S-xxx do <a href="14-source-register.md">14</a> cấp.</p>
+<ul>
+  <li>https://storage-vnportal.vnpt.vn/gov-tnn/7350/FileQuanTriTinTuc/VBHN%2052%20Nghi%20dinh%2058%20va%20ND%20243%2030.6.pdf (VBHN 52; nội dung Điều 10(5) theo nghiên cứu FS trước)</li>
+  <li>https://luatvietnam.vn/tin-van-ban-moi/tu-26-6-2026-dien-mat-troi-mai-nha-duoc-ban-toi-da-50-san-luong-dien-du-186-109883-article.html</li>
+  <li>https://www.reccessary.com/en/news/vietnam-solar-grid-export-dppa</li>
+  <li>https://thuvienphapluat.vn/van-ban/Tai-nguyen-Moi-truong/Quyet-dinh-963-QD-BCT-2026-khung-gio-cao-diem-thap-diem-cua-he-thong-dien-quoc-gia-703327.aspx</li>
+  <li>https://thuvienphapluat.vn/phap-luat-nha-dat/toan-van-quyet-dinh-1279-qd-bct-2025-quy-dinh-ve-gia-ban-dien-3357.html</li>
+  <li>https://tapchicongthuong.vn/thi-diem-ap-dung-gia-dien-hai-thanh-phan-tu-1-1-2026-218800.htm</li>
+  <li>https://vietnamnet.vn/en/rooftop-solar-saves-billions-of-dong-but-one-bottleneck-remains-2552186.html</li>
+  <li>https://www.pv-magazine.com/2026/09/22/vietnam-pushes-provinces-to-accelerate-rooftop-solar-rollout/</li>
+  <li>https://vneconomy.vn/automotive/quy-dinh-moi-ve-gia-ban-dien-cho-tram-sac-xe-dien.htm</li>
+</ul>
+<p>Nguồn nội bộ: <a href="notes/K-review-round1.md">K-review-round1</a>, <a href="notes/_catalog-gaps.md">_catalog-gaps</a>, tài liệu 02–10, nghiên cứu FusionSolar trước (<a href="../fusionsolar/README.md">../fusionsolar/README.md</a>).</p>
+
+</article>
+</div>
+</main>
+<footer class="docfoot">Tài liệu 11 · MVP và lộ trình · v1.0 · 2026-10-10 · Product/Delivery Lead (phối hợp Agent J). Ràng buộc bởi <a href="notes/K-review-round1.md">K vòng 1</a>. Liên quan: <a href="03-functional-catalog.html">03</a> · <a href="04-business-requirements.md">04</a> · <a href="06-system-architecture.html">06</a> · <a href="10-security-and-reliability.md">10</a> · <a href="13-open-questions-and-risks.md">13</a>.</footer>
+</body>
+</html>
