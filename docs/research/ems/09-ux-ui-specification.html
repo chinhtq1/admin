@@ -69,7 +69,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
   <li><a href="#s4">Nguyên tắc UX</a></li>
   <li><a href="#s5">Kiến trúc thông tin và sitemap</a></li>
   <li><a href="#s6">Quy ước chung mọi trang</a></li>
-  <li><a href="#s7">Đặc tả trang UI-01…UI-36</a>
+  <li><a href="#s7">Đặc tả trang UI-01…UI-37</a>
     <ol>
       <li><a href="#s7-1">Danh mục, điều hướng</a></li>
       <li><a href="#s7-2">Site và giám sát</a></li>
@@ -97,7 +97,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <h2>1. Tóm tắt</h2>
 <ul>
   <li><b>Câu hỏi trung tâm của giao diện</b> không còn là "sản lượng bao nhiêu" như FusionSolar mà là "<b>site nào cần chú ý, site có đang làm đúng kế hoạch, có an toàn và có tuân thủ giới hạn lưới không</b>". Vì vậy header site luôn hiện chiến lược, nguồn lệnh đang thắng, trạng thái edge, độ tươi dữ liệu, dải TOU và LOCAL/REMOTE (UI-03). <span class="tag proposal">PROPOSAL</span></li>
-  <li><b>36 trang</b> được cấp mã <code>UI-01…UI-36</code>, mỗi trang có mục tiêu, thông tin chính kèm nguồn dữ liệu và FR, bộ lọc/thao tác, thành phần, năm trạng thái (đang tải, rỗng, dữ liệu cũ, lỗi, mất kết nối), responsive, quyền, drill-down và truy vết. <b>14 trang</b> có wireframe low-fi với dữ liệu mẫu truy được về mã điểm. 32 trang có phạm vi MVP (9 trong số đó có phần mở rộng P1) và 4 trang chỉ thuộc P1 (UI-06, UI-08, UI-35, UI-36). <span class="tag proposal">PROPOSAL</span></li>
+  <li><b>37 trang</b> được cấp mã <code>UI-01…UI-37</code>, mỗi trang có mục tiêu, thông tin chính kèm nguồn dữ liệu và FR, bộ lọc/thao tác, thành phần, năm trạng thái (đang tải, rỗng, dữ liệu cũ, lỗi, mất kết nối), responsive, quyền, drill-down và truy vết. <b>14 trang</b> có wireframe low-fi với dữ liệu mẫu truy được về mã điểm. 32 trang có phạm vi MVP (9 trong số đó có phần mở rộng P1) và 4 trang chỉ thuộc P1 (UI-06, UI-08, UI-35, UI-36). <span class="tag proposal">PROPOSAL</span></li>
   <li><b>Phân cấp màn hình L1–L4</b> (danh mục → site → tài sản → chẩn đoán), nền trung tính, màu bão hòa chỉ cho bất thường, mọi trạng thái mã hóa bằng ít nhất hai kênh. Thiết kế <b>theo tinh thần</b> ISA-101 và ISA-18.2; <b>không tuyên bố tuân thủ</b> vì chưa đối chiếu văn bản tiêu chuẩn (K §6 #34). <span class="tag inference">INFERENCE</span></li>
   <li><b>Không bao giờ hiện 0 thay cho "không biết"</b>; số không dấu kèm chữ hướng (Nhập/Xuất/Sạc/Xả/Chờ); trạng thái sạc/xả lấy từ PCS/BMS; độ tươi <code>freshness ∈ {LIVE, DELAYED, OLD, OFFLINE, NO_DATA}</code> tách khỏi cờ chất lượng <code>FROZEN</code> và <code>UNCERTAIN_STALE</code> (K §6 #4, #9). <span class="tag proposal">PROPOSAL</span></li>
   <li><b>Lệnh theo hạng C0–C4</b> (K §6 #28): C1 hộp xác nhận hai bước; C2 thêm step-up MFA và lý do; C3 gửi yêu cầu sang hàng đợi duyệt hai người (UI-22); C4 không có nút, không có API. Không có nút "E-stop từ xa". Không cập nhật lạc quan: chỉ hiện "Đã áp dụng" sau readback (UI-21, UI-23). <span class="tag proposal">PROPOSAL</span></li>
@@ -196,7 +196,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <div class="diagram">
 <svg viewBox="0 0 1100 560" role="img" aria-labelledby="sm-title sm-desc">
 <title id="sm-title">Sitemap EMS: khung toàn cục và sáu nhóm trang</title>
-<desc id="sm-desc">Khung toàn cục UI-02 ở trên cùng nối xuống sáu nhóm: danh mục cấp tổ chức, site giám sát, site điều khiển, phân tích và sự cố, cấu hình và tích hợp, quản trị. Hàng dưới cùng là hai giao diện ngoài ứng dụng chính: kiosk và HMI cục bộ trên edge. Hộp nét đứt là trang P1.</desc>
+<desc id="sm-desc">Khung toàn cục UI-02 ở trên cùng nối xuống sáu nhóm (nhóm phân tích có thêm UI-37 P1): danh mục cấp tổ chức, site giám sát, site điều khiển, phân tích và sự cố, cấu hình và tích hợp, quản trị. Hàng dưới cùng là hai giao diện ngoài ứng dụng chính: kiosk và HMI cục bộ trên edge. Hộp nét đứt là trang P1.</desc>
 <rect class="box alt" x="10" y="12" width="1080" height="38" rx="6"/>
 <text class="title" x="24" y="36">UI-02 Khung toàn cục</text>
 <text class="small" x="190" y="36">Bộ chọn Org ▸ Site ▸ Tài sản (Ctrl+K) · đếm cảnh báo theo mức · lệnh chờ duyệt · thông báo · người dùng (ngôn ngữ, mật độ, giao diện)</text>
@@ -235,6 +235,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <rect class="box" x="556" y="122" width="170" height="26" rx="3"/><text x="564" y="139">UI-13 Trend explorer</text>
 <rect class="box" x="556" y="154" width="170" height="26" rx="3"/><text x="564" y="171">UI-12 Chẩn đoán L4</text>
 <rect class="box" x="556" y="186" width="170" height="26" rx="3"/><text x="564" y="203">UI-15 Chi tiết cảnh báo</text>
+<rect class="box ext" x="556" y="218" width="170" height="26" rx="3"/><text x="564" y="235">UI-37 Dự báo, mô phỏng (P1)</text>
 <!-- col 5 -->
 <rect class="box" x="738" y="122" width="170" height="26" rx="3"/><text x="746" y="139">UI-29 Site, tài sản</text>
 <rect class="box" x="738" y="154" width="170" height="26" rx="3"/><text x="746" y="171">UI-25 Biểu giá, TOU</text>
@@ -281,7 +282,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
       <li>UI-03 Tổng quan <code>…/dashboard</code> · UI-05 Dòng năng lượng <code>…/flow</code> · UI-06 SLD <code>…/sld</code> (P1)</li>
       <li>UI-04 Tài sản <code>…/assets</code> → UI-07 BESS · UI-09 PV · UI-10 Lưới/POC · UI-11 EV <code>…/assets/{asset}</code> → UI-12 Chẩn đoán <code>…/assets/{asset}/diagnostics</code>; UI-08 <code>…/assets/{bess}/cells</code> (P1)</li>
       <li>UI-24 Điều khiển <code>…/control</code> · UI-18 Chiến lược <code>…/strategy</code> · UI-19 Kế hoạch <code>…/plan</code> · UI-20 Thực thi <code>…/execution</code></li>
-      <li>UI-13 Lịch sử <code>…/history?view={view_id}</code> · Cảnh báo của site (UI-14 lọc sẵn) <code>…/alarms</code></li>
+      <li>UI-13 Lịch sử <code>…/history?view={view_id}</code> · Cảnh báo của site (UI-14 lọc sẵn) <code>…/alarms</code> · UI-37 Dự báo và mô phỏng <code>…/forecast</code> (P1)</li>
       <li>Cấu hình: UI-25 <code>…/tariff</code> · UI-26 <code>…/edge</code> · UI-27 <code>…/commissioning</code> · UI-28 <code>…/points</code> · UI-29 <code>…/settings</code></li>
     </ul></li>
   <li><b>Quản trị</b>: UI-31 <code>/o/{org}/admin/users</code> · UI-32 <code>/o/{org}/admin/settings</code> · UI-33 <code>/o/{org}/admin/audit</code></li>
@@ -361,6 +362,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><td><a href="#ui-34">UI-34</a></td><td>Đăng nhập, MFA, step-up</td><td>—</td><td>M-SEC</td><td><span class="prio p0">P0</span></td><td>Mọi vai trò</td><td>—</td></tr>
 <tr><td><a href="#ui-35">UI-35</a></td><td>Kiosk công khai</td><td>—</td><td>M-DASH</td><td><span class="prio p1">P1</span></td><td>PK, P1</td><td>—</td></tr>
 <tr><td><a href="#ui-36">UI-36</a></td><td>HMI cục bộ trên edge</td><td>L2</td><td>M-MON</td><td><span class="prio p1">P1</span></td><td>P4</td><td>—</td></tr>
+<tr><td><a href="#ui-37">UI-37</a></td><td>Dự báo và mô phỏng (đánh giá dự báo, mô hình tải, what-if định cỡ)</td><td>L3</td><td>M-ADV</td><td><span class="prio p1">P1</span></td><td>P2, P4, P6</td><td>—</td></tr>
 </tbody></table></div>
 </section>
 
@@ -456,7 +458,10 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>≥ 1920: chế độ tile (P1). 1280–1919: bảng đầy đủ, cột cố định "Trạng thái" và "Site". Tablet: 7 cột ưu tiên (trạng thái, site, độ tươi, P lưới, nhập/trần, BESS, cảnh báo). Mobile: "Cần chú ý" lên đầu, bảng thành thẻ site (tên, trạng thái, P lưới, SOC, số cảnh báo).</td></tr>
 <tr><th>Phân quyền</th><td><code>site.read</code> trên ≥ 2 site (người có 1 site vào thẳng UI-03, FR-DASH-007). Cột chi phí ẩn khi chủ site tắt "hiển thị chi phí". Ack cần <code>alarm.ack</code>.</td></tr>
 <tr><th>Drill-down</th><td>Dòng "Cần chú ý" → UI-15 (cảnh báo) hoặc UI-03/UI-24 (fallback, Gate). Tên site → UI-03. Ô BESS → UI-07. Ô cảnh báo → UI-14 lọc theo site và mức. Ô kế hoạch "Lệch" → UI-20.</td></tr>
-<tr><th>Truy vết</th><td>F-DASH-01, F-DASH-02, F-DASH-06, F-DASH-08 (P1), F-DASH-09 (P2) · FR-DASH-001, 002, 006, 008, 009, 013 · BR-DASH-02, 03 · AC-DASH-01, 02, 03, 05 · NFR-PERF-001 · H-P01, H-P18</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Lưu view danh mục</b> (P1, FR-DASH-012): bộ lọc, cột, sắp xếp, khoảng thời gian lưu theo người dùng; chia sẻ link trong tenant, mở lại phải qua kiểm quyền server (UXP-16).</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-DASH-01, F-DASH-02, F-DASH-06, F-DASH-08 (P1), F-DASH-09 (P2) · FR-DASH-001, 002, 006, 008, 009, 013 · BR-DASH-02, 03 · AC-DASH-01, 02, 03, 05 · NFR-PERF-001 · H-P01, H-P18 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-DASH-012 (P1)</td></tr>
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-01 tổng quan danh mục">
@@ -506,7 +511,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: breadcrumb rút thành tên site + nút ▾; bộ chuyển mở toàn màn hình; bộ đếm cảnh báo gộp thành một chip mức cao nhất.</td></tr>
 <tr><th>Phân quyền</th><td>Chỉ trả site/tài sản có binding hoặc grant còn hạn; đếm lệnh chờ duyệt chỉ cho người có <code>cmd.c3.approve</code>. Grant hết hạn → site biến khỏi danh sách ở lần tải sau, deep-link trả 403.</td></tr>
 <tr><th>Drill-down</th><td>Site → UI-03 (giữ tab nếu có); tài sản → trang L3 theo loại (UI-07/09/10/11); bộ đếm cảnh báo → UI-14 lọc mức; bộ đếm duyệt → UI-22; chuông → UI-17.</td></tr>
-<tr><th>Truy vết</th><td>F-DASH-03, F-DASH-07, F-ORG-02 · FR-DASH-003, 007 · AC-DASH-06 · H-P02</td></tr>
+<tr><th>Truy vết</th><td>F-DASH-03, F-DASH-07, F-ORG-02 · FR-DASH-003, 007 · AC-DASH-06 · H-P02 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-ORG-002 (cây Org → Portfolio/Region → Site → Asset group → Device mà bộ chọn ngữ cảnh duyệt)</td></tr>
 </tbody></table></div>
 </section>
 </section>
@@ -533,7 +538,12 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Desktop: header toàn ngang; trái 5 cột energy flow, phải 7 cột KPI; biểu đồ toàn ngang; dưới: cảnh báo | tài sản. Tablet: 2 cột. Mobile: header rút gọn (trạng thái, chiến lược, độ tươi, TOU), energy flow, thanh giới hạn, KPI dạng danh sách, biểu đồ chỉ xem.</td></tr>
 <tr><th>Phân quyền</th><td><code>site.read</code>. Chi phí ẩn khi chủ site tắt. Nút "Điều khiển" chỉ hiện với vai trò có <code>cmd.c1</code> trên site và site có gói CONTROL.</td></tr>
 <tr><th>Drill-down</th><td>Header chiến lược → UI-18; mức arbiter/LOCAL/Gate → UI-24; energy flow → UI-05; thanh giới hạn → UI-10; biểu đồ (click slot) → UI-19/UI-20; cảnh báo → UI-15; thẻ tài sản → UI-07/09/10/11; KPI → UI-13 với chuỗi tương ứng.</td></tr>
-<tr><th>Truy vết</th><td>F-DASH-04, F-DASH-05, F-DASH-06, F-MON-03, F-MON-04, F-GRID-07, F-GRID-09 (P1), F-OPT-08 · FR-DASH-004, 005, 006, 008 · FR-GRID-007, 010 · FR-MON-004, 005 · FR-OPT-002 · AC-DASH-03, 04 · H-P03, H-P04</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Watermark dữ liệu</b> (FR-HIST-006): chip "Dữ liệu đầy đủ đến HH:MM" lấy từ <code>complete_until</code> của site; số ngày/tháng chưa đủ dữ liệu ghi "tạm tính".</li>
+<li><b>Thẻ kế hoạch</b> (FR-OPT-009): tóm tắt slot hiện tại và kế tiếp của kế hoạch 48 h, link UI-19.</li>
+<li><b>Mobile</b> (P1, FR-DASH-010): theo mục Responsive; không có lệnh C2/C3 trên mobile ở Phase 1.</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-DASH-04, F-DASH-05, F-DASH-06, F-MON-03, F-MON-04, F-GRID-07, F-GRID-09 (P1), F-OPT-08 · FR-DASH-004, 005, 006, 008 · FR-GRID-007, 010 · FR-MON-004, 005 · FR-OPT-002 · AC-DASH-03, 04 · H-P03, H-P04 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-HIST-006, FR-OPT-009, FR-DASH-010 (P1)</td></tr>
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-03 dashboard site BD-02">
@@ -587,7 +597,11 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: danh sách thẻ theo nhóm, thu gọn nhóm bình thường, mở sẵn nhóm có cảnh báo.</td></tr>
 <tr><th>Phân quyền</th><td><code>site.read</code>; cột driver/trạng thái kiểm chứng chỉ cho TECHNICIAN, OPERATOR, SITE_ENGINEER, CONTROL_SUPERVISOR.</td></tr>
 <tr><th>Drill-down</th><td>Theo loại → UI-07 (BESS), UI-09 (PV), UI-10 (công tơ/POC), UI-11 (EV), UI-26 (edge); mọi thiết bị → UI-12 (chẩn đoán), UI-13 (lịch sử).</td></tr>
-<tr><th>Truy vết</th><td>F-MON-01, F-MON-02, F-MON-05, F-MON-08, F-MON-09 · FR-MON-003, 005, 006, 009, 010 · AC-MON-06 · BR-MON-04</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Máy phát</b> (P1, FR-GRID-017): P, E, trạng thái chạy/dừng, giờ chạy lũy kế; khi mất lưới, sản lượng máy phát tách khỏi PV trong cân bằng (không cộng chung "nguồn tại chỗ").</li>
+<li>Giá trị "đo lúc" theo <code>ts</code> của edge; nhận theo lớp C1/C2/C3 (FR-MON-001, FR-MON-002 là backend, trang chỉ tiêu thụ).</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-MON-01, F-MON-02, F-MON-05, F-MON-08, F-MON-09 · FR-MON-003, 005, 006, 009, 010 · AC-MON-06 · BR-MON-04 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-GRID-017 (P1) · FR-MON-001, 002 (backend, gián tiếp)</td></tr>
 </tbody></table></div>
 </section>
 
@@ -672,7 +686,14 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Desktop: trái trạng thái + SOC + giới hạn; phải biểu đồ; dưới: sức khỏe, an toàn, rack. Mobile: trạng thái, SOC, chuỗi giới hạn rút gọn ("Sạc 116 kW · cho phép 240 kW"), biểu đồ chỉ xem; lệnh C1 có, C2/C3 không.</td></tr>
 <tr><th>Phân quyền</th><td>Xem: <code>site.read</code>. Lệnh: <code>cmd.c1</code>/<code>cmd.c2</code> (OPERATOR, SITE_ENGINEER, CONTROL_SUPERVISOR); nút ẩn với VIEWER/ANALYST/TECHNICIAN/ORG_ADMIN. Điều kiện vô hiệu: <code>control_enabled = false</code>, LOCAL, kill switch, Gate không phù hợp, ngoài SOE (BR-SEC-04).</td></tr>
 <tr><th>Drill-down</th><td>Rack → UI-08 (P1); nguồn lệnh → UI-19/UI-23; lý do kẹp → UI-12 điểm <code>ess.p_charge_max</code>; interlock → UI-24; biểu đồ → UI-13.</td></tr>
-<tr><th>Truy vết</th><td>F-BESS-01, 03, 04, 05, 06, 07, 09, 10, 18, 19 (CẤM), 20 (CẤM) · FR-BESS-001…011 · AC-BESS-01…08 · BR-BESS-01, 03, 06 · H-P07</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Xu hướng SOH</b> (P1, FR-BESS-014): SOH theo BMS (ghi "BMS công bố") và dung lượng khả dụng ước lượng từ các chu kỳ sâu ΔSOC ≥ 60% (nhãn "≈ ước tính", hiện số chu kỳ dùng để ước lượng); KPI throughput, EFC (<code>E_ref</code> ghi rõ), RTE theo <code>rte_boundary</code>, aux, giờ derate (FR-BESS-013).</li>
+<li><b>Phân chia công suất theo PCS/tủ</b> (P1, FR-BESS-016): bảng mỗi tủ P thực tế, SOC, giới hạn sạc/xả, phần được giao; ghi rõ "edge chia" hay "controller native chia".</li>
+<li><b>Tab "Bảo hành"</b> (P1, FR-BESS-015): bảng so điều khoản bảo hành (nhập ở UI-29 tab "Hợp đồng", FR-ORG-016) với thực tế: EFC lũy kế và theo năm, throughput (MWh), SOC trung bình, nhiệt độ trung bình và thời gian vượt ngưỡng, chu kỳ/năm; mỗi dòng có "% đã dùng" và ngày dự kiến chạm giới hạn (≈ ngoại suy tuyến tính, nhãn ước tính). Cảnh báo khi tiến gần giới hạn (ngưỡng cấu hình, mặc định đề xuất 80%). Chưa nhập điều khoản → "Chưa có điều khoản bảo hành — nhập ở UI-29", không hiện 0. Chú thích: "Theo dõi của nền tảng, không phải đánh giá bảo hành của hãng". <span class="tag proposal">PROPOSAL</span></li>
+<li><b>Thẻ "Nguồn gốc năng lượng trong pin"</b> (P1, FR-BESS-017): kWh hiện có trong pin chia theo nguồn (PV / lưới) và quy kết khi xả (xuất lưới / cấp tải); nhãn "≈ ước tính · thuật toán quy kết vN" và link phương pháp; quy tắc quy kết còn <span class="tag unknown">UNKNOWN</span> (Q-C04).</li>
+<li><b>Dừng vận hành từ xa</b> (P1, FR-BESS-018): như thao tác đã nêu; luôn qua UI-21 → UI-22 (C3).</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-BESS-01, 03, 04, 05, 06, 07, 09, 10, 18, 19 (CẤM), 20 (CẤM) · FR-BESS-001…011 · AC-BESS-01…08 · BR-BESS-01, 03, 06 · H-P07 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-BESS-013, 014, 015, 016, 017, 018 (P1)</td></tr>
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-07 chi tiết BESS">
@@ -778,7 +799,16 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: hai thanh giới hạn, vi phạm hôm nay, kWh theo khung; bảng pha thu gọn.</td></tr>
 <tr><th>Phân quyền</th><td>Xem <code>site.read</code>; giới hạn tạm thời <code>cmd.c2</code>; cấu hình lưới <code>soe.propose</code> + duyệt C3; CT/VT chỉ vai trò kỹ thuật.</td></tr>
 <tr><th>Drill-down</th><td>Vi phạm → UI-13 dữ liệu 1 s quanh sự kiện (nếu còn trong vòng 7 ngày tại edge) và UI-30 bằng chứng; chủ vòng → UI-24; submeter → UI-13; công tơ → UI-12.</td></tr>
-<tr><th>Truy vết</th><td>F-GRID-01, 02, 03, 04, 06, 07, 09 (P1), 11 (P1), 13 · F-MON-09 · F-TAR-06 · FR-GRID-001…008, 010, 012 · FR-MON-010 · FR-ALM-009 · AC-ALM-08 · H-P08 (hạ P1 theo K R-24)</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Ngân sách xuất theo kỳ</b> (P1, FR-GRID-009, FR-REP-015): thanh lũy kế E_xuất/E_PV của kỳ so với tỷ lệ cho phép, dự báo cuối kỳ (nhãn dự báo), nguồn gốc điện xuất (PV trực tiếp / BESS xả, ≈ ước tính). Độ dài kỳ và mẫu số là tham số <span class="tag unknown">UNKNOWN</span> (Q-A03), hiện rõ "tham số mẫu" cho đến khi kiểm chứng.</li>
+<li><b>Cảnh báo Pmax</b> (P1, FR-GRID-011): vạch công suất đăng ký và ngưỡng người dùng trên đồng hồ demand; chip khi Pmax kỳ tiến gần.</li>
+<li><b>Peak shaving theo demand</b> (P1, FR-OPT-017): trong đồng hồ demand hiện <code>P_target</code>, phần công suất còn cho phép tới cuối cửa sổ và <code>demand_basis</code> (đo/đăng ký); cấu hình ở UI-18.</li>
+<li><b>Trạng thái nối lưới</b> (P1, FR-GRID-014): <code>grid_connected</code>, sự kiện mất lưới và thời lượng; khi đảo, sơ đồ cân bằng đổi sang dạng không có lưới.</li>
+<li><b>Nhiều POC</b> (P1, FR-GRID-015): bộ chọn POC; thanh giới hạn và vi phạm theo từng POC, không net xuất ở POC này với nhập ở POC khác.</li>
+<li><b>Tab "Phụ tải"</b> (P1, FR-GRID-016): tải nền (phương pháp có phiên bản, ví dụ phân vị thấp của tải ngoài giờ sản xuất — <span class="tag proposal">PROPOSAL</span>), tải không đo (= tải tổng suy ra − Σ <code>MTR_LOAD_i</code>; âm → cờ kiểm tra), heatmap hồ sơ tải giờ × thứ (có nhãn số, không chỉ màu), top phụ tải theo kWh; số suy ra mang nhãn "≈ ước tính". Không gọi là "AI".</li>
+<li>Vi phạm xuất (FR-REP-007) và điện năng theo khung TOU (FR-TAR-006) như đã nêu; xuất bằng chứng ở UI-30.</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-GRID-01, 02, 03, 04, 06, 07, 09 (P1), 11 (P1), 13 · F-MON-09 · F-TAR-06 · FR-GRID-001…008, 010, 012 · FR-MON-010 · FR-ALM-009 · AC-ALM-08 · H-P08 (hạ P1 theo K R-24) · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-GRID-009, 011, 014, 015, 016 (P1) · FR-OPT-017 (P1) · FR-TAR-006 · FR-REP-007, FR-REP-015 (P1)</td></tr>
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-10 lưới và POC">
@@ -816,7 +846,10 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: thẻ trụ.</td></tr>
 <tr><th>Phân quyền</th><td>Xem <code>site.read</code>; phiên sạc gắn người là dữ liệu cá nhân → ẩn danh với VIEWER, đầy đủ chỉ cho vai trò được phép (F-SEC-18, phân lớp D0–D4 của 10). Lệnh EV <code>cmd.c1</code>.</td></tr>
 <tr><th>Drill-down</th><td>Trụ → UI-12; phiên → UI-13; giới hạn do EMS → UI-24 (mức arbiter 10).</td></tr>
-<tr><th>Truy vết</th><td>F-EV-01 (MVP), F-EV-02, 05, 06, 07, 08 (P1) · FR-EV-001, 002, 005, 006, 007, 008</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Nguồn dữ liệu phiên sạc</b> (P1, FR-EV-003, FR-EV-004): chip "CSMS trên edge của ta (OCPP 1.6J, Security Profile ≥ 2)" hoặc "CSMS của CPO — chỉ đọc qua connector"; trạng thái kết nối và lần đồng bộ cuối. Ghi giới hạn qua API CPO chỉ hiện khi đủ điều kiện của FR-EV-004 (còn mở ở 12 GAP-12-02); nếu không, nút giới hạn EV ẩn kèm lý do.</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-EV-01 (MVP), F-EV-02, 05, 06, 07, 08 (P1) · FR-EV-001, 002, 005, 006, 007, 008 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-EV-003, 004 (P1)</td></tr>
 </tbody></table></div>
 </section>
 
@@ -845,7 +878,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Điều tra sự kiện và xu hướng: so sánh nhiều chuỗi, nhiều khoảng, thực tế với kế hoạch; xuất dữ liệu có đơn vị và múi giờ.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
-<li>Chuỗi từ catalog (SeriesDefinition), độ phân giải tự chọn theo khoảng và hiện rõ ("Độ phân giải: 5 phút, trung bình"): raw ≤ 1 ngày, 5 phút ≤ 31 ngày, 1 h ≤ 1 năm, ngày &gt; 1 năm (FR-HIST-010).</li>
+<li>Chuỗi từ catalog (SeriesDefinition), độ phân giải tự chọn theo khoảng và hiện rõ ("Độ phân giải: 5 phút, trung bình") theo ngưỡng của FR-HIST-010: <b>raw ≤ 7 ngày; 5 phút ≤ 93 ngày; ngày cho khoảng dài hơn</b>. Ngưỡng này trùng giới hạn tối đa mỗi request của 06 và NFR-PERF-002, nên UI không bao giờ yêu cầu độ phân giải mịn hơn ngưỡng. Người dùng có thể chọn thô hơn (ví dụ 1 h cho khoảng 7–93 ngày để biểu đồ nhẹ hơn), không chọn mịn hơn.</li>
 <li><b>Công suất (kW) vẽ đường; điện năng (kWh) vẽ cột theo bucket</b> với nhãn khoảng <code>[bucket_start, bucket_start+Δ)</code> (K §6 #8).</li>
 <li>Lớp chất lượng: khoảng trống không nối; ước tính/nội suy nét đứt; SUSPECT/FROZEN nền sọc (§6.2).</li>
 <li>Lớp phủ: dải TOU (theo phiên bản lịch có hiệu lực ngày đó), ngưỡng (trần nhập, giới hạn xuất, SOC min/max), marker sự kiện (cảnh báo, lệnh, đổi chế độ, interlock, LOCAL/REMOTE).</li>
@@ -857,7 +890,12 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: chỉ xem view đã lưu, một panel mỗi màn, nút zoom; không soạn view.</td></tr>
 <tr><th>Phân quyền</th><td><code>site.read</code>; xuất cần <code>data.export</code>; chuỗi L4 (thanh ghi, cell) chỉ vai trò kỹ thuật.</td></tr>
 <tr><th>Drill-down</th><td>Marker cảnh báo → UI-15; marker lệnh → UI-23; slot kế hoạch → UI-20; điểm → UI-12.</td></tr>
-<tr><th>Truy vết</th><td>F-HIST-07, F-HIST-08 (P1), F-HIST-05, F-REP-11 · FR-HIST-010, 012, 007, 008 · FR-REP-006 · NFR-PERF-002 · H-P09 · <span class="tag fact">FACT</span> FusionSolar chỉ cho chọn một ngày, legend phân trang "1/2", hai chuỗi màu gần nhau (<code>06_device_history.jpg</code>, <code>02_energy_revenue_charts.jpg</code>)</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Độ phân giải</b> (FR-HIST-005): bucket khóa <code>bucket_start</code>, nửa mở <code>[start, start+Δ)</code>; nhãn phép tổng hợp (trung bình theo tích phân, min, max, last) cạnh chip độ phân giải.</li>
+<li><b>Thay thế giá trị</b> (P1, FR-HIST-014): chọn khoảng hỏng → "Nhập/thay thế giá trị" với lý do bắt buộc; dữ liệu mang origin MANUAL/SUBSTITUTED và cờ REVISED, kích hoạt tính lại và restatement (FR-REP-005); vẽ nét đứt; ghi audit (UI-33). Chỉ vai trò kỹ thuật có quyền sửa dữ liệu.</li>
+<li><b>Tab "Chất lượng dữ liệu"</b> (P1, FR-HIST-015): bảng theo thiết bị: coverage (%), độ trễ ingest p50/p95, tỷ lệ SUSPECT, số reset/rollover bộ đếm, lệch Σ inverter so với công tơ PV (%); lọc theo site/khoảng; nút "Tạo ticket DQ" → UI-16. Không hiện 0 khi thiết bị chưa có dữ liệu.</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-HIST-07, F-HIST-08 (P1), F-HIST-05, F-REP-11 · FR-HIST-010, 012, 007, 008 · FR-REP-006 · NFR-PERF-002 · H-P09 · <span class="tag fact">FACT</span> FusionSolar chỉ cho chọn một ngày, legend phân trang "1/2", hai chuỗi màu gần nhau (<code>06_device_history.jpg</code>, <code>02_energy_revenue_charts.jpg</code>) · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-HIST-005 · FR-DASH-012 (P1, lưu view) · FR-HIST-014, 015 (P1)</td></tr>
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-13 trend explorer">
@@ -892,7 +930,13 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Desktop: bảng đầy đủ, khung chi tiết bên phải (UI-15) khi chọn. Mobile (ưu tiên số 1 của mobile): danh sách thẻ theo mức, vuốt hoặc nút "Xác nhận"; tạm gác và xóa thủ công chỉ ở desktop/tablet.</td></tr>
 <tr><th>Phân quyền</th><td>Xem <code>site.read</code>; ack <code>alarm.ack</code> (TECHNICIAN chỉ trong site/ticket được giao); gác <code>alarm.shelve</code> (OPERATOR, SITE_ENGINEER, CONTROL_SUPERVISOR); ticket <code>ticket.write</code>.</td></tr>
 <tr><th>Drill-down</th><td>Dòng → UI-15; site → UI-03; tài sản → L3; ticket → UI-16; cảnh báo lệnh → UI-23; cảnh báo tuân thủ → UI-10.</td></tr>
-<tr><th>Truy vết</th><td>F-ALM-01, 02, 03, 04, 05, 07 (P1), 13, 21 · FR-ALM-001…005, 009, 011, 012 (P1) · BR-ALM-01…04 · AC-ALM-01, 03, 06, 08 · NFR-PERF-001 · H-P10 · 10 §17.3 (danh sách cảnh báo không được gác)</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Mobile</b> (P1, FR-DASH-010): danh sách cảnh báo và ack.</li>
+<li><b>Nguồn "Phân tích thống kê"</b> (P1, FR-ALM-021): bộ lọc nguồn cảnh báo (Quy tắc / Phân tích thống kê / Thiết bị); cảnh báo thống kê mang nhãn "Phân tích thống kê" (không "AI") và hiện tỷ lệ cảnh báo sai đo được của bộ phát hiện.</li>
+<li><b>Điều khiển ngoài</b> (P1, FR-ALM-022): <code>EXTERNAL_CONTROL_DETECTED</code> hiển thị như mọi cảnh báo, link sang UI-24.</li>
+<li><b>Báo động PCCC/khí/nhiệt phòng pin</b> (FR-BESS-010) xuất hiện trong console với interlock IL-08 liên quan.</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-ALM-01, 02, 03, 04, 05, 07 (P1), 13, 21 · FR-ALM-001…005, 009, 011, 012 (P1) · BR-ALM-01…04 · AC-ALM-01, 03, 06, 08 · NFR-PERF-001 · H-P10 · 10 §17.3 (danh sách cảnh báo không được gác) · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-DASH-010, FR-ALM-021, 022 (P1) · FR-BESS-010</td></tr>
 </tbody></table></div>
 <p><span class="tag inference">INFERENCE</span> Vòng đời theo tinh thần ISA-18.2/IEC 62682 (shelved, suppressed by design, out of service); edition <span class="tag unknown">UNKNOWN</span>; không tuyên bố tuân thủ (K §3.7). Ngưỡng lũ cảnh báo kiểu EEMUA 191 là <span class="tag unknown">UNKNOWN</span>, nên N cấu hình được, không hard-code (H #25). <span class="tag fact">FACT</span> FusionSolar 7.0 có nút "New Ticket" trong alarm center (<a href="https://solisdepot.com/wp-content/uploads/2023/03/FusionSolar-Smart-PV-Management-System-7.0-After-sales-Technical-Training-Slides.pptx.pdf">slide đào tạo 7.0</a>, qua kết quả tìm kiếm); thao tác ack/clear/mask ở bản 25.x <span class="tag unknown">UNKNOWN</span>.</p>
 
@@ -1011,7 +1055,12 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: xem chiến lược, tầng, chủ vòng; override C1 cho phép; C2/C3 ẩn.</td></tr>
 <tr><th>Phân quyền</th><td>Xem <code>site.read</code>; override <code>cmd.c1</code>; mặc định <code>cmd.c2</code>; chủ vòng và nới guardrail yêu cầu C3 (<code>cmd.c3.request</code>/<code>approve</code>).</td></tr>
 <tr><th>Drill-down</th><td>Tầng 2 → UI-19 kế hoạch hiện hành; phiên bản → so sánh tham số; backtest (P1) → báo cáo mô phỏng; chủ vòng → UI-24.</td></tr>
-<tr><th>Truy vết</th><td>F-BESS-05, F-OPT-01, 02, 03, 04, 05, F-OPT-13…15 (P1) · FR-BESS-004 · FR-OPT-001…006, 014…016 · AC-OPT-05, AC-BESS-08 · 08 §2, §13</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Peak shaving theo demand</b> (P1, FR-OPT-017): cấu hình <code>demand_basis</code> (tắt mặc định; đo/đăng ký), <code>P_target</code> và nguồn của nó (kế hoạch hoặc Pmax tháng).</li>
+<li><b>Tăng dự phòng khi có cảnh báo bão/mất điện theo lịch</b> (P1, FR-OPT-019): hệ thống đề xuất, người dùng xác nhận (C1) mới áp dụng; hiện hạn và mức dự phòng mới.</li>
+<li><b>Ánh xạ chế độ native</b> (FR-BESS-003): với mỗi chiến lược, hiện chế độ native tương ứng của driver và kết quả đọc lại.</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-BESS-05, F-OPT-01, 02, 03, 04, 05, F-OPT-13…15 (P1) · FR-BESS-004 · FR-OPT-001…006, 014…016 · AC-OPT-05, AC-BESS-08 · 08 §2, §13 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-OPT-017, 019 (P1) · FR-BESS-003</td></tr>
 </tbody></table></div>
 </section>
 
@@ -1033,7 +1082,12 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Desktop: 48 h đầy đủ. Tablet: 24 h cuộn ngang trong vùng timeline. Mobile: chỉ xem danh sách khối ("17:30–22:30 Xả cao điểm tới SOC 20%") và SOC dự kiến; không soạn.</td></tr>
 <tr><th>Phân quyền</th><td>Xem <code>site.read</code> (P1 thấy khối và lý do; số chi phí theo cài đặt hiển thị chi phí); chạy lại <code>cmd.c1</code>; duyệt <code>plan.approve</code>; soạn tay (P1) <code>cmd.c2</code>.</td></tr>
 <tr><th>Drill-down</th><td>Slot quá khứ → UI-20; mã lý do → UI-24 (mức arbiter); dải TOU → UI-25; dự báo → UI-13 (thực tế so với dự báo).</td></tr>
-<tr><th>Truy vết</th><td>F-OPT-04, 06, 07, 08, 11, F-OPT-09 (P1), F-OPT-12 (P1), F-ADV-01, F-TAR-02 · FR-OPT-005, 007, 008, 009, 011, 012 (P1) · AC-OPT-02, 03, 06, 07, 08 · H-P11 · <span class="tag fact">FACT, Low–Med</span> Schneider EMA lập lịch 15 phút và có lịch mặc định khi mất kết nối (một nguồn ~2017, 48/72 h mâu thuẫn, K R-23); lựa chọn 48 h/15 phút của ta là PROPOSAL độc lập</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Ngân sách xuất trong kế hoạch</b> (P1, FR-OPT-018): lớp hiển thị E_xuất dự kiến so với ngân sách kỳ; cờ <code>allow_grid_charge</code>, <code>allow_ess_export</code> hiện trong header kế hoạch.</li>
+<li><b>Nguồn dự báo PV</b> (P1, FR-ADV-003): tên nhà cung cấp, phiên bản mô hình, thời điểm phát hành, dải P10–P90; link sang UI-37 tab "Đánh giá dự báo".</li>
+<li>Dải TOU lấy từ lịch có phiên bản hiệu lực ngày đó (FR-TAR-002).</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-OPT-04, 06, 07, 08, 11, F-OPT-09 (P1), F-OPT-12 (P1), F-ADV-01, F-TAR-02 · FR-OPT-005, 007, 008, 009, 011, 012 (P1) · AC-OPT-02, 03, 06, 07, 08 · H-P11 · <span class="tag fact">FACT, Low–Med</span> Schneider EMA lập lịch 15 phút và có lịch mặc định khi mất kết nối (một nguồn ~2017, 48/72 h mâu thuẫn, K R-23); lựa chọn 48 h/15 phút của ta là PROPOSAL độc lập · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-TAR-002 · FR-OPT-018, FR-ADV-003 (P1)</td></tr>
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-19 kế hoạch 48 giờ">
@@ -1084,7 +1138,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: chỉ C1 (với phiên MFA), hộp toàn màn hình, hai bước giữ nguyên; C2/C3 hiện "Thực hiện trên máy tính" (Q-H06).</td></tr>
 <tr><th>Phân quyền</th><td>Theo ma trận 10 §5.4; PDP quyết định ở server. Điều kiện chung: <code>lifecycle = active</code> ∧ <code>control_enabled</code> ∧ REMOTE ∧ kill switch OFF ∧ Gate phù hợp (BR-SEC-04).</td></tr>
 <tr><th>Drill-down</th><td>Sau gửi → UI-23 (chi tiết lệnh); C3 → UI-22.</td></tr>
-<tr><th>Truy vết</th><td>F-SEC-06, 07, 14, 15, F-BESS-05…07, F-PV-03, F-GRID-03, 06, F-EV-05 (P1) · FR-SEC-003, 006, 007, 008, 009, 016, 022 · FR-BESS-004…006 · AC-BESS-01, 02, AC-SEC-05, 06, 13 · H-P12, H-P13 · 10 §11</td></tr>
+<tr><th>Truy vết</th><td>F-SEC-06, 07, 14, 15, F-BESS-05…07, F-PV-03, F-GRID-03, 06, F-EV-05 (P1) · FR-SEC-003, 006, 007, 008, 009, 016, 022 · FR-BESS-004…006 · AC-BESS-01, 02, AC-SEC-05, 06, 13 · H-P12, H-P13 · 10 §11 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-PV-003 · FR-GRID-003, 006 · FR-EV-005 (P1) · FR-SEC-015 · FR-INT-007 (trạng thái readback)</td></tr>
 </tbody></table></div>
 
 <h5>Luồng theo hạng lệnh</h5>
@@ -1167,7 +1221,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Desktop chính. Duyệt trên mobile là P1 và cần quyết định của 10 (Q-H06); MVP mobile chỉ xem.</td></tr>
 <tr><th>Phân quyền</th><td><code>cmd.c3.approve</code> (CONTROL_SUPERVISOR; PLATFORM_ADMIN chỉ OTA và kill switch nền tảng); <code>soe.approve</code> không duyệt bản mình đề xuất (BR-SEC-02).</td></tr>
 <tr><th>Drill-down</th><td>Site → UI-24; lệnh sau duyệt → UI-23; SOE → UI-24 mục SOE.</td></tr>
-<tr><th>Truy vết</th><td>F-SEC-06, F-SEC-10, F-SEC-11, F-BESS-08 · FR-SEC-006, 007, 012, 013 · FR-BESS-007 · AC-SEC-02, 03, 07 · 10 §5.5, X-10-09</td></tr>
+<tr><th>Truy vết</th><td>F-SEC-06, F-SEC-10, F-SEC-11, F-BESS-08 · FR-SEC-006, 007, 012, 013 · FR-BESS-007 · AC-SEC-02, 03, 07 · 10 §5.5, X-10-09 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-GRID-003 (đổi cấu hình lưới, C3) · FR-BESS-018 (P1, C3)</td></tr>
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-22 hàng đợi duyệt">
@@ -1201,7 +1255,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: danh sách lệnh của tôi và lệnh gần đây của site; chi tiết dạng dòng thời gian.</td></tr>
 <tr><th>Phân quyền</th><td><code>site.read</code> xem lệnh của site (VIEWER thấy lệnh và kết quả, không thấy IP); IP/thiết bị cần <code>audit.read</code>.</td></tr>
 <tr><th>Drill-down</th><td>Lệnh → chi tiết; site → UI-24; slot kế hoạch → UI-20; phê duyệt → UI-22; audit → UI-33.</td></tr>
-<tr><th>Truy vết</th><td>F-SEC-14, F-SEC-07 · FR-SEC-009, 015 · NFR-REL-012 · H-P13</td></tr>
+<tr><th>Truy vết</th><td>F-SEC-14, F-SEC-07 · FR-SEC-009, 015 · NFR-REL-012 · H-P13 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-SEC-008 (envelope lệnh)</td></tr>
 </tbody></table></div>
 </section>
 
@@ -1224,7 +1278,13 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: trạng thái tổng (có nhận lệnh từ xa không + lý do), nút "Tạm ngưng điều khiển từ xa" (C1); các phần khác thu gọn.</td></tr>
 <tr><th>Phân quyền</th><td>Xem <code>site.read</code>; kill switch engage <code>killswitch.engage</code> (OPERATOR site; CONTROL_SUPERVISOR, ORG_ADMIN site/tenant; PLATFORM_ADMIN nền tảng); release C3; bật control/M2 <code>control.enable</code>; SOE <code>soe.propose</code>/<code>soe.approve</code>.</td></tr>
 <tr><th>Drill-down</th><td>Điều kiện chưa đạt → UI-27 (bước commissioning), UI-28 (driver), UI-31 (MFA người dùng); lệnh → UI-23; kế hoạch → UI-19; interlock → UI-13 lớp sự kiện.</td></tr>
-<tr><th>Truy vết</th><td>F-SEC-05, 08, 09, 10, 11, 15, F-OPT-01, 02, F-BESS-08 · FR-SEC-005, 010, 011, 012, 013, 016, 021 · FR-OPT-002, 003 · AC-SEC-01, 06, 08, 11 · NFR-REL-010 · 10 §12, §13.4, §14.4 · catalog gap "hồ sơ sẵn sàng Gate M2" (agent D)</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Liên kết điều độ</b> (P1, FR-GRID-013): trạng thái slave IEC 104 (kết nối, lần nhận cuối), lệnh <code>GRID_OPERATOR</code> đang hiệu lực ở mức 4 của arbiter; chỉ hiện ở site có liên kết.</li>
+<li><b>Phát hiện điều khiển ngoài</b> (P1, FR-ALM-022): chip khi chế độ/setpoint thiết bị đổi không do edge, kèm thời điểm và thiết bị.</li>
+<li><b>Giám sát an toàn edge</b> (FR-BESS-009) và <b>lịch dự phòng</b> (FR-OPT-006): trạng thái SOC guard, BMS stale, "đang chạy lịch dự phòng tới HH:MM".</li>
+<li><b>Duyệt phiên hỗ trợ từ xa</b> (P1, FR-SEC-024): hàng chờ yêu cầu từ UI-26 (người yêu cầu, lý do, phạm vi, thời lượng ≤ 2 h); người đại diện chủ tài sản Đồng ý/Từ chối; phiên đang mở có đồng hồ đếm và nút "Kết thúc ngay"; break-glass cần duyệt hai người qua UI-22; phiên được ghi và xem ở UI-33. <span class="tag proposal">PROPOSAL</span></li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-SEC-05, 08, 09, 10, 11, 15, F-OPT-01, 02, F-BESS-08 · FR-SEC-005, 010, 011, 012, 013, 016, 021 · FR-OPT-002, 003 · AC-SEC-01, 06, 08, 11 · NFR-REL-010 · 10 §12, §13.4, §14.4 · catalog gap "hồ sơ sẵn sàng Gate M2" (agent D) · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-OPT-001 (arbiter) · FR-BESS-007, 009 · FR-OPT-006 · FR-GRID-013, FR-ALM-022, FR-SEC-024 (P1)</td></tr>
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-24 trạng thái điều khiển site">
@@ -1279,7 +1339,14 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: trạng thái tổng và claim bằng camera quét QR (P4 tại site).</td></tr>
 <tr><th>Phân quyền</th><td>Xem: vai trò kỹ thuật; claim/cấu hình <code>edge.manage</code> (SITE_ENGINEER); OTA <code>edge.ota</code> (PLATFORM_ADMIN, C3).</td></tr>
 <tr><th>Drill-down</th><td>Thiết bị trên bus → UI-12/UI-28; cảnh báo edge → UI-15; kế hoạch → UI-19; commissioning → UI-27.</td></tr>
-<tr><th>Truy vết</th><td>F-MON-07, F-INT-01, 02, 08, 09, 10, 11, 12, F-INT-13 (connector P1) · FR-MON-003, 008 · FR-INT-001, 002, 008…012 · NFR-REL-008, 011 · NFR-DATA-001 · 10 §17.3</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Lệch đồng hồ thiết bị</b> (P1, FR-HIST-016): thiết bị bị gắn <code>CLOCK_SUSPECT</code> và lý do (reset <code>daily_yield</code> lệch 00:00, tương quan chéo POC–PV).</li>
+<li><b>Connector cloud hãng khác</b> (P1, FR-INT-021): lần pull cuối, hạn mức theo endpoint, tiến độ backfill, quality <code>UNCERTAIN_VENDOR_CLOUD</code>.</li>
+<li><b>Giao diện ra hệ thống khách</b> (P1): slave IEC 104 (bảng điểm, conduit, trạng thái liên kết; FR-INT-023, FR-GRID-013) và Modbus TCP server cho SCADA/BMS tòa nhà (bật/tắt, bảng điểm xuất lại, client đang kết nối; FR-INT-024).</li>
+<li><b>CSMS trên edge</b> (P1, FR-EV-003): trạng thái OCPP, Security Profile, trụ đang kết nối.</li>
+<li><b>Yêu cầu phiên hỗ trợ từ xa</b> (P1, FR-SEC-024): nút "Yêu cầu hỗ trợ từ xa" (lý do, thời lượng ≤ 2 h) → chờ chủ site đồng ý ở UI-24; trạng thái tunnel và thời gian còn lại. <span class="tag proposal">PROPOSAL</span></li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-MON-07, F-INT-01, 02, 08, 09, 10, 11, 12, F-INT-13 (connector P1) · FR-MON-003, 008 · FR-INT-001, 002, 008…012 · NFR-REL-008, 011 · NFR-DATA-001 · 10 §17.3 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-HIST-016, FR-INT-021, 023, 024, FR-GRID-013, FR-EV-003, FR-SEC-024 (P1)</td></tr>
 </tbody></table></div>
 </section>
 
@@ -1295,7 +1362,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Laptop tại site là chính; tablet được. Mobile: xem tiến độ, chụp ảnh bằng chứng, quét QR claim.</td></tr>
 <tr><th>Phân quyền</th><td><code>commissioning.execute</code> (SITE_ENGINEER); nghiệm thu/duyệt bật control <code>control.enable</code> (CONTROL_SUPERVISOR); xem: OPERATOR, chủ tài sản (biên bản).</td></tr>
 <tr><th>Drill-down</th><td>Bước 7 → UI-28; bước 8 → UI-05/UI-12; bước 13–14 → UI-24 (hồ sơ M2); bước 15 → UI-30 (tài liệu site).</td></tr>
-<tr><th>Truy vết</th><td>F-INT-25…29, F-INT-02, 05, 07, F-OPT-02, F-BESS-08, F-GRID-04, F-SEC-05 · FR-INT-015…020 · NFR-REL-009 · K G-02 · catalog gaps "COMMISSIONING_TEST + site sandbox" (agent E)</td></tr>
+<tr><th>Truy vết</th><td>F-INT-25…29, F-INT-02, 05, 07, F-OPT-02, F-BESS-08, F-GRID-04, F-SEC-05 · FR-INT-015…020 · NFR-REL-009 · K G-02 · catalog gaps "COMMISSIONING_TEST + site sandbox" (agent E) · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-BESS-003, 007 · FR-GRID-004 · FR-OPT-003 · FR-INT-002, 005, 007 · FR-SEC-005, 021</td></tr>
 </tbody></table></div>
 
 <div class="wf" role="img" aria-label="Wireframe UI-27 commissioning">
@@ -1331,7 +1398,11 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Laptop; mobile chỉ xem trang thiết bị được hỗ trợ.</td></tr>
 <tr><th>Phân quyền</th><td>Xem bảng điểm: vai trò kỹ thuật; sửa/đẩy map <code>asset.configure</code> + <code>edge.manage</code>; thư viện driver: PLATFORM_ADMIN. Trang thiết bị được hỗ trợ: mọi người dùng.</td></tr>
 <tr><th>Drill-down</th><td>Điểm → UI-12; thiết bị → L3; driver → lịch sử phiên bản.</td></tr>
-<tr><th>Truy vết</th><td>F-INT-03, 04, 05, 06, 07, 23 · FR-INT-003…007, 013, 020 · 07 §6.2–6.4, §9.3</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Driver CAN listen-only</b> (P1, FR-INT-022): hồ sơ driver ghi "chỉ nghe — không ghi lên bus bảo vệ"; không có lệnh nào gắn với thiết bị dùng driver này.</li>
+<li><b>Nhập dữ liệu lịch sử</b> (P1, FR-INT-027): tải CSV lịch sử hoặc file load profile công tơ EVN → ánh xạ cột sang điểm, chọn múi giờ, xem trước khoảng trùng; dữ liệu nhập mang origin và quality riêng, không ghi đè số đo.</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-INT-03, 04, 05, 06, 07, 23 · FR-INT-003…007, 013, 020 · 07 §6.2–6.4, §9.3 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-INT-022, 027 (P1)</td></tr>
 </tbody></table></div>
 </section>
 
@@ -1351,7 +1422,14 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Desktop/laptop; mobile chỉ xem thông tin site và liên hệ.</td></tr>
 <tr><th>Phân quyền</th><td><code>asset.configure</code> (SITE_ENGINEER); tạo site và gói: ORG_ADMIN/SITE_ENGINEER; cấu hình lưới <code>soe.propose</code> + duyệt C3.</td></tr>
 <tr><th>Drill-down</th><td>Sau wizard → UI-27 (commissioning) hoặc kết nối connector; tài sản → L3; biểu giá → UI-25.</td></tr>
-<tr><th>Truy vết</th><td>F-ORG-02…06, 11, 13 (P1), 15, F-GRID-01, 02, 03, 15 (P1) · FR-ORG-002…006, 010, 011, 015, 018 · FR-GRID-001…003</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Mẫu site</b> (P1, FR-ORG-012): "Lưu làm mẫu" (topology, điểm đo, quy tắc cảnh báo, chiến lược, SOE đề xuất) và "Tạo từ mẫu" có xem diff; SOE không bao giờ đi theo mẫu ở trạng thái đã duyệt.</li>
+<li><b>Nhiều POC</b> (P1, FR-GRID-015): khai báo nhiều <code>MTR_POC</code> và cấu hình lưới theo từng POC.</li>
+<li><b>Biểu giá theo điểm đo thanh toán</b> (FR-TAR-004): mỗi công tơ thanh toán gắn hợp đồng/biểu giá riêng; link UI-25.</li>
+<li><b>Tab "Tài liệu"</b> (P1, FR-ORG-014): danh sách theo site/tài sản: loại (SLD, biên bản, datasheet, bảo hành, hồ sơ đấu nối), phiên bản, người tải, ngày, badge phân loại D2; tải phiên bản mới giữ phiên bản cũ; xem/tải theo quyền.</li>
+<li><b>Tab "Hợp đồng"</b> (P1, FR-ORG-016): bảo hành BESS (EFC, throughput, SOC trung bình, nhiệt độ, thời hạn), O&amp;M (SLA, loại trừ availability), PPA/ESCO (giá, kỳ); có phiên bản và ngày hiệu lực. Giá trị do hợp đồng quyết định, nền tảng không đặt mặc định. Dùng bởi UI-07 tab "Bảo hành" và SLA ticket ở UI-16. <span class="tag proposal">PROPOSAL</span></li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-ORG-02…06, 11, 13 (P1), 15, F-GRID-01, 02, 03, 15 (P1) · FR-ORG-002…006, 010, 011, 015, 018 · FR-GRID-001…003 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-ORG-012, 014, 016 (P1) · FR-GRID-015 (P1) · FR-TAR-004</td></tr>
 </tbody></table></div>
 </section>
 </section>
@@ -1376,7 +1454,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Mobile: xem/tải PDF đã phát hành.</td></tr>
 <tr><th>Phân quyền</th><td>VIEWER chỉ báo cáo đã phát hành; ANALYST/OPERATOR/CONTROL_SUPERVISOR/ORG_ADMIN tạo và phát hành; xuất cần <code>data.export</code>; chi phí ẩn khi tắt hiển thị.</td></tr>
 <tr><th>Drill-down</th><td>KPI trong báo cáo → UI-13 cùng khoảng; vi phạm xuất → UI-10; R8 → thiết bị thiếu dữ liệu (UI-04).</td></tr>
-<tr><th>Truy vết</th><td>F-REP-01, 02, 03, 08, 10, 11, 13, F-REP-04…07, 09, 12, 14…18 (P1) · FR-REP-001…019 · NFR-DATA-007, 011 · 08 §15 · <span class="tag fact">FACT</span> GridBeyond ViewPoint Lens hiển thị hồ sơ tải và tổng hợp doanh thu cho khách C&amp;I (<a href="https://secure.businesswire.com/news/home/20250930978130/en/GridBeyond-Launches-ViewPoint-Lens-to-Empower-Energy-Customers-With-Greater-Visibility-and-Control">BusinessWire 9/2025</a>, qua kết quả tìm kiếm)</td></tr>
+<tr><th>Truy vết</th><td>F-REP-01, 02, 03, 08, 10, 11, 13, F-REP-04…07, 09, 12, 14…18 (P1) · FR-REP-001…019 · NFR-DATA-007, 011 · 08 §15 · <span class="tag fact">FACT</span> GridBeyond ViewPoint Lens hiển thị hồ sơ tải và tổng hợp doanh thu cho khách C&amp;I (<a href="https://secure.businesswire.com/news/home/20250930978130/en/GridBeyond-Launches-ViewPoint-Lens-to-Empower-Energy-Customers-With-Greater-Visibility-and-Control">BusinessWire 9/2025</a>, qua kết quả tìm kiếm) · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-HIST-006 (watermark, restatement) · FR-TAR-006</td></tr>
 </tbody></table></div>
 </section>
 
@@ -1392,7 +1470,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Desktop; mobile cho chủ tài sản: xem và thu hồi grant.</td></tr>
 <tr><th>Phân quyền</th><td><code>user.manage</code> (ORG_ADMIN); <code>grant.issue</code> (ORG_ADMIN, chủ tài sản được ủy quyền); installer không tự cấp quyền lệnh cho mình trên site khách (BR-ORG-03).</td></tr>
 <tr><th>Drill-down</th><td>Người dùng → UI-33 lọc theo người; site → UI-24 (ai có quyền lệnh).</td></tr>
-<tr><th>Truy vết</th><td>F-ORG-07, 08, 09, F-SEC-02, 03 · FR-ORG-007…009 · FR-SEC-002, 003 · catalog gaps vai trò <code>TECHNICIAN</code>, <code>PLATFORM_ADMIN</code> (agent D)</td></tr>
+<tr><th>Truy vết</th><td>F-ORG-07, 08, 09, F-SEC-02, 03 · FR-ORG-007…009 · FR-SEC-002, 003 · catalog gaps vai trò <code>TECHNICIAN</code>, <code>PLATFORM_ADMIN</code> (agent D) · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-ORG-013 (P1, tạo liên kết chỉ đọc có hạn) · FR-SEC-022 (giới hạn tốc độ hiển thị trong hồ sơ người dùng)</td></tr>
 </tbody></table></div>
 </section>
 
@@ -1414,7 +1492,11 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Responsive</th><td>Cá nhân đầy đủ trên mobile; tổ chức/quy tắc trên desktop.</td></tr>
 <tr><th>Phân quyền</th><td><code>tenant.configure</code> (ORG_ADMIN); quy tắc <code>alarm.rule.configure</code> (SITE_ENGINEER, CONTROL_SUPERVISOR, ORG_ADMIN); cá nhân: chính người dùng.</td></tr>
 <tr><th>Drill-down</th><td>Định tuyến thông báo → UI-17; người dùng → UI-31; biểu giá → UI-25.</td></tr>
-<tr><th>Truy vết</th><td>F-ORG-01, 15, F-ALM-03, F-SEC-18, 19, F-SEC-22 (P1), F-ORG-14 (P2) · FR-ORG-001, 011, 017 · FR-ALM-003 · FR-SEC-019, 020, 026</td></tr>
+<tr><th>Nội dung bổ sung (P1 / truy vết)</th><td><ul>
+<li><b>Webhook</b> (P1, FR-INT-026): danh sách endpoint; sự kiện đăng ký (cảnh báo mở/đóng, trạng thái lệnh, báo cáo sẵn sàng, ticket); secret HMAC hiện một lần và xoay vòng; nhật ký lần gửi (thời điểm, mã HTTP, số lần retry, idempotency key); "Gửi thử"; gửi lại thủ công một lần gửi lỗi. Webhook chỉ gửi ra, không nhận lệnh vào. Quyền <code>tenant.configure</code>. <span class="tag proposal">PROPOSAL</span></li>
+<li>Chính sách lưu giữ chỉ đọc như trên (FR-HIST-011, FR-SEC-020).</li>
+</ul></td></tr>
+<tr><th>Truy vết</th><td>F-ORG-01, 15, F-ALM-03, F-SEC-18, 19, F-SEC-22 (P1), F-ORG-14 (P2) · FR-ORG-001, 011, 017 · FR-ALM-003 · FR-SEC-019, 020, 026 · <b>Bổ sung truy vết (12 §6.1–6.2):</b> FR-HIST-011 · FR-INT-026 (P1)</td></tr>
 </tbody></table></div>
 </section>
 
@@ -1485,6 +1567,25 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><th>Truy vết</th><td>F-MON-11 · FR-MON-012 · H-P21 (nâng từ P2 lên P1 theo K §3.7) · <span class="tag fact">FACT</span> Stem PowerTrack EMS có "edge UI" tách khỏi phần mềm danh mục (<a href="https://www.businesswire.com/news/home/20250902991311/en">BusinessWire 9/2025</a>, qua kết quả tìm kiếm)</td></tr>
 </tbody></table></div>
 </section>
+<section id="ui-37">
+<h4>UI-37 · Dự báo và mô phỏng <span class="prio p1">P1</span></h4>
+<p class="muted">Route <code>/o/{org}/s/{site}/forecast</code> (tab <code>?tab=accuracy|load-model|whatif</code>) · Persona P2, P4, P6 · Module M-ADV · Mã cấp ở vòng sửa theo <a href="12-traceability-matrix.md">12</a> GAP-12-10</p>
+<div class="table-wrap"><table class="spec"><tbody>
+<tr><th>Mục tiêu chính</th><td>Cho thấy dự báo đáng tin tới đâu trước khi dùng cho kế hoạch, mô hình tải nào đang chạy và vì sao, và mô phỏng định cỡ BESS/biểu giá trên dữ liệu đo của chính site.</td></tr>
+<tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
+<li><b>Tab "Đánh giá dự báo"</b> (FR-ADV-004): bảng theo site × tầm dự báo (intraday, day-ahead) × nhà cung cấp: MAE, nMAE (ghi rõ mẫu số), nRMSE, MBE, WAPE, skill score so với seasonal naive, pinball loss và coverage P10–P90, sai số tại đỉnh; chạy hằng đêm, có ngày tính và cửa sổ đánh giá. Không hiển thị MAPE cho PV. Biểu đồ sai số theo ngày; nguồn PV theo FR-ADV-003.</li>
+<li><b>Tab "Mô hình tải"</b> (FR-ADV-005): mô hình đang dùng (F1 thống kê hay F2 gradient boosting), phiên bản, tập kiểm tra có phiên bản, so sánh chỉ số F1 với F2. Nhãn "ML" chỉ xuất hiện khi F2 đã thắng F1 trên tập kiểm tra; nếu chưa, ghi "Mô hình thống kê" (K: không gọi AI/ML khi chưa có mô hình học được đánh giá).</li>
+<li><b>Tab "What-if định cỡ"</b> (FR-ADV-006): đầu vào kích thước BESS (kWh, kW), biểu giá (TT 16 so với QĐ 963; có/không thành phần công suất), chiến lược, <code>c_deg</code>; đầu ra hóa đơn bóng so với baseline cùng phiên bản biểu giá, chu kỳ/năm, kWh PV bị cắt. Yêu cầu dữ liệu đo ≥ 1 năm, hoặc ≥ 3 tháng kèm danh sách mùa thiếu hiện rõ.</li>
+</ul></td></tr>
+<tr><th>Bộ lọc &amp; thao tác</th><td>Chọn khoảng đánh giá, tầm, nhà cung cấp; chạy what-if (job nền, có trạng thái); lưu và so sánh tối đa 3 kịch bản; xuất kết quả (UI-30). Không có thao tác nào tác động thiết bị.</td></tr>
+<tr><th>Thành phần</th><td>C-18 bảng chỉ số, C-05 biểu đồ, form tham số, viền <code>--sim-border</code> và nhãn "Mô phỏng" cho mọi kết quả what-if (§6.5).</td></tr>
+<tr><th>Trạng thái</th><td>Rỗng: chưa đủ 30 ngày dữ liệu đo → "Chưa đủ dữ liệu để đánh giá (cần ≥ 30 ngày)". Dữ liệu thiếu: what-if hiện các tháng thiếu và chặn chạy nếu dưới 3 tháng. Lỗi job: thông điệp kèm mã job. Không áp dụng mất kết nối (dữ liệu lịch sử).</td></tr>
+<tr><th>Responsive</th><td>Desktop; mobile chỉ xem bảng chỉ số tóm tắt.</td></tr>
+<tr><th>Phân quyền</th><td>Xem <code>site.read</code>; chạy what-if ANALYST, SITE_ENGINEER, ORG_ADMIN; kết quả what-if không bao giờ được trình bày như "tiết kiệm x%" mà là hóa đơn bóng so với baseline (K: không marketing % tiết kiệm).</td></tr>
+<tr><th>Drill-down</th><td>Dòng chỉ số → UI-13 (thực tế so với dự báo); mô hình → UI-19 (kế hoạch dùng dự báo); kịch bản → UI-30 (xuất).</td></tr>
+<tr><th>Truy vết</th><td>F-ADV-02, F-ADV-03, F-ADV-04, F-ADV-06 · FR-ADV-003, 004, 005, 006 (P1) · API: chưa có endpoint (12 GAP-12-06, gửi 06) · <span class="tag proposal">PROPOSAL</span></td></tr>
+</tbody></table></div>
+</section>
 </section>
 </section>
 
@@ -1501,7 +1602,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><td>C-04</td><td>Energy-flow widget</td><td>UI-03, 05, 35, 36</td><td>nút (loại, <code>p_kw</code> ≥ 0, hướng, <code>state</code>, SOC), cạnh (từ, tới, <code>p_kw</code> ≥ 0), <code>ts</code>, <code>attribution_version</code>, <code>balance_residual_kw</code></td><td>kW live · kWh khoảng · OLD (dừng hoạt ảnh) · OFFLINE · thiếu POC</td></tr>
 <tr><td>C-05</td><td>Biểu đồ chuỗi thời gian có lớp chất lượng</td><td>UI-03, 07, 13, 15, 20, 27</td><td>chuỗi (<code>series_id</code>, đơn vị, <code>[bucket_start, ts]</code>, giá trị, quality), lớp TOU, ngưỡng, sự kiện, kế hoạch</td><td>đường (kW) · cột (kWh) · nhiều panel · tương lai nét đứt</td></tr>
 <tr><td>C-06</td><td>Bảng cảnh báo</td><td>UI-14, UI-03 (rút gọn), UI-36</td><td>Alarm (mức, trạng thái gộp, lớp phủ, thời điểm, evidence, ticket)</td><td>đầy đủ · rút gọn top 5 · thẻ mobile</td></tr>
-<tr><td>C-07</td><td>Icon mức cảnh báo</td><td>mọi nơi có mức</td><td><code>severity ∈ {URGENT, HIGH, MEDIUM, INFO}</code>, <code>acked</code></td><td>chưa xác nhận (nhấp nháy chỉ icon, tắt được) · đã xác nhận · đã hết (icon rỗng)</td></tr>
+<tr><td>C-07</td><td>Icon mức cảnh báo</td><td>mọi nơi có mức</td><td><code>severity ∈ {CRITICAL, HIGH, MEDIUM, INFO}</code> (enum của 05 <code>AlarmDefinition.default_severity</code>), <code>acked</code></td><td>chưa xác nhận (nhấp nháy chỉ icon, tắt được) · đã xác nhận · đã hết (icon rỗng)</td></tr>
 <tr><td>C-08</td><td>Hộp lệnh hai bước</td><td>UI-21 (mở từ nhiều trang)</td><td>loại lệnh, đích, giá trị hiện tại, giới hạn, kết quả <code>dry_run</code>, hạng hiệu lực</td><td>C1 · C2 (step-up + lý do) · C3 (mã site + yêu cầu duyệt) · nhiều site</td></tr>
 <tr><td>C-09</td><td>Theo dõi trạng thái lệnh</td><td>UI-21, 23, 26, 27</td><td>DispatchCommand + chuyển trạng thái + readback + <code>tracking_state</code></td><td>stepper · chip gọn · dòng thời gian</td></tr>
 <tr><td>C-10</td><td>Timeline lịch có dải TOU</td><td>UI-19, UI-03 (mini)</td><td>DispatchPlan + PlanSlot, TouCalendar có hiệu lực, dự báo, SOC dự kiến, giới hạn</td><td>xem · so sánh phiên bản · soạn (P1) · mini 24 h</td></tr>
@@ -1557,12 +1658,12 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <div class="table-wrap"><table>
 <thead><tr><th>Mức (enum)</th><th>Nhãn vi / en</th><th>Icon (hình dạng)</th><th>Token màu</th><th>Âm thanh NOC</th><th>Tạm gác</th></tr></thead>
 <tbody>
-<tr><td><code>URGENT</code></td><td>Khẩn cấp / Urgent</td><td>Bát giác ⬣ có "!!"</td><td><code>--alarm-urgent</code></td><td>Tùy chọn</td><td>Cấm với cảnh báo an toàn (10 §17.3)</td></tr>
+<tr><td><code>CRITICAL</code></td><td>Khẩn cấp / Critical</td><td>Bát giác ⬣ có "!!"</td><td><code>--alarm-critical</code></td><td>Tùy chọn</td><td>Cấm với cảnh báo an toàn (10 §17.3)</td></tr>
 <tr><td><code>HIGH</code></td><td>Cao / High</td><td>Tam giác ▲ có "!"</td><td><code>--alarm-high</code></td><td>Tùy chọn</td><td>Có (lý do + ≤ 8 h)</td></tr>
 <tr><td><code>MEDIUM</code></td><td>Trung bình / Medium</td><td>Thoi ◆</td><td><code>--alarm-medium</code></td><td>Không</td><td>Có</td></tr>
 <tr><td><code>INFO</code></td><td>Thông tin / Info</td><td>Tròn ● chữ "i"</td><td><code>--alarm-info</code></td><td>Không</td><td>Có</td></tr>
 </tbody></table></div>
-<p>Mã enum tiếng Anh ở trên là đề xuất cho 05 (05 hiện dùng nhãn tiếng Việt và MEDIUM/INFO cho auto-ack); nhãn hiển thị là bộ duy nhất của K §6 #39. Chỉ icon nhấp nháy (≤ 3 lần/giây, tắt được) khi Khẩn cấp/Cao chưa xác nhận; dòng không nhấp nháy. <span class="tag proposal">PROPOSAL</span></p>
+<p>Mã enum ở trên là enum i18n duy nhất của <a href="05-domain-model.html">05</a> (<code>AlarmDefinition.default_severity</code> = <code>CRITICAL | HIGH | MEDIUM | INFO</code>); API, bộ lọc, token và ví dụ trong 09 dùng đúng các mã này. Nhãn hiển thị là bộ duy nhất của K §6 #39 (Khẩn cấp / Cao / Trung bình / Thông tin). Chỉ icon nhấp nháy (≤ 3 lần/giây, tắt được) khi Khẩn cấp/Cao chưa xác nhận; dòng không nhấp nháy. <span class="tag proposal">PROPOSAL</span></p>
 
 <h4>C-08 · Hộp lệnh hai bước</h4>
 <ul>
@@ -1625,7 +1726,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><td><code>--text</code> / <code>--muted</code> / <code>--border</code></td><td>#1b1f24 / #5b6573 / #d9dde3</td><td>#e6e9ed / #9aa4b1 / #343b45</td><td>Chữ, chữ phụ và dữ liệu cũ, viền</td><td>ems-docs.css</td></tr>
 <tr><td><code>--accent</code></td><td>#1f5f99</td><td>#7fb2e5</td><td>Liên kết, focus, chọn (không dùng cho trạng thái)</td><td>ems-docs.css (cũ #1f5fbf)</td></tr>
 <tr><td colspan="5"><b>Cảnh báo</b> — chỉ cho bất thường, luôn kèm hình dạng + chữ</td></tr>
-<tr><td><code>--alarm-urgent</code></td><td>#b3261e</td><td>#f08a80</td><td>Khẩn cấp; vi phạm giới hạn</td><td>= <code>--bad</code>; thay <code>--sev-critical</code></td></tr>
+<tr><td><code>--alarm-critical</code></td><td>#b3261e</td><td>#f08a80</td><td>Khẩn cấp (<code>CRITICAL</code>); vi phạm giới hạn</td><td>= <code>--bad</code>; thay <code>--sev-critical</code> cũ</td></tr>
 <tr><td><code>--alarm-high</code></td><td>#c2410c</td><td>#fb923c</td><td>Cao</td><td>= <code>--sev-major</code> cũ</td></tr>
 <tr><td><code>--alarm-medium</code></td><td>#a21caf</td><td>#e879f9</td><td>Trung bình</td><td>Mới; thay amber <code>--sev-minor</code> để không trùng sắc với PV</td></tr>
 <tr><td><code>--alarm-info</code></td><td>#475569</td><td>#94a3b8</td><td>Thông tin</td><td>Mới; thay xanh <code>--sev-warning</code> để không trùng sắc với Tải</td></tr>
@@ -1730,6 +1831,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><td><code>site_strategy</code></td><td>SELF_CONSUMPTION · PEAK_SHAVING · TOU_SCHEDULE · BACKUP_HOLD · IDLE</td><td>Tự dùng · Cắt đỉnh · Lịch TOU · Giữ dự phòng · Nghỉ</td><td>Self-consumption · Peak shaving · TOU schedule · Backup hold · Idle</td></tr>
 <tr><td><code>slot_mode</code></td><td>PV_SURPLUS_CHARGE · GRID_CHARGE_TO_TARGET · PEAK_DISCHARGE · GRID_SETPOINT · HOLD · IDLE</td><td>Sạc PV dư · Nạp lưới tới đích · Xả cao điểm · Bám công suất lưới · Giữ · Nghỉ</td><td>PV surplus charge · Grid charge to target · Peak discharge · Grid setpoint · Hold · Idle</td></tr>
 <tr><td><code>run_mode</code></td><td>SAFE_START · NORMAL · FALLBACK_SCHEDULE · DEFAULT_STRATEGY · NATIVE_SAFE</td><td>Khởi động an toàn · Bình thường · Lịch dự phòng · Chiến lược mặc định · An toàn native</td><td>Safe start · Normal · Fallback schedule · Default strategy · Native safe</td></tr>
+<tr><td>Mức cảnh báo (<code>AlarmDefinition.default_severity</code>, 05)</td><td>CRITICAL · HIGH · MEDIUM · INFO</td><td>Khẩn cấp · Cao · Trung bình · Thông tin</td><td>Critical · High · Medium · Info</td></tr>
 <tr><td><code>freshness</code></td><td>LIVE · DELAYED · OLD · OFFLINE · NO_DATA</td><td>Trực tiếp · Trễ · Cũ · Mất kết nối · Không có dữ liệu</td><td>Live · Delayed · Old · Offline · No data</td></tr>
 <tr><td><code>local_remote_state</code></td><td>REMOTE · LOCAL · MAINTENANCE · UNKNOWN</td><td>Từ xa · Tại chỗ · Bảo trì tại chỗ · Không rõ</td><td>Remote · Local · Maintenance · Unknown</td></tr>
 <tr><td>Hướng</td><td>import · export · charge · discharge · idle</td><td>Nhập · Xuất · Sạc · Xả · Chờ</td><td>Import · Export · Charge · Discharge · Idle</td></tr>
@@ -1766,47 +1868,48 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 
 <section id="s13">
 <h2>13. Ma trận truy vết</h2>
-<h3 id="s13-1">13.1 UI ↔ tính năng ↔ yêu cầu</h3>
-<p>Nguồn cho ma trận đầy đủ F ↔ FR ↔ UI ↔ T ở <a href="12-traceability-matrix.md">12</a>. Cột "Mã tạm" ghi mã H-P của ghi chú H để truy vết (K §6 #38).</p>
+<h3 id="s13-1">13.1 UI ↔ tính năng ↔ yêu cầu ↔ API</h3>
+<p>Nguồn cho ma trận đầy đủ F ↔ FR ↔ UI ↔ T ở <a href="12-traceability-matrix.md">12</a>. Cột "Mã tạm" ghi mã H-P của ghi chú H để truy vết (K §6 #38). Phần sau dấu "+" trong cột F- và FR- là bổ sung của vòng sửa theo 12 §6.1(b), §6.1(c), §6.1(e) và §6.2 (đóng GAP-12-09, GAP-12-10, GAP-12-11); nội dung tương ứng nằm ở dòng "Nội dung bổ sung" của từng trang. Cột API lấy từ <a href="12-traceability-matrix.md">12 §5</a> (ghép API ↔ FR ↔ UI, là <span class="tag inference">INFERENCE</span> của 12) và đóng GAP-12-08; mã API theo <a href="06-system-architecture.html">06</a>; "(P1)" là phát hành của endpoint.</p>
 <div class="table-wrap"><table>
-<thead><tr><th>UI</th><th>F- (03)</th><th>FR- (04)</th><th>AC chính</th><th>Mã tạm</th></tr></thead>
+<thead><tr><th>UI</th><th>F- (03)</th><th>FR- (04)</th><th>API (06, qua 12 §5)</th><th>AC chính</th><th>Mã tạm</th></tr></thead>
 <tbody>
-<tr><td>UI-01</td><td>F-DASH-01, 02, 06, 08, 09</td><td>FR-DASH-001, 002, 006, 008, 009, 013</td><td>AC-DASH-01, 02, 03, 05</td><td>H-P01, H-P18</td></tr>
-<tr><td>UI-02</td><td>F-DASH-03, 07, F-ORG-02</td><td>FR-DASH-003, 007</td><td>AC-DASH-06</td><td>H-P02</td></tr>
-<tr><td>UI-03</td><td>F-DASH-04, 05, 06, F-MON-03, 04, F-GRID-07, 09, F-OPT-08</td><td>FR-DASH-004, 005, 006, 008; FR-GRID-007, 010; FR-MON-004, 005; FR-OPT-002</td><td>AC-DASH-03, 04</td><td>H-P03, H-P04</td></tr>
-<tr><td>UI-04</td><td>F-MON-01, 02, 05, 08, 09</td><td>FR-MON-003, 005, 006, 009, 010</td><td>AC-MON-06</td><td>—</td></tr>
-<tr><td>UI-05</td><td>F-MON-03, F-HIST-06, 09</td><td>FR-MON-004, FR-HIST-009, 013</td><td>AC-MON-05</td><td>H-P05</td></tr>
-<tr><td>UI-06</td><td>F-MON-10</td><td>FR-MON-011</td><td>—</td><td>H-P06</td></tr>
-<tr><td>UI-07</td><td>F-BESS-01, 03…07, 09, 10, 18, 19, 20</td><td>FR-BESS-001…011</td><td>AC-BESS-01…08</td><td>H-P07</td></tr>
-<tr><td>UI-08</td><td>F-BESS-02</td><td>FR-BESS-012</td><td>—</td><td>H-P07</td></tr>
-<tr><td>UI-09</td><td>F-PV-01…05 (P0), 06…12 (P1/P2)</td><td>FR-PV-001…005, 006…012</td><td>—</td><td>—</td></tr>
-<tr><td>UI-10</td><td>F-GRID-01…04, 06, 07, 09, 11, 13, F-MON-09, F-TAR-06</td><td>FR-GRID-001…008, 010, 012; FR-MON-010; FR-ALM-009</td><td>AC-ALM-08</td><td>H-P08</td></tr>
-<tr><td>UI-11</td><td>F-EV-01, 02, 05…08</td><td>FR-EV-001, 002, 005…008</td><td>—</td><td>—</td></tr>
-<tr><td>UI-12</td><td>F-MON-06, 12</td><td>FR-MON-007, 013</td><td>—</td><td>—</td></tr>
-<tr><td>UI-13</td><td>F-HIST-05, 07, 08, F-REP-11</td><td>FR-HIST-007, 008, 010, 012; FR-REP-006</td><td>—</td><td>H-P09</td></tr>
-<tr><td>UI-14</td><td>F-ALM-01…05, 07, 13, 21</td><td>FR-ALM-001…005, 009, 011, 012</td><td>AC-ALM-01, 03, 06, 08</td><td>H-P10</td></tr>
-<tr><td>UI-15</td><td>F-ALM-06, 14, 18</td><td>FR-ALM-006, 010, 019</td><td>AC-ALM-04</td><td>H-P10</td></tr>
-<tr><td>UI-16</td><td>F-ALM-14…17, 19</td><td>FR-ALM-010, 016…018, 020</td><td>AC-ALM-04, 05</td><td>—</td></tr>
-<tr><td>UI-17</td><td>F-ALM-08…12</td><td>FR-ALM-007, 008, 013…015</td><td>AC-ALM-02</td><td>—</td></tr>
-<tr><td>UI-18</td><td>F-BESS-05, F-OPT-01…05, 13…15</td><td>FR-BESS-004; FR-OPT-001…006, 014…016</td><td>AC-OPT-05, AC-BESS-08</td><td>—</td></tr>
-<tr><td>UI-19</td><td>F-OPT-04, 06…09, 11, 12, F-ADV-01, F-TAR-02</td><td>FR-OPT-005, 007…009, 011…013; FR-ADV-001, 002</td><td>AC-OPT-02, 03, 06, 07, 08</td><td>H-P11</td></tr>
-<tr><td>UI-20</td><td>F-OPT-06, 10</td><td>FR-OPT-007, 010</td><td>—</td><td>—</td></tr>
-<tr><td>UI-21</td><td>F-SEC-06, 07, 14, 15, F-BESS-05…07, F-PV-03, F-GRID-03, 06, F-EV-05</td><td>FR-SEC-003, 006…009, 016, 022; FR-BESS-004…006</td><td>AC-BESS-01, 02; AC-SEC-05, 06, 13</td><td>H-P12, H-P13</td></tr>
-<tr><td>UI-22</td><td>F-SEC-06, 10, 11, F-BESS-08</td><td>FR-SEC-006, 007, 012, 013; FR-BESS-007</td><td>AC-SEC-02, 03, 07</td><td>H-P12</td></tr>
-<tr><td>UI-23</td><td>F-SEC-07, 14</td><td>FR-SEC-009, 015</td><td>—</td><td>H-P13</td></tr>
-<tr><td>UI-24</td><td>F-SEC-05, 08…11, 15, F-OPT-01, 02, F-BESS-08</td><td>FR-SEC-005, 010…013, 016, 021; FR-OPT-002, 003</td><td>AC-SEC-01, 06, 08, 11</td><td>H-P03</td></tr>
-<tr><td>UI-25</td><td>F-TAR-01…11</td><td>FR-TAR-001…012</td><td>—</td><td>—</td></tr>
-<tr><td>UI-26</td><td>F-MON-07, F-INT-01, 02, 08…13</td><td>FR-MON-003, 008; FR-INT-001, 002, 008…012</td><td>AC-MON-03</td><td>—</td></tr>
-<tr><td>UI-27</td><td>F-INT-25…29, 02, 05, 07, F-OPT-02, F-BESS-08, F-GRID-04, F-SEC-05</td><td>FR-INT-015…020</td><td>—</td><td>—</td></tr>
-<tr><td>UI-28</td><td>F-INT-03…07, 23</td><td>FR-INT-003…007, 013, 020</td><td>—</td><td>—</td></tr>
-<tr><td>UI-29</td><td>F-ORG-02…06, 11, 13, 15, F-GRID-01…03, 15</td><td>FR-ORG-002…006, 010, 011, 015, 018; FR-GRID-001…003</td><td>—</td><td>—</td></tr>
-<tr><td>UI-30</td><td>F-REP-01…18</td><td>FR-REP-001…019</td><td>—</td><td>H-P20</td></tr>
-<tr><td>UI-31</td><td>F-ORG-07…09, F-SEC-02, 03</td><td>FR-ORG-007…009; FR-SEC-002, 003</td><td>AC-SEC-12</td><td>—</td></tr>
-<tr><td>UI-32</td><td>F-ORG-01, 14, 15, F-ALM-03, F-SEC-18, 19, 22</td><td>FR-ORG-001, 011, 017; FR-ALM-003; FR-SEC-019, 020, 026</td><td>—</td><td>—</td></tr>
-<tr><td>UI-33</td><td>F-SEC-12, 13</td><td>FR-SEC-014, 023</td><td>AC-SEC-10</td><td>—</td></tr>
-<tr><td>UI-34</td><td>F-SEC-01, 02</td><td>FR-SEC-001, 002</td><td>AC-SEC-12</td><td>—</td></tr>
-<tr><td>UI-35</td><td>F-DASH-11, F-ORG-10</td><td>FR-DASH-011, FR-ORG-013</td><td>—</td><td>H-P18</td></tr>
-<tr><td>UI-36</td><td>F-MON-11</td><td>FR-MON-012</td><td>—</td><td>H-P21</td></tr>
+<tr><td><a href="#ui-01">UI-01</a></td><td>F-DASH-01, 02, 06, 08, 09; + F-DASH-12</td><td>FR-DASH-001, 002, 006, 008, 009, 013; + FR-DASH-012 (P1)</td><td>API-AUTH-04, API-ORG-02, API-TEL-03, API-TEL-06, API-TEL-09, API-LIVE-02</td><td>AC-DASH-01, 02, 03, 05</td><td>H-P01, H-P18</td></tr>
+<tr><td><a href="#ui-02">UI-02</a></td><td>F-DASH-03, 07, F-ORG-02</td><td>FR-DASH-003, 007; + FR-ORG-002</td><td>API-AUTH-02, API-ORG-02</td><td>AC-DASH-06</td><td>H-P02</td></tr>
+<tr><td><a href="#ui-03">UI-03</a></td><td>F-DASH-04, 05, 06, F-MON-03, 04, F-GRID-07, 09, F-OPT-08; + F-HIST-04, F-DASH-10</td><td>FR-DASH-004, 005, 006, 008; FR-GRID-007, 010; FR-MON-004, 005; FR-OPT-002; + FR-OPT-009, FR-HIST-006, FR-DASH-010 (P1)</td><td>API-AUTH-04, API-TEL-02, API-TEL-03, API-TEL-04, API-TEL-06, API-TEL-07, API-TEL-09, API-LIVE-01, API-ALM-01, API-ALM-03, API-CMD-07, API-OPT-03</td><td>AC-DASH-03, 04</td><td>H-P03, H-P04</td></tr>
+<tr><td><a href="#ui-04">UI-04</a></td><td>F-MON-01, 02, 05, 08, 09; + F-GRID-17</td><td>FR-MON-003, 005, 006, 009, 010; + FR-GRID-017 (P1); FR-MON-001, 002 (backend, gián tiếp)</td><td>API-AUTH-04, API-ORG-05, API-TEL-02, API-TEL-03, API-TEL-05, API-LIVE-01, API-INT-07 (MVP Huawei, P1 hãng khác)</td><td>AC-MON-06</td><td>—</td></tr>
+<tr><td><a href="#ui-05">UI-05</a></td><td>F-MON-03, F-HIST-06, 09</td><td>FR-MON-004, FR-HIST-009, 013</td><td>API-TEL-04, API-TEL-05, API-TEL-07, API-LIVE-01</td><td>AC-MON-05</td><td>H-P05</td></tr>
+<tr><td><a href="#ui-06">UI-06</a></td><td>F-MON-10</td><td>FR-MON-011</td><td>API-ORG-05, API-ORG-06</td><td>—</td><td>H-P06</td></tr>
+<tr><td><a href="#ui-07">UI-07</a></td><td>F-BESS-01, 03…07, 09, 10, 18, 19, 20; + F-BESS-11…16</td><td>FR-BESS-001…011; + FR-BESS-013, 014, 015, 016, 017, 018 (P1)</td><td>API-ORG-05, API-TEL-02, API-TEL-03, API-TEL-06, API-ALM-01, API-CMD-01, API-CMD-02, API-CMD-05, API-CMD-07, API-CMD-08, API-OPT-01; chưa có endpoint cho FR-BESS-017 (12 GAP-12-06 → 06)</td><td>AC-BESS-01…08</td><td>H-P07</td></tr>
+<tr><td><a href="#ui-08">UI-08</a></td><td>F-BESS-02</td><td>FR-BESS-012</td><td>API-TEL-02, API-TEL-08</td><td>—</td><td>H-P07</td></tr>
+<tr><td><a href="#ui-09">UI-09</a></td><td>F-PV-01…05 (P0), 06…12 (P1/P2)</td><td>FR-PV-001…005, 006…012</td><td>API-ORG-05, API-TEL-02, API-TEL-03, API-TEL-06, API-TEL-08, API-CMD-01</td><td>—</td><td>—</td></tr>
+<tr><td><a href="#ui-10">UI-10</a></td><td>F-GRID-01…04, 06, 07, 09, 11, 13, F-MON-09, F-TAR-06; + F-GRID-08, 10, 14, 15, 16, F-OPT-16, F-REP-13, 14</td><td>FR-GRID-001…008, 010, 012; FR-MON-010; FR-ALM-009; + FR-TAR-006, FR-REP-007; FR-GRID-009, 011, 014, 015, 016, FR-OPT-017, FR-REP-015 (P1)</td><td>API-ORG-06, API-TEL-03, API-TEL-05, API-TEL-06, API-LIVE-01, API-ALM-04, API-CMD-01, API-CMD-09, API-OPT-01, API-TAR-06, API-REP-05</td><td>AC-ALM-08</td><td>H-P08</td></tr>
+<tr><td><a href="#ui-11">UI-11</a></td><td>F-EV-01, 02, 05…08; + F-EV-03, 04</td><td>FR-EV-001, 002, 005…008; + FR-EV-003, 004 (P1)</td><td>API-ORG-06, API-TEL-05, API-CMD-01, API-CMD-08, API-OPT-01; nhóm API-EV chưa có (12 GAP-12-05)</td><td>—</td><td>—</td></tr>
+<tr><td><a href="#ui-12">UI-12</a></td><td>F-MON-06, 12</td><td>FR-MON-007, 013</td><td>API-TEL-08, API-LIVE-05 (P1)</td><td>—</td><td>—</td></tr>
+<tr><td><a href="#ui-13">UI-13</a></td><td>F-HIST-05, 07, 08, F-REP-11; + F-HIST-03, F-DASH-12, F-HIST-11, 12</td><td>FR-HIST-007, 008, 010, 012; FR-REP-006; + FR-HIST-005; FR-DASH-012, FR-HIST-014, 015 (P1)</td><td>API-TEL-02, API-TEL-07, API-TEL-11 (P1), API-REP-04</td><td>—</td><td>H-P09</td></tr>
+<tr><td><a href="#ui-14">UI-14</a></td><td>F-ALM-01…05, 07, 13, 21; + F-DASH-10, F-ALM-20, 22, F-BESS-18</td><td>FR-ALM-001…005, 009, 011, 012; + FR-BESS-010; FR-DASH-010, FR-ALM-021, 022 (P1)</td><td>API-TEL-03, API-LIVE-03, API-ALM-01, API-ALM-03, API-ALM-04</td><td>AC-ALM-01, 03, 06, 08</td><td>H-P10</td></tr>
+<tr><td><a href="#ui-15">UI-15</a></td><td>F-ALM-06, 14, 18</td><td>FR-ALM-006, 010, 019</td><td>API-ALM-02, API-ALM-03, API-ALM-06</td><td>AC-ALM-04</td><td>H-P10</td></tr>
+<tr><td><a href="#ui-16">UI-16</a></td><td>F-ALM-14…17, 19</td><td>FR-ALM-010, 016…018, 020</td><td>API-ALM-06, API-ALM-07 (P1), API-ALM-08 (P1), API-PUB-03 (P1)</td><td>AC-ALM-04, 05</td><td>—</td></tr>
+<tr><td><a href="#ui-17">UI-17</a></td><td>F-ALM-08…12</td><td>FR-ALM-007, 008, 013…015</td><td>API-ALM-05; chưa có endpoint cho FR-ALM-008 in-app (12 GAP-12-04 → 06)</td><td>AC-ALM-02</td><td>—</td></tr>
+<tr><td><a href="#ui-18">UI-18</a></td><td>F-BESS-05, F-OPT-01…05, 13…15; + F-BESS-04, F-OPT-16, 18</td><td>FR-BESS-004; FR-OPT-001…006, 014…016; + FR-BESS-003; FR-OPT-017, 019 (P1)</td><td>API-LIVE-01, API-CMD-01, API-CMD-02, API-CMD-07, API-CMD-09, API-OPT-01, API-OPT-06, API-OPT-07, API-OPT-09 (P1)</td><td>AC-OPT-05, AC-BESS-08</td><td>—</td></tr>
+<tr><td><a href="#ui-19">UI-19</a></td><td>F-OPT-04, 06…09, 11, 12, F-ADV-01, F-TAR-02; + F-OPT-17, F-ADV-02</td><td>FR-OPT-005, 007…009, 011…013; FR-ADV-001, 002; + FR-TAR-002; FR-OPT-018, FR-ADV-003 (P1)</td><td>API-LIVE-04, API-CMD-04, API-OPT-01, API-OPT-02, API-OPT-03, API-OPT-04, API-OPT-06, API-OPT-08 (P1); endpoint dự báo cho FR-ADV-001 chưa có (12 GAP-12-04)</td><td>AC-OPT-02, 03, 06, 07, 08</td><td>H-P11</td></tr>
+<tr><td><a href="#ui-20">UI-20</a></td><td>F-OPT-06, 10</td><td>FR-OPT-007, 010</td><td>API-OPT-02, API-OPT-04, API-OPT-05</td><td>—</td><td>—</td></tr>
+<tr><td><a href="#ui-21">UI-21</a></td><td>F-SEC-06, 07, 14, 15, F-BESS-05…07, F-PV-03, F-GRID-03, 06, F-EV-05; + F-INT-07</td><td>FR-SEC-003, 006…009, 016, 022; FR-BESS-004…006; + FR-PV-003, FR-GRID-003, 006, FR-SEC-015, FR-INT-007; FR-EV-005 (P1)</td><td>API-AUTH-02, API-LIVE-04, API-CMD-01, API-CMD-02, API-CMD-03, API-CMD-04, API-CMD-05, API-CMD-12, API-OPT-01, API-AUD-02</td><td>AC-BESS-01, 02; AC-SEC-05, 06, 13</td><td>H-P12, H-P13</td></tr>
+<tr><td><a href="#ui-22">UI-22</a></td><td>F-SEC-06, 10, 11, F-BESS-08; + F-GRID-03, F-BESS-16</td><td>FR-SEC-006, 007, 012, 013; FR-BESS-007; + FR-GRID-003; FR-BESS-018 (P1)</td><td>API-CMD-01, API-CMD-05, API-CMD-06, API-CMD-08, API-CMD-09, API-CMD-12</td><td>AC-SEC-02, 03, 07</td><td>H-P12</td></tr>
+<tr><td><a href="#ui-23">UI-23</a></td><td>F-SEC-07, 14</td><td>FR-SEC-009, 015; + FR-SEC-008</td><td>API-LIVE-04, API-CMD-02, API-CMD-03, API-CMD-04, API-AUD-02</td><td>—</td><td>H-P13</td></tr>
+<tr><td><a href="#ui-24">UI-24</a></td><td>F-SEC-05, 08…11, 15, F-OPT-01, 02, F-BESS-08; + F-BESS-10, F-OPT-05, F-GRID-12, F-ALM-22, F-SEC-20</td><td>FR-SEC-005, 010…013, 016, 021; FR-OPT-002, 003; + FR-OPT-001, FR-BESS-007, 009, FR-OPT-006; FR-GRID-013, FR-ALM-022, FR-SEC-024 (P1)</td><td>API-LIVE-01, API-ALM-01, API-CMD-01, API-CMD-04…12, API-OPT-07, API-INT-08; chưa có endpoint cho FR-SEC-024 (12 GAP-12-06 → 06)</td><td>AC-SEC-01, 06, 08, 11</td><td>H-P03</td></tr>
+<tr><td><a href="#ui-25">UI-25</a></td><td>F-TAR-01…11</td><td>FR-TAR-001…012</td><td>API-TAR-01…06, API-TAR-07 (P1), API-REP-03</td><td>—</td><td>—</td></tr>
+<tr><td><a href="#ui-26">UI-26</a></td><td>F-MON-07, F-INT-01, 02, 08…13; + F-HIST-13, F-INT-16, 17, F-GRID-12, F-EV-03, F-SEC-20</td><td>FR-MON-003, 008; FR-INT-001, 002, 008…012; + FR-HIST-016, FR-INT-021, 023, 024, FR-GRID-013, FR-EV-003, FR-SEC-024 (P1)</td><td>API-TEL-07, API-TEL-10, API-INT-01…05, API-INT-07 (MVP Huawei, P1 hãng khác); chưa có endpoint cho FR-SEC-024, FR-INT-023/024 (12 GAP-12-06 → 06)</td><td>AC-MON-03</td><td>—</td></tr>
+<tr><td><a href="#ui-27">UI-27</a></td><td>F-INT-25…29, 02, 05, 07, F-OPT-02, F-BESS-08, F-GRID-04, F-SEC-05; + F-BESS-04</td><td>FR-INT-015…020; + FR-INT-002, 005, 007, FR-BESS-003, 007, FR-GRID-004, FR-OPT-003, FR-SEC-005, 021</td><td>API-TEL-08, API-CMD-01, API-CMD-02, API-INT-01, API-INT-02, API-INT-08, API-INT-09</td><td>—</td><td>—</td></tr>
+<tr><td><a href="#ui-28">UI-28</a></td><td>F-INT-03…07, 23; + F-INT-15, 22</td><td>FR-INT-003…007, 013, 020; + FR-INT-022, 027 (P1)</td><td>API-TEL-01, API-TEL-08, API-CMD-02, API-INT-06, API-INT-08, API-INT-10 (P1)</td><td>—</td><td>—</td></tr>
+<tr><td><a href="#ui-29">UI-29</a></td><td>F-ORG-02…06, 11, 13, 15, F-GRID-01…03, 15; + F-TAR-04, F-ORG-12, 16</td><td>FR-ORG-002…006, 010, 011, 015, 018; FR-GRID-001…003; + FR-TAR-004; FR-ORG-012, 014, 016, FR-GRID-015 (P1)</td><td>API-ORG-02…06, API-ORG-10, API-ORG-11 (P1), API-CMD-09, API-TAR-04, API-INT-01, API-INT-02; chưa có endpoint cho FR-ORG-012, 014, 016 (12 GAP-12-06 → 06)</td><td>—</td><td>—</td></tr>
+<tr><td><a href="#ui-30">UI-30</a></td><td>F-REP-01…18; + F-HIST-04, F-TAR-06</td><td>FR-REP-001…019; + FR-HIST-006, FR-TAR-006</td><td>API-TEL-07, API-TAR-06, API-REP-01…05, API-REP-06 (P1), API-REP-07 (P1)</td><td>—</td><td>H-P20</td></tr>
+<tr><td><a href="#ui-31">UI-31</a></td><td>F-ORG-07…09, F-SEC-02, 03; + F-ORG-10</td><td>FR-ORG-007…009; FR-SEC-002, 003; + FR-SEC-022; FR-ORG-013 (P1)</td><td>API-AUTH-02, API-AUTH-03, API-ORG-07, API-ORG-08, API-ORG-09, API-ORG-12 (P1)</td><td>AC-SEC-12</td><td>—</td></tr>
+<tr><td><a href="#ui-32">UI-32</a></td><td>F-ORG-01, 14, 15, F-ALM-03, F-SEC-18, 19, 22; + F-HIST-10, F-INT-20</td><td>FR-ORG-001, 011, 017; FR-ALM-003; FR-SEC-019, 020, 026; + FR-HIST-011; FR-INT-026 (P1)</td><td>API-ORG-01, API-ORG-02, API-ALM-04, API-PUB-01 (P1), API-PUB-02 (P1), API-PUB-03 (P1)</td><td>—</td><td>—</td></tr>
+<tr><td><a href="#ui-33">UI-33</a></td><td>F-SEC-12, 13</td><td>FR-SEC-014, 023</td><td>API-AUD-01, API-AUD-03 (P1), API-AUD-04 (MVP gói, P1 ghim 1 s)</td><td>AC-SEC-10</td><td>—</td></tr>
+<tr><td><a href="#ui-34">UI-34</a></td><td>F-SEC-01, 02</td><td>FR-SEC-001, 002</td><td>API-AUTH-01, API-AUTH-03, API-AUTH-05</td><td>AC-SEC-12</td><td>—</td></tr>
+<tr><td><a href="#ui-35">UI-35</a></td><td>F-DASH-11, F-ORG-10</td><td>FR-DASH-011, FR-ORG-013</td><td>API-ORG-12 (P1)</td><td>—</td><td>H-P18</td></tr>
+<tr><td><a href="#ui-36">UI-36</a></td><td>F-MON-11</td><td>FR-MON-012</td><td>— (giao diện cục bộ của edge, không gọi API cloud; API cục bộ chưa đặc tả ở 06)</td><td>—</td><td>H-P21</td></tr>
+<tr><td><a href="#ui-37">UI-37</a></td><td>F-ADV-02, 03, 04, 06</td><td>FR-ADV-003, 004, 005, 006 (P1)</td><td>chưa có endpoint cho FR-ADV-004…006 (12 GAP-12-06 → 06)</td><td>—</td><td>—</td></tr>
 </tbody></table></div>
 <p class="muted">Mọi trang áp FR-DASH-008 (quy tắc hiển thị chung) và FR-ADV-002 (nhãn dự báo/ước tính/mô phỏng). Mã H-P14 (độ tươi), H-P15 (màu), H-P16 (đơn vị), H-P17 (enum), H-P19 (mobile), H-P22 (nhãn ước tính) thành nguyên tắc UXP-06, UXP-02/03, UXP-11, UXP-13, §6.3, UXP-12.</p>
 
@@ -1818,6 +1921,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <tr><td>Hàng đợi duyệt C3 có diff, MW, % ngân sách Governor, hạn; trạng thái điều khiển; "Tạm ngưng điều khiển từ xa"; "Dừng vận hành từ xa"; không nút E-stop; trạng thái lệnh không lạc quan; mã lý do PDP dễ hiểu</td><td>10 X-10-09</td><td>UI-22, UI-24, UI-07 (P1), UI-21 bảng ánh xạ</td></tr>
 <tr><td>"Đã gửi, thiết bị không cho đọc lại"; nhãn "Mô phỏng" cho site sandbox; <code>tracking_state</code></td><td>07 X-07-06</td><td>UI-21 bảng ánh xạ, §6.1, UI-27</td></tr>
 <tr><td>Mã lý do và câu mẫu theo slot, mức arbiter đang thắng, nhãn "Quy tắc"/"Tối ưu dựa trên dự báo"/"Mô phỏng", so sánh baseline B0</td><td>08 X-08-05</td><td>UI-19, UI-24, §6.5</td></tr>
+<tr><td>Thêm cột API; ghi đủ FR có chỗ trên trang; trang/tab cho 11 FR P1; truy vết ngược F- → FR</td><td>12 GAP-12-08, 09, 10, 11</td><td>§13.1 (cột API, phần "+"); dòng "Nội dung bổ sung" ở UI-01…UI-32; trang mới UI-37. GAP-12-19 (16 FR P2) chưa xử lý, chờ lập Phase 2</td></tr>
 <tr><td>Ma trận UX chỉ so với FusionSolar; "theo tinh thần", không "tuân thủ" ISA; demand widget P1; HMI edge P1</td><td>K §3.7, R-24</td><td>§12, §3.2, UI-10, UI-36</td></tr>
 </tbody></table></div>
 </section>
@@ -1856,14 +1960,14 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <div class="table-wrap"><table>
 <thead><tr><th>Mã</th><th>Gửi</th><th>Vấn đề</th><th>Đề nghị</th></tr></thead>
 <tbody>
-<tr><td>X-09-01</td><td>05 Domain</td><td>Enum mức cảnh báo cần mã ổn định không dấu cho API và i18n</td><td>Dùng <code>URGENT | HIGH | MEDIUM | INFO</code> làm mã, nhãn vi/en theo K §6 #39</td></tr>
+<tr><td>X-09-01</td><td>05 Domain</td><td>Enum mức cảnh báo cần mã ổn định không dấu cho API và i18n</td><td><b>Đã đóng — 05 giải quyết:</b> <code>AlarmDefinition.default_severity</code> = <code>CRITICAL | HIGH | MEDIUM | INFO</code>, nhãn vi/en theo K §6 #39; 09 đã đổi mã và token sang <code>CRITICAL</code> / <code>--alarm-critical</code></td></tr>
 <tr><td>X-09-02</td><td>05, 10</td><td>Hộp lệnh cần danh mục mã lý do từ chối của PDP (ngoài <code>CONTROL_DISABLED</code>) để hiển thị hướng xử lý</td><td>Enum có phiên bản, ví dụ <code>CONTROL_DISABLED, KILL_SWITCH_ENGAGED, LOCAL_MODE, GATE_MISMATCH, OUT_OF_SOE, GOVERNOR_BUDGET, RATE_LIMITED, NOT_PERMITTED, REQUIRES_NATIVE_FALLBACK, MFA_STEP_UP_REQUIRED</code> (đề xuất của 09)</td></tr>
 <tr><td>X-09-03</td><td>06 Kiến trúc</td><td>Cần API "trạng thái hiện tại + freshness" theo site và kênh push cho L2; API <code>dry_run</code> trả hạng hiệu lực, giá trị dự kiến sau kẹp và tác động P lưới</td><td>Đưa vào thiết kế API và ADR cập nhật live (Q-09-02)</td></tr>
 <tr><td>X-09-04</td><td>08 Tối ưu</td><td>Câu mẫu giải thích cần cả bản en và tham số đơn vị rõ</td><td><code>explain_params</code> mang đơn vị (<code>_kw</code>, <code>_vnd_per_kwh</code>, <code>_pct</code>)</td></tr>
 <tr><td>X-09-05</td><td>10 An toàn</td><td>Q-H06 (lệnh C2/C3 và duyệt trên mobile); xác nhận tên hiển thị "Tạm ngưng điều khiển từ xa"/"Dừng vận hành từ xa"</td><td>Chốt trong 10; 09 mặc định: mobile chỉ C1 và kill switch engage</td></tr>
 <tr><td>X-09-06</td><td>11 Lộ trình</td><td>Dòng B0 trong R2 và trên UI-19 phụ thuộc GAP-05</td><td>Quyết định MVP/P1</td></tr>
 <tr><td>X-09-07</td><td>07 Tích hợp</td><td>Tập trạng thái OCPP hiển thị cho UI-11 theo phiên bản 1.6J</td><td>Liệt kê enum và ánh xạ nhãn vi</td></tr>
-<tr><td>X-09-08</td><td>12 Truy vết, 14 Nguồn</td><td>Mã UI-01…UI-36 mới cấp; URL ở §15 cần S-id</td><td>Thêm cột UI vào ma trận; cấp S-id</td></tr>
+<tr><td>X-09-08</td><td>12 Truy vết, 14 Nguồn</td><td>Mã UI-01…UI-37 mới cấp (UI-37 thêm ở vòng sửa theo GAP-12-10); URL ở §15 cần S-id</td><td>Thêm cột UI vào ma trận; cấp S-id</td></tr>
 </tbody></table></div>
 <p>Khoảng trống tính năng phát hiện khi viết 09 đã ghi vào <a href="notes/_catalog-gaps.md">notes/_catalog-gaps.md</a>: tùy chọn hiển thị của người dùng; trang phương pháp và thuật ngữ trong ứng dụng.</p>
 </section>

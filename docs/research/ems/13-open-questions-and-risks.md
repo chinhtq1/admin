@@ -2,8 +2,8 @@
 
 [← Mục lục](index.html) · [00 Tóm tắt](00-executive-summary.html) · [02 Thị trường](02-market-and-competitor-analysis.html) · [03 Chức năng](03-functional-catalog.html) · [04 Yêu cầu](04-business-requirements.md) · [05 Domain](05-domain-model.html) · [06 Kiến trúc](06-system-architecture.html) · [07 Tích hợp](07-device-integration.md) · [08 Tối ưu](08-energy-optimization.md) · [09 UX/UI](09-ux-ui-specification.html) · [10 An toàn](10-security-and-reliability.md) · [11 Lộ trình](11-mvp-and-roadmap.html) · [12 Truy vết](12-traceability-matrix.md) · [14 Nguồn](14-source-register.md) · [K vòng 1](notes/K-review-round1.md)
 
-- **Người viết:** Product/Delivery Lead (phối hợp Agent J — Kiến trúc). **Ngày:** 2026-10-10. **Phiên bản:** 1.0. **Trạng thái:** bản nháp vòng 1, đã áp quyết định thống nhất của Evidence Judge ([K §6](notes/K-review-round1.md)).
-- **Phạm vi:** gom và cấp mã chính thức cho mọi câu hỏi mở, giả định, xung đột, quyết định cần chốt và rủi ro đang nằm rải rác ở ghi chú `notes/` và tài liệu 02–10. Theo K §6 #38, tài liệu này là nơi duy nhất cấp `Q-NN` và `R-NN`. Mỗi mục ghi **mã tạm gốc** để [12 Truy vết](12-traceability-matrix.md) nối lại.
+- **Người viết:** Product/Delivery Lead (phối hợp Agent J — Kiến trúc). **Ngày:** 2026-10-10. **Phiên bản:** 1.1. **Trạng thái:** bản nháp vòng sửa, đã áp quyết định thống nhất của Evidence Judge ([K §6](notes/K-review-round1.md)). v1.1 thêm: tích hợp Huawei cần cho Phase 1 (U-29, U-30, Q-33 chặn G1), rủi ro/câu hỏi từ [15](15-simulators-and-messaging.md) (R-48…R-51, Q-59, mở rộng Q-16) và hai xung đột từ [12](12-traceability-matrix.md) (CF-39, CF-40).
+- **Phạm vi:** gom và cấp mã chính thức cho mọi câu hỏi mở, giả định, xung đột, quyết định cần chốt và rủi ro đang nằm rải rác ở ghi chú `notes/`, tài liệu 02–12 và 15. Theo K §6 #38, tài liệu này là nơi duy nhất cấp `Q-NN` và `R-NN`. Mỗi mục ghi **mã tạm gốc** để [12 Truy vết](12-traceability-matrix.md) nối lại.
 - **Giới hạn bằng chứng:** không có lượt tìm kiếm mới (hạn mức WebSearch chung đã hết, K mục đầu). Mọi FACT trích ở đây là FACT đã được các agent ghi nhận **qua kết quả tìm kiếm** (snippet) hoặc từ nghiên cứu FusionSolar trước; không URL nào được mở trực tiếp. Mức tin cậy tối đa là "Trung bình".
 
 ## Mục lục
@@ -29,10 +29,10 @@
 |---|---|---|
 | `Q-NN` | Câu hỏi mở: chưa đủ bằng chứng để quyết | Mã chính thức (K §6 #38) |
 | `A-NN` | Giả định đang dùng để lập kế hoạch | Cục bộ của 13; nếu sai thì xem cột "Ảnh hưởng nếu sai" |
-| `CF-NN` | Xung đột giữa ghi chú/tài liệu và cách đã hòa giải | CF-01…CF-27 là phán quyết K R-01…R-27; CF-28 trở đi do 13 phát hiện |
+| `CF-NN` | Xung đột giữa ghi chú/tài liệu và cách đã hòa giải | CF-01…CF-27 là phán quyết K R-01…R-27; CF-28 trở đi do 13 phát hiện hoặc nhận từ 11/12 (CF-39, CF-40 từ GAP-12-02/03) |
 | `D-NN` | Quyết định cần chủ sản phẩm/đội chốt, có phương án và khuyến nghị | Khuyến nghị là `[PROPOSAL]` |
 | `R-NN` | Rủi ro: kỹ thuật (KT), thương mại (TM), pháp lý (PL), an toàn (AT), dữ liệu (DL) | Mã chính thức (K §6 #38) |
-| `U-NN` | Tích hợp không khả dụng trong nghiên cứu hoặc mục chưa kiểm chứng | Cục bộ của 13 |
+| `U-NN` | Tích hợp không khả dụng trong nghiên cứu hoặc mục chưa kiểm chứng | Cục bộ của 13; U-29, U-30 (v1.1) được thêm vào §7.2 nên số không liên tục theo mục |
 
 **Vai trò chủ sở hữu (owner).** PO = Product Owner · DL = Delivery Lead · ARC = Kiến trúc sư (Agent J, [06](06-system-architecture.html)) · EDGE = trưởng nhóm edge/firmware · INT = trưởng tích hợp thiết bị ([07](07-device-integration.md)) · DATA = trưởng dữ liệu ([05](05-domain-model.html)) · OPT = trưởng tối ưu ([08](08-energy-optimization.md)) · SEC = trưởng an toàn/bảo mật ([10](10-security-and-reliability.md)) · UX = trưởng UX ([09](09-ux-ui-specification.html)) · LEGAL = pháp chế/tư vấn luật bên ngoài · BIZ = kinh doanh/phát triển khách hàng. Owner là **vai trò**, không phải người cụ thể; PO phân công người khi đội hình được chốt (Q-43).
 
@@ -54,7 +54,7 @@
 | 6 | Chưa phỏng vấn khách thật; chưa có pilot ký | Q-18, Q-20, R-42 | Thứ tự driver, ưu tiên P0/P1, G0 |
 | 7 | Watchdog/reversion thực tế của thiết bị đích | Q-27, R-25 | Gate M2 theo thiết bị, G2 |
 | 8 | Phần cứng edge (TPM, BOM) và lab thiết bị chưa chọn | Q-36, R-33 | PoC-03, ADR-19, G0 |
-| 9 | Phạm vi MVP (146 FR P0) so với năng lực đội 6–10 kỹ sư; edge là đường găng | Q-43, R-11, R-43 | Toàn bộ lộ trình |
+| 9 | Phạm vi MVP (148 FR P0) so với năng lực đội 6–10 kỹ sư; edge là đường găng | Q-43, R-11, R-43 | Toàn bộ lộ trình |
 | 10 | Chưa có site pilot BESS có tủ cung cấp register map theo hợp đồng | Q-28, R-45 | G2 |
 
 ---
@@ -85,7 +85,7 @@
 |---|---|---|---|---|---|---|
 | Q-14 | TimescaleDB TSL có cho phép SaaS EMS tự host khi khách **không** truy vấn DB trực tiếp? Nếu mở "SQL access" thì sao? | LEGAL + ARC | Kiến trúc lõi ADR-06; câu "SaaS không bán DB nên có vẻ được phép" chỉ là INFERENCE | Pháp chế đọc toàn văn TSL; phương án dự phòng PostgreSQL thuần/Tiger Cloud | G0 | Q-F01, NFR-DATA-013 |
 | Q-15 | Giấy phép OpenEMS theo từng module (EPL-2.0 và AGPL-3.0 đều có trong repo) và giấy phép thư viện IEC 104/61850/OCPP/Modbus dùng trong sản phẩm đóng | LEGAL + EDGE | ADR-07 edge runtime; không tái dùng UI OpenEMS khi chưa có ý kiến pháp lý (K R-21) | Đọc LICENSE từng module + ý kiến pháp lý | G0 | Q-B9, Q-E-12 |
-| Q-16 | Giấy phép EMQX, HiveMQ CE/Enterprise, VerneMQ cho SaaS thương mại tự host tại VN; cluster có ở bản miễn phí? | LEGAL + ARC | ADR-04 broker | Đọc LICENSE + ý kiến pháp lý | G0 | Q-06-02 |
+| Q-16 | Giấy phép và chi phí broker cho SaaS thương mại tự host tại VN: (a) EMQX ≥ 5.9 (BSL 1.1): SaaS của ta có thuộc ngoại lệ "integrating into a product or solution offered to third parties" của grant không, giá Enterprise theo kết nối/node; (b) giá và điều khoản HiveMQ Enterprise tự host tại VN; (c) RabbitMQ 4.x: giới hạn MQTT 5 (shared subscription, message expiry, will delay) và giấy phép hiện hành; (d) cluster có ở bản miễn phí không. VerneMQ đã bị 15 loại | LEGAL + ARC + BIZ | ADR-04 broker; chi phí license chưa có trong kế hoạch MVP (R-49). [FACT, High theo 15 E2-34] EMQX 5.9 đổi sang BSL 1.1, cluster cần license; việc SaaS của ta cần license thương mại là `[INFERENCE]` (E2 F2-22) | Đọc LICENSE trong repo + ý kiến pháp lý; xin báo giá EMQX/HiveMQ trước PoC-02 | G0 (ADR-04) | Q-06-02, Q-E2-01, Q-E2-02, Q-E2-03 |
 | Q-17 | Giấy phép và binding Java của OR-Tools (và backend đóng gói), HiGHS, ojAlgo, SCIP, Timefold | LEGAL + OPT | ADR-11 (tầng 3) | Đọc LICENSE bản phát hành | G3 track 3A | Q-G04, Q-08-04 |
 
 ### 2.3 Thị trường, khách hàng, mô hình vận hành
@@ -112,7 +112,7 @@
 | Q-30 | Huawei C&I chạy TOU + capacity control đồng thời không; thứ tự ưu tiên native | INT + OPT | Tránh hai lớp điều khiển đánh nhau ở Gate M1 (R-14) | Manual + lab | G1 (milestone 1b) | Q-G03, Q-08-03 |
 | Q-31 | Thanh ghi điều khiển nào ghi vào NVM; giới hạn số lần ghi | INT | Mòn flash (R-15); cờ `persist` | Hỏi hãng | G2 | Q-E-05 |
 | Q-32 | Dữ liệu công tơ EVN: đọc được qua DLMS/IEC 62056 hoặc cổng quang không; nhãn đầu/cuối khoảng; ngày chốt kỳ | DATA + INT | Đối soát hóa đơn bóng với công tơ thanh toán (F-TAR-10) | Hỏi Điện lực; thu file load profile thật từ pilot | Phase 2 (F-TAR-10) | Q-C02, Q-F10, MQ-07, GAP-07 |
-| Q-33 | Hạn mức và cơ chế xác thực API cloud: Huawei OAuth Connect (endpoint, grant, hạn token), Growatt V1, Deye, Solis; SMA GridControl API cấp cho ai | INT | Định cỡ connector chỉ đọc (P1) và ghi qua cloud (P2) | Tài khoản developer/installer | Phase 3 (connector), Phase 4 (ghi) | Q-E-10, Q-E-11, Q-E-14 |
+| Q-33 | Hạn mức và cơ chế xác thực API cloud: (a) **Huawei Northbound đọc** (OAuth Connect: endpoint, grant, hạn token, hạn mức gọi, điều kiện tài khoản installer/developer, cơ chế owner consent); (b) Growatt V1, Deye, Solis; (c) ghi qua cloud: Huawei OAuth Connect control API, SMA GridControl API cấp cho ai | INT + BIZ | (a) là connector F-MON-02 của Phase 1 (D-20, pilot (c) ở [11](11-mvp-and-roadmap.html)); (b) định cỡ connector chỉ đọc khác; (c) ghi qua cloud (P2, CF-39) | Xin tài khoản installer/developer Huawei qua pilot (c) + văn bản đồng ý của chủ site; đo hạn mức trong lab (U-29) | **G1** cho (a); Phase 3 cho (b); Phase 4 track 4D cho (c) | Q-E-10, Q-E-11, Q-E-14 |
 | Q-34 | OCPP: chu kỳ cập nhật tối thiểu các bộ sạc phổ biến ở VN chấp nhận; Security Whitepaper 1.6J Ed.4 (02/2026) có đổi yêu cầu profile; OCPP 2.1 DER control dùng được cho kênh EMS → CSMS | INT + OPT | EV DLM, kiến trúc EV khi có CPO | Lab với charger thật; đọc tài liệu OCA | G3 track 3E | Q-G11, Q-08-11, Q-E-08, Q-E-17 |
 | Q-35 | SunSpec: model 715 là gì; trạng thái 802–805; sentinel 0x8000 | INT | Bảng model của driver SunSpec chung | Định nghĩa model trên GitHub SunSpec | G1 (driver thứ 3) | Q-E-07 |
 | Q-36 | Ứng viên phần cứng edge (CPU/RAM, TPM 2.0, secure boot, 2 NIC, CAN, 4G, SSD TBW), giá BOM; chi phí lab thiết bị | EDGE + PO | PoC-03, ADR-19, buffer 30 ngày, chi phí mỗi site | RFQ 2–3 nhà cung cấp | G0 | Q-E-15, Q-06-06, Q-10-01, GAP-17, K G-06 |
@@ -129,7 +129,8 @@
 | Q-42 | Site chỉ giám sát qua cloud hãng (5 phút): chạy phân bổ luồng ở 5 phút với cờ, chấp nhận sai số netting? | DATA | KPI tự tiêu thụ cho site monitoring-only | Đo `netting_kwh` trên pilot | G1 | MQ-12 |
 | Q-43 | Quy mô và kỹ năng đội thực tế (số người, edge/embedded, vận hành PostgreSQL/Kubernetes) | PO | Năng lực MVP; edge là đường găng ([11 §11](11-mvp-and-roadmap.html#s11)); ADR-01/07/18 | Chủ dự án xác nhận | G0 | Q-06-01, Q-D-07 |
 | Q-44 | Nhà cung cấp hạ tầng tại VN có managed Kubernetes, KMS/HSM, object lock (WORM), hai vùng khác tỉnh? | ARC + SEC | ADR-13, ADR-18, NFR-REL-006, neo WORM | Khảo sát nhà cung cấp | G0 (KMS), Phase 2 (WORM) | Q-06-03, Q-I-13 |
-| Q-45 | Tỷ lệ người dùng mobile và mạng 4G tại site ảnh hưởng tới SSE và băng thông edge? | ARC + UX | ADR-03, §14 của 06 | Đo trên pilot | G1 | Q-06-07 |
+| Q-45 | Tỷ lệ người dùng mobile và mạng 4G tại site ảnh hưởng tới SSE và băng thông edge? Keepalive/Session Expiry MQTT tối ưu theo NAT timeout của nhà mạng VN (R-51)? | ARC + UX + EDGE | ADR-03, §14 của 06; ổn định uplink và chi phí dữ liệu 4G | Đo trên pilot | G1 | Q-06-07, Q-E2-09 |
+| Q-59 | Mosquitto 2.1 có dùng được làm broker **pilot** (≤ ~100–200 edge, một node + standby nóng) không: shared subscription, giới hạn kết nối/tin, cấu hình cert-as-username, cơ chế ACL thay `acl_file`/`password_file` đã deprecate; tiêu chí thoát sang broker PoC-02. Đây là thay đổi so với 06 ADR-04 ("Mosquitto chỉ dev/lab") do 15 đề xuất | ARC | Nếu không chốt, Phase 1 phải chờ license broker production (Q-16) mới có pilot | PoC nhỏ theo 15 (T-E2-04 chạy trên Mosquitto và ≥ 1 ứng viên PoC-02); người viết 06 quyết | G0 (ADR-04) | Q-E2-07 |
 
 ### 2.6 An toàn, bảo mật, tiêu chuẩn
 
@@ -172,7 +173,7 @@ Mỗi giả định là cơ sở lập kế hoạch ở [11](11-mvp-and-roadmap.
 | A-01 | Người mua chính là installer/O&M/ESCO; chủ C&I là người xem báo cáo | [INFERENCE] (A §3.3, chưa có số liệu) | Đổi persona chính; đổi ưu tiên giữa O&M (M-ALM) và báo cáo tài chính (M-REP); đổi kênh bán | G0 | Q-18, R-42 |
 | A-02 | Đại đa số C&I chưa trả phí công suất; chỉ khách thí điểm ≥ 200.000 kWh/tháng **có thể** đã trả từ 07/2026 | [INFERENCE] (K R-17) | Nếu demand charge áp đại trà sớm: peak shaving theo demand (F-OPT-16) phải kéo từ Phase 3 lên Phase 2 | Mỗi cổng; khi Q-03 đóng | Q-03, D-16 |
 | A-03 | Zero-export/giới hạn xuất là chế độ phổ biến nhất | [INFERENCE] từ [FACT]: 28.254 hệ TSXTTT, chỉ ~287 hệ đăng ký bán dư; đến 08/2026 chưa có giao dịch bán dư theo NĐ 243 (vietnamnet, pv-magazine) | Nếu bán dư tăng nhanh: ngân sách xuất 50% và IEC 104 phải kéo lên sớm hơn | G1, G2 | Q-04, Q-06 |
-| A-04 | Controller native (Huawei SmartLogger/EMMA) cho cấu hình giới hạn xuất, TOU và chế độ pin qua Modbus có readback | [INFERENCE] từ tài liệu hãng qua snippet (02 L37, L38) | Gate M1 cho BESS chậm; phải đưa vòng edge (Gate M2) lên sớm cho cả chức năng giới hạn xuất | G0 (lab), G1 | Q-30, R-13 |
+| A-04 | Controller native (Huawei SmartLogger/EMMA) cho cấu hình giới hạn xuất, TOU và chế độ pin qua Modbus có readback | [INFERENCE] từ tài liệu hãng qua snippet (02 L37, L38) | Gate M1 cho BESS chậm; phải đưa vòng edge (Gate M2) lên sớm cho cả chức năng giới hạn xuất | G0 (lab), G1 | Q-30, R-13, U-30 |
 | A-05 | Đội 6–10 kỹ sư trong 12–18 tháng đầu, gồm 1–2 người edge/firmware; stack Java/Spring + Angular đã quen | [INFERENCE] (06 §3.3) | Ước lượng ở 11 sai; edge thành nút cổ chai | G0 | Q-43, R-11, R-43 |
 | A-06 | MVP 50–200 site; thiết kế cho 1.000 site; mở tới 10.000 site không đổi hợp đồng edge | [PROPOSAL] (06 §3.3) | Kích thước hạ tầng, PoC-01/02 | G1 | Q-39 |
 | A-07 | Có nhà cung cấp hạ tầng tại VN đủ dịch vụ (Kubernetes, KMS/HSM, object storage) | [INFERENCE] | Phải dùng HSM thiết bị hoặc hosting ngoài VN (cần ý kiến pháp lý) | G0 | Q-44, R-21 |
@@ -228,7 +229,7 @@ CF-01…CF-27 tương ứng một–một với K R-01…R-27 ([K §2](notes/K-r
 | CF-26 | R-26 | Nhãn mức cảnh báo | Khẩn cấp / Cao / Trung bình / Thông tin | 09, 05 |
 | CF-27 | R-27 | Tên chế độ lưới | `export_mode` + `export_limit_w` + `import_cap_w`; lệnh giữ tên của E | FR-GRID-003 |
 
-### 4.2 Xung đột mới do 13/11 phát hiện
+### 4.2 Xung đột mới do 13/11/12 phát hiện
 
 | Mã | Xung đột | Các lập trường | Hòa giải | Trạng thái |
 |---|---|---|---|---|
@@ -243,6 +244,8 @@ CF-01…CF-27 tương ứng một–một với K R-01…R-27 ([K §2](notes/K-r
 | CF-36 | Mã FR-OPT tạm của G trùng chữ với FR-OPT chính thức của 04 (ví dụ FR-OPT-004 khác nghĩa) | G vs 04 | Mã tạm G không được dùng ở tài liệu chính thức; bảng ánh xạ ở 04 §7.2 | Đã xử lý ở 04 |
 | CF-37 | Tầng 3 "P1" (K #23) nhưng cổng bật cần ≥ 90 ngày dữ liệu (08 §14.4) | Ưu tiên vs điều kiện dữ liệu | Tầng 3 nằm ở Phase 3 với trigger "≥ 3 site M2 có ≥ 90 ngày dữ liệu ≤ 5 phút"; không phải mốc cố định | Áp ở 11 |
 | CF-38 | Thời điểm cần TPM: 10 D-10-13 cho phép edge thiếu TPM là ngoại lệ tạm thời; K §3.8 nêu TPM là yêu cầu nặng | 10 vs yêu cầu P0 | Edge thiếu TPM được dùng ở site chỉ giám sát và Gate M1 có ngoại lệ ghi rủi ro (R-33); **không** bật Gate M2 trên edge thiếu TPM/secure element (D-12, đề xuất chặt hơn 10) | Chờ D-12 |
+| CF-39 | Đường ghi không qua envelope/arbiter của edge (GAP-12-02): FR-EV-004 ghi giới hạn công suất sang API của CPO và FR-INT-028 ghi qua cloud hãng (Huawei OAuth Connect control API) đều là lời gọi tới hệ thống bên ngoài, có thể bỏ qua SOE, TTL, arbiter và Fleet Governor của ta; mâu thuẫn tiềm tàng với K §6 ("cloud không bao giờ ghi trực tiếp thiết bị; gửi ý định có hạn, edge quyết"; "edge bắt buộc ở mọi site nền tảng ghi lệnh") | 12 (GAP-12-02) vs 04 FR-EV-004 (bản mới), FR-INT-028; 07 §8.8 | **Quyết định:** mọi lệnh ghi qua CPO hoặc cloud hãng phải thỏa đủ: (1) đi qua PDP, hạng lệnh (≥ C2 cho cloud hãng), Fleet Governor và envelope ký như lệnh edge; (2) có hạn (`expires_at`, TTL phía bên ngoài ≤ hạn envelope; bên ngoài không hỗ trợ hạn → cấm ghi); (3) readback, chỉ báo `APPLIED` khi khớp, không khớp → `FAILED_NO_EFFECT`; (4) mặc định khi mất liên lạc đã kiểm khi commissioning (profile an toàn của CPO; chế độ native của hãng); (5) không dùng cho vòng điều khiển nhanh hay mức 1–6 của arbiter; (6) ở site có edge, edge là client gọi API và arbiter của edge vẫn giữ trần nhập/giới hạn xuất bằng tài nguyên khác. Không thỏa → **cấm**, tích hợp chỉ đọc. FR-EV-004 bản mới của 04 đã đạt (1)–(6). FR-INT-028 **chưa** nêu hạn, readback, mặc định mất liên lạc, Governor → phải sửa 04 trước khi bật cờ, nếu không thì bỏ FR. Site chỉ giám sát (không có edge) không được bật FR-INT-028 cho tới khi Evidence Judge chấp nhận ngoại lệ có lý do | `[PROPOSAL]`; FR-EV-004 đã áp ở 04; FR-INT-028 gửi 04/07/10 (§10); chặn G2 cho ghi EV qua CPO, G3 track 3E, G4 track 4D |
+| CF-40 | `COMMISSIONING_TEST` (GAP-12-03): FR-INT-016/017/018 (phép thử dấu, test giới hạn xuất, test watchdog) ghi lệnh thật vào thiết bị khi commissioning, là P0 · M1, nhưng bản trước của 04/12 không có NFR an toàn và không có F- riêng ở 03 | 12 (GAP-12-03) vs 04 bản trước | 04 bản mới cấp FR-INT-031 (đường ghi duy nhất, xác nhận có mặt bằng nút vật lý, phong bì test \|P\| ≤ min(10% P định mức, 50 kW), `REVERT_DEFAULT` khi thoát) và NFR-SEC-033 (P0 · M1). **Vẫn chặn G1** tới khi: 03 cấp F- riêng; 07 §9.4 và 10 IL-10 dẫn đúng FR-INT-031/NFR-SEC-033; 12 thêm dòng truy vết; AC-INT-10 có trong bộ test Phase 1 ([11](11-mvp-and-roadmap.html)). Phần còn lại của GAP-12-03 (một PCS mất liên lạc, PCS đã dừng, EV mất `MTR_POC`, IEC 104 mất liên kết, trực ca 24/7) chặn G2 | Một phần đã áp ở 04; gửi 03/07/10/12 (§10) |
 
 ---
 
@@ -269,7 +272,7 @@ CF-01…CF-27 tương ứng một–một với K R-01…R-27 ([K §2](notes/K-r
 | D-17 | Nhà cung cấp hosting tại VN | — | Chốt sau Q-08 và Q-44; yêu cầu tối thiểu: KMS hoặc HSM, object storage có object lock, hai vùng (P1) | ARC + SEC · G0 | ADR-18 |
 | D-18 | Mô hình trực ca 24/7 cho site M2 | (a) Installer/O&M trực, nền tảng hỗ trợ cấp 2. (b) Nền tảng trực toàn bộ | **(a)** với runbook, cảnh báo nền tảng và kill switch; xác nhận bằng Q-24 | PO · G2 | NFR-OBS-008 |
 | D-19 | Cam kết "không kill thương mại" trong hợp đồng: khi hết hợp đồng, edge chạy chế độ mặc định cục bộ | (a) Có. (b) Không | **(a)** | PO + LEGAL · G1 | I AC-07, 04 BR-SEC-08 |
-| D-20 | Connector Huawei Northbound trong Phase 1 (F-MON-02) | (a) Giữ. (b) Lùi sang Phase 2 | **(a)** nếu trong ngân sách; là mục **đầu tiên** của danh sách cắt nếu Phase 1 trễ ([11 §11.4](11-mvp-and-roadmap.html#s11)) | PO · G1 | 04 FR-MON-003 |
+| D-20 | Connector Huawei Northbound trong Phase 1 (F-MON-02) | (a) Giữ. (b) Lùi sang Phase 2 | **(a)** nếu trong ngân sách **và** U-29 (tài khoản + consent) có trước giữa Phase 1; là mục **đầu tiên** của danh sách cắt nếu Phase 1 trễ hoặc U-29 chưa có ([11 §11.4](11-mvp-and-roadmap.html#s11)) | PO · G1 | 04 FR-MON-003; Q-33 (a), U-29 |
 | D-21 | Vai trò `TECHNICIAN` và `PLATFORM_ADMIN` | (a) Thêm vào F-ORG-08 trong Phase 1. (b) Dùng OPERATOR cho kỹ thuật viên | **(a):** ticket MVP cần người xử lý không có quyền lệnh | PO · G0 | `_catalog-gaps`, 04 §3.2 |
 
 ---
@@ -302,6 +305,7 @@ Nhóm: KT = kỹ thuật · TM = thương mại · PL = pháp lý/quy định ·
 | R-13 | KT | Lệnh ghi "không tác dụng" hoặc bị native âm thầm đè | TB | Cao | Readback bắt buộc; `FAILED_NO_EFFECT`; `tracking_state`; phát hiện điều khiển ngoài (F-ALM-22, Phase 2) | INT | 1–2 | R-E-02 |
 | R-14 | KT | Hai vòng điều khiển (native + edge) dao động | Thấp | Cao | `control_owner`; từ chối cấu hình hai chủ; Q-30 | OPT | 1–2 | R-08-03 |
 | R-15 | KT | Mòn NVM do ghi setpoint chu kỳ | TB | TB | Cờ `persist` trong driver; `min_write_interval_ms`; chỉ ghi khi đổi; Q-31 | INT | 2 | R-E-04 |
+| R-54 | KT/TM | Gate M1: lịch native lặp vô hạn trên thiết bị khi edge chết, nên nạp lưới/xả theo khung TOU cũ sau khi biểu giá đổi (rủi ro kinh tế/hợp đồng; bảo vệ thiết bị vẫn do BMS/PCS) | Thấp | TB | Chỉ ghi khi đổi (≤ 4 lần/ngày); `native_default_profile` khi hết hạn/đổi biểu giá/kill switch; validator V-N1…V-N4; cảnh báo `EDGE_OFFLINE_NATIVE_SCHEDULE_ACTIVE` sau 1 h, Khẩn cấp nếu biểu giá mới hiệu lực khi edge còn offline ([08 §6.6](08-energy-optimization.md)); liên quan R-15, Q-31 | OPT + INT | 1 | R-08-10 |
 | R-16 | KT | Xung đột Modbus master với SCADA/công cụ installer | TB | TB | Edge là connection owner; Modbus TCP server xuất lại (Phase 3); chế độ MAINTENANCE | INT | 1 | R-E-07 |
 | R-17 | TM/KT | Hãng siết hoặc đổi chính sách cloud API (ví dụ Huawei đòi owner consent) | TB | TB | Edge Modbus cục bộ là đường chính; cảnh báo `AUTH_FAILED`; runbook cấp lại quyền | INT | 1 | R-E-05, RB-2 |
 | R-18 | KT/DL | RLS chậm hoặc không áp được trên CAGG | TB | Cao | PoC-04; hàm truy cập SECURITY DEFINER; cell theo tenant ở quy mô lớn | ARC | 0 | R-06-06, MQ-01 |
@@ -311,6 +315,10 @@ Nhóm: KT = kỹ thuật · TM = thương mại · PL = pháp lý/quy định ·
 | R-22 | KT | Dự báo PV/tải sai → nạp lưới thừa hoặc thiếu năng lượng cao điểm | TB | TB | Hệ số `α`, space reserve, lần sinh lịch 16:30; Phase 3 P10/P50 | OPT | 1–3 | R-08-01 |
 | R-23 | KT | Kế hoạch MPC "lật" liên tục làm mất lòng tin | TB | TB | `λ_stab`, cửa sổ đóng băng, giới hạn số lần sinh | OPT | 3 | R-08-04 |
 | R-24 | KT | Thiếu lịch sử để backtest làm tầng 3 không bao giờ bật ở site mới | Cao | Thấp | Nhập CSV lịch sử (F-INT-22, Phase 2); giữ tầng 2 | OPT | 3 | R-08-09, GAP-14 |
+| R-48 | KT/AT | Mô phỏng cho kết quả "xanh giả": virtual site sinh từ cùng register map mà driver dùng nên lỗi map (dấu, scale, thứ tự word) không bao giờ lộ; driver qua CI nhưng sai ở thiết bị thật | Cao | Cao | Vector vàng thu từ thiết bị thật; chế độ "map lệch" trong simulator; HIL và test lab bắt buộc trước khi gắn `VERIFIED_*` (không có driver `VERIFIED_*` chỉ dựa mô phỏng); phép thử dấu khi commissioning (FR-INT-016) | INT + EDGE | 1–2 | R-15-01 |
+| R-49 | TM/PL | Chi phí license broker MQTT chưa có trong kế hoạch MVP; broker "mở" có thể đổi giấy phép (tiền lệ EMQX 5.9 sang BSL 1.1); dịch vụ IoT managed có thể bị khai tử (Google Cloud IoT Core 2023) | Cao | TB | Hợp đồng MQTT không phụ thuộc broker (07 §7); T-E2-04 chạy trên ≥ 2 broker; xin báo giá ở Phase 0 và dự trù ngân sách; phương án RabbitMQ 4.x mở; không dùng managed IoT ở MVP; Q-16, Q-59 | ARC + PO | 0 | R-15-02, R-15-03, R-15-04 |
+| R-50 | PL/KT | Thư viện GPL/copyleft (lib60870, j60870, libIEC61850, c104, SteVe) lọt vào image edge hoặc bản phân phối đóng → nghĩa vụ công bố mã | TB | Cao | SBOM + kiểm giấy phép tự động trong CI chặn build; danh sách giấy phép cho phép do LEGAL duyệt; mua license thương mại nếu nhúng thư viện giao thức; công cụ test dùng GPL chỉ ở môi trường test, không đóng gói; liên quan Q-15, R-09, R-28 | EDGE + LEGAL | 0–1 | R-15-05 |
+| R-51 | KT | Keepalive/NAT timeout của mạng 4G VN làm rớt kết nối MQTT liên tục hoặc tốn dữ liệu | TB | TB | Keepalive 30–60 s, Session Expiry hữu hạn, Will Delay; đo ở pilot (Q-45); buffer edge 7–30 ngày che gián đoạn | EDGE | 1 | R-15-08 |
 
 ### 6.3 An toàn vận hành và bảo mật
 
@@ -327,6 +335,7 @@ Nhóm: KT = kỹ thuật · TM = thương mại · PL = pháp lý/quy định ·
 | R-33 | AT | Edge MVP không có TPM → khóa thiết bị lưu bằng phần mềm | TB | TB | D-12 (cấm ở M2); thay phần cứng trước Phase 2 | SEC + EDGE | 1–2 | I-R-09 |
 | R-34 | AT | Operator hiểu nhầm trạng thái lệnh ("đã gửi" = "đã áp dụng"), nhầm site khi phát lệnh, hoặc hiểu site OFFLINE là "mất điều khiển" | TB | Cao | Không cập nhật lạc quan; tên site trong hộp lệnh và gõ mã site ở C3; banner "site vẫn điều khiển cục bộ theo kế hoạch #n" | UX | 1–2 | R-09-03, R-09-04, R-09-05 |
 | R-35 | DL/AT | Rò dữ liệu cross-tenant do RLS/pool cấu hình sai | TB | Cao | Lớp lọc ứng dụng thứ hai; test cross-tenant trong CI chặn build | ARC + SEC | 1 | I-R-04 |
+| R-52 | AT/DL | Tenant demo/mô phỏng bị nhầm là dữ liệu thật, hoặc lệnh từ tenant demo chạm tới edge thật | Thấp | Cao | Nhãn "mô phỏng" bắt buộc trên mọi màn hình và báo cáo của tenant demo; cô lập mạng; test T-E2-06 chứng minh không có route tới edge thật | SEC + ARC | 1 | R-15-06 |
 
 ### 6.4 Dữ liệu và báo cáo
 
@@ -344,11 +353,12 @@ Nhóm: KT = kỹ thuật · TM = thương mại · PL = pháp lý/quy định ·
 | R-40 | TM | OEM (Huawei SmartEMO đã có demand charge theo TOU và phân tích doanh thu từ 03/2026; SolarEdge ONE) mở rộng, cho dashboard miễn phí, làm hẹp khoảng trống | Cao | Cao | Tập trung vào thứ OEM khó làm: đa hãng, bằng chứng tuân thủ, O&M đa hãng, hóa đơn bóng độc lập | PO | 1–3 | RB-1 |
 | R-41 | TM | Thứ tự driver MVP sai so với thị phần thực | TB | Cao | Q-20 trước khi mua lab; kiến trúc driver khai báo cho phép thêm nhanh | INT + BIZ | 0 | RB-4, R-E-10 |
 | R-42 | TM | Giả định người mua/persona sai do chưa phỏng vấn khách | TB | Cao | Phỏng vấn ở Phase 0; kiểm thử khả dụng với 5 operator trước khi build UI chính | PO + UX | 0 | GAP-15, R-09-06 |
-| R-43 | TM/KT | Phạm vi MVP (146 FR P0) quá lớn cho đội 6–10 kỹ sư; bộ an toàn P0 làm chậm Gate M2 | Cao | Cao | Tách Phase 1/Phase 2 (D-01); milestone nội bộ 1a/1b/1c; danh sách cắt ([11 §11.4](11-mvp-and-roadmap.html#s11)); không cắt an toàn | DL | 1–2 | Q-D-07, I-R-10 |
+| R-43 | TM/KT | Phạm vi MVP (148 FR P0) quá lớn cho đội 6–10 kỹ sư; bộ an toàn P0 làm chậm Gate M2 | Cao | Cao | Tách Phase 1/Phase 2 (D-01); milestone nội bộ 1a/1b/1c; danh sách cắt ([11 §11.4](11-mvp-and-roadmap.html#s11)); không cắt an toàn | DL | 1–2 | Q-D-07, I-R-10 |
 | R-44 | TM | Mệt mỏi cảnh báo làm operator bỏ qua cảnh báo Cao | TB | TB | Chặn theo cha–con ở Phase 1; đo số cảnh báo/operator/giờ; gom lũ (F-ALM-07) ở Phase 2 | UX | 1–2 | R-09-01 |
 | R-45 | TM | Không có pilot BESS có tủ cung cấp map theo hợp đồng → G2 không chứng minh được | TB | Cao | Tìm pilot từ Phase 0 (D-10); NDA với nhà phân phối; dùng PCS/tủ nhỏ ở lab | BIZ + INT | 0–2 | Q-E-09 |
 | R-46 | TM | Mô hình giá không bền khi OEM cho phần mềm miễn phí | TB | TB | Hai gói tách theo mặt phẳng; dịch vụ giám sát hộ cho installer; Q-19 | PO | 1 | K G-04 |
 | R-47 | TM | Định vị dựa trên bằng chứng đối thủ chỉ qua snippet → so sánh sai | TB | TB | Không đưa so sánh đối thủ ra ngoài trước lượt kiểm chứng; ghi "không có tài liệu ≠ không hỗ trợ" | PO | 0 | U-02…U-08 |
+| R-53 | TM/PL | Không URL nào được reviewer spot-check (K vòng 1 và vòng rà soát cuối đều hết hạn mức WebSearch); một FACT sai lọt vào tài liệu phát hành ra ngoài (so sánh đối thủ, pháp lý) | TB | Cao | Không phát hành 02 và phần đối thủ của 00 ra ngoài trước V-14 ([14 §7](14-source-register.md)); lượt kiểm chứng có mạng theo [01 §9.1](01-research-methodology.md); trần độ tin cậy snippet | PO + Registrar | 0 | V-14 |
 
 ---
 
@@ -383,6 +393,8 @@ Nhóm: KT = kỹ thuật · TM = thương mại · PL = pháp lý/quy định ·
 | U-18 | Zalo OA/ZNS | Chưa nghiên cứu điều kiện API, chi phí, mẫu tin | GAP-06, D-09 | 2 |
 | U-19 | KMS/HSM và object lock tại nhà cung cấp VN | Chưa khảo sát | Q-44 | 0–2 |
 | U-20 | Chương trình DR/VPP tại VN | Chưa thấy cơ chế trả tiền | Q-13 | 4 |
+| U-29 | Huawei Northbound **đọc** (OAuth Connect) cho connector F-MON-02 | Chưa có tài khoản installer/developer; chưa có văn bản đồng ý của chủ site (owner consent); hạn mức gọi và hạn token chưa đo | Tài khoản qua pilot (c) của [11](11-mvp-and-roadmap.html); consent theo mẫu (Q-23); đo hạn mức trong lab; Q-33 (a). Liên quan D-20 (là mục đầu tiên của danh sách cắt nếu không có), A-04, R-17 | **1 — chặn G1** (cho F-MON-02) |
+| U-30 | Bảng register **ghi** chính thức của Huawei SmartLogger/EMMA (giới hạn xuất, TOU, chế độ pin) kèm thanh ghi readback | Chỉ có tài liệu hãng qua snippet (02 L37, L38) và thanh ghi diễn đàn (U-21, không được dùng); chưa có tài liệu Modbus bản hiện hành theo firmware, chưa thử ở lab | Tài liệu Modbus chính thức theo dải firmware (kênh đối tác/pilot (a)); thử ghi + readback + watchdog ở lab (Q-27, Q-30). Kiểm A-04; liên quan D-20, R-12, R-13 | **1 (lab) — chặn G1** (giá trị số 1 tại Gate M1: cấu hình native có readback) |
 
 ### 7.3 Nội dung chưa kiểm chứng đang dùng làm căn cứ
 
@@ -405,13 +417,13 @@ Nhóm: KT = kỹ thuật · TM = thương mại · PL = pháp lý/quy định ·
 
 **Theo cổng của [11](11-mvp-and-roadmap.html):**
 
-| Cổng | Câu hỏi phải đóng | Quyết định phải chốt | Rủi ro phải có kế hoạch giảm thiểu đã chạy |
-|---|---|---|---|
-| G0 (ra Phase 0) | Q-08, Q-14, Q-15, Q-16, Q-18, Q-20, Q-36, Q-38, Q-39, Q-43, Q-44 | D-01, D-02, D-03, D-04, D-05, D-08, D-10, D-17, D-21 | R-05, R-08, R-09, R-11, R-18, R-41, R-42 |
-| G1 (Gate M1, phát hành Monitoring MVP) | Q-01 (hoặc chạy hai lịch), Q-05, Q-07, Q-22, Q-23 (M1), Q-30, Q-35, Q-37, Q-41, Q-42, Q-45, Q-49, Q-55, Q-57 | D-06, D-07, D-09, D-11, D-12, D-19, D-20 | R-01, R-03, R-07, R-12, R-31, R-35, R-37, R-38, R-43 |
-| G2 (site Gate M2 đầu tiên) | Q-10 (ramp), Q-21, Q-24, Q-26, Q-27, Q-28, Q-31, Q-46, Q-47, Q-52 | D-14, D-15, D-16, D-18 | R-13, R-21, R-25, R-26, R-29, R-30, R-32, R-33, R-34, R-45 |
-| G3 (theo track) | 3A: Q-17, Q-50, Q-51 · 3C: Q-03 · 3D: Q-04 · 3E: Q-34 | D-13 | R-02, R-10, R-22, R-23, R-24 |
-| G4 (theo track) | 4A: Q-13 · 4F: Q-48 · 4D: Q-33 | — | R-40, R-46 |
+| Cổng | Câu hỏi phải đóng | Quyết định phải chốt | Rủi ro phải có kế hoạch giảm thiểu đã chạy | Xung đột / tích hợp phải đóng |
+|---|---|---|---|---|
+| G0 (ra Phase 0) | Q-08, Q-14, Q-15, Q-16, Q-18, Q-20, Q-36, Q-38, Q-39, Q-43, Q-44, Q-59 | D-01, D-02, D-03, D-04, D-05, D-08, D-10, D-17, D-21 | R-05, R-08, R-09, R-11, R-18, R-41, R-42, R-49, R-50, R-53 | — |
+| G1 (Gate M1, phát hành Monitoring MVP) | Q-01 (hoặc chạy hai lịch), Q-05, Q-07, Q-22, Q-23 (M1), Q-30, Q-33 (a), Q-35, Q-37, Q-41, Q-42, Q-45, Q-49, Q-55, Q-57 | D-06, D-07, D-09, D-11, D-12, D-19, D-20 | R-01, R-03, R-07, R-12, R-31, R-35, R-37, R-38, R-43, R-48, R-51, R-52, R-54 | CF-28, CF-40 (`COMMISSIONING_TEST`); U-29 (Huawei Northbound đọc, hoặc cắt F-MON-02 theo D-20); U-30 (map ghi SmartLogger/EMMA có readback, kiểm A-04) |
+| G2 (site Gate M2 đầu tiên) | Q-10 (ramp), Q-21, Q-24, Q-26, Q-27, Q-28, Q-31, Q-46, Q-47, Q-52 | D-14, D-15, D-16, D-18 | R-13, R-21, R-25, R-26, R-29, R-30, R-32, R-33, R-34, R-45, R-48 (HIL) | CF-39 (nếu bật ghi EV qua API CPO); phần còn lại của GAP-12-03 (CF-40) |
+| G3 (theo track) | 3A: Q-17, Q-50, Q-51 · 3C: Q-03 · 3D: Q-04 · 3E: Q-34 | D-13 | R-02, R-10, R-22, R-23, R-24 | 3E: CF-39 (FR-EV-004) |
+| G4 (theo track) | 4A: Q-13 · 4F: Q-48 · 4D: Q-33 (c) | — | R-40, R-46 | 4D: CF-39 (FR-INT-028 phải được 04 sửa hoặc bỏ) |
 
 ---
 
@@ -585,6 +597,7 @@ Dành cho [12 Truy vết](12-traceability-matrix.md). Mã tạm không có ở �
 | R-08-07 | R-10 |
 | R-08-08 | R-02 |
 | R-08-09 | R-24 |
+| R-08-10 | R-54 |
 | R-09-01 | R-44 |
 | R-09-02 | R-38 |
 | R-09-03, R-09-04, R-09-05 | R-34 |
@@ -601,6 +614,21 @@ Dành cho [12 Truy vết](12-traceability-matrix.md). Mã tạm không có ở �
 | I-R-10 | R-43 |
 | I-R-11 | R-32 |
 | X-05-08 | R-18, R-36, R-37 |
+| R-15-01 | R-48 |
+| R-15-02, R-15-03, R-15-04 | R-49 |
+| R-15-05 | R-50 |
+| R-15-06 | R-52 |
+| R-15-07 | Không cấp (rủi ro công cụ nội bộ: API simulator pymodbus; 15 tự xử lý bằng khóa phiên bản) |
+| R-15-08 | R-51 |
+| V-14 (14 §7) | R-53 |
+| Q-E2-01, Q-E2-02, Q-E2-03 | Q-16 |
+| Q-E2-04 | Q-54 (chỉ cần nếu ADR-07 chọn OpenEMS; D-04) |
+| Q-E2-05 | Q-34 (công cụ EV); phần OpenLEADR theo Q-13 |
+| Q-E2-06, Q-E2-08 | Không cấp (dữ liệu/giấy phép cho tenant demo và backtest; 15 tự xử lý; nếu dùng cho backtest tầng 3 thì theo R-24) |
+| Q-E2-07 | Q-59 |
+| Q-E2-09 | Q-45 |
+| GAP-12-02 | CF-39 |
+| GAP-12-03 | CF-40 |
 
 **Lưu ý trùng chữ.** `R-01`…`R-27` trong [K](notes/K-review-round1.md) là **mã phán quyết** của K, khác với `R-NN` của sổ rủi ro này. Khi trích phán quyết, luôn ghi "K R-nn"; khi trích rủi ro, ghi "R-nn" kèm liên kết tới 13. Phán quyết K ↔ CF-NN ở [§4.1](#41-phán-quyết-của-evidence-judge-k-vòng-1).
 
@@ -617,6 +645,14 @@ Dành cho [12 Truy vết](12-traceability-matrix.md). Mã tạm không có ở �
 | 07 Tích hợp | CF-31 (`APPROVAL_REJECTED`) | Sửa 07 §8.4 |
 | 10 An toàn | CF-32 (ACL `down/config`); CF-38/D-12 (TPM ở M2) | Cập nhật 10 §9.3, §20.4 |
 | 12 Truy vết | Bảng §9; ghi chú trùng chữ K R-nn vs R-nn | Dùng bảng này cho cột "mã tạm" |
+| 12 Truy vết | GAP-12-02 → CF-39, GAP-12-03 → CF-40 (v1.1). 04 (bảng gửi agent khác) đề nghị 12 đóng GAP-12-02, nhưng FR-INT-028 chưa đạt điều kiện CF-39 | Giữ GAP-12-02 mở cho FR-INT-028; dẫn CF-39/CF-40 |
+| 04 Yêu cầu | CF-39: FR-INT-028 (ghi qua cloud hãng) chưa có hạn/TTL, readback, mặc định khi mất liên lạc, Governor, điều kiện edge là client | Viết lại FR-INT-028 theo 6 điều kiện của CF-39 (như FR-EV-004 bản mới), hoặc bỏ FR; NFR-SEC-018 thêm các điều kiện này |
+| 07 Tích hợp | CF-39 (§8.8 ghi qua cloud hãng; đường API CPO do edge gọi cho FR-EV-004); CF-40 (§9.4 dẫn FR-INT-031/NFR-SEC-033) | Cập nhật §8.8 theo CF-39 |
+| 10 An toàn | CF-39: PDP + Fleet Governor + envelope ký áp cho ghi qua CPO/cloud hãng; CF-40: IL-10 dẫn NFR-SEC-033 | Cập nhật §5.4/§11 |
+| 03 Danh mục | CF-40: cấp F- riêng cho `COMMISSIONING_TEST` (FR-INT-031 đang tạm trỏ F-INT-26…28) | Thêm F- khi cập nhật catalog |
+| 06 Kiến trúc | Q-59: Mosquitto 2.1 cho pilot là thay đổi so với ADR-04 ("chỉ dev/lab") do 15 đề xuất; Q-16 mở rộng (EMQX BSL, HiveMQ, RabbitMQ); R-49 | Người viết 06 quyết trong ADR-04 |
+| 11 Lộ trình | U-29/U-30 chặn G1; Q-33 (a) vào G1; R-48…R-52 | Thêm vào tiêu chí ra G1 và danh sách rủi ro Phase 0–1 |
+| 15 Mô phỏng | R-15-01…08 và Q-E2-01…09 đã có mã 13 (§9) | Dẫn mã 13 khi trích ra ngoài 15 |
 | 14 Nguồn | URL ở §11 | Cấp S-xxx |
 | 00 Tóm tắt | Mười điều chặn ở §1 | Đưa vào phần rủi ro chính |
 
@@ -638,6 +674,7 @@ Mọi URL dưới đây đã xuất hiện trong ghi chú nghiên cứu hoặc t
 - Chưa có giao dịch bán dư đến 08/2026: https://www.pv-magazine.com/2026/09/22/vietnam-pushes-provinces-to-accelerate-rooftop-solar-rollout/
 - Biểu giá trạm sạc EV: https://vneconomy.vn/automotive/quy-dinh-moi-ve-gia-ban-dien-cho-tram-sac-xe-dien.htm
 - Trang hạt giống: https://www.infinitepowerht.com/what-is-energy-management-system-ems-and-its-functions.html (U-01) ; https://ampowr.com/energy-management-system-ems/ (U-02)
+- Giấy phép EMQX 5.9 (BSL 1.1, cluster cần license; Q-16, R-49, theo 15 E2-34): https://www.emqx.com/en/content/license-faq ; https://www.emqx.com/en/blog/adopting-business-source-license-to-accelerate-mqtt-and-ai-innovation ; https://docs.emqx.com/en/emqx/latest/deploy/license.md
 - Cấu hình phần cứng tham chiếu (SolarEdge ONE Controller C&I, chỉ dùng làm tham chiếu): https://knowledge-center.solaredge.com/sites/kc/files/se-one-controller-commercial-and-industrial-datasheet-eng.pdf
 
 Nguồn nội bộ: [K-review-round1](notes/K-review-round1.md), [_catalog-gaps](notes/_catalog-gaps.md), các tài liệu 02–10 và nghiên cứu FusionSolar trước ([../fusionsolar/README.md](../fusionsolar/README.md)).

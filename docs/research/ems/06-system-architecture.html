@@ -86,7 +86,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tbody>
 <tr><td>D-06-01</td><td><b>Hai modular monolith Java/Spring Boot theo mặt phẳng</b> (monitoring và control), mỗi cái chạy được ở nhiều "run profile" (API, ingest, jobs, alarm, planner). Không chia microservice ở MVP. Edge là sản phẩm riêng.</td><td><span class="tag proposal">PROPOSAL</span></td><td><a href="#adr-01">ADR-01</a></td></tr>
 <tr><td>D-06-02</td><td><b>Cloud không nằm trong vòng bảo vệ, không ghi trực tiếp thiết bị.</b> Cloud gửi ý định có hạn, đã ký; edge arbiter 12 mức quyết định setpoint (K §6 #14–#16).</td><td>Quyết định K</td><td><a href="#adr-12">ADR-12</a>, <a href="#adr-13">ADR-13</a></td></tr>
-<tr><td>D-06-03</td><td><b>MQTT 5 + mTLS outbound-only</b> giữa edge và cloud; topic <code>ems/v1/{edge_id}/up/…</code> và <code>…/down/…</code> (K R-12). Broker chọn sau PoC và kiểm tra giấy phép; ứng viên EMQX, HiveMQ, VerneMQ; Mosquitto chỉ cho dev/lab.</td><td>Quyết định K + <span class="tag proposal">PROPOSAL</span></td><td><a href="#adr-04">ADR-04</a></td></tr>
+<tr><td>D-06-03</td><td><b>MQTT 5 + mTLS outbound-only</b> giữa edge và cloud; topic <code>ems/v1/{edge_id}/up/…</code> và <code>…/down/…</code> (K R-12). Broker production chọn sau PoC và kiểm tra giấy phép; ứng viên EMQX, HiveMQ, RabbitMQ 4.x, VerneMQ; Mosquitto 2.1 cho dev/lab và pilot Phase 1 có tiêu chí thoát (Q-59).</td><td>Quyết định K + <span class="tag proposal">PROPOSAL</span></td><td><a href="#adr-04">ADR-04</a></td></tr>
 <tr><td>D-06-04</td><td><b>Không dùng Kafka ở MVP.</b> Sự kiện nội bộ đi qua transactional outbox trên PostgreSQL; ingest đọc thẳng từ broker bằng shared subscription. Có ngưỡng chuyển sang Kafka/Redpanda/NATS.</td><td><span class="tag proposal">PROPOSAL</span></td><td><a href="#adr-05">ADR-05</a></td></tr>
 <tr><td>D-06-05</td><td><b>PostgreSQL + TimescaleDB (TSL, tự host) cho tầng nóng/ấm, Parquet trên object storage cho lưu lạnh (P1).</b> Có điều kiện: kiểm tra giấy phép TSL và PoC 1.000 site (NFR-DATA-013).</td><td>Quyết định K, chặn bởi điều kiện</td><td><a href="#adr-06">ADR-06</a></td></tr>
 <tr><td>D-06-06</td><td><b>Hai cụm cơ sở dữ liệu tách biệt:</b> <code>mon-db</code> (metadata + chuỗi thời gian) và <code>ctl-db</code> (lệnh, kế hoạch, SOE, audit). Tải truy vấn lịch sử không thể làm nghẽn đường lệnh.</td><td><span class="tag proposal">PROPOSAL</span></td><td><a href="#adr-10">ADR-10</a></td></tr>
@@ -793,7 +793,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td>CREATED → RECEIVED (edge online)</td><td>p95 ≤ 5 s, p99 ≤ 15 s</td><td><code>max_latency_ms</code> vượt → <code>REJECTED_STALE</code></td><td>NFR-PERF-005</td></tr>
 <tr><td>RECEIVED → APPLIED</td><td>p95 ≤ 15 s (phụ thuộc thiết bị)</td><td><code>FAILED_TIMEOUT</code>, <code>FAILED_NO_EFFECT</code></td><td>NFR-PERF-005</td></tr>
 <tr><td>Đối soát sau reconnect</td><td>≤ 60 s</td><td><code>CTRL.STATE_MISMATCH</code></td><td>NFR-REL-012</td></tr>
-<tr><td>Kill switch tới mọi edge online</td><td>≤ 60 s</td><td>Cảnh báo; edge offline thì vốn không nhận lệnh mới</td><td>NFR-REL-010</td></tr>
+<tr><td>Kill switch tới mọi edge online</td><td>≤ 60 s</td><td>Edge chưa báo <code>REMOTE_CONTROL_SUSPENDED</code> sau 60 s → cảnh báo Cao. Edge offline <b>không</b> vô hại: nó vẫn chạy lịch cloud đã lưu (tối đa 7 ngày, hạn của <code>APPLY_SCHEDULE</code>) cho tới khi reconnect. Trạng thái tạm ngưng là một phần của trạng thái ký số site/edge (<code>suspension_epoch</code>), không hết hạn; khi reconnect edge phải đồng bộ và kiểm trạng thái này <b>trước</b> khi tiếp tục chạy hay nhận lịch cloud (xem <a href="#adr-14">ADR-14</a>)</td><td>NFR-REL-010</td></tr>
 </tbody>
 </table>
 </div>
@@ -943,7 +943,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <table>
 <thead><tr><th>Môi trường</th><th>Mục đích</th><th>Dữ liệu</th><th>Khác biệt</th></tr></thead>
 <tbody>
-<tr><td>dev</td><td>Phát triển, docker compose: PostgreSQL + TimescaleDB, Mosquitto, Keycloak, mô phỏng thiết bị</td><td>Giả lập, nhãn "Mô phỏng"</td><td>Mosquitto chỉ ở đây và lab (<a href="#adr-04">ADR-04</a>)</td></tr>
+<tr><td>dev</td><td>Phát triển, docker compose: PostgreSQL + TimescaleDB, Mosquitto, Keycloak, mô phỏng thiết bị</td><td>Giả lập, nhãn "Mô phỏng"</td><td>Mosquitto ở đây, lab và pilot Phase 1 trong tiêu chí thoát (<a href="#adr-04">ADR-04</a>)</td></tr>
 <tr><td>ci</td><td>Test đơn vị, hợp đồng (L1–L2), mô phỏng (L3), tiêm lỗi (L4 hằng đêm), cross-tenant, ArchUnit, golden replay planner</td><td>Giả lập</td><td>Không có khóa thật</td></tr>
 <tr><td>staging</td><td>Bản sao cấu trúc production; edge ảo hàng loạt; PoC tải</td><td>Giả lập + dữ liệu ẩn danh có đồng ý</td><td>KMS riêng, CA riêng</td></tr>
 <tr><td>lab-hil</td><td>Thiết bị thật (07 §11.4), release edge, <code>VERIFIED_LAB</code></td><td>Lab</td><td>Không nối với production</td></tr>
@@ -1141,12 +1141,15 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td>API-LIVE-03</td><td>GET /api/v1/stream/alarms?scope=</td><td>Vòng đời cảnh báo</td><td>MON</td><td>R</td><td>F-ALM-05</td><td>MVP</td></tr>
 <tr><td>API-LIVE-04</td><td>GET /api/v1/stream/commands?site=</td><td>Trạng thái lệnh và kế hoạch (từ projection)</td><td>MON</td><td>R</td><td>F-SEC-14, F-OPT-08</td><td>MVP</td></tr>
 <tr><td>API-LIVE-05</td><td>GET /api/v1/stream/devices/{id}/burst</td><td>Burst 1 s quanh sự cố</td><td>MON</td><td>R</td><td>F-MON-12</td><td>Phase 1</td></tr>
+<tr><td>API-LIVE-06</td><td>GET /api/v1/stream/notifications</td><td>Sự kiện <code>notification</code> (mới, đã đọc, số chưa đọc) của người dùng hiện tại; cùng loại sự kiện được gộp vào kết nối SSE đang mở của trang (ADR-03), endpoint riêng chỉ dùng khi trang không mở luồng nào khác <span class="tag proposal">PROPOSAL</span></td><td>MON</td><td>R</td><td>F-ALM-09</td><td>MVP</td></tr>
 <tr><td colspan="7"><b>API-ALM — cảnh báo, thông báo, ticket</b></td></tr>
 <tr><td>API-ALM-01</td><td>GET /api/v1/alarms</td><td>Console cảnh báo có lọc</td><td>MON</td><td>R</td><td>F-ALM-05</td><td>MVP</td></tr>
 <tr><td>API-ALM-02</td><td>GET /api/v1/alarms/{id}</td><td>Chi tiết, lịch sử chuyển trạng thái, liên hệ trực ca</td><td>MON</td><td>R</td><td>F-ALM-06</td><td>MVP</td></tr>
 <tr><td>API-ALM-03</td><td>POST /api/v1/alarms/{id}/ack · /shelve · /comments</td><td>Xác nhận, tạm gác (trừ cảnh báo an toàn), ghi chú</td><td>MON</td><td>Cfg</td><td>F-ALM-05</td><td>MVP</td></tr>
 <tr><td>API-ALM-04</td><td>GET, POST, PATCH /api/v1/alarm-rules</td><td>Quy tắc L1 có phiên bản</td><td>MON</td><td>Cfg</td><td>F-ALM-03, F-ALM-13</td><td>MVP</td></tr>
 <tr><td>API-ALM-05</td><td>GET, POST /api/v1/notification-subscriptions</td><td>Đăng ký và định tuyến thông báo</td><td>MON</td><td>Cfg</td><td>F-ALM-08</td><td>MVP</td></tr>
+<tr><td>API-ALM-09</td><td>GET /api/v1/notifications?status=unread|all&amp;cursor=</td><td>Trung tâm thông báo in-app (UI-17): danh sách theo người nhận, <code>severity</code> (Khẩn cấp / Cao / Trung bình / Thông tin), <code>deep_link</code>, <code>group_id</code> khi gộp lũ cảnh báo, <code>unread_count</code>; chỉ trả thông báo về site người dùng còn quyền đọc tại thời điểm truy vấn <span class="tag proposal">PROPOSAL</span></td><td>MON</td><td>R</td><td>F-ALM-09</td><td>MVP</td></tr>
+<tr><td>API-ALM-10</td><td>POST /api/v1/notifications/{id}/read · POST /api/v1/notifications:mark-all-read</td><td>Đánh dấu đã đọc (theo người nhận, idempotent); không đổi trạng thái cảnh báo gốc — xác nhận cảnh báo vẫn qua API-ALM-03</td><td>MON</td><td>Cfg</td><td>F-ALM-09</td><td>MVP</td></tr>
 <tr><td>API-ALM-06</td><td>GET, POST, PATCH /api/v1/tickets · POST /tickets/{id}/transitions</td><td>Ticket từ cảnh báo</td><td>MON</td><td>Cfg</td><td>F-ALM-14</td><td>MVP</td></tr>
 <tr><td>API-ALM-07</td><td>GET, POST /api/v1/work-orders</td><td>Work order, field service</td><td>MON</td><td>Cfg</td><td>F-ALM-15</td><td>Phase 1</td></tr>
 <tr><td>API-ALM-08</td><td>GET, POST /api/v1/maintenance-plans</td><td>Bảo trì định kỳ</td><td>MON</td><td>Cfg</td><td>F-ALM-17</td><td>Phase 1</td></tr>
@@ -1166,13 +1169,15 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td colspan="7"><b>API-OPT — chiến lược, kế hoạch, lịch</b> (ctl-app)</td></tr>
 <tr><td>API-OPT-01</td><td>GET, POST /api/v1/control/strategies · /strategies/{id}/versions · POST …/{v}/transitions</td><td>Phiên bản chiến lược: soạn, kiểm, duyệt, kích hoạt</td><td>CTL</td><td>C2 (nới guardrail C3)</td><td>F-BESS-05, F-OPT-04</td><td>MVP</td></tr>
 <tr><td>API-OPT-02</td><td>GET /api/v1/control/sites/{id}/plans?from=&amp;to=</td><td>Danh sách kế hoạch, phiên bản</td><td>CTL</td><td>R</td><td>F-OPT-06, F-OPT-08</td><td>MVP</td></tr>
-<tr><td>API-OPT-03</td><td>GET /api/v1/control/plans/{id}/versions/{v}/slots?include=explain</td><td>Slot 48 h, <code>slot_mode</code>, SOC đích, mã lý do</td><td>CTL</td><td>R</td><td>F-OPT-08, F-OPT-11</td><td>MVP</td></tr>
+<tr><td>API-OPT-03</td><td>GET /api/v1/control/plans/{id}/versions/{v}/slots?include=explain</td><td>Slot 48 h, <code>slot_mode</code>, SOC đích, mã lý do; <code>include=forecast</code> trả kèm dự báo tải đã dùng để lập kế hoạch (<code>forecast_run_id</code>, <code>issue_time</code>, p50/p10/p90 theo slot, <code>method_label</code>) — cùng hợp đồng với API-FC-01</td><td>CTL</td><td>R</td><td>F-OPT-08, F-OPT-11, F-ADV-01</td><td>MVP</td></tr>
 <tr><td>API-OPT-04</td><td>POST /api/v1/control/plans/{id}/versions/{v}/approve · /abort</td><td>Duyệt kế hoạch vượt guardrail; hủy</td><td>CTL</td><td>C1–C2</td><td>F-OPT-06, F-OPT-07</td><td>MVP</td></tr>
 <tr><td>API-OPT-05</td><td>GET /api/v1/control/sites/{id}/plan-vs-actual?from=&amp;to=</td><td>Thực tế so với kế hoạch, <code>deviation_cause</code></td><td>CTL</td><td>R</td><td>F-OPT-10</td><td>MVP</td></tr>
 <tr><td>API-OPT-06</td><td>POST /api/v1/control/sites/{id}/replans</td><td>Yêu cầu sinh lại kế hoạch tầng 2</td><td>CTL</td><td>C1</td><td>F-OPT-04</td><td>MVP</td></tr>
 <tr><td>API-OPT-07</td><td>GET /api/v1/control/sites/{id}/default-strategy</td><td>Chiến lược mặc định và lịch dự phòng đang ở edge</td><td>CTL</td><td>R</td><td>F-OPT-05</td><td>MVP</td></tr>
 <tr><td>API-OPT-08</td><td>POST /api/v1/control/sites/{id}/manual-schedules</td><td>Soạn lịch thủ công</td><td>CTL</td><td>C1–C3</td><td>F-OPT-09</td><td>Phase 1</td></tr>
 <tr><td>API-OPT-09</td><td>POST /api/v1/control/backtests · GET …/{id}</td><td>Backtest, nhãn "Mô phỏng"</td><td>CTL</td><td>R</td><td>F-OPT-15</td><td>Phase 1</td></tr>
+<tr><td colspan="7"><b>API-FC — dự báo</b> (mon-app đọc kết quả do jobs-worker sinh)</td></tr>
+<tr><td>API-FC-01</td><td>GET /api/v1/sites/{id}/forecasts?kind=load&amp;from=&amp;to=&amp;issue_time=latest</td><td>Dự báo tải F0/F1 theo slot 15 phút: <code>p50_kw</code>, <code>p10_kw</code>, <code>p90_kw</code>, <code>issue_time</code> (UTC), <code>method</code> (<code>F0_SEASONAL_NAIVE</code> | <code>F1_PROFILE_MEDIAN</code>), <code>method_label = "Thống kê"</code>, <code>calc_version</code>, <code>is_estimate = true</code>, <code>coverage_pct</code> dữ liệu huấn luyện; thiếu lịch sử → <code>null</code> kèm lý do, không trả 0. Không có trường hay nhãn "AI"/"ML" (K §6 #14). p10/p90 là khoảng thực nghiệm từ phân bố sai số quá khứ, không phải khoảng tin cậy của mô hình học <span class="tag proposal">PROPOSAL</span></td><td>MON</td><td>R</td><td>F-ADV-01</td><td>MVP</td></tr>
 <tr><td colspan="7"><b>API-TAR — biểu giá, lịch TOU, hóa đơn bóng</b></td></tr>
 <tr><td>API-TAR-01</td><td>GET /api/v1/tariff-catalog</td><td>Thư viện biểu giá EVN có phiên bản (toàn cục)</td><td>MON</td><td>R</td><td>F-TAR-01</td><td>MVP</td></tr>
 <tr><td>API-TAR-02</td><td>POST /api/v1/tariffs · /tariffs/{id}/versions · POST …/{v}/publish</td><td>Biểu giá tùy chỉnh theo tenant</td><td>MON</td><td>Cfg</td><td>F-TAR-01</td><td>MVP</td></tr>
@@ -1325,7 +1330,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td>Hợp đồng MQTT</td><td>Payload telemetry/lệnh/ack (protobuf + JSON Schema)</td><td>Consumer-driven giữa edge và ingest/ctl; vector vàng</td><td>Mỗi commit</td><td>Có</td></tr>
 <tr><td>Cross-tenant</td><td>Mọi endpoint và job</td><td>Hai tenant; token A truy cập ID của B → 403/404, 0 hàng; role DB không đặt tenant → 0 hàng</td><td>Mỗi commit</td><td>Có (NFR-SEC-007)</td></tr>
 <tr><td>Tái lập tính toán</td><td>calc_version, attribution, hóa đơn bóng, planner</td><td>Bộ "golden snapshot" ≥ 20 site/ngày mẫu chạy lại, so <code>output_hash</code></td><td>Mỗi build</td><td>Có (NFR-DATA-006)</td></tr>
-<tr><td>Chuỗi lệnh end-to-end</td><td>Command API → signer → broker → edge mô phỏng → ack</td><td>Ca: hết hạn, replay, sai chữ ký, edge offline, kill switch, C3, Governor vượt ngân sách</td><td>Hằng đêm</td><td>Có cho CTL</td></tr>
+<tr><td>Chuỗi lệnh end-to-end</td><td>Command API → signer → broker → edge mô phỏng → ack</td><td>Ca: hết hạn, replay, sai chữ ký, edge offline, kill switch, <b>reconnect sau tạm ngưng</b> (edge offline lúc engage đang chạy lịch đã lưu → nối lại → phải dừng lịch cloud và báo <code>REMOTE_CONTROL_SUSPENDED</code> trước khi nhận bất kỳ lệnh/lịch nào; kèm biến thể release trong lúc offline và bản ghi trạng thái sai chữ ký), C3, Governor vượt ngân sách</td><td>Hằng đêm</td><td>Có cho CTL</td></tr>
 <tr><td>Tiêm lỗi</td><td>Broker, DB, KMS, mạng, đồng hồ</td><td>Proxy lỗi, dừng container, lệch giờ</td><td>Hằng đêm</td><td>Có cho CTL và edge</td></tr>
 <tr><td>Tải</td><td>Ingest, truy vấn, SSE</td><td>Edge ảo hàng loạt (07 §11.2); 1.000 site thường + đỉnh 10×; đo NFR-PERF-001…004</td><td>Trước Gate MVP và mỗi thay đổi lưu trữ</td><td>Có</td></tr>
 <tr><td>Migration</td><td>Schema mon-db, ctl-db</td><td>Chạy trên bản sao kích thước thật; đo thời gian khóa; migration không phá vỡ (expand/contract)</td><td>Mỗi release có migration</td><td>Có</td></tr>
@@ -1348,7 +1353,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td><a href="#adr-01">ADR-01</a></td><td>Modular monolith hay microservices</td><td>Hai modular monolith theo mặt phẳng + run profile; signer tách riêng</td><td>Proposed</td></tr>
 <tr><td><a href="#adr-02">ADR-02</a></td><td>Đồng bộ hay hướng sự kiện</td><td>REST đồng bộ cho người dùng và tạo lệnh; bất đồng bộ cho thiết bị và hiệu ứng phụ</td><td>Proposed</td></tr>
 <tr><td><a href="#adr-03">ADR-03</a></td><td>Cập nhật trực tiếp</td><td>REST + SSE; không MQTT tới trình duyệt</td><td>Proposed</td></tr>
-<tr><td><a href="#adr-04">ADR-04</a></td><td>MQTT broker phía thiết bị</td><td>Chọn giữa EMQX / HiveMQ / VerneMQ sau PoC-02 + kiểm tra giấy phép</td><td>Proposed – blocked</td></tr>
+<tr><td><a href="#adr-04">ADR-04</a></td><td>MQTT broker phía thiết bị</td><td>Chọn giữa EMQX / HiveMQ / RabbitMQ / VerneMQ sau PoC-02 + kiểm tra giấy phép; pilot Phase 1 dùng Mosquitto 2.1 có tiêu chí thoát (Q-59)</td><td>Proposed – blocked</td></tr>
 <tr><td><a href="#adr-05">ADR-05</a></td><td>Messaging nội bộ, Kafka</td><td>Không Kafka ở MVP; outbox PostgreSQL; có ngưỡng chuyển</td><td>Proposed</td></tr>
 <tr><td><a href="#adr-06">ADR-06</a></td><td>Lưu trữ quan hệ và chuỗi thời gian</td><td>PostgreSQL + TimescaleDB TSL tự host + Parquet (P1)</td><td>Proposed – blocked (Q-F01, PoC-01)</td></tr>
 <tr><td><a href="#adr-07">ADR-07</a></td><td>Edge runtime</td><td>Hợp đồng trước; PoC OpenEMS vs tự xây; mặc định dự phòng tự xây Java</td><td>Proposed – blocked (K R-21)</td></tr>
@@ -1358,7 +1363,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td><a href="#adr-11">ADR-11</a></td><td>Ngôn ngữ dịch vụ tối ưu/dự báo (ADR-OPT)</td><td>Java; tầng 3 OR-Tools sau SolverPort; sidecar Python theo điều kiện</td><td>Proposed – blocked (Q-08-04)</td></tr>
 <tr><td><a href="#adr-12">ADR-12</a></td><td>Mô hình lệnh</td><td>Cloud gửi ý định có hạn; edge quyết định</td><td>Accepted (K §6 #14)</td></tr>
 <tr><td><a href="#adr-13">ADR-13</a></td><td>Ký lệnh tầng ứng dụng</td><td>JCS + JWS ES256; khóa lệnh ≠ khóa cấu hình</td><td>Accepted (K R-11) / chi tiết Proposed</td></tr>
-<tr><td><a href="#adr-14">ADR-14</a></td><td>Fleet Governor và kill switch</td><td>Trong ctl-app, ledger cùng transaction; kill switch là lệnh ký không hết hạn</td><td>Accepted (K §6 #30) / chi tiết Proposed</td></tr>
+<tr><td><a href="#adr-14">ADR-14</a></td><td>Fleet Governor và kill switch</td><td>Trong ctl-app, ledger cùng transaction; kill switch là trạng thái ký số không hết hạn (<code>suspension_epoch</code>), edge kiểm khi reconnect trước khi chạy lịch cloud</td><td>Accepted (K §6 #30) / chi tiết Proposed</td></tr>
 <tr><td><a href="#adr-15">ADR-15</a></td><td>PDP engine</td><td>Module chính sách Java nhúng, có phiên bản; xem lại OPA/Cedar ở P1</td><td>Proposed</td></tr>
 <tr><td><a href="#adr-16">ADR-16</a></td><td>Kênh ack telemetry</td><td>Giữ <code>down/config</code>; không đổi R-12</td><td>Proposed</td></tr>
 <tr><td><a href="#adr-17">ADR-17</a></td><td>IdP</td><td>Keycloak tự host tại VN</td><td>Proposed</td></tr>
@@ -1373,7 +1378,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <h3>ADR-01 · Modular monolith theo mặt phẳng, không microservices ở MVP</h3>
 <dl>
 <dt>Trạng thái</dt><dd>Proposed</dd>
-<dt>Bối cảnh</dt><dd>Đội nhỏ (giả định 6–10 kỹ sư, <span class="tag unknown">UNKNOWN</span>), stack Java/Spring Boot + Angular đã chọn từ hướng cũ, ranh giới nghiệp vụ còn thay đổi (146 FR P0, 04 §7.1). Có yêu cầu bảo mật cứng: hai mặt phẳng tách danh tính, credential, DB, release (K §6 #26). Nhiều thao tác cần nhất quán trong một transaction: AUTHORIZED + ghi Governor ledger + audit; ghi lô telemetry + outbox sự kiện.</dd>
+<dt>Bối cảnh</dt><dd>Đội nhỏ (giả định 6–10 kỹ sư, <span class="tag unknown">UNKNOWN</span>), stack Java/Spring Boot + Angular đã chọn từ hướng cũ, ranh giới nghiệp vụ còn thay đổi (148 FR P0, 04 §7.1). Có yêu cầu bảo mật cứng: hai mặt phẳng tách danh tính, credential, DB, release (K §6 #26). Nhiều thao tác cần nhất quán trong một transaction: AUTHORIZED + ghi Governor ledger + audit; ghi lô telemetry + outbox sự kiện.</dd>
 <dt>Phương án</dt><dd>
 <div class="table-wrap"><table>
 <thead><tr><th>Phương án</th><th>Ưu</th><th>Nhược</th></tr></thead>
@@ -1418,7 +1423,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td>WebSocket</td><td>Hai chiều</td><td>Không cần hai chiều; phải tự làm reconnect, heartbeat; khó qua một số WAF</td></tr>
 <tr><td>MQTT qua WebSocket tới trình duyệt</td><td>Tái dùng broker</td><td>Lộ broker cho người dùng Internet; ACL người dùng phức tạp; phá tách mặt phẳng — <b>loại</b></td></tr>
 </tbody></table></div></dd>
-<dt>Quyết định</dt><dd><span class="tag proposal">PROPOSAL</span> SSE (API-LIVE-01…05) với vé dùng một lần ≤ 60 s (API-AUTH-04) hoặc cookie BFF; một kết nối SSE cho mỗi trang (gộp nhiều loại sự kiện); yêu cầu HTTP/2 ở biên. Nguồn dữ liệu: ingest phát bản rút gọn lên topic nội bộ <code>int/v1/live/{site_id}</code>; mon-app chỉ subscribe các site đang có người xem; trạng thái lệnh từ projection.</dd>
+<dt>Quyết định</dt><dd><span class="tag proposal">PROPOSAL</span> SSE (API-LIVE-01…06) với vé dùng một lần ≤ 60 s (API-AUTH-04) hoặc cookie BFF; một kết nối SSE cho mỗi trang (gộp nhiều loại sự kiện); yêu cầu HTTP/2 ở biên. Nguồn dữ liệu: ingest phát bản rút gọn lên topic nội bộ <code>int/v1/live/{site_id}</code>; mon-app chỉ subscribe các site đang có người xem; trạng thái lệnh từ projection.</dd>
 <dt>Hệ quả</dt><dd>Khi quyền bị thu hồi, server đóng luồng. WebSocket chỉ cân nhắc khi có nhu cầu hai chiều thật (ví dụ cộng tác thời gian thực), không cho lệnh.</dd>
 </dl>
 </div>
@@ -1439,7 +1444,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tr><td>Mosquitto</td><td>Nhẹ, ổn định, dễ chạy</td><td>Không có cluster gốc (kiến thức nền) → chỉ hợp dev/lab hoặc broker cục bộ</td><td><span class="tag inference">INFERENCE</span></td></tr>
 <tr><td>Dịch vụ IoT managed nước ngoài</td><td>Không phải vận hành</td><td>Trái mặc định hosting VN (AC-08)</td><td><span class="tag inference">INFERENCE</span></td></tr>
 </tbody></table></div></dd>
-<dt>Quyết định</dt><dd><span class="tag proposal">PROPOSAL</span> Shortlist EMQX và HiveMQ (VerneMQ dự phòng). Chọn sau (a) ý kiến pháp lý về giấy phép bản sẽ dùng và (b) PoC-02: 10.000 edge ảo mTLS, 2.600 tin/s thường và 26.000 tin/s đỉnh, kiểm Message Expiry, shared subscription, ACL theo <code>edge_id</code>, thu hồi chứng chỉ, failover một nút khi đang tải. Mosquitto chỉ dùng ở dev/lab. Hợp đồng topic không phụ thuộc broker cụ thể; không dùng tính năng riêng của hãng broker cho logic nghiệp vụ (chỉ cho xác thực/ACL/quan sát).</dd>
+<dt>Quyết định</dt><dd><span class="tag proposal">PROPOSAL</span> Shortlist EMQX và HiveMQ (VerneMQ dự phòng). Chọn sau (a) ý kiến pháp lý về giấy phép bản sẽ dùng và (b) PoC-02: 10.000 edge ảo mTLS, 2.600 tin/s thường và 26.000 tin/s đỉnh, kiểm Message Expiry, shared subscription, ACL theo <code>edge_id</code>, thu hồi chứng chỉ, failover một nút khi đang tải. <b>Cập nhật vòng sửa (Q-59, 11 F0-4):</b> cho pilot Phase 1 được phép dùng Mosquitto 2.1 một nút + standby nóng, với tiêu chí thoát: &gt; 200 edge, cần HA không gián đoạn, hoặc PoC-02 đã xong thì chuyển sang broker production. Ngoài pilot, Mosquitto chỉ dùng ở dev/lab. Bối cảnh giấy phép theo <a href="15-simulators-and-messaging.md">15 §7</a>: EMQX ≥ 5.9 dùng BSL 1.1 (cluster cần license), HiveMQ Enterprise là thương mại, HiveMQ CE không có cluster <span class="tag fact">FACT</span> (qua kết quả tìm kiếm); SaaS của ta có thuộc ngoại lệ BSL hay không là <span class="tag unknown">UNKNOWN</span> (13 Q-16). RabbitMQ 4.x (MQTT 5) được thêm vào PoC-02. Hợp đồng topic không phụ thuộc broker cụ thể; không dùng tính năng riêng của hãng broker cho logic nghiệp vụ (chỉ cho xác thực/ACL/quan sát).</dd>
 <dt>Hệ quả</dt><dd>Đổi broker sau này chỉ ảnh hưởng hạ tầng và plugin xác thực, không ảnh hưởng edge. Hướng cũ (nghiên cứu FS <code>competitors_rebuild.md</code>) đã liệt kê EMQX/HiveMQ/AWS IoT Core; ta bỏ dịch vụ managed nước ngoài vì hosting VN.</dd>
 </dl>
 </div>
@@ -1600,8 +1605,16 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <dt>Trạng thái</dt><dd>Accepted (K §6 #30); chi tiết Proposed</dd>
 <dt>Bối cảnh</dt><dd><span class="tag fact">FACT</span> Forescout "SUN:DOWN" (3/2025) báo 46 lỗ hổng mới ở sản phẩm Sungrow, Growatt, SMA (đã vá) — https://forescout.com/press-releases/forescout-vedere-labs-uncovers-severe-systemic-security-risks-in-global-solar-power-infrastructure (nghiên cứu FusionSolar trước). <span class="tag inference">INFERENCE</span> Mẫu nguy hiểm nhất là một khóa/tài khoản tác động đồng thời nhiều site (10 §14.1).</dd>
 <dt>Phương án</dt><dd>Governor ở (A) broker — không hiểu ngữ nghĩa ΔP; (B) edge — không thấy cả đội; (C) <b>ctl-app, cùng transaction với quyết định PDP</b>.</dd>
-<dt>Quyết định</dt><dd>C. <code>FleetDispatchLedger</code> cửa sổ trượt 300 s theo tenant và nền tảng, kiểm và ghi trong cùng transaction với <code>AUTHORIZED</code>; vượt → xếp hàng + C3; planner tự rải jitter trước khi xin duyệt; lệnh an toàn hóa miễn trừ (PDP-15). Kill switch: <code>RemoteControlSuspension</code> (site/tenant/nền tảng), PDP chặn ngay, lệnh ký <code>REMOTE_CONTROL_SUSPEND</code> không hết hạn tới edge, lan truyền ≤ 60 s; tự bật khi nghi lộ khóa, failover DR, bất thường lệnh &gt; 5× đường cơ sở. Ngưỡng 20%/5% là đề xuất cần mô phỏng (Q-I-14).</dd>
-<dt>Hệ quả</dt><dd>Mọi principal (người, planner, API client P2) đều qua Governor. Dispatcher hủy lệnh chưa gửi khi kill switch bật.</dd>
+<dt>Quyết định</dt><dd>C. <code>FleetDispatchLedger</code> cửa sổ trượt 300 s theo tenant và nền tảng, kiểm và ghi trong cùng transaction với <code>AUTHORIZED</code>; vượt → xếp hàng + C3; planner tự rải jitter trước khi xin duyệt; lệnh an toàn hóa miễn trừ (PDP-15). Kill switch: <code>RemoteControlSuspension</code> (site/tenant/nền tảng), PDP chặn ngay, trạng thái tạm ngưng được phát hành thành bản ghi ký số <code>SuspensionState{scope, suspended, suspension_epoch, reason, issued_at}</code> nằm trong trạng thái/cấu hình ký số mà edge giữ (không có <code>expires_at</code>; chỉ thay bằng bản ghi có <code>suspension_epoch</code> lớn hơn, tức release C3 hoặc engage mới), đồng thời gửi lệnh ký <code>REMOTE_CONTROL_SUSPEND</code> để đẩy nhanh, lan truyền ≤ 60 s tới edge online; tự bật khi nghi lộ khóa, failover DR, bất thường lệnh &gt; 5× đường cơ sở. Ngưỡng 20%/5% là đề xuất cần mô phỏng (Q-I-14).</dd>
+<dt>Hệ quả</dt><dd>Mọi principal (người, planner, API client P2) đều qua Governor. Dispatcher hủy lệnh chưa gửi khi kill switch bật.
+<br><span class="tag proposal">PROPOSAL</span> <b>Edge offline lúc engage.</b> Edge offline không nhận được tạm ngưng và vẫn chạy lịch cloud đã lưu (tối đa 7 ngày) dưới vòng an toàn và tuân thủ lưới cục bộ; đây là rủi ro tồn dư được chấp nhận vì cloud không nằm trong vòng bảo vệ. Để đóng khe hở khi kết nối lại:
+<ol>
+<li>Trạng thái tạm ngưng không hết hạn và không phụ thuộc hàng đợi lệnh: cloud không dựa vào việc "xếp hàng lệnh với hạn 24 h" (khác với dòng "Edge offline lúc engage" hiện ở 10 §14.4 — cần sửa ở 10 cho khớp).</li>
+<li>Bắt tay reconnect: bản tin đầu tiên của edge sau khi kết nối gửi <code>suspension_epoch</code> và hash trạng thái ký số đang giữ; cloud trả <code>SuspensionState</code> hiện hành (ký số) trước mọi lệnh hay lịch khác. Edge chỉ tiếp tục chạy lịch cloud đã lưu hoặc chấp nhận lịch/lệnh mới sau khi đã kiểm chữ ký và xác nhận <code>suspended = false</code>; nếu <code>suspended = true</code> → hủy lệnh tay, dừng lịch cloud, chạy chiến lược mặc định cục bộ, báo <code>REMOTE_CONTROL_SUSPENDED</code>.</li>
+<li>Cloud từ chối mọi ack/kế hoạch từ edge có <code>suspension_epoch</code> cũ hơn hiện hành cho tới khi edge báo đã áp trạng thái mới; khi chưa đồng bộ được (ví dụ lỗi ký) edge giữ chiến lược mặc định, không quay lại lịch cloud.</li>
+<li>Bản ghi trạng thái được ký bằng khóa cấu hình (khác khóa lệnh, <a href="10-security-and-reliability.md#s8">10 §8</a>) để lộ khóa lệnh không thể giả "release".</li>
+</ol>
+Ca kiểm thử "reconnect sau khi tạm ngưng" nằm trong chuỗi lệnh end-to-end ở <a href="#s16">§16</a>.</dd>
 </dl>
 </div>
 
@@ -1717,7 +1730,7 @@ table.api td:first-child, table.adr-idx td:first-child { white-space: nowrap; }
 <tbody>
 <tr><td>ADR-01, §5</td><td>Toàn bộ</td><td>NFR-SEC-002</td><td>#26</td></tr>
 <tr><td>ADR-02, ADR-12, §8.2</td><td>F-SEC-07, F-SEC-14, F-INT-07, F-OPT-06</td><td>NFR-SEC-004, 011; NFR-PERF-005; NFR-REL-012</td><td>#14, #21</td></tr>
-<tr><td>ADR-03, API-LIVE</td><td>F-MON-01, F-MON-03, F-MON-04, F-DASH-01, F-ALM-05</td><td>NFR-PERF-003</td><td>#9</td></tr>
+<tr><td>ADR-03, API-LIVE</td><td>F-MON-01, F-MON-03, F-MON-04, F-DASH-01, F-ALM-05, F-ALM-09</td><td>NFR-PERF-003</td><td>#9</td></tr>
 <tr><td>ADR-04, ADR-16, §7.1</td><td>F-INT-08, F-INT-09</td><td>NFR-SEC-003; NFR-DATA-001, 002; NFR-REL-016</td><td>#18, #20, R-12</td></tr>
 <tr><td>ADR-05, §12</td><td>F-ALM-08, F-HIST-04</td><td>NFR-PERF-004</td><td>#20</td></tr>
 <tr><td>ADR-06, §11</td><td>F-HIST-01…05, F-HIST-10, F-HIST-14</td><td>NFR-DATA-008, 013; NFR-PERF-002, 009</td><td>#25, #31</td></tr>

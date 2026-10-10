@@ -188,7 +188,7 @@ Hạng phát hành lấy từ [03 Chức năng](03-functional-catalog.html). "M�
 | S11 | Đáp ứng tần số (FCR/FFR) | Thay đổi P theo tần số trong giây | 1 (tại edge/PCS) | PCS/edge | — | Không áp dụng; chức năng tần số–công suất của inverter thuộc grid code (chỉ đọc) | Out of scope | F-OPT-21; F-PV-12 (đọc) |
 | S12 | Điều khiển máy phát (genset) | Khởi/dừng genset khi SOC thấp/mất lưới | 1 | Edge / controller genset | 7–11 tùy nguồn | Thấp; đặc thù site | Phase 2 | F-OPT-19 |
 
-[FACT] Ít nhất 8/11 sản phẩm được Agent B xét có tài liệu về peak shaving/giới hạn mua lưới (ma trận B·G1). Câu "peak shaving là table stakes" là [INFERENCE] (K §4).
+[INFERENCE] Ít nhất 8/11 sản phẩm được Agent B xét có tài liệu về peak shaving/giới hạn mua lưới (đếm từ ma trận [02 §7](02-market-and-competitor-analysis.html) / [14](14-source-register.md) EL-046, vốn dựng từ trích đoạn kết quả tìm kiếm; ma trận B·G1). Câu "peak shaving là table stakes" là [INFERENCE] (K §4).
 
 ### 3.2 Thẻ chiến lược
 
@@ -593,15 +593,17 @@ Mọi tham số là [PROPOSAL], cấu hình trong SOE và phải tinh chỉnh t�
 
 ### 5.8 Kiểm thử tối thiểu cho tầng 1
 
-| Test | Kịch bản | Kỳ vọng |
-|---|---|---|
-| T1-01 | Bước tải −30% khi PV cao, zero-export | Không có sự kiện vi phạm xuất (P_xuất > tol liên tục ≥ 2 s); đạt ≤ 5 s |
-| T1-02 | Rút cáp `MTR_POC` | Sau `T_stale_poc`: BESS P = 0/native, PV về giới hạn native, IL-04, cảnh báo |
-| T1-03 | BMS đặt DCL = 0 khi đang xả | Setpoint về 0 trong 1 chu kỳ, `CLAMPED_BY_BMS` |
-| T1-04 | Lệnh tay hết hạn | `EXPIRED` → `REVERT_DEFAULT`, không có ghi lặp lại sau hạn |
-| T1-05 | Tải vượt trần với SOC = dự phòng | Xả tới `S_res_hard`, `RESERVE_DIPPED_FOR_IMPORT_CAP` |
-| T1-06 | Dao động quanh SOC sàn | Không quá 1 lần đổi chiều trong `dir_change_min_dwell_s` |
-| T1-07 | Hai vòng trên cùng biến | Cấu hình bị từ chối (AC-OPT-05) |
+Mã test theo quy ước `T-<FR id>-NN` ([12 §2.2](12-traceability-matrix.md)); cột "Mã cũ" giữ để truy vết (GAP-12-17).
+
+| Test | Mã cũ | Kịch bản | Kỳ vọng |
+|---|---|---|---|
+| T-FR-GRID-005-01 | T1-01 | Bước tải −30% khi PV cao, zero-export | Không có sự kiện vi phạm xuất (P_xuất > tol liên tục ≥ 2 s); đạt ≤ 5 s |
+| T-FR-OPT-004-01 | T1-02 | Rút cáp `MTR_POC` | Sau `T_stale_poc`: BESS P = 0/native, PV về giới hạn native, IL-04, cảnh báo |
+| T-FR-BESS-008-01 | T1-03 | BMS đặt DCL = 0 khi đang xả | Setpoint về 0 trong 1 chu kỳ, `CLAMPED_BY_BMS` |
+| T-FR-BESS-005-03 | T1-04 | Lệnh tay hết hạn | `EXPIRED` → `REVERT_DEFAULT`, không có ghi lặp lại sau hạn |
+| T-FR-GRID-006-01 | T1-05 | Tải vượt trần với SOC = dự phòng | Xả tới `S_res_hard`, `RESERVE_DIPPED_FOR_IMPORT_CAP` |
+| T-FR-OPT-004-02 | T1-06 | Dao động quanh SOC sàn | Không quá 1 lần đổi chiều trong `dir_change_min_dwell_s` |
+| T-FR-OPT-003-01 | T1-07 | Hai vòng trên cùng biến | Cấu hình bị từ chối (AC-OPT-05) |
 
 Các test này thuộc chiến lược kiểm thử chung (simulator Modbus/OCPP, HIL) mà K G-05 nêu thiếu; chủ sở hữu là [06](06-system-architecture.html)/[10](10-security-and-reliability.md)/[11](11-mvp-and-roadmap.html).
 
@@ -697,6 +699,60 @@ Giả định (Ví dụ số, không phải đo): thứ Ba; BESS `E_usable = 1.0
 | `import_cap_w` | Capacity control / peak shaving native | Theo hãng |
 
 [INFERENCE] Ánh xạ chỉ được dùng cho chế độ có trong `capability_profile` và ma trận chế độ hợp lệ theo topology. [FACT] Ràng buộc "peak shaving chỉ ở kịch bản on/off-grid" chỉ đúng với manual LUNA2000-(107-215) C&I-Microgrid-SmartLogger3000 được trích, không áp cho SmartLogger5000B on-grid hay SmartEMO (K R-20). Readback lịch native phải khớp trước khi kế hoạch được coi là `EXECUTING`; không khớp → `FAILED_NO_EFFECT`.
+
+[INFERENCE] Lịch native (khung TOU sạc/xả trên logger/EMS tủ) thường lặp lại hằng ngày trên thiết bị và không có thời hạn. Nếu không có quy tắc bổ sung, một lịch ghi ở Gate M1 sẽ tiếp tục chạy khi cloud hoặc edge mất liên lạc quá `plan_expiry_fallback_h` = 48 h ([10](10-security-and-reliability.md)), hoặc khi `TariffVersion`/khung QĐ 963 đã đổi. Khi đó BESS vẫn nạp lưới hoặc xả trong khung giờ cũ, trái với fallback của K §6 #17 và NFR-REL-001 ([04](04-business-requirements.md)). Ba quy tắc dưới đây khép lỗ hổng này. Cả ba áp cho mọi site có `control_owner = NATIVE` ở Gate M1. Cloud không ghi thẳng xuống thiết bị: edge ghi qua driver `VERIFIED_*`.
+
+#### 6.6.1 Chỉ ghi khi lịch thay đổi (giảm mòn NVM)
+
+[PROPOSAL]
+1. Edge chuẩn hóa lịch native đích thành dạng chính tắc `native_schedule_canonical`: danh sách khung đã sắp xếp, đơn vị W/%, làm tròn theo bước của thanh ghi. Edge đọc lịch đang có trên thiết bị và chuẩn hóa theo cùng cách.
+2. Hai bản trùng nhau: không ghi, kế hoạch chuyển `EXECUTING`, ghi lý do `NATIVE_SCHEDULE_UNCHANGED`. Hai bản khác nhau: chỉ ghi những thanh ghi khác, rồi đọc lại toàn bộ để xác nhận.
+3. Lần sinh lịch định kỳ (05:30, 16:30, §6.1) **không** tự nó tạo ra lần ghi. Bản dịch native của một kế hoạch mới thường trùng bản cũ: native chỉ nhận khung giờ, còn SOC đích theo slot bị làm tròn hoặc bỏ. Khi đó không ghi gì.
+4. Giới hạn `native_schedule_max_writes_per_day` (mặc định 4, theo site). Vượt mức thì edge giữ lịch hiện hành và phát cảnh báo Trung bình `NATIVE_WRITE_BUDGET_EXCEEDED`. Ngoại lệ: lần ghi về hồ sơ mặc định an toàn ở §6.6.2 luôn được phép.
+5. Driver khai báo cờ `persist` và `min_write_interval_ms` cho từng thanh ghi lịch. Thanh ghi nào ghi vào NVM và giới hạn số lần ghi là bao nhiêu vẫn [UNKNOWN] ([13 Q-31](13-open-questions-and-risks.md); rủi ro mòn flash [13 R-15](13-open-questions-and-risks.md)). Khi chưa rõ, driver coi mọi thanh ghi lịch là NVM.
+6. Edge đọc lại lịch native mỗi 15 phút. Lệch so với bản đã xác nhận (ví dụ có người sửa tại chỗ) thì edge không tự ghi đè: nó phát cảnh báo Cao `NATIVE_SCHEDULE_DRIFT` và kế hoạch chuyển `OVERRIDDEN`. Lý do: thao tác tại chỗ có thể là chủ ý của người vận hành, gần với tinh thần mức 2 (interlock cục bộ, §4.2); người có quyền quyết định ghi lại hay giữ.
+
+#### 6.6.2 Hết hạn kế hoạch hoặc đổi biểu giá → hồ sơ native mặc định
+
+[PROPOSAL] Mỗi site M1 có một `native_default_profile`. Đây là bản dịch native của chiến lược mặc định (mức 12, §4.2), được validator chấp nhận và ký cùng cấu hình site. Hồ sơ phải thỏa điều kiện **an toàn khi lặp vô hạn**:
+
+| Điều kiện | Nội dung |
+|---|---|
+| N-01 | Không có khung "charge from grid". Chỉ cho phép self-consumption/sạc PV dư. Nếu hãng không có chế độ "không nạp lưới" thì đặt công suất nạp lưới = 0 |
+| N-02 | Không xả ra lưới. Giới hạn xuất native (S1) bật độc lập với lịch |
+| N-03 | SOC sàn native ≥ dự phòng backup của site |
+| N-04 | Không phụ thuộc khung TOU. Hồ sơ đúng với mọi `TouCalendarVersion` |
+
+Hồ sơ này được kích hoạt trong các trường hợp sau. Mọi trường hợp đều do edge thực hiện, không cần cloud:
+
+| Sự kiện | Hành động của edge | Mã lý do |
+|---|---|---|
+| Kế hoạch hiện hành hết hạn (`valid_until` của `DispatchPlan`, ≤ `plan_expiry_fallback_h`) mà chưa có kế hoạch mới | Ghi `native_default_profile` (kèm readback) tại thời điểm hết hạn | `FALLBACK_SCHEDULE_EXPIRED` |
+| Tới `valid_from` của một `TariffVersion`/`TouCalendarVersion` mới mà kế hoạch đang chạy còn tham chiếu bản cũ | Ghi `native_default_profile` tại `valid_from`, giữ tới khi nhận kế hoạch sinh theo bản mới | `TARIFF_VERSION_CHANGED` |
+| Lệnh đổi `site_strategy`, tắt control site (`control_enabled = false`) hoặc kill switch | Ghi `native_default_profile` | `DEFAULT_STRATEGY` |
+
+Để làm được hàng thứ hai, mỗi `DispatchPlan` M1 mang `tariff_version_id`, `tou_calendar_version_id` và `valid_until = min(plan_end, tariff_version.valid_to)`. Cloud gửi trước cho edge các phiên bản biểu giá đã công bố có `valid_from` trong tương lai ([05](05-domain-model.html)).
+
+#### 6.6.3 Edge cũng mất: lịch đang chạy phải an toàn khi lặp vô hạn
+
+[INFERENCE] Khi chính edge hỏng, mất nguồn hoặc mất liên lạc với logger, không thành phần nào của ta còn ghi được hồ sơ mặc định. Lịch native cuối cùng sẽ lặp mãi. Vì vậy validator (§10.2) áp thêm quy tắc cho **mọi** lịch native M1, không chỉ cho hồ sơ mặc định:
+
+| Quy tắc | Nội dung | Mức |
+|---|---|---|
+| V-N1 | Mọi khung nạp lưới phải có công suất nạp ≤ `import_cap_w` − `P_load_offpeak_p95` của site, **hoặc** thiết bị đang chạy capacity control/peak shaving native với ngưỡng ≤ `import_cap_w` (đã có readback). Thiếu cả hai: không cho khung nạp lưới ở M1. Kế hoạch còn `PV_SURPLUS_CHARGE` + `PEAK_DISCHARGE` | Chặn |
+| V-N2 | Khung nạp lưới chỉ nằm trong băng thấp điểm của **mọi** `TouCalendarVersion` đã công bố còn hiệu lực trong 48 h tới | Chặn |
+| V-N3 | Có SOC đích/giới hạn SOC cuối khung nạp, **hoặc** độ dài khung ≤ `(S_tgt − SOC_floor)·E/P_ch` | Chặn |
+| V-N4 | SOC sàn native ≥ dự phòng backup; giới hạn xuất native bật | Chặn |
+
+[INFERENCE] Bảo vệ thiết bị vẫn do BMS/PCS/rơ-le native đảm nhiệm; lịch lặp không vượt qua được bảo vệ đó. Rủi ro còn lại chỉ là kinh tế và hợp đồng: nạp lưới hoặc xả sai khung TOU sau khi lịch giờ đổi mà edge đã chết trước `valid_from`. Giảm thiểu: cloud phát hiện edge offline (heartbeat) và phát cảnh báo Cao `EDGE_OFFLINE_NATIVE_SCHEDULE_ACTIVE` sau 1 h, nâng lên Khẩn cấp nếu còn offline khi tới `valid_from` của biểu giá mới. Runbook yêu cầu O&M tới hiện trường để chuyển hệ thống sang LOCAL hoặc tắt lịch tại chỗ. Ghi là R-08-10 (§19.2), gửi [13](13-open-questions-and-risks.md) cấp mã chính thức.
+
+#### 6.6.4 Kiểm thử chấp nhận cho ánh xạ native
+
+| Test | Kịch bản | Kỳ vọng |
+|---|---|---|
+| T-FR-BESS-003-01 | Sinh lại kế hoạch 05:30 và 16:30 trong 7 ngày, bản dịch native không đổi; sau đó một kế hoạch có khung khác | 0 lần ghi thanh ghi lịch khi không đổi (đếm từ log Modbus của simulator); khi đổi, chỉ thanh ghi khác được ghi; readback khớp → `EXECUTING` |
+| T-FR-BESS-003-02 | (a) Chặn broker > `plan_expiry_fallback_h`; (b) công bố `TouCalendarVersion` mới có `valid_from` trong 24 h rồi chặn broker | (a) Tại `valid_until`: edge ghi `native_default_profile`, readback khớp, `FALLBACK_SCHEDULE_EXPIRED`. (b) Tại `valid_from`: tương tự với `TARIFF_VERSION_CHANGED`. Không có khung nạp lưới sau thời điểm đó |
+| T-FR-BESS-003-03 | Gửi lịch native có khung nạp lưới vượt `import_cap_w` − tải p95 trên thiết bị không có capacity control native; rồi tắt nguồn edge khi đang chạy một lịch hợp lệ trong 72 h (HIL) | Validator chặn (V-N1). Với lịch hợp lệ: P nhập tại `MTR_POC` không vượt `import_cap_w` trong 72 h; cloud phát `EDGE_OFFLINE_NATIVE_SCHEDULE_ACTIVE` sau 1 h |
 
 ---
 
@@ -998,6 +1054,7 @@ Mọi đầu ra của tầng 2/3/4, lịch tay và lệnh tay đi qua đủ các
 | V-10 | Guardrail: không dưới dự phòng; năng lượng xả thay đổi ≤ 30% so với bản trước (I §3.7.6); không slot nào > 80% giới hạn SOE (nếu có → duyệt tay, C2) | Vượt → duyệt tay |
 | V-11 | `input_hash` khớp snapshot; `engine_ref` khớp strategy version ACTIVE | Chặn |
 | V-12 | Đầu ra số học hợp lệ: không NaN, W là số nguyên, đơn vị đúng hậu tố | Chặn |
+| V-N1…V-N4 | Chỉ cho Gate M1 (lịch native): lịch phải an toàn khi lặp vô hạn (trần nhập, khung thấp điểm của mọi lịch TOU đã công bố, giới hạn SOC cuối khung, SOC sàn và giới hạn xuất native), chi tiết §6.6.3 | Chặn |
 
 ### 10.3 Những điều optimizer không bao giờ làm
 
@@ -1117,6 +1174,8 @@ KPI điều độ: % slot `APPLIED`; MAE lệch SOC cuối slot; MAE dự báo t
 | `NATIVE_MODE_ACTIVE` | Controller native đang làm chủ | Arbiter | chế độ |
 | `SAFE_STATE_STALE_BMS` / `SAFE_STATE_STALE_POC` | Về trạng thái an toàn | Mức 3 | tuổi dữ liệu |
 | `FALLBACK_SCHEDULE_EXPIRED` / `DEFAULT_STRATEGY` | Chạy mặc định | Mức 12 | thời điểm hết lịch |
+| `TARIFF_VERSION_CHANGED` | Về hồ sơ mặc định vì biểu giá/lịch TOU mới có hiệu lực trước khi có kế hoạch mới | Edge (M1, §6.6.2) | phiên bản cũ, phiên bản mới, `valid_from` |
+| `NATIVE_SCHEDULE_UNCHANGED` / `NATIVE_SCHEDULE_DRIFT` / `NATIVE_WRITE_BUDGET_EXCEEDED` | Lịch native không ghi vì trùng / bị sửa tại chỗ / hết hạn mức ghi | Edge (M1, §6.6.1) | số lần ghi trong ngày, thanh ghi lệch |
 | `SOC_TARGET_UNREACHABLE` | Không đạt SOC đích | Tầng 1 | SOC đích, SOC thực |
 | `EV_THROTTLED_IMPORT_CAP` / `EV_COMMITMENT` | EV bị giảm / được ưu tiên | Tầng 1 (P1) | phiên, kW |
 
@@ -1438,6 +1497,7 @@ Mã `Q-08-xx`/`R-08-xx` là mã cục bộ; [13](13-open-questions-and-risks.md)
 | R-08-07 | Solver/giấy phép không phù hợp phát hiện muộn | Thấp · Trung bình | `SolverPort`, kiểm chứng Q-08-04 trước Phase 1 |
 | R-08-08 | Một lần thất bại peak shaving mất lợi ích cả tháng | Trung bình · Trung bình (chỉ khách thí điểm) | Cảnh báo sớm; fallback native capacity control |
 | R-08-09 | Thiếu lịch sử để backtest (site mới) làm tầng 3 không bao giờ bật | Cao · Thấp | Nhập CSV lịch sử; giữ tầng 2 (GAP-14) |
+| R-08-10 | Gate M1: lịch native lặp vô hạn trên thiết bị khi edge chết, nên nạp lưới/xả theo khung TOU cũ sau khi biểu giá đổi (rủi ro kinh tế/hợp đồng, không phải bảo vệ) | Thấp · Trung bình | Chỉ ghi khi đổi; hồ sơ native mặc định khi hết hạn/đổi biểu giá; V-N1…V-N4; cảnh báo `EDGE_OFFLINE_NATIVE_SCHEDULE_ACTIVE`; runbook tới hiện trường (§6.6); liên quan [13 R-15](13-open-questions-and-risks.md)/Q-31 (mòn NVM) |
 
 ---
 
@@ -1450,9 +1510,9 @@ Mã `Q-08-xx`/`R-08-xx` là mã cục bộ; [13](13-open-questions-and-risks.md)
 | X-08-03 | 06 Kiến trúc | ADR-OPT | Phương án A (OR-Tools Java + `SolverPort`) trước; B (Python sidecar) chỉ khi benchmark không đạt; điều kiện chặn Q-08-04 (§8.4) |
 | X-08-04 | 04 Yêu cầu | NFR ứng viên | Giải 1 site ≤ 30 s p95; toàn bộ site ≤ 5 phút/chu kỳ 15′; tái lập xác định theo `engine_ref` (§7.8, §13.3) |
 | X-08-05 | 09 UX/UI | Màn kế hoạch 48 h | Hiển thị mã lý do và câu mẫu theo slot, mức arbiter đang thắng, nhãn "Quy tắc"/"Tối ưu dựa trên dự báo"/"Mô phỏng"; so sánh baseline B0 |
-| X-08-06 | 10 An toàn | Chuỗi 7 lớp (§10.1) và danh sách "optimizer không bao giờ làm" (§10.3) | Đưa vào test an toàn; thêm T1-01…T1-07 vào chiến lược kiểm thử |
+| X-08-06 | 10 An toàn | Chuỗi 7 lớp (§10.1) và danh sách "optimizer không bao giờ làm" (§10.3) | Đưa vào test an toàn; thêm bảy ca §5.8 (T-FR-GRID-005-01 … T-FR-OPT-003-01, mã cũ T1-01…T1-07) và ba ca §6.6.4 (T-FR-BESS-003-01…03) vào chiến lược kiểm thử |
 | X-08-07 | 11 Lộ trình | GAP-05 | Đề xuất B0 vào MVP trong R2 (§15.5); tầng 3 Phase 1 có cổng backtest (§14.4) |
-| X-08-08 | 13 Rủi ro | Q-08-01…14, R-08-01…09 | Cấp mã chính thức |
+| X-08-08 | 13 Rủi ro | Q-08-01…14, R-08-01…10 | Cấp mã chính thức; R-08-10 (lịch native lặp vô hạn ở M1) là rủi ro tồn dư mới. **Đã đóng vòng sửa:** 13 cấp R-54; 05 §11.5 thêm `native_default_profile`, `native_schedule_max_writes_per_day`, `DispatchPlan.tariff_version_id`/`tou_calendar_version_id`/`valid_until`; tên trường slot theo 05: `soc_floor` → `soc_floor_pct`, `soc_ceiling` → `soc_ceiling_pct`, `soc_target_end` → `soc_target_pct` |
 | X-08-09 | 14 Nguồn | URL ở §21 | Cấp S-id |
 | X-08-10 | Orchestrator | Hạn mức WebSearch hết | Lượt kiểm chứng: Q-08-01, 02, 04, 06, 08, 12 |
 

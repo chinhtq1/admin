@@ -29,7 +29,7 @@
 
 - [FACT] Dự án đã reverse-engineer Huawei FusionSolar ngày 07/10/2026. Kết quả ở `docs/research/fusionsolar/`: báo cáo, wireframe 15 màn hình, 11 ghi chú nghiên cứu, 9 ảnh demo thật (S-388…S-403 trong [14 §3](14-source-register.md#3-tệp-nghiên-cứu-trước-s-388s-403)).
 - [FACT] Hướng trước đó: nền tảng giám sát/O&M PV đa hãng, edge-first, cho installer và đơn vị O&M C&I tại Việt Nam; Java/Spring Boot + Angular; TimescaleDB/PostgreSQL; MQTT; edge kiểu OpenEMS (S-388).
-- Người dùng giao hai trang hạt giống: Ampowr Cosmos (S-080) và trang "What is EMS" của HT InfinitePower (S-095). Trang InfinitePower chỉ được dùng cho định nghĩa chung, có nguồn thứ hai đi kèm (S-330), theo phán quyết R-18.
+- Người dùng giao hai trang hạt giống: Ampowr Cosmos (S-080) và trang "What is EMS" của HT InfinitePower (S-095). Trang InfinitePower chỉ được dùng cho định nghĩa chung, có nguồn thứ hai đi kèm (S-330), theo phán quyết K R-18.
 
 ### 1.2 Phạm vi nghiên cứu EMS
 
@@ -43,12 +43,12 @@
 
 | Chủ đề | Hướng FusionSolar trước | Quyết định EMS | Lý do |
 |---|---|---|---|
-| Phạm vi | Giám sát/O&M PV | Giám sát/O&M + điều khiển BESS/lưới/EV theo hai cổng M1/M2 | Mở rộng có chủ đích; giám sát vẫn là nền (R-08) |
-| Quy ước dấu | Lưới + = xuất (theo Huawei `meterPower`) | Lưới + = nhập, BESS + = xả | Khớp OpenEMS và OBIS A+; mọi trần thành số dương (R-01; EL-048, EL-080) |
-| Edge | Edge kiểu OpenEMS cho thu thập | Edge bắt buộc ở site có lệnh; cloud không bao giờ ghi thẳng thiết bị | An toàn lệnh; cloud hãng là pull có hạn mức (R-09; EL-027, EL-028) |
-| Ngôn ngữ tối ưu | Java | Java cho tầng 1–2; sidecar Python cho tầng 3 chỉ qua ADR | Ngoại lệ có chủ đích (R-22) |
+| Phạm vi | Giám sát/O&M PV | Giám sát/O&M + điều khiển BESS/lưới/EV theo hai cổng M1/M2 | Mở rộng có chủ đích; giám sát vẫn là nền (K R-08) |
+| Quy ước dấu | Lưới + = xuất (theo Huawei `meterPower`) | Lưới + = nhập, BESS + = xả | Khớp OpenEMS và OBIS A+; mọi trần thành số dương (K R-01; EL-048, EL-080) |
+| Edge | Edge kiểu OpenEMS cho thu thập | Edge bắt buộc ở site có lệnh; cloud không bao giờ ghi thẳng thiết bị | An toàn lệnh; cloud hãng là pull có hạn mức (K R-09; EL-027, EL-028) |
+| Ngôn ngữ tối ưu | Java | Java cho tầng 1–2; sidecar Python cho tầng 3 chỉ qua ADR | Ngoại lệ có chủ đích (K R-22) |
 | Lưu trữ | TimescaleDB | TimescaleDB + Parquet, **có điều kiện** kiểm tra giấy phép TSL và PoC 1.000 site | EL-090, EL-092 |
-| Nhãn mức cảnh báo | S1 Nghiêm trọng … S4 Cảnh báo | Khẩn cấp / Cao / Trung bình / Thông tin | "Cảnh báo" vừa là tên chung vừa là tên mức (R-26) |
+| Nhãn mức cảnh báo | S1 Nghiêm trọng … S4 Cảnh báo | Khẩn cấp / Cao / Trung bình / Thông tin | "Cảnh báo" vừa là tên chung vừa là tên mức (K R-26) |
 
 ---
 
@@ -59,10 +59,10 @@
 | RQ-01 | EMS gồm những nhóm sản phẩm nào, khác nhau ở đâu, ta nên đứng ở nhóm nào? | A | [02](02-market-and-competitor-analysis.html), nA §3.1–3.7 | Đã chốt (K §6); điểm chấm cần trọng số rõ |
 | RQ-02 | Động lực pháp lý và biểu giá ở Việt Nam tạo giá trị gì cho EMS C&I? | A, C | 02, [04](04-business-requirements.md), [08](08-energy-optimization.md) §giá trị | Có hướng; chi tiết văn bản **chưa kiểm chứng** (V-01…V-05) |
 | RQ-03 | Đối thủ thật sự cung cấp gì (có tài liệu), và khác biệt nằm ở đâu? | B | 02 | 11 sản phẩm có ma trận; thiếu Deye/Solarman, Growatt, Solis C&I (K G-08) |
-| RQ-04 | Đại lượng, quy ước dấu, cân bằng năng lượng, KPI và cách tính đúng? | C | [05](05-domain-model.html), 04 | Đã chốt hợp đồng dữ liệu (R-01…R-06) |
+| RQ-04 | Đại lượng, quy ước dấu, cân bằng năng lượng, KPI và cách tính đúng? | C | [05](05-domain-model.html), 04 | Đã chốt hợp đồng dữ liệu (K R-01…K R-06) |
 | RQ-05 | Tích hợp thiết bị bằng giao thức nào, giới hạn gì, vòng nhanh đặt ở đâu? | E | [07](07-device-integration.md) | Có kiến trúc; register map hãng **chưa kiểm chứng** (V-10) |
 | RQ-06 | Lưu trữ, tổng hợp, chất lượng dữ liệu, dự báo cho 1.000+ site? | F | 05, [06](06-system-architecture.html) | Có thiết kế; cần PoC và kiểm tra giấy phép (V-07) |
-| RQ-07 | Chiến lược tối ưu nào, tầng điều khiển nào, giải xung đột ưu tiên ra sao? | G | 08 | Đã chốt arbiter 12 mức (R-07); tầng 3 là P1 |
+| RQ-07 | Chiến lược tối ưu nào, tầng điều khiển nào, giải xung đột ưu tiên ra sao? | G | 08 | Đã chốt arbiter 12 mức (K R-07); tầng 3 là P1 |
 | RQ-08 | UX cho fleet đa site, lệnh nguy hiểm, dữ liệu cũ, song ngữ? | H | [09](09-ux-ui-specification.html) | Có đặc tả; bằng chứng UI đối thủ chỉ có FusionSolar |
 | RQ-09 | Điều khiển từ xa an toàn thế nào: phân quyền, lệnh có hạn, fail-safe, audit? | I | [10](10-security-and-reliability.md) | Có bộ P0 cho Gate M2; khung luật VN **chưa kiểm chứng** (V-06) |
 | RQ-10 | Kiến trúc hệ thống và stack? | J | 06 | Có; phụ thuộc ADR giấy phép (V-07, V-08) |
@@ -108,7 +108,7 @@ Quy trình có chín bước. Bước 1–4 đã xong ở vòng 1. Bước 5–6
 |---|---|---|---|---|
 | 1 | **Research** | Đề bài, trang seed, nghiên cứu FS trước, WebSearch | 8 ghi chú `notes/A…I` có evidence ledger | A, B, C, E, F, G, H, I |
 | 2 | **Challenge** | 8 ghi chú | Mâu thuẫn, claim bị bác/hạ cấp, chủ đề thiếu, kiểm tra số học | K ([K §1–§5](notes/K-review-round1.md)) |
-| 3 | **Anchor** | Kết quả bước 2 | 27 phán quyết R-01…R-27 và danh sách quyết định thống nhất (K §6), ràng buộc mọi người viết | K |
+| 3 | **Anchor** | Kết quả bước 2 | 27 phán quyết K R-01…K R-27 và danh sách quyết định thống nhất (K §6), ràng buộc mọi người viết | K |
 | 4 | **Specify** | Ghi chú + K | Danh mục chức năng, yêu cầu nghiệp vụ, mô hình miền | D (03, 04), F (05) |
 | 5 | **Architect** | 03–05 + ghi chú | Kiến trúc, tích hợp, tối ưu, UX, an toàn | J (06), E (07), G (08), H (09), I (10) |
 | 6 | **Plan** | 02–10 | MVP hai cổng M1/M2, lộ trình, rủi ro, câu hỏi mở | Lead + J (11, 13) |
@@ -142,7 +142,7 @@ Trong Markdown viết `[FACT]`; trong HTML dùng `<span class="tag fact">FACT</s
 **Quy tắc hạ nhãn (do K áp dụng).**
 
 1. Câu có "mọi", "tất cả", "thống trị", "bắt buộc cho mọi site" mà dựa trên mẫu nhỏ → `INFERENCE`.
-2. Hai nguồn mâu thuẫn chưa giải → `UNKNOWN` cho phần mâu thuẫn, giữ `FACT` cho phần các nguồn đồng ý (ví dụ R-16).
+2. Hai nguồn mâu thuẫn chưa giải → `UNKNOWN` cho phần mâu thuẫn, giữ `FACT` cho phần các nguồn đồng ý (ví dụ K R-16).
 3. Nguồn do AI sinh (rfp.wiki) → loại khỏi vai trò bằng chứng.
 4. Nguồn vendor có lợi ích thương mại trực tiếp với claim (Advantech về QĐ 1570) → `FACT, Low`, không làm NFR.
 5. Thanh ghi từ diễn đàn → `FACT, Low` "cộng đồng báo cáo"; cấm dùng cho driver đã kiểm chứng.
@@ -192,9 +192,10 @@ Mỗi ghi chú có ledger riêng (claim, URL, loại/ngày, trích, độ tin c�
 | Không biết ngữ cảnh đầy đủ của câu trích (điều kiện, ngoại lệ, phiên bản) | Cao với pháp lý và tiêu chuẩn | Trần độ tin cậy: "High" chỉ nghĩa là nguồn mạnh + snippet khớp. Mọi yêu cầu bắt buộc dựa trên pháp lý chờ V-01…V-06 |
 | Snippet có thể là tóm tắt của công cụ tìm kiếm, không phải câu nguyên văn | Trung bình | Chỉ trích ngắn; claim quan trọng cần hai nguồn |
 | Không kiểm chứng được URL có còn tồn tại, đúng nội dung | Thấp–trung bình | Đối chiếu chéo giữa agent; 16 URL gắn cờ |
-| Agent khác nhau thấy kết quả khác nhau (InfinitePower seed) | Trung bình | Hạ nhãn, cần nguồn thứ hai (R-18) |
+| Agent khác nhau thấy kết quả khác nhau (InfinitePower seed) | Trung bình | Hạ nhãn, cần nguồn thứ hai (K R-18) |
 | Agent sau không tìm được nguồn mới, phải dựa vào ghi chú trước | Cao với G, H, I | Họ ghi rõ nguồn gốc lấy lại; kiến thức nền gắn `INFERENCE`/`UNKNOWN` |
-| Hạn mức hết trước K: không có lượt kiểm chứng độc lập | Cao | Phán quyết K dựa trên nhất quán, chất lượng nguồn và logic; hàng đợi V-01…V-13 |
+| Hạn mức hết trước K: không có lượt kiểm chứng độc lập | Cao | Phán quyết K dựa trên nhất quán, chất lượng nguồn và logic; hàng đợi V-01…V-14 |
+| Vòng rà soát cuối (review + fix các deliverable 02–14) cũng không có hạn mức WebSearch: **chưa reviewer nào spot-check bất kỳ URL nào** | Cao | V-14 ở [14 §7](14-source-register.md) chặn phát hành ra ngoài 02 và phần so sánh đối thủ của 00; rủi ro R-53 ở [13](13-open-questions-and-risks.md) |
 
 ### 6.3 Diễn giải cho người đọc
 
@@ -232,7 +233,7 @@ Nguyên tắc chung: claim về hãng được viết **hẹp nhất có thể**
 | T-04 | Thiếu hãng phổ biến ở VN | Selection | Deye/Solarman, Growatt, Solis C&I, tủ BESS Trung Quốc chưa được đánh giá đầy đủ | Ghi rõ ở K G-08 | Lượt B/E thứ 2 |
 | T-05 | Nguồn vendor có lợi ích | Source bias | Nhiều số liệu (SOC LFP, QĐ 1570, % tiết kiệm) từ bên bán hàng | Hạ nhãn; cần nguồn độc lập | Nguồn học thuật/văn bản gốc |
 | T-06 | Thời điểm | History | Pháp lý VN thay đổi nhanh (NĐ 243 06/2026, QĐ 963 04/2026, NĐ 278 07/2026, thí điểm giá hai thành phần 07/2026) | Biểu giá và lịch TOU là dữ liệu có phiên bản | Theo dõi định kỳ văn bản |
-| T-07 | Mâu thuẫn giữa agent do chạy song song | Internal consistency | Đơn vị, timestamp, dấu Q, arbiter, topic MQTT từng khác nhau | K phán quyết R-01…R-27 | Rà soát vòng 2 |
+| T-07 | Mâu thuẫn giữa agent do chạy song song | Internal consistency | Đơn vị, timestamp, dấu Q, arbiter, topic MQTT từng khác nhau | phán quyết K R-01…K R-27 | Rà soát vòng 2 |
 | T-08 | Hạn mức tìm kiếm phân bổ không đều | Coverage | A/B/C/E dùng gần hết; G/H/I/J/K không có | Agent sau ghi nguồn gốc lấy lại | Lượt tìm kiếm riêng cho F, G, H, I |
 | T-09 | Kiến thức nền của mô hình | Construct | Nội dung tiêu chuẩn (IEC 62443, ISA-101/18.2, EEMUA 191), luật VN về dữ liệu, giấy phép solver | Gắn `INFERENCE`/`UNKNOWN`, edition `UNKNOWN` | V-06, V-11, V-12 |
 | T-10 | Con số ước tính kỹ thuật | Measurement | Khối lượng dữ liệu, số điểm đo/site, dung lượng nén | Gắn `INFERENCE`; K tính lại số học | PoC 1.000 site |

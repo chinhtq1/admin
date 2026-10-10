@@ -318,7 +318,7 @@ Quy tắc [PROPOSAL]:
 | 124 | Storage | [FACT, Med–High] SMA ghi rằng 124 và 126 **không còn được hỗ trợ** trong SunSpec profile 2.0 của SMA — https://files.sma.de/downloads/SunSpecModbus-TI-en-11.pdf (qua kết quả tìm kiếm) | Hỗ trợ, cờ `legacy` |
 | 126 | Volt-Var (cũ) | Như trên | Chỉ đọc |
 | 201–204, 211–214 | Công tơ (int + SF; float) | [FACT, Med] danh sách theo tài liệu SMA — https://manuals.sma.de/ennexOS/en-US/14259660939.html (qua kết quả tìm kiếm); tên chi tiết từng model là [INFERENCE] | Hỗ trợ |
-| 701–712 | DER theo IEEE 1547-2018 (701 AC Measurement, 702 Capacity, 703 Enter Service, 704 AC Controls, 705 Volt-Var, 706 Volt-Watt, 707–709 trip, 712 Watt-Var) | [FACT, High] APPROVED (nguồn SunSpec); danh sách theo SMA TI | Ưu tiên đọc 701/702/704. 705–712 là chức năng lưới: **chỉ đọc**, so với hồ sơ (F-PV-12), không chỉnh (IP-05) |
+| 701–712 | DER theo IEEE 1547-2018 (701 AC Measurement, 702 Capacity, 703 Enter Service, 704 AC Controls, 705 Volt-Var, 706 Volt-Watt, 707–710 trip (LV/HV/LF/HF), 711 Freq-Droop, 712 Watt-Var) | [FACT, High] dải 701–712 APPROVED (nguồn SunSpec trên); tên từng model theo SMA TI / snippet SunSpec (qua kết quả tìm kiếm), chưa đối chiếu file định nghĩa model gốc → tên từng model [FACT, Med] | Ưu tiên đọc 701/702/704. 705–712 là chức năng lưới: **chỉ đọc**, so với hồ sơ (F-PV-12), không chỉnh (IP-05) |
 | 713 | DER Storage Capacity | [FACT] SMA TI | Đọc SOC/dung lượng |
 | 714 | DER DC Measurement | [FACT] SMA TI | Đọc |
 | 715 | Xuất hiện trong danh sách chứng nhận của một hãng — https://sunspec.org/product-certification-registry (qua kết quả tìm kiếm) | Nội dung [UNKNOWN] | Không dùng tới khi kiểm chứng |
@@ -770,7 +770,7 @@ Phát hiện giá trị đóng băng (`FROZEN`) là việc của tầng chuỗi 
 
 Trình tự [PROPOSAL]:
 1. Kết nối lại với backoff mũ có jitter (1 s → tối đa 5 phút); mTLS bằng chứng chỉ vận hành.
-2. Publish `up/state` (retained): `online`, `firmware_version`, `config_version_reported`, `clock_state`, `run_mode`, `local_remote_state`, `active_commands[]` (command_id, trạng thái, `expires_at`), `active_plan_ref`, `buffer_oldest_ts`, `last_seq_by_stream`.
+2. Publish `up/state` (retained): `online`, `firmware_version`, `config_version_reported`, `clock_state`, `run_mode`, `local_remote_state`, `maintenance_substate`, `active_commands[]` (command_id, trạng thái, `expires_at`), `active_plan_ref`, `buffer_oldest_ts`, `last_seq_by_stream`.
 3. Cloud đối soát: config desired ≠ reported → đẩy lại config; lệnh cloud ghi `SENT` mà edge không có → `UNDELIVERED` nếu đã quá hạn (**không gửi lại**); lệnh còn hạn → gửi lại cùng `command_id` (edge idempotent).
 4. Edge nhận `down/cmd` còn hạn (Message Expiry đã lọc lệnh quá hạn ở broker) và `down/config`.
 5. Realtime C1/C5 chạy ngay; backfill xả theo giới hạn tốc độ, cũ nhất trước, trên `up/backfill`.
@@ -813,6 +813,7 @@ Tóm tắt từ I §3.5; chi tiết ở [10](10-security-and-reliability.md).
 | Lưu trữ | SSD/eMMC công nghiệp ≥ 32 GB (≥ 64 GB site lớn), chọn theo TBW | §6.7 |
 | Thời gian | RTC có pin; GNSS tùy chọn | §6.8 |
 | An toàn | Watchdog phần cứng; TPM 2.0/secure element | §6.6, §6.14 |
+| Thao tác tại chỗ | Nút nhấn vật lý nối GPIO/DI cục bộ (xác nhận có mặt cho phiên `COMMISSIONING_TEST`); khuyến nghị LED hoặc màn hình nhỏ hiển thị mã | §9.4 |
 | Môi trường | Nhiệt độ công nghiệp, gắn DIN rail | [INFERENCE] tủ điện C&I |
 | CPU/RAM | [UNKNOWN] tới khi PoC runtime (§6.1) đo tải với 5.000 điểm, IEC 104 và OCPP cùng chạy | — |
 
@@ -1009,14 +1010,37 @@ Tên lệnh giữ theo ghi chú E (K R-27). Cột "Tên tương đương" ánh x
 | `SET_PV_LIMIT` | set_active_power_setpoint (PV) | `pv_inverter` / nhóm / logger | `p_limit_pct` hoặc `p_limit_w` | 0–100%; `min_write_interval_ms` | 100% nếu site cho xuất, ngược lại giới hạn native | C1 | M1 | F-PV-03 |
 | `SET_Q` / `SET_PF` | set_reactive_power | `pv_inverter` / `pcs` | `q_var` / `pf` | **Khóa ở MVP** (grid code) | Giá trị native | C2 | M2 | F-PV-13 (P2) |
 | `SET_EV_LIMIT` | set_charging_limit | `evse` / `ev_connector` | `i_max_a` hoặc `p_max_w`, `phases` | ≥ `I_min` (mặc định 6 A, [INFERENCE] mức phổ biến của IEC 61851) hoặc 0 để tạm dừng | TxDefaultProfile an toàn | C1 | M2 | F-EV-05 (P1) |
-| `APPLY_SCHEDULE` | apply_schedule | site / `ess` | Slot 15 phút, horizon ≥ 48 h (§8.3) | Mỗi slot kiểm như lệnh đơn; có version; F-OPT-07 | Hết lịch → chiến lược mặc định | C1 | M1 (tham số native) / M2 | F-OPT-04, F-OPT-05 |
+| `APPLY_SCHEDULE` | apply_schedule | site / `ess` | `plan_id`, `plan_version`, `slot_minutes` = 15, `slots[]` theo `PlanSlot` của 05 (`slot_start`, `slot_mode`, `p_ess_min_w`, `p_ess_max_w`, `p_grid_target_w`, `soc_target_pct`, `import_cap_w`, `export_limit_w`, `ev_limit_w`, `reason_codes`); horizon ≥ 48 h (§8.3) | Mỗi slot kiểm như lệnh đơn; có version; F-OPT-07 | Hết lịch → chiến lược mặc định | C1 | M1 (tham số native) / M2 | F-OPT-04, F-OPT-05 |
 | `SET_REVERSE_FEED_BLOCK` | — | site | `blocked: bool` | Chỉ từ `GRID_OPERATOR` hoặc thủ công C3 | Theo điều độ [UNKNOWN] | C3 (thủ công) | M2 | F-GRID-12 (P1) |
 | `DEVICE_ON_OFF` | start / stop | thiết bị (PCS) | `on: bool` | Hai người duyệt; không được nằm trong lịch tự động; tên UI "Dừng vận hành từ xa", **không phải E-stop** | Không tự đảo | C3 | M2 | F-BESS-16 (P1) |
 | `REMOTE_CONTROL_SUSPEND` / `RESUME` | kill switch | site / tenant / nền tảng | — | Tắt = C1, bật lại = C3 | — | C1/C3 | M2 | F-SEC-11 |
+| `REVERT` | cancel / revert | site / thiết bị | `command_id` cần hủy (hoặc `all_active: true`) | Chỉ hoàn nguyên về giá trị mặc định đã cấu hình; thuộc đường an toàn hóa (§8.7 B) | — (chính nó là hoàn nguyên) | C1 | M1/M2 | F-SEC-11 |
 | `CONFIG_PUSH`, `FW_UPDATE_EDGE` | — | edge | Tài liệu/ảnh ký số | Kiểm chữ ký, tương thích | Rollback | C1/C3 | M1 | F-INT-11, F-INT-12 |
-| `COMMISSIONING_TEST` | test command | thiết bị | Bước test (§9.4) | Chỉ khi site `COMMISSIONING` và chế độ `MAINTENANCE`; biên độ trong "phong bì test" | `REVERT_DEFAULT` | C2 | — | F-INT-26–28 |
+| `COMMISSIONING_TEST` | test command | thiết bị | Bước test (§9.4) | Chỉ khi site `commissioning` và edge ở trạng thái con `MAINTENANCE/COMMISSIONING_TEST` có xác nhận có mặt (§9.4); biên độ trong "phong bì test" | `REVERT_DEFAULT` | C2 | — | F-INT-26–28 |
 
 Không có kiểu lệnh nào ghi ngưỡng bảo vệ BMS, grid code PCS, cài đặt rơ-le, reset E-stop (C4, F-BESS-19, F-BESS-20).
+
+#### 8.1.1 Thuộc tính `persist_safe` cho lệnh ghi Gate M1 [PROPOSAL]
+
+Vấn đề: ở Gate M1, lệnh ghi tham số native (`SET_ESS_MODE`, `SET_SOC_RESERVE`, `SET_PV_LIMIT`, `SET_EXPORT_LIMIT`/`SET_IMPORT_LIMIT` tạm thời, `APPLY_SCHEDULE` tham số native) chỉ được hoàn nguyên khi **edge còn sống** thực hiện `on_expiry`. Ràng buộc `requires_native_fallback` và test watchdog F-INT-28 chỉ áp ở M2. Nếu edge mất nguồn trong lúc lệnh tạm thời còn hiệu lực, giá trị đã ghi ở lại trên thiết bị vô thời hạn.
+
+Quy tắc: một lệnh ghi M1 chỉ được phép khi thỏa **ít nhất một** điều kiện:
+- (a) **Hoàn nguyên phía thiết bị đã kiểm chứng**: driver khai báo `watchdog_support` cho đúng tham số đó và test mất nguồn edge (T-FR-INT-018b, §11.3) đã đạt trong commissioning; `revert_timeout_s` ≤ thời gian còn lại tới `expires_at`; hoặc
+- (b) **`persist_safe(type, value) = true`**: giá trị ghi an toàn nếu tồn tại vô thời hạn, theo bảng dưới.
+
+Không thỏa → PDP từ chối (`DENIED: NOT_PERSIST_SAFE`) **và** edge từ chối độc lập (`REJECTED_UNSUPPORTED`, bước 10 §8.7) — lớp sau không tin lớp trước (BR-SEC-05). Bảng `persist_safe` nằm trong config đã ký của edge, có version.
+
+| Type | `persist_safe = true` khi | Không persist_safe (cần (a)) | Lý do |
+|---|---|---|---|
+| `SET_EXPORT_LIMIT` | `export_limit_w` mới ≤ `export_limit_w` của cấu hình site (chặt hơn) | Nới giới hạn xuất | Chặt hơn chỉ giảm xuất; nới tồn tại vô hạn có thể vi phạm cam kết đấu nối |
+| `SET_IMPORT_LIMIT` | `import_cap_w` mới ≤ cấu hình site và ≥ tải tối thiểu không cắt được | Nới trần nhập | Như trên, theo chiều nhập |
+| `SET_SOC_RESERVE` | `soc_reserve_pct` mới ≥ giá trị cấu hình (tăng dự phòng) | Giảm dự phòng | Dự phòng cao hơn chỉ giảm dải khai thác |
+| `SET_ESS_MODE` | `site_strategy` mới = chiến lược mặc định đã cấu hình của site | Mọi chế độ khác (`BACKUP_HOLD`, `IDLE`, `PEAK_SHAVING`…) | Chế độ lệch mặc định tồn tại vô hạn làm site vận hành sai ý chủ tài sản (mất tiết kiệm, giữ pin đầy/rỗng) |
+| `SET_PV_LIMIT` | Giá trị mới = giá trị mặc định cấu hình (thường 100% nếu được xuất, hoặc giới hạn native) | Hạ giới hạn PV tạm thời | Hạ PV vô hạn gây mất sản lượng không ai thấy |
+| `APPLY_SCHEDULE` (tham số native, ví dụ lịch TOU trên logger) | Lịch là **cấu hình nền** đã duyệt (trở thành giá trị hoàn nguyên của site, lưu trong config version) | Lịch tạm/override ngắn hạn | Lịch nền lặp theo ngày là cấu hình, không phải lệnh tạm |
+| Thay đổi cấu hình nền (mọi type) | Giá trị ghi = giá trị hoàn nguyên mới, đã ghi vào cấu hình site (C2, readback) | — | Hoàn nguyên về chính nó nên không có rủi ro "treo" |
+
+Ghi chú: (b) không thay test hoàn nguyên ở M2; ở M2 vẫn áp `requires_native_fallback` (§6.4). Lệnh an toàn hóa (§8.7) luôn persist_safe theo định nghĩa (chỉ thu hẹp vận hành).
 
 ### 8.2 Envelope lệnh
 
@@ -1098,17 +1122,21 @@ Envelope = trường của ghi chú E §3.19 + trường của I (X-I-02), theo 
     "slot_minutes": 15,
     "slots": [
       {"slot_start": "2026-10-10T17:00:00Z", "slot_mode": "GRID_CHARGE_TO_TARGET",
-       "soc_target_end_pct": 40.0, "p_import_cap_w": 900000, "p_export_cap_w": 0,
-       "soc_floor_pct": 15.0, "soc_ceiling_pct": 95.0},
+       "p_ess_min_w": -300000, "p_ess_max_w": 0, "soc_target_pct": 40.0,
+       "import_cap_w": 900000, "export_limit_w": 0,
+       "reason_codes": ["TOU_OFFPEAK_CHARGE"]},
       {"slot_start": "2026-10-11T10:30:00Z", "slot_mode": "PEAK_DISCHARGE",
-       "p_grid_target_w": 600000, "p_import_cap_w": 900000, "p_export_cap_w": 0,
-       "soc_floor_pct": 30.0, "soc_ceiling_pct": 95.0}
+       "p_ess_min_w": 0, "p_ess_max_w": 400000, "p_grid_target_w": 600000,
+       "soc_target_pct": 30.0, "import_cap_w": 900000, "export_limit_w": 0,
+       "reason_codes": ["TOU_PEAK_DISCHARGE"]}
     ]
   },
   "kid": "cmd-signer-2026-03",
   "signature": "…"
 }
 ```
+
+Tên trường slot là hợp đồng dây cloud↔edge và **phải trùng đúng** `PlanSlot` của [05 §e-plan](05-domain-model.html#e-plan): `slot_start`, `slot_mode`, `p_ess_min_w`, `p_ess_max_w` (dấu BESS + = xả), `p_grid_target_w` (+ = nhập), `soc_target_pct`, `soc_floor_pct` (tùy chọn), `soc_ceiling_pct` (tùy chọn), `import_cap_w`, `export_limit_w`, `ev_limit_w` (tùy chọn), `reason_codes`. Các trường dự báo của `PlanSlot` (`expected_*`) không truyền xuống edge. Edge từ chối (`REJECTED_INVALID`) slot có trường lạ hoặc thiếu trường bắt buộc theo `slot_mode`. Sàn/trần SOC theo slot (`soc_floor_pct`, `soc_ceiling_pct`) chỉ được **siết** thêm: edge dùng `max(soc_floor_pct, SOE.soc_min, dự phòng backup)` và `min(soc_ceiling_pct, SOE.soc_max)`; không bao giờ nới SOE (05 §11.5, X-07-08 đã đóng). Mã `reason_codes` trong ví dụ là minh họa; danh mục chuẩn thuộc [08](08-energy-optimization.md).
 
 `slot_mode ∈ {PV_SURPLUS_CHARGE, GRID_CHARGE_TO_TARGET, PEAK_DISCHARGE, GRID_SETPOINT, HOLD, IDLE}` chỉ xuất hiện trong `APPLY_SCHEDULE`; `site_strategy` chỉ trong `SET_ESS_MODE` (K R-15). Giờ trong ví dụ là UTC: 10:30Z = 17:30 giờ Việt Nam (đầu cao điểm theo QĐ 963, K §6 #37).
 
@@ -1140,7 +1168,7 @@ Tên trạng thái chuẩn theo [05 §11.2](05-domain-model.html#s11-sm1). Bản
 | Vòng đời chung | Trạng thái chuẩn | Ai ghi | Điều kiện |
 |---|---|---|---|
 | created | `CREATED` | Command API | Lưu envelope chưa ký |
-| (chờ duyệt) | `PENDING_APPROVAL` → `APPROVAL_DENIED` / `APPROVAL_EXPIRED` | PDP / người duyệt | Hạng C3 |
+| (chờ duyệt) | `PENDING_APPROVAL` → `APPROVAL_REJECTED` / `APPROVAL_EXPIRED` | PDP / người duyệt | Hạng C3 |
 | validated | `AUTHORIZED` (hoặc `DENIED`) | PDP | Quyền, MFA/step-up, SOE, Fleet Dispatch Governor, kill switch, `control_enabled` |
 | sent | `SENT` | Signer + dispatcher | Ký JWS, gán `seq`, publish QoS 1 không retained, Message Expiry |
 | (không tới) | `UNDELIVERED` | Cloud | Không có `RECEIVED` trước `expires_at`; **không gửi lại** |
@@ -1185,18 +1213,48 @@ Thiết bị **không có `readback_ref`**: lệnh không bao giờ đạt `APPL
 
 Các mẫu watchdog theo hãng là [UNKNOWN] tới khi kiểm chứng (I §3.8 ghi SunSpec 123/704 có trường revert time; nhiều PCS Trung Quốc có "EMS heartbeat"; SMA có tham số fallback; Victron chưa rõ — đều là kiến thức nền chưa kiểm chứng). Driver khai báo `watchdog_support` và `revert_timeout_s`; test F-INT-28 xác nhận.
 
+**Gate M1 khi edge chết**: `on_expiry` do edge thực hiện nên không có tác dụng nếu edge mất nguồn. Vì vậy lệnh M1 tạm thời chỉ được gửi khi thiết bị có hoàn nguyên đã kiểm chứng hoặc giá trị là `persist_safe` (§8.1.1). Sau khi edge khởi động lại (`SAFE_START`), edge đọc lại các tham số native có lệnh đã hết hạn trong lúc tắt; giá trị lệch cấu hình nền → ghi hoàn nguyên, sinh sự kiện `CTRL.REVERT_AFTER_RESTART` và audit [PROPOSAL].
+
 ### 8.7 Thứ tự kiểm tra tại edge
 
+[PROPOSAL] Ba phần: (A) kiểm danh tính và tính toàn vẹn, áp cho **mọi** lệnh; (B) đường an toàn hóa; (C) kiểm vận hành cho lệnh thường. Tham chiếu BR-SEC-05: edge không tin rằng cloud (PDP, Signer) đã kiểm đúng.
+
+**A. Kiểm bắt buộc cho mọi lệnh**
+
 1. Chữ ký JWS hợp lệ; `kid` thuộc danh sách tin cậy trong config đã ký → nếu sai: `REJECTED_INVALID`.
-2. `target.edge_id` = chính nó → `REJECTED_INVALID`.
-3. Đồng hồ `SYNCED` (IL-06) → `REJECTED_INTERLOCK:IL-06`.
-4. `valid_from ≤ now ≤ expires_at`; `now − sent_at ≤ max_latency_ms` → `REJECTED_STALE`.
-5. `command_id` chưa thấy (nếu đã thấy: trả trạng thái cũ); `seq` > `seq` cuối của signer → `REJECTED_REPLAY`.
-6. Kill switch không bật; site `control_enabled`.
-7. Interlock IL-01…IL-10 → `REJECTED_INTERLOCK:<code>`.
-8. Type có trong `capability_profile`; thiết bị `VERIFIED_*`; không `requires_native_fallback` với setpoint cưỡng bức → `REJECTED_UNSUPPORTED`.
-9. Tham số trong SOE và `limits` → `REJECTED_OUT_OF_LIMIT` (giới hạn tĩnh) hoặc chấp nhận và kẹp (giới hạn động CCL/DCL → `APPLIED_CLAMPED`).
-10. Mức arbiter: lệnh mức thấp hơn lệnh đang hiệu lực mà xung đột → `REJECTED_LOWER_PRIORITY` hoặc giữ hàng đợi tới khi lệnh mức cao hết hạn (theo `type`; mặc định từ chối với lệnh tay, xếp hàng với lịch).
+2. `target.edge_id` = chính nó; `target.site_id`/`asset_id` thuộc edge → `REJECTED_INVALID`.
+3. **Kiểm cấu trúc và hạng nguy hiểm** theo bảng `command_policy` trong config đã ký (bảng có version, khớp §8.1 và PDP của [10](10-security-and-reliability.md)) → sai bất kỳ điều nào: `REJECTED_INVALID` + cảnh báo bảo mật:
+   - `type` có trong bảng; đủ trường bắt buộc; không có trường lạ trong `params` (với `APPLY_SCHEDULE`: theo `PlanSlot`, §8.3).
+   - `danger_class` ≥ `min_class(type, params)`. Hạng tối thiểu tính theo cả tham số: `SET_ESS_P` > 80% SOE → C2; `SET_SOC_RESERVE` giảm → C2; `REMOTE_CONTROL_RESUME`, `DEVICE_ON_OFF`, `SET_REVERSE_FEED_BLOCK` thủ công, `FW_UPDATE_EDGE` → C3. Lệnh nhãn thấp hơn mức tối thiểu bị từ chối dù chữ ký hợp lệ (chống lỗi hoặc danh tính bị chiếm của Signer/command service).
+   - C2/C3: có `reason`. C3: có `approved_by` và `approval_ref`, `approved_by` ≠ `issued_by`, và `expires_at − valid_from ≤ 30 phút`.
+   - `expires_at` có mặt và `expires_at − valid_from` ≤ trần theo type (setpoint 1 h, đổi chế độ 24 h, lịch 7 ngày — §8.2).
+4. `command_id` chưa thấy (nếu đã thấy: trả trạng thái cũ, không thực thi lại); `seq` > `seq` cuối của signer → `REJECTED_REPLAY`. Bước này không cần đồng hồ.
+
+**B. Đường an toàn hóa (safe-ify)**
+
+5. Nếu `(type, params)` thuộc danh sách an toàn hóa trong config đã ký thì **bỏ qua** bước 6–12 (đồng hồ, hạn/độ trễ, kill switch, interlock, capability, SOE, arbiter) và áp dụng ngay, vì lệnh chỉ thu hẹp vận hành. Danh sách mặc định, khớp PDP-15 của [10](10-security-and-reliability.md):
+   - `REMOTE_CONTROL_SUSPEND` (bật kill switch; **không** gồm `RESUME`);
+   - `SET_ESS_P` với `p_w = 0`;
+   - `CONFIG_PUSH` mà thay đổi duy nhất là `control_enabled: true → false`;
+   - `REVERT` (hủy lệnh/lịch đang hiệu lực và thực hiện `REVERT_DEFAULT`; tên theo PDP-15 của 10).
+
+   Ràng buộc của đường này:
+   - Không vượt bảo vệ native và interlock vật lý: nếu interlock cấm ghi xuống thiết bị (IL-01 LOCAL, IL-02 E-stop, `MAINTENANCE`), edge chỉ thực hiện phần **nội bộ** (dừng vòng điều khiển của mình, hủy lệnh/lịch đang hiệu lực, chặn lệnh mới) và không ghi thiết bị.
+   - Khi `UNSYNCED`, lệnh có hạn (`SET_ESS_P = 0`) được giữ tới khi lệnh khác thay thế hoặc đồng hồ đồng bộ lại và `expires_at` đã qua; kill switch giữ tới khi có `RESUME` (C3, đi đủ phần C).
+   - Audit bắt buộc với `safe_path = true` và danh sách bước kiểm đã bỏ qua kèm lý do (ví dụ `SKIPPED: IL-06 UNSYNCED`, `SKIPPED: LATENCY 42000ms > 10000ms`); cảnh báo mức Cao để người vận hành biết lệnh đã đi đường ngoại lệ.
+   - Danh sách an toàn hóa chỉ đổi bằng config ký (C3). Thêm type vào danh sách phải chứng minh type đó chỉ thu hẹp vận hành.
+
+**C. Kiểm vận hành cho lệnh thường**
+
+6. Đồng hồ `SYNCED` (IL-06) → `REJECTED_INTERLOCK:IL-06`.
+7. `valid_from ≤ now ≤ expires_at`; `now − sent_at ≤ max_latency_ms` → `REJECTED_STALE`.
+8. Kill switch không bật; site `control_enabled`.
+9. Interlock IL-01…IL-10 → `REJECTED_INTERLOCK:<code>`.
+10. Type có trong `capability_profile`; thiết bị `VERIFIED_*`; không `requires_native_fallback` với setpoint cưỡng bức (M2); lệnh M1 thỏa (a) hoặc (b) của §8.1.1 → nếu không: `REJECTED_UNSUPPORTED`.
+11. Tham số trong SOE và `limits` → `REJECTED_OUT_OF_LIMIT` (giới hạn tĩnh) hoặc chấp nhận và kẹp (giới hạn động CCL/DCL → `APPLIED_CLAMPED`).
+12. Mức arbiter: lệnh mức thấp hơn lệnh đang hiệu lực mà xung đột → `REJECTED_LOWER_PRIORITY` hoặc giữ hàng đợi tới khi lệnh mức cao hết hạn (theo `type`; mặc định từ chối với lệnh tay, xếp hàng với lịch).
+
+Vector kiểm thử vàng cho phần A và B nằm ở §11.3 (T-NFR-SEC-004b…004e, T-FR-INT-018c/d).
 
 ### 8.8 Lệnh ghi qua cloud hãng (P2)
 
@@ -1262,13 +1320,29 @@ Hai mức "sandbox" khác nhau, không được nhầm:
 | Mức | Là gì | Dùng để | Nhãn |
 |---|---|---|---|
 | **Sandbox mô phỏng** | Site ảo chạy trên bộ mô phỏng thiết bị (§11.2), edge thật hoặc edge ảo | Thử cấu hình, driver, lịch trước khi ra hiện trường; đào tạo | Mọi màn hình và báo cáo của site ảo mang nhãn "Mô phỏng"; dữ liệu không vào KPI thật |
-| **Chế độ thử tại hiện trường** | Site thật ở `commissioning`, công tắc ở `MAINTENANCE` | Phép thử dấu, test giới hạn xuất, test watchdog | Lệnh `COMMISSIONING_TEST` |
+| **Chế độ thử tại hiện trường** | Site thật ở `commissioning`, edge ở trạng thái con `MAINTENANCE/COMMISSIONING_TEST` | Phép thử dấu, test giới hạn xuất, test watchdog | Lệnh `COMMISSIONING_TEST` |
 
 Quy tắc `COMMISSIONING_TEST` [PROPOSAL]:
-- Chỉ khi site `commissioning` **và** `local_remote_state = MAINTENANCE`; người phát lệnh xác nhận có mặt tại chỗ bằng mã hiển thị trên HMI cục bộ hoặc màn hình edge.
+- Chỉ khi site `commissioning` **và** edge ở trạng thái con `local_remote_state = MAINTENANCE`, `maintenance_substate = COMMISSIONING_TEST` (định nghĩa dưới).
 - "Phong bì test": |P| ≤ 10% P định mức hoặc ≤ 50 kW (lấy nhỏ hơn), thời gian ≤ 10 phút mỗi bước, `on_expiry = REVERT_DEFAULT`; không vượt SOE nháp hay giới hạn native.
 - Hạng C2 (step-up MFA, lý do bắt buộc); mọi bước vào audit và biên bản.
 - `dry_run = true` dùng trước mỗi lệnh thử để kiểm interlock/capability mà không ghi.
+
+**Trạng thái con `MAINTENANCE/COMMISSIONING_TEST`** [PROPOSAL]
+
+Lý do: ở `MAINTENANCE` thường, edge nhả kết nối ghi ([10 §12.2](10-security-and-reliability.md)), nên lệnh thử không ghi được; site Gate M1 không bắt buộc có công tắc LOCAL/REMOTE (FR-SEC-010 thuộc M2); HMI cục bộ (F-MON-11) chưa có ở Phase 1. Không định nghĩa trạng thái con thì phép thử dấu và test giới hạn xuất (FR-INT-016/017, bắt buộc cho G1) không thể thỏa điều kiện của chính nó.
+
+| Khía cạnh | Quy tắc |
+|---|---|
+| Vào trạng thái | Site ở `commissioning` **và** (công tắc khóa chìa ở `MAINTENANCE`, **hoặc** site không có công tắc) **và** xác nhận có mặt (dưới). Site có công tắc ở `LOCAL` → không vào được |
+| Xác nhận có mặt (Phase 1, không cần HMI) | Kỹ sư yêu cầu phiên test trên app; cloud gửi xuống một mã 4 chữ số; edge chỉ mở phiên khi **nút vật lý trên edge** được nhấn trong 120 s sau đó (hoặc chuỗi nhấn theo mã nếu edge có LED/màn hình 7 đoạn hiển thị mã để kỹ sư nhập lại trên app). Nút phải đi qua DI/GPIO cục bộ, không đi qua mạng. Yêu cầu phần cứng: thêm vào §6.15 |
+| Phiên | Tối đa 2 h, gia hạn bằng nhấn nút lại; hết phiên hoặc rút cáp/khởi động lại edge → thoát |
+| Kết nối ghi | Edge **giữ (hoặc lấy lại)** kết nối ghi **chỉ** để thực thi `COMMISSIONING_TEST` trong phong bì test; mọi type khác (kể cả lịch, lệnh tay, chiến lược mặc định) bị từ chối `REJECTED_INTERLOCK:IL-10`. Thiết bị chỉ nhận một client (Huawei, EL-062): công cụ engineering của installer phải ngắt trong phiên test |
+| Thoát | Edge thực hiện `REVERT_DEFAULT` cho mọi bước test đang hiệu lực, đọc lại xác nhận, rồi về `MAINTENANCE` thường (nhả kết nối ghi) hoặc `REMOTE` theo công tắc. Không có công tắc → về trạng thái trước phiên |
+| Đường an toàn hóa | Vẫn áp (§8.7 B) |
+| Hiển thị và audit | `edge.local_remote_state` + `maintenance_substate` trong `up/state`; banner "Đang thử nghiệm commissioning tại chỗ"; mỗi lần vào/ra là sự kiện audit có người, mã phiên, thời gian nhấn nút |
+
+Cần 10 §12.2 bổ sung dòng trạng thái con này (X-07-10).
 
 ### 9.5 Phép thử dấu (chi tiết)
 
@@ -1297,12 +1371,13 @@ Quy ước: "Không thấy tài liệu" nghĩa là các nguồn đã xem không 
 | Hạng mục | Nội dung | Nhãn |
 |---|---|---|
 | Tài liệu | "Solar Inverter Modbus Interface Definitions", Issue 05, 2023-02-16; FC 0x03/0x06/0x10 (bản PDF qua diễn đàn ioBroker) | [FACT, Med] nghiên cứu FusionSolar trước |
-| Ví dụ thanh ghi | 32080 công suất tác dụng (I32, kW, gain 1000); 37113 công suất công tơ (I32, W; > 0 feed-in, < 0 import); 37760 SOC pin (U16, %, gain 10); 47086 chế độ làm việc pin | [FACT, Med] cùng tài liệu |
-| Kết nối | Modbus TCP cổng 6607 (firmware từ 12/2021) hoặc 502; unit ID 1 (0 qua AP inverter); RTU 9600 baud; phải bật "Enable (Unlimited)"/"Unrestricted Modbus TCP" | [FACT, Med] |
-| Một client | "Modbus devices only support one connection at a time" (huawei_solar); proxy song song "may cause communication errors" (evcc) | [FACT, Med] |
+| Ví dụ thanh ghi | 32080 công suất tác dụng (I32, kW, gain 1000); 37113 công suất công tơ (I32, W; > 0 feed-in, < 0 import); 37760 SOC pin (U16, %, gain 10) | [FACT, Med] Issue 05 qua bản sao diễn đàn S-185 (https://forum.iobroker.net/assets/uploads/files/1699119419919-solar-inverter-modbus-interface-definitions-v5.pdf), như ghi trong nghiên cứu FusionSolar trước (`api_integration.md`, S-393); 37760 cũng có trong định nghĩa thanh ghi của huawei-solar-lib. Bản sao không chính thức → chưa đủ cho driver `VERIFIED_*` (V-10) |
+| 47086 (chế độ làm việc pin) | Có trong nghiên cứu FusionSolar trước, nhưng giá trị/cách dùng để điều khiển chỉ đến từ cộng đồng (hàng "Điều khiển pin" bên dưới) | [FACT, Low] cộng đồng báo cáo (EL-063); **cấm** dùng cho driver `VERIFIED_*` |
+| Kết nối | Modbus TCP cổng 6607 (firmware từ 12/2021) hoặc 502; unit ID 1 (0 qua AP inverter); RTU 9600 baud; phải bật "Enable (Unlimited)"/"Unrestricted Modbus TCP" — wiki huawei_solar https://github.com/wlcrs/huawei_solar/wiki/Connecting-to-the-inverter (S-296), tài liệu Eniris https://docs.eniris.com/nl/Controller/Devices/PV-hybrid-and-battery-inverters/Huawei, theo nghiên cứu FusionSolar trước (S-393). **Lưu ý**: ghi chú FS trước (`source_code_clients.md`) đính chính rằng mã huawei_solar hiện mặc định cổng 502 / unit 0 — https://github.com/wlcrs/huawei_solar/blob/main/const.py#L6-L7 | [FACT, Med] nguồn cộng đồng/bên thứ ba, không phải tài liệu Huawei; driver phải thử cả 6607/502 và unit 0/1 khi khám phá |
+| Một client | "Modbus devices only support one connection at a time" (huawei_solar, S-296); proxy song song "may cause communication errors" (evcc, S-299) — EL-062 | [FACT, Med] |
 | Dongle | Đọc ≥ 5 s; timeout ≥ 1.000 ms; connect delay 1–5 s; "first TX always fails"; SDongleA-05/FE gây nhiễu RS485A1/B1 | [FACT, Low–Med] cộng đồng |
 | EMMA | Modbus TCP chỉ ở cổng 502, không chỉnh Modbus ID; chỉ tài khoản installer bật được; datasheet: "Supports Modbus-TCP and third-party VPP integration", quản lý tối đa 2 SCharger — https://forum.iobroker.net/post/1270320 ; https://raspberry.tips/raspberrypi-tutorials/huawei-sun2000-home-assistant-emma-solar-dashboard ; https://solar.huawei.com/en/professionals/all-products/EMMA/specs ; https://www.heima24.de/shop/images/products/media/db-huawei-emma02.pdf (qua kết quả tìm kiếm) | [FACT] datasheet Med, forum Low |
-| Điều khiển pin (cộng đồng) | 47086 = 6 "Third-party Scheduling"; 47100 kích hoạt sạc/xả cưỡng bức; 47083 thời lượng; 47102 công suất; 47104 SOC đích; có người bật/tắt được nhưng không đổi được công suất — https://community.homey.app/t/app-pro-huawei-fusionsolar-manager/153353?page=16 ; https://community.openhab.org/t/sveasolar-powershifter-pv-inverter-huawei/164046 (qua kết quả tìm kiếm) | [FACT, Low] **không dùng làm map đã kiểm chứng** |
+| Điều khiển pin (cộng đồng) | 47086 = 6 "Third-party Scheduling"; 47100 kích hoạt sạc/xả cưỡng bức; 47083 thời lượng; 47102 công suất; 47104 SOC đích; có người bật/tắt được nhưng không đổi được công suất — https://community.homey.app/t/app-pro-huawei-fusionsolar-manager/153353?page=16 ; https://community.openhab.org/t/sveasolar-powershifter-pv-inverter-huawei/164046 (qua kết quả tìm kiếm; S-302, S-303) | [FACT, Low] cộng đồng báo cáo (EL-063); **không dùng làm map đã kiểm chứng** |
 | Thời gian | 40000 (U32, epoch giây giờ địa phương), 43006 múi giờ (I16, phút) — §6.8 | [FACT, Low–Med] |
 | SmartLogger | IEC 104 cho tối đa 5 kết nối bên thứ ba; outbound TLS tới cloud Huawei (nghiên cứu FusionSolar trước, `architecture_security.md`) | [FACT, Med] |
 | Controller site C&I | SmartLogger5000B/SmartMGC5000B: zero feed-in ≤ 2 s, peak shaving/giới hạn ≤ 5 s (tự công bố) | [FACT, Med] (K R-19) |
@@ -1442,6 +1517,15 @@ Theo FR-INT-006 (thứ tự có thể đổi sau đánh giá thị phần):
 | T-FR-INT-017 | Bước tải/PV làm xuất vượt giới hạn | Về ≤ giới hạn + tol trong ≤ 5 s | L5 |
 | T-FR-INT-018 | Rút cáp edge↔PCS; mất `MTR_POC`; chặn broker; chuyển LOCAL; tắt nguồn edge | Thiết bị về mặc định trong `revert_timeout_s`; BESS P = 0/native ≤ 2 chu kỳ | L4, L5 |
 | T-NFR-SEC-004 | Lệnh replay (`seq` cũ), lệnh hết hạn, chữ ký sai, `target.edge_id` sai | `REJECTED_REPLAY`/`STALE`/`INVALID`; cảnh báo bảo mật | L4 |
+| T-NFR-SEC-004b | Vector vàng hạng nguy hiểm: `DEVICE_ON_OFF` và `SET_REVERSE_FEED_BLOCK` nhãn C1, chữ ký hợp lệ; `SET_SOC_RESERVE` giảm nhãn C1; `SET_ESS_P` > 80% SOE nhãn C1 | `REJECTED_INVALID`; cảnh báo bảo mật; không ghi thiết bị | L1, L4 |
+| T-NFR-SEC-004c | Vector vàng C3: thiếu `approval_ref`; thiếu `reason`; `approved_by` = `issued_by`; `expires_at − valid_from` = 31 phút | `REJECTED_INVALID` cho từng vector | L1, L4 |
+| T-NFR-SEC-004d | Trường lạ trong slot `APPLY_SCHEDULE` (ví dụ `p_import_cap_w`); thiếu `expires_at`; `expires_at` vượt trần theo type | `REJECTED_INVALID` | L1, L4 |
+| T-NFR-SEC-004e | Lệnh an toàn hóa có `seq` cũ hoặc chữ ký sai | `REJECTED_REPLAY`/`INVALID` (đường an toàn hóa không bỏ qua phần A) | L4 |
+| T-FR-INT-018b | Gate M1: gửi lệnh tạm (`SET_PV_LIMIT` 50%, `SET_ESS_MODE = IDLE`) tới thiết bị có hoàn nguyên đã khai báo; cắt nguồn edge giữa chừng; chờ qua `expires_at` | Thiết bị tự về giá trị nền trong `revert_timeout_s` sau hạn; không đạt → driver mất cờ (a), lệnh M1 không persist_safe bị PDP và edge từ chối. Sau khi edge khởi động lại: `CTRL.REVERT_AFTER_RESTART` nếu còn lệch | L5 (HIL), commissioning |
+| T-FR-INT-018c | `REMOTE_CONTROL_SUSPEND` khi đồng hồ `UNSYNCED` (IL-06) | Áp dụng; vòng điều khiển dừng; audit `safe_path = true`, `SKIPPED: IL-06` | L4, L5 (HIL) |
+| T-FR-INT-018d | `REMOTE_CONTROL_SUSPEND` và `SET_ESS_P = 0` đến sau `max_latency_ms`; và khi đang có lệnh mức arbiter cao hơn | Áp dụng; audit ghi bước bỏ qua; `RESUME` trong cùng điều kiện bị `REJECTED_*` | L4, L5 (HIL) |
+| T-FR-INT-018e | Lệnh M1 không persist_safe (nới giới hạn xuất, hạ reserve, hạ PV) tới thiết bị không có hoàn nguyên | PDP `DENIED: NOT_PERSIST_SAFE`; gửi thẳng tới edge (bỏ qua PDP trong test) → `REJECTED_UNSUPPORTED` | L4 |
+| T-FR-INT-016b | Vào phiên `MAINTENANCE/COMMISSIONING_TEST`: không nhấn nút; nhấn sau 120 s; công tắc ở `LOCAL`; nhấn đúng | Chỉ trường hợp cuối mở phiên; trong phiên lệnh khác `COMMISSIONING_TEST` bị IL-10; thoát phiên → `REVERT_DEFAULT` + readback | L4, L5 |
 | T-NFR-SEC-011 | Lệnh tới edge sau `expires_at` khi edge offline | `UNDELIVERED` ở cloud; không gửi lại | L4 |
 | T-FR-EV-005 (P1) | Giới hạn EV có `validTo`; mất kết nối | Charger về TxDefaultProfile an toàn | L3, L5 |
 | T-FR-INT-023 (P1) | Master 104 gửi setpoint khi cloud mất | Arbiter mức 4 áp; ACT_CON sau readback | L3, L5 |
@@ -1536,6 +1620,9 @@ Mã `Q-E-xx` là mã tạm; người viết [13](13-open-questions-and-risks.md)
 | X-07-05 | 10 | Chốt phương pháp chuẩn hóa JSON trước khi ký (đề xuất JCS); xác thực lệnh `GRID_OPERATOR` trên conduit 104 (§8.9) |
 | X-07-06 | 09 | Hiển thị "Đã gửi, thiết bị không cho đọc lại"; nhãn "Mô phỏng" cho site sandbox; trạng thái `tracking_state` |
 | X-07-07 | 11 | Lab thiết bị §11.4 và driver thứ tự §10.10 là tiền đề Gate M1/M2 |
+| X-07-08 | 05, 08 | Envelope `APPLY_SCHEDULE` (§8.3) dùng đúng trường `PlanSlot` của 05. 08 (§5.5, §11) dùng `soc_floor`/`soc_ceiling`/`soc_target_end` theo slot, 05 không có. 05 quyết định: thêm `soc_floor_pct`/`soc_ceiling_pct` vào `PlanSlot` (07 sẽ thêm vào envelope) hoặc 08 đổi sang `soc_target_pct` + sàn do edge tính — **Đã đóng vòng sửa:** 05 thêm `soc_floor_pct`/`soc_ceiling_pct` (tùy chọn) vào `PlanSlot`; `soc_target_end` của 08 = `soc_target_pct`. |
+| X-07-09 | 10, 04 | Đường "an toàn hóa" tại edge (§8.7) là bản đối ứng của PDP-15; danh sách type an toàn hóa phải nằm trong config ký và trùng PDP-15. Thuộc tính `persist_safe` cho lệnh M1 (§8.1, §8.6) cần một quy tắc PDP tương ứng ở 10 và tiêu chí chấp nhận ở 04 (FR-SEC-016 hiện chỉ áp M2) |
+| X-07-10 | 10 | 10 §12.2 ghi `MAINTENANCE` nhả kết nối ghi; 07 §9.4 thêm trạng thái con `MAINTENANCE/COMMISSIONING_TEST` giữ kết nối ghi chỉ cho `COMMISSIONING_TEST` trong phong bì test và cách xác nhận có mặt bằng nút trên edge (Phase 1, không cần HMI). 10 §12.2 cần thêm dòng này |
 
 ---
 
@@ -1550,6 +1637,8 @@ Mã `Q-E-xx` là mã tạm; người viết [13](13-open-questions-and-risks.md)
 | IEC 104 | P0 cho V1 C&I trung áp | P1 có điều kiện | K R-10 |
 | Buffer | ≥ 7 ngày | Cứng 7 ngày, mục tiêu 30 ngày, 1 s vòng 7 ngày | K R-13 |
 | OpenEMS | "EPL-2.0" | Giấy phép UNKNOWN, chặn ADR | K R-21 |
+| Huawei cổng/unit ID | Báo cáo FS: 6607 là cổng chính, unit 1 | Thử cả 6607/502 và unit 0/1 khi khám phá; nguồn cộng đồng, FACT Med | Ghi chú FS `source_code_clients.md` đính chính mặc định hiện tại của huawei_solar là 502/unit 0 |
+| Huawei 47086 | Báo cáo FS liệt kê cùng 32080/37113/37760 | FACT Low, cấm cho driver `VERIFIED_*` | Cách dùng điều khiển chỉ có từ cộng đồng (EL-063) |
 | QĐ 1570 "≥ 64 kbps, ≤ 125 ms" | Nêu như tham số mạng | Chỉ là tóm tắt vendor, không dùng làm NFR | K §4 |
 | Thanh ghi diễn đàn | FACT | FACT Low "cộng đồng báo cáo", cấm vào driver `VERIFIED_*` | K §4 |
 | Edge (so với FusionSolar cũ) | Giám sát trước, edge tùy chọn; lấy mẫu 1–5 phút | Edge bắt buộc ở site có lệnh; lấy mẫu 1 s tại edge, cloud 5 s/60 s/300 s | Vòng ≤ 2–5 s và cloud hãng là pull 5 phút có hạn mức (§3.4, §5.11); K §6 #13, #19 |

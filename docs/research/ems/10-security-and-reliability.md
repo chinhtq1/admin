@@ -97,14 +97,14 @@ Khác với nền tảng giám sát PV trong nghiên cứu FusionSolar trước 
 | D-10-03 | **Hai mặt phẳng** (monitoring/control) tách danh tính dịch vụ, credential, topic, quyền DB, namespace, quy trình release. Điều khiển **tắt mặc định** theo site | [PROPOSAL] | K §6 #26 | NFR-SEC-002 |
 | D-10-04 | **Kiểm tra ở ba nơi**: cloud (quyền, PDP, SOE, Governor) → edge (chữ ký, hạn, `seq`, interlock, SOE đã ký) → thiết bị (giới hạn native, watchdog). Lớp sau không tin lớp trước | [PROPOSAL] | BR-SEC-05 | NFR-SEC-004, 009, 010 |
 | D-10-05 | **Hạng lệnh C0–C4**, C3 hai người duyệt khác vai trò; C4 (thông số bảo vệ, E-stop, bỏ qua interlock) không có API | [PROPOSAL] | K §6 #28 | NFR-SEC-008 |
-| D-10-06 | **Fleet Dispatch Governor + kill switch** là P0 của Gate M2. Ngưỡng 20% MW BESS tenant / 5 phút là đề xuất cần mô phỏng | [PROPOSAL] | K §6 #30 | NFR-SEC-012, 013 |
+| D-10-06 | **Kill switch, C3 hai người, Governor biến thể đếm (trần site/5 phút, trần site mỗi lần chạy bộ sinh lịch), toàn vẹn thời gian edge và giới hạn tĩnh `M1StaticLimits` là P0 từ Gate M1** (site có `control_enabled`), vì M1 đã ghi tới nhiều site; Governor ΔP (20% MW BESS tenant / 5 phút, đề xuất cần mô phỏng) thêm ở Gate M2 | [PROPOSAL] | K §6 #30; 13 CF-28/D-03 | NFR-SEC-008, 009, 012, 013, 028 |
 | D-10-07 | **Fail-safe về trạng thái định trước**, không "giữ nguyên": hết hạn → `REVERT_DEFAULT`; mất `MTR_POC`/BMS cũ → BESS P = 0 hoặc native, PV về giới hạn native; thiết bị không có watchdog không nhận setpoint P cưỡng bức | [PROPOSAL] | K §6 #17 | NFR-REL-001, 002, 007 |
 | D-10-08 | **Mục tiêu khả dụng tách theo mặt phẳng**: điều khiển cục bộ edge cao nhất (≥ 99,95%); Command API ≥ 99,5% tổng; giám sát ≥ 99,5%. Cloud sập không làm mất an toàn, chỉ mất tối ưu/giám sát từ xa | [PROPOSAL] | I §3.14; K §3.8 | NFR-REL-004 |
 | D-10-09 | **Fail-closed cho control plane**: IdP, PDP, KMS/Signer hoặc DB lệnh không sẵn sàng → không phát lệnh mới; monitoring plane vẫn chạy | [PROPOSAL] | 04 §5.14 "Lỗi và trường hợp biên" | NFR-REL-015 (mới) |
 | D-10-10 | **Ký lệnh bằng JWS ES256 trên JSON chuẩn hóa JCS (RFC 8785)**; chốt câu hỏi mở của [07 §8.2](07-device-integration.md) | [PROPOSAL] | 07 §8.2 | NFR-SEC-004 |
 | D-10-11 | **Không tuyên bố tuân thủ.** Lộ trình: ISO/IEC 27001 cho vận hành cloud → IEC 62443-4-2 cho edge → đánh giá kiến trúc theo 62443-3-3. Tuyên bố bảo mật của hãng ghi là "tự tuyên bố" | [PROPOSAL] | K §6 #34 | NFR-SEC-025 |
 | D-10-12 | **Hosting tại Việt Nam là mặc định** cho khách Việt Nam, chờ kiểm chứng pháp lý (Q-I-04 là điều kiện chặn phát hành) | [INFERENCE] | K §6 #31 | NFR-SEC-026, NFR-DATA-010 |
-| D-10-13 | **Phân pha nặng nhẹ** (K §3.8): ký lệnh, `expires_at`, SOE, interlock, MFA + step-up, audit append-only, outbound mTLS là P0 cho Gate M2. Neo WORM theo giờ, hai DC, chứng nhận là P1/P2. Edge thiếu TPM: khóa trong file mã hóa là ngoại lệ tạm thời có ghi rủi ro | [PROPOSAL] | K §3.8 | [§20.4](#s20-gate) |
+| D-10-13 | **Phân pha nặng nhẹ** (K §3.8): ký lệnh, `expires_at`, SOE, interlock, MFA + step-up, audit append-only, outbound mTLS là P0 cho Gate M2. Neo WORM theo giờ, hai DC, chứng nhận là P1/P2. Edge thiếu TPM/secure element: khóa trong file mã hóa chỉ được phép ở site chỉ giám sát và Gate M1, có ghi rủi ro (13 R-33); **không** bật Gate M2 trên edge thiếu TPM/SE (13 D-12, CF-38) | [PROPOSAL] | K §3.8; 13 D-12 | [§20.4](#s20-gate) |
 
 **Thay đổi so với hướng FusionSolar trước.** Hướng cũ là giám sát/O&M chỉ đọc với mô hình quyền Company tree + Role + DataScope (nghiên cứu FusionSolar trước, `workflows_data_model.md`). Tài liệu này **giữ nguyên** mô hình đó cho monitoring plane và **thêm** control plane: PDP, phê duyệt, ký lệnh, SOE, Governor, kill switch. Đây là phần mở rộng có chủ đích vì nền tảng bắt đầu ghi lệnh vật lý, không phải mâu thuẫn. [PROPOSAL]
 
@@ -312,7 +312,7 @@ Cột "Bằng chứng": **K** = kiến thức nền, chưa kiểm chứng URL; *
 | PDP-05 | Nâng **C3** khi: Σ\|ΔP\| của lệnh > 10% MW BESS tenant; vượt ngân sách Governor; xả/sạc cưỡng bức bỏ qua tối ưu > 30 phút; mọi type C3 ([04 §2](04-business-requirements.md)) | Tạo `CommandApproval` |
 | PDP-06 | Step-up: C2/C3 cần `auth_time` ≤ 5 phút | `DENIED: STEP_UP_REQUIRED` (UI mở step-up) |
 | PDP-07 | `expires_at` có, ≤ hạn tối đa của type ([§11.6](#s11)) | `DENIED: TTL` |
-| PDP-08 | Tham số trong SOE **đang hiệu lực trên edge** (không phải bản nháp) | `DENIED: OUT_OF_SOE` (không kẹp im lặng ở cloud) |
+| PDP-08 | Tham số trong giới hạn **đang hiệu lực trên edge** (không phải bản nháp): `M1StaticLimits` cho site `control_gate = M1` ([§11.3a](#s11-m1)), SOE đầy đủ cho site M2; site `control_enabled` mà chưa có bản `ACTIVE_ON_EDGE` → từ chối mọi ghi | `DENIED: OUT_OF_SOE` (không kẹp im lặng ở cloud) |
 | PDP-09 | Thiết bị đích `VERIFIED_*`; nếu `requires_native_fallback` thì chỉ `SET_ESS_MODE` giữa các chế độ native an toàn (FR-SEC-016) | `DENIED: DEVICE_NOT_ELIGIBLE` |
 | PDP-10 | Edge `ONLINE` và `clock_state = SYNCED` lần báo gần nhất (lệnh tay); lịch có thể xếp hàng khi edge offline nhưng hết hạn theo `expires_at` | `DENIED: EDGE_UNAVAILABLE` |
 | PDP-11 | Rate limit: site ≤ 6 lệnh tay/phút, ≤ 12 đổi chế độ/giờ; user ≤ 30 lệnh/10 phút; `mode_change_min_interval` 300 s (FR-SEC-022) | `DENIED: RATE_LIMIT` |
@@ -321,7 +321,7 @@ Cột "Bằng chứng": **K** = kiến thức nền, chưa kiểm chứng URL; *
 | PDP-14 | API client: chỉ C1 trong SOE, không C2/C3 (P2) | `DENIED` |
 | PDP-15 | Lệnh "an toàn hóa" (kill switch engage, `SET_ESS_P` về 0, thu hồi đồng ý, `control_enabled=false`) **không** bị chặn bởi PDP-11, PDP-04 và Governor; vẫn cần quyền và audit | Cho phép |
 
-Ví dụ chính sách (diễn đạt): *"OPERATOR được `SET_ESS_P` trên site S nếu có binding OPERATOR trên S hoặc tổ tiên; S.control_gate = M2; S.control_enabled; REMOTE; không kill switch; phiên MFA hợp lệ; |p_w| ≤ SOE.p_ess_dis_max_w hoặc ≤ SOE.p_ess_ch_max_w; TTL ≤ 1 h; ngân sách Governor còn đủ; nếu |p_w| > 0,8 × giới hạn → C2."*
+Ví dụ chính sách (diễn đạt): *"OPERATOR được `SET_ESS_P` trên site S nếu có binding OPERATOR trên S hoặc tổ tiên; S.control_gate = M2; S.control_enabled; REMOTE; không kill switch; phiên MFA hợp lệ; |p_w| ≤ SOE.p_ess_discharge_max_w hoặc ≤ SOE.p_ess_charge_max_w; TTL ≤ 1 h; ngân sách Governor còn đủ; nếu |p_w| > 0,8 × giới hạn → C2."*
 
 ### 5.4 Ma trận vai trò × hành động điều khiển
 
@@ -330,7 +330,8 @@ Bổ sung cho ma trận quyền của [04 §3.4](04-business-requirements.md) th
 | Hành động (type / thao tác) | Hạng | Gate | VIEWER | ANALYST | TECHNICIAN | OPERATOR | SITE_ENGINEER | CONTROL_SUPERVISOR | ORG_ADMIN | PLATFORM_ADMIN | API_CLIENT |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Đọc trạng thái, `dry_run` | C0 | — | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | metadata | scope |
-| `SET_ESS_MODE` (`site_strategy`) | C1 | M1 | — | — | — | ✓ | ✓ | ✓ | — | — | — (P2: ✓ trong SOE) |
+| `SET_ESS_MODE` (override `site_strategy` ≤ 24 h) | C1 | M1 | — | — | — | ✓ | ✓ | ✓ | — | — | — (P2: ✓ trong SOE) |
+| Đổi chiến lược mặc định (`SiteControlConfig.default_strategy`, cấu hình có version, FR-BESS-004) | C2 | M1 | — | — | — | — | ✓² | ✓² | — | — | — |
 | `SET_ESS_P` (≤ 80% SOE, TTL ≤ 1 h) | C1 | M2 | — | — | — | ✓ | ✓ | ✓ | — | — | — (P2) |
 | `SET_ESS_P` (> 80% SOE) | C2 | M2 | — | — | — | ✓² | ✓² | ✓² | — | — | — |
 | `SET_SOC_RESERVE` tăng / giảm | C1 / C2 | M1 | — | — | — | ✓ / ✓² | ✓ / ✓² | ✓ / ✓² | — | — | — |
@@ -339,7 +340,7 @@ Bổ sung cho ma trận quyền của [04 §3.4](04-business-requirements.md) th
 | Đổi cấu hình lưới site (`export_mode`, `export_limit_w`, `import_cap_w`) | C3 | M1 | — | — | — | — | R | A | — | — | — |
 | `APPLY_SCHEDULE` thủ công / duyệt kế hoạch vượt guardrail | C1 / C2 | M1/M2 | — | — | — | ✓ / — | ✓ / — | ✓ / ✓² | — | — | — |
 | `SET_EV_LIMIT` (P1) | C1 | M2 | — | — | — | ✓ | ✓ | ✓ | — | — | — |
-| Đề xuất / duyệt SOE | C3 | M2 | — | — | — | — | R | A (không duyệt bản mình) | — | — | — |
+| Đề xuất / duyệt `M1StaticLimits` (M1) / SOE đầy đủ (M2) | C3 | M1/M2 | — | — | — | — | R | A (không duyệt bản mình) | — | — | — |
 | Bật `control_enabled` / Gate M2 | C3 | M1/M2 | — | — | — | — | R | A | — | — | — |
 | Tắt `control_enabled` (an toàn hóa) | C1 | — | — | — | — | ✓ | ✓ | ✓ | ✓ | — | — |
 | `DEVICE_ON_OFF` "Dừng vận hành từ xa" (P1) | C3 | M2 | — | — | — | R | R | R/A (khác người) | — | — | — |
@@ -510,7 +511,7 @@ Khóa ký lệnh / cấu hình / OTA / audit: JWK set có kid, không phải X.5
 ```
 
 - Subject chứng chỉ edge: `CN=edge-<uuid>`, SAN URI `urn:ems:edge:<uuid>`. **Không** nhúng tenant/site (edge có thể chuyển site); ánh xạ edge→site ở `EdgeSiteBinding` ([05 §6](05-domain-model.html#s6)). [PROPOSAL]
-- Edge thiếu TPM/secure element: khóa lưu trong file mã hóa bằng khóa dẫn xuất từ phần cứng; ghi cờ `key_storage = SOFTWARE` và rủi ro ứng viên I-R-09; không đủ điều kiện mục tiêu chứng nhận 62443-4-2 (K §3.8). [PROPOSAL]
+- Edge thiếu TPM/secure element: khóa lưu trong file mã hóa bằng khóa dẫn xuất từ phần cứng; ghi cờ `key_storage = SOFTWARE` và rủi ro ứng viên I-R-09; không đủ điều kiện mục tiêu chứng nhận 62443-4-2 (K §3.8). Chỉ dùng ở site chỉ giám sát và Gate M1; **không bật Gate M2** trên edge này (13 D-12, CF-38). [PROPOSAL]
 
 ### 9.2 Vòng đời danh tính edge
 
@@ -531,7 +532,7 @@ Khóa ký lệnh / cấu hình / OTA / audit: JWK set có kid, không phải X.5
 | Hướng | **Chỉ outbound** từ edge; không mở cổng inbound tại site; không cần IP tĩnh | [FACT] Huawei SmartLogger3000 dùng kênh outbound "Encrypted Modbus TCP" tới hệ quản lý, SSL bật mặc định, "TLS1.2 or a later version is recommended"; Modbus TCP không mã hóa tắt mặc định — https://support.huawei.com/enterprise/en/doc/EDOC1100108365/4fbe151e/setting-parameters-for-connecting-to-the-management-system-v300r001c00 (nghiên cứu FusionSolar trước). [INFERENCE] Đây là mẫu chuẩn cho gateway |
 | Giao thức | MQTT 5 qua TLS 1.3 (cho phép 1.2 chỉ với cipher AEAD + ECDHE); mTLS; cổng 8883, dự phòng 443 (MQTT qua WebSocket) khi tường lửa khách chặn | K §6 #20 |
 | Topic | `ems/v1/{edge_id}/up/{state \| telemetry/{stream} \| event \| backfill \| cmd-ack}`, `ems/v1/{edge_id}/down/{cmd \| config}` | K R-12; [07 §7.1](07-device-integration.md) |
-| ACL broker | Edge X chỉ publish `ems/v1/X/up/#`, chỉ subscribe `ems/v1/X/down/#`; cấm wildcard ngoài phạm vi; client cloud `svc-ingest-*` chỉ subscribe `up/{state,telemetry,event,backfill}`; chỉ `svc-command-dispatcher` publish `down/cmd`; chỉ `svc-config-*` publish `down/config` | NFR-SEC-002 |
+| ACL broker | Edge X chỉ publish `ems/v1/X/up/#`, chỉ subscribe `ems/v1/X/down/#`; cấm wildcard ngoài phạm vi; client cloud `svc-ingest-*` chỉ subscribe `up/{state,telemetry,event,backfill}`; chỉ `svc-command-dispatcher` publish `down/cmd`; trên `down/config` chỉ hai client được publish: `svc-config-*` (tin `CONFIG` và trạng thái tạm ngưng, đã ký) và `svc-ingest-ack` (**chỉ** tin `TELEMETRY_ACK`, `RESEND_REQUEST`, không ký, không retained — theo [06 ADR-16](06-system-architecture.html), 13 CF-32; [07 §7.1](07-device-integration.md)). **Edge chỉ áp tin `CONFIG`/trạng thái có chữ ký khóa cấu hình hợp lệ** ([§9.4](#s9), [§11.8](#s11)); tin không ký trên `down/config` chỉ được hiểu là ack/resend, tối đa làm edge xóa buffer đã ack hoặc gửi lại dữ liệu, không bao giờ đổi cấu hình hay điều khiển. Rủi ro còn lại: ack giả từ broker bị chiếm có thể làm edge xóa buffer chưa ingest (mất dữ liệu, không mất an toàn) — giảm bằng ACL và kiểm `ack_seq` ≤ `seq` đã gửi | NFR-SEC-002 |
 | Lệnh | QoS 1, **không retained**, Message Expiry = `expires_at − now` | K §6 #20 |
 | Toàn vẹn ứng dụng | Lệnh và cấu hình **ký ở tầng ứng dụng** (không chỉ dựa vào TLS): broker bị chiếm vẫn không giả được lệnh; ack ký bằng khóa edge (chống giả "APPLIED") | K R-11; [§11.8](#s11) |
 | Telemetry | Không ký từng message (mTLS đủ cho nguồn gốc); lô sự kiện an toàn (interlock, LOCAL/REMOTE, audit edge) có hash chain và chữ ký lô | [PROPOSAL] |
@@ -540,7 +541,7 @@ Khóa ký lệnh / cấu hình / OTA / audit: JWK set có kid, không phải X.5
 
 ### 9.4 Cấu hình, OTA và thời gian
 
-- **Cấu hình edge** (F-INT-11): `EdgeConfigVersion` có version, `content_hash`, chữ ký khóa cấu hình; edge từ chối cấu hình không ký, ký bằng `kid` lạ, hoặc version thấp hơn bản đang áp (chống rollback cấu hình). Danh sách `kid` tin cậy cho lệnh nằm trong cấu hình đã ký; `kid` gốc của khóa cấu hình nằm trong ảnh firmware. [PROPOSAL]
+- **Cấu hình edge** (F-INT-11): `EdgeConfigVersion` có version, `content_hash`, chữ ký khóa cấu hình; edge từ chối cấu hình không ký, ký bằng `kid` lạ, hoặc version thấp hơn bản đang áp (chống rollback cấu hình). Cùng cơ chế ký/version áp cho `M1StaticLimits`/SOE ([§11.3a](#s11-m1)) và tin trạng thái tạm ngưng `REMOTE_CONTROL_STATE` (retained, [§14.4](#s14)); tin không ký trên `down/config` chỉ có thể là `TELEMETRY_ACK`/`RESEND_REQUEST` ([§9.3](#s9)). Danh sách `kid` tin cậy cho lệnh nằm trong cấu hình đã ký; `kid` gốc của khóa cấu hình nằm trong ảnh firmware. [PROPOSAL]
 - **OTA edge** (F-INT-12, NFR-SEC-020): metadata kiểu TUF (root offline, targets/snapshot/timestamp), ảnh ký số; cài A/B có rollback tự động nếu health check thất bại trong 10 phút; bộ đếm anti-rollback; triển khai theo đợt canary ([§14.4](#s14)); OTA là C3. **Không** cập nhật firmware thiết bị của hãng. [FACT] CCC (2026) phát hiện cập nhật firmware và điều khiển từ xa không xác thực ở microinverter Hoymiles — https://cybernews.com/security/china-solar-inverters-hack/ (nghiên cứu FusionSolar trước): cơ chế cập nhật là bề mặt tấn công thật.
 - **Thời gian** (F-INT-10): chrony với ≥ 2 nguồn (ưu tiên NTS khi có, hoặc NTP nội bộ của khách) + RTC có pin. Edge từ chối bước nhảy đồng hồ > 1 s khi đang `SYNCED` mà không có ≥ 2 nguồn đồng ý; `clock_state = UNSYNCED` → IL-06 chặn mọi lệnh có hạn, vòng cục bộ vẫn chạy. Mục đích: chống làm lệnh hết hạn thành hợp lệ bằng cách giả thời gian (ABU-12). [PROPOSAL, NFR-SEC-028 mới]
 
@@ -661,20 +662,20 @@ Nguyên tắc: **lớp sau không tin lớp trước** (BR-SEC-05). Bước nào
 |---|---|---|---|---|
 | S1 Xác thực | Cloud | Token OIDC hợp lệ; phiên MFA; step-up cho C2/C3 | `DENIED: AUTH` / `STEP_UP_REQUIRED` | NFR-SEC-005 |
 | S2 Phân quyền | Cloud (PDP) | RBAC theo cây + PDP-01…PDP-15 ([§5.3](#s5)); lưu `pdp_decision_id` | `DENIED: <lý do>` | NFR-SEC-006 |
-| S3 Kiểm vùng an toàn | Cloud | Tham số so với SOE **đang hiệu lực trên edge**; type có trong `capability_profile`; thiết bị `VERIFIED_*`; `requires_native_fallback`; Gate | `DENIED: OUT_OF_SOE` / `DEVICE_NOT_ELIGIBLE` / `GATE` | NFR-SEC-009 |
+| S3 Kiểm vùng an toàn | Cloud | Tham số so với `M1StaticLimits` (site M1, [§11.3a](#s11-m1)) hoặc SOE (site M2) **đang hiệu lực trên edge**; type có trong `capability_profile`; thiết bị `VERIFIED_*`; `requires_native_fallback`; Gate | `DENIED: OUT_OF_SOE` / `DEVICE_NOT_ELIGIBLE` / `GATE` | NFR-SEC-009 |
 | S4 Phân hạng & duyệt | Cloud | Hạng hiệu lực = max(tối thiểu, ngữ cảnh); C2 lý do; C3 hai người ([§5.5](#s5)) | `PENDING_APPROVAL` → `APPROVAL_REJECTED` / `APPROVAL_EXPIRED` | NFR-SEC-008 |
-| S5 Ngân sách đội | Cloud (Governor) | Σ\|ΔP\| cửa sổ 5 phút theo tenant và nền tảng; rate limit site/user ([§14](#s14)) | Xếp hàng + nâng C3, hoặc `DENIED: RATE_LIMIT` | NFR-SEC-012 |
+| S5 Ngân sách đội | Cloud (Governor) | M1: số site thay đổi mỗi 5 phút và trần site mỗi lần chạy bộ sinh lịch; M2: thêm Σ\|ΔP\| cửa sổ 5 phút theo tenant và nền tảng; rate limit site/user ([§14](#s14)) | Xếp hàng + nâng C3, hoặc `DENIED: RATE_LIMIT` | NFR-SEC-012 |
 | S6 Hạn | Cloud | `valid_from`, `expires_at` bắt buộc ≤ hạn tối đa type; `max_latency_ms` | `DENIED: TTL` | NFR-SEC-011 |
 | S7 Idempotency | Cloud | `Idempotency-Key` trên POST → một `command_id` (UUID v7) duy nhất; gửi lại cùng key trả lệnh cũ | Trả trạng thái lệnh cũ | NFR-SEC-011 |
 | S8 Ký | Signer (KMS) | Signer chỉ ký lệnh ở `AUTHORIZED` có `pdp_decision_id` (và `approval_ref` nếu C3) đọc lại từ DB; gán `seq`; JWS ES256 trên JCS | Không ký → không gửi; KMS lỗi → fail-closed | NFR-SEC-004 |
 | S9 Giao | Dispatcher, broker | QoS 1, không retained, Message Expiry; retry chỉ khi còn hạn, backoff mũ; không gửi lại sau `expires_at` | `UNDELIVERED` | NFR-SEC-011, NFR-REL-012 |
-| S10 Kiểm tại edge | Edge | Thứ tự 10 bước của [07 §8.7](07-device-integration.md): chữ ký/`kid` → đích → đồng hồ → hạn/độ trễ → `command_id`/`seq` → kill switch/`control_enabled` → interlock → capability/verified/fallback → SOE/limits → mức arbiter | `REJECTED_{INVALID, STALE, REPLAY, INTERLOCK:<IL>, UNSUPPORTED, OUT_OF_LIMIT, LOWER_PRIORITY}` | NFR-SEC-004, 010, 011 |
+| S10 Kiểm tại edge | Edge | Thứ tự 10 bước của [07 §8.7](07-device-integration.md): chữ ký/`kid` → đích → đồng hồ → hạn/độ trễ → `command_id`/`seq` → kill switch/`control_enabled` → interlock → capability/verified/fallback → SOE/limits (site M1: `M1StaticLimits`, [§11.3a](#s11-m1)) → mức arbiter | `REJECTED_{INVALID, STALE, REPLAY, INTERLOCK:<IL>, UNSUPPORTED, OUT_OF_LIMIT, LOWER_PRIORITY}` | NFR-SEC-004, 010, 011 |
 | S11 Phân xử | Edge | Arbiter 12 mức, mô hình "thu hẹp khoảng"; kẹp theo CCL/DCL hiện tại, SOE, POC, ramp; ghi `ARBITER_REASON` | `APPLIED_CLAMPED` (khi kẹp động) | K §6 #16 |
 | S12 Ghi thiết bị | Edge driver | Chuỗi ghi theo driver (ví dụ chế độ remote rồi setpoint); `min_write_interval`; ghi reversion timeout/heartbeat cùng setpoint | `FAILED_DEVICE_EXCEPTION` | NFR-REL-002 |
 | S13 Ack/timeout | Edge → cloud | Ack ký bằng khóa edge cho mỗi chuyển trạng thái; cloud chờ `RECEIVED` trong `max_latency_ms`; readback timeout theo type | Cloud: `UNDELIVERED`; edge: `FAILED_TIMEOUT` | NFR-SEC-004 |
 | S14 Kiểm chứng | Edge | Readback trong dung sai → `APPLIED`; theo dõi đáp ứng vật lý suốt hiệu lực → `tracking_state` ([07 §8.5](07-device-integration.md)) | `FAILED_NO_EFFECT`; cảnh báo `CTRL.TRACKING_DEVIATION` | FR-SEC-009 |
 | S15 Hết hạn | Edge | Tại `expires_at`: thực hiện `on_expiry` (mặc định `REVERT_DEFAULT`) → `EXPIRED` → `COMPLETED` | — | NFR-SEC-011 |
-| S16 Audit & đối soát | Cloud + edge | Mọi chuyển trạng thái vào audit (hash chain); sau reconnect edge báo lệnh đang hiệu lực + config version; cloud đối soát ≤ 60 s | Cảnh báo `CTRL.STATE_MISMATCH` | NFR-SEC-015, NFR-REL-012 |
+| S16 Audit & đối soát | Cloud + edge | Mọi chuyển trạng thái vào audit (hash chain); sau reconnect edge báo lệnh đang hiệu lực + config version + `remote_control_suspended`/`remote_control_state_version` (+ phiên bản giới hạn tĩnh M1/SOE); cloud đối soát ≤ 60 s; edge chưa nối lại lịch cloud trước khi khớp trạng thái tạm ngưng ([§14.4](#s14)) | Cảnh báo `CTRL.STATE_MISMATCH` | NFR-SEC-015, NFR-REL-012 |
 
 ### 11.3 Vùng vận hành an toàn (SOE)
 
@@ -682,7 +683,7 @@ SOE (`SafeOperatingEnvelope@version`, F-BESS-08, FR-BESS-007) là tài liệu c�
 
 | Tham số SOE | Đơn vị (hợp đồng edge) | Ví dụ mặc định | Nguồn giá trị |
 |---|---|---|---|
-| `p_ess_dis_max_w`, `p_ess_ch_max_w` | W | ≤ công suất định mức PCS × hệ số thiết kế | Datasheet PCS + thiết kế |
+| `p_ess_discharge_max_w`, `p_ess_charge_max_w` | W | ≤ công suất định mức PCS × hệ số thiết kế | Datasheet PCS + thiết kế |
 | `soc_min_eff_pct`, `soc_max_eff_pct` | % | 10 / 95 | Hãng pin, điều kiện bảo hành |
 | `soc_backup_reserve_pct` | % | 30 (site có tải ưu tiên) | Chủ site |
 | `export_limit_w`, `import_cap_w` (trần cứng của SOE; cấu hình lưới site phải ≤) | W | 0 / ≤ công suất MBA, hợp đồng | Hợp đồng đấu nối, thiết kế |
@@ -696,7 +697,27 @@ SOE (`SafeOperatingEnvelope@version`, F-BESS-08, FR-BESS-007) là tài liệu c�
 | `plan_expiry_fallback_h` | h | 48 | K §6 #17 |
 | `hold_last_allowed_types` | danh sách | rỗng (mặc định chỉ `REVERT_DEFAULT`) | — |
 
-Mọi thay đổi SOE được thông báo cho chủ site; edge so SOE nhận được với chữ ký và từ chối nếu `version` thấp hơn bản đang áp (ABU-02).
+Mọi thay đổi SOE được thông báo cho chủ site; edge so SOE nhận được với chữ ký và từ chối nếu `version` thấp hơn bản đang áp (ABU-02). Tên trường SOE dùng đúng tên của [05 §11](05-domain-model.html#s11) (`p_ess_discharge_max_w`, `p_ess_charge_max_w`, …) vì chúng được kiểm trong cấu hình ký và trong quy tắc PDP; đổi tên là thay đổi hợp đồng có version.
+
+<a id="s11-m1"></a>
+#### 11.3a Giới hạn tĩnh Gate M1 (`M1StaticLimits`) — tập con bắt buộc của SOE
+
+**Vấn đề**: ở Gate M1 chưa có SOE đầy đủ (commissioning SOE là bước của M2), nhưng M1 đã ghi tham số xuống thiết bị (`SET_PV_LIMIT`, `SET_SOC_RESERVE`, `SET_EXPORT_LIMIT`/`SET_IMPORT_LIMIT` tạm thời, `SET_ESS_MODE`, lịch native, cấu hình lưới C3). Không có trần cứng thì hoặc PDP-08 từ chối mọi ghi M1, hoặc ghi M1 không được kiểm theo giới hạn vật lý/hợp đồng. **Quyết định** [PROPOSAL]: mỗi site có `control_enabled = true` ở M1 phải có tài liệu `M1StaticLimits@version` — chính là **tập con bắt buộc của SOE**, cùng lược đồ, cùng tên trường, cùng cơ chế ký/version/chống rollback; khi lên M2, SOE đầy đủ là phiên bản sau của cùng tài liệu (không phải tài liệu thứ hai), nên không có hai nguồn giới hạn song song.
+
+| Trường (tên như SOE) | Bắt buộc ở M1 | Nguồn giá trị |
+|---|---|---|
+| `export_limit_w` (trần cứng xuất) | Có | Hợp đồng đấu nối/thỏa thuận với điện lực; site zero-export = 0 |
+| `import_cap_w` (trần cứng nhập) | Có | min(công suất MBA × hệ số thiết kế, công suất hợp đồng) |
+| `soc_backup_reserve_pct` (sàn), `soc_min_eff_pct`, `soc_max_eff_pct` | Có nếu site có BESS | Chủ site; hãng pin |
+| `pv_limit_min_w`, `pv_limit_max_w` | Có nếu M1 ghi `SET_PV_LIMIT` | Định mức inverter; giới hạn xuất |
+| `allowed_command_types` | Có | `capability_profile` ∩ danh sách type Gate M1 ([07 §8.1](07-device-integration.md)); type M2 (`SET_ESS_P`, `SET_EV_LIMIT`…) không được có |
+| `mode_change_min_interval_s` | Có | Mặc định 300 |
+| `p_ess_discharge_max_w`, `p_ess_charge_max_w`, `ramp_max_w_per_s`, `delta_p_max_per_cmd_w` | Không (bắt buộc từ M2) | — |
+
+- **Phê duyệt**: lập trong commissioning M1 bởi `SITE_ENGINEER`, duyệt C3 bởi `CONTROL_SUPERVISOR` khác người (PDP-12), đính kèm bằng chứng (trang hợp đồng đấu nối, nhãn MBA); ký bằng khóa cấu hình; edge báo `ACTIVE_ON_EDGE`. Bật `control_enabled` (C3) bị chặn nếu chưa có bản `ACTIVE_ON_EDGE`.
+- **Kiểm**: PDP-08 và S3 ở cloud, bước 9 "SOE/limits" của chuỗi kiểm edge ([07 §8.7](07-device-integration.md)) dùng `M1StaticLimits` cho site `control_gate = M1` và SOE đầy đủ cho site M2. Cấu hình lưới site (`export_limit_w`, `import_cap_w` trong `SiteGridConfig`) phải ≤ trần cứng tương ứng; ghi tham số native (ví dụ giới hạn xuất của logger) ngoài trần → `DENIED: OUT_OF_SOE` ở cloud, `REJECTED_OUT_OF_LIMIT` ở edge.
+- **Không thay bảo vệ**: trần này là kiểm tra phần mềm của ta; bảo vệ native (rơ-le chống phát ngược, BMS) vẫn là lớp 1.
+- Kiểm thử: T-NFR-SEC-009-01 (dưới §19.3).
 
 ### 11.4 Interlock tại edge
 
@@ -720,8 +741,8 @@ Tín hiệu interlock không đọc được (mất DI module, giá trị không
 | Hạng | Ví dụ | Yêu cầu |
 |---|---|---|
 | C0 Thông tin | Đọc, refresh, `dry_run` | Quyền đọc |
-| C1 Thường | Áp lịch trong SOE; đổi `site_strategy`; setpoint ≤ 80% SOE, TTL ≤ 1 h; `SET_EV_LIMIT`; kill switch engage; tắt `control_enabled` | Quyền + phiên MFA |
-| C2 Nhạy cảm | Setpoint > 80% SOE; giảm dự phòng SOC; tắt tối ưu; > 5 site/lệnh; ngoài giờ hành chính; `SET_EXPORT_LIMIT`/`SET_IMPORT_LIMIT` tạm thời; `COMMISSIONING_TEST`; mở tunnel hỗ trợ | Step-up ≤ 5 phút + lý do |
+| C1 Thường | Áp lịch trong SOE (hoặc giới hạn tĩnh M1, §11.3a); override `SET_ESS_MODE` (`site_strategy`) ≤ 24 h; setpoint ≤ 80% SOE, TTL ≤ 1 h; `SET_EV_LIMIT`; kill switch engage; tắt `control_enabled` | Quyền + phiên MFA |
+| C2 Nhạy cảm | Đổi chiến lược mặc định của site (`SiteControlConfig.default_strategy`, cấu hình có version — [04 FR-BESS-004](04-business-requirements.md)); setpoint > 80% SOE; giảm dự phòng SOC; tắt tối ưu; > 5 site/lệnh; ngoài giờ hành chính; `SET_EXPORT_LIMIT`/`SET_IMPORT_LIMIT` tạm thời; `COMMISSIONING_TEST`; mở tunnel hỗ trợ | Step-up ≤ 5 phút + lý do |
 | C3 Nguy hiểm | `DEVICE_ON_OFF`; đổi SOE; đổi cấu hình lưới; bật `control_enabled`/Gate M2; `SET_REVERSE_FEED_BLOCK` thủ công; xả/sạc cưỡng bức bỏ qua tối ưu > 30 phút; > 10% MW BESS tenant; reset lỗi từ xa; OTA edge; kill switch release | Hai người khác vai trò, cả hai step-up; cửa sổ duyệt ≤ 15 phút; thông báo chủ site |
 | C4 Cấm | Đổi grid code, ngưỡng bảo vệ, cấu hình BMS; bỏ qua interlock; điều khiển/reset E-stop | **Không có API**; chỉ làm tại chỗ bằng công cụ hãng |
 
@@ -737,7 +758,7 @@ Tín hiệu interlock không đọc được (mất DI module, giá trị không
 | `APPLY_SCHEDULE` | 7 ngày (horizon ≥ 48 h) | 300 000 | — (ack theo slot) | Chiến lược mặc định |
 | `SET_EV_LIMIT` (P1) | 1 h (15 phút) | 10 000 | 30 s | TxDefaultProfile an toàn |
 | Lệnh C3 sau duyệt | ≤ 30 phút sau duyệt | 10 000 | 30 s | Hủy |
-| `REMOTE_CONTROL_SUSPEND` | Không hết hạn (trạng thái) — gỡ bằng `RESUME` C3 | 60 000 | — | — |
+| `REMOTE_CONTROL_SUSPEND` | Không hết hạn (trạng thái) — gỡ bằng `RESUME` C3. Nguồn sự thật là tin trạng thái ký, retained trên `down/config` ([§14.4](#s14)); lệnh trên `down/cmd` chỉ là đường nhanh | 60 000 | — | — |
 | `GRID_OPERATOR` (IEC 104, P1) | Theo điều độ [UNKNOWN] | Cục bộ | Theo QĐ 1570 [UNKNOWN] | Theo điều độ |
 
 Nguồn số: [04 §2](04-business-requirements.md), [07 §8.2](07-device-integration.md); K §6 #21.
@@ -780,8 +801,8 @@ Thứ tự 12 mức của K R-07 (mức 1–6 cố định): (1) bảo vệ nati
 | Trạng thái | Ý nghĩa | Edge làm | Cloud/UI |
 |---|---|---|---|
 | `REMOTE` | Cho phép lệnh từ cloud theo PDP | Bình thường | Bình thường |
-| `LOCAL` | Người tại chỗ điều khiển (qua HMI hãng hoặc chế độ native) | Từ chối mọi lệnh cloud (IL-01); hủy lệnh tay đang hiệu lực (`CANCELLED`); ngừng ghi setpoint cưỡng bức, để thiết bị về chế độ native qua watchdog hoặc ghi một lần chế độ native an toàn đã định trong commissioning; vẫn đọc và gửi telemetry; vẫn giám sát an toàn (mức 3) và cảnh báo | Banner "Đang điều khiển tại chỗ"; nút lệnh vô hiệu |
-| `MAINTENANCE` | Bảo trì; công cụ engineering có thể cần làm master Modbus | Như LOCAL + **nhả kết nối ghi**; nếu thiết bị chỉ nhận một client (ví dụ Huawei chỉ một client Modbus TCP, [07 IP-03](07-device-integration.md)) thì nhả cả kết nối đọc; telemetry gắn quality `BAD_NOT_CONNECTED`/khoảng trống có lý do `MAINTENANCE` | Banner "Bảo trì tại chỗ"; cảnh báo kết nối bị chặn theo cha–con |
+| `LOCAL` | Người tại chỗ điều khiển (qua HMI hãng hoặc chế độ native) | Từ chối mọi lệnh cloud (IL-01); hủy lệnh tay đang hiệu lực (`CANCELLED`); **không ghi bất kỳ gì xuống thiết bị** kể từ lúc phát hiện LOCAL (kể cả "ghi một lần chế độ an toàn" — người tại chỗ đã nắm quyền, edge không được đè cài đặt của kỹ thuật viên); thiết bị tự về chế độ native qua cơ chế mất-master/watchdog của chính nó (cấu hình sẵn trong commissioning: `revert_timeout_s`, fallback loss-of-master). Thiết bị không có cơ chế này thì phải mang `requires_native_fallback = true` và không bao giờ nhận setpoint cưỡng bức (PDP-09, FR-SEC-016), nên khi LOCAL không có setpoint cưỡng bức nào "treo" lại; vẫn đọc và gửi telemetry; vẫn giám sát an toàn (mức 3) và cảnh báo | Banner "Đang điều khiển tại chỗ"; nút lệnh vô hiệu |
+| `MAINTENANCE` | Bảo trì; công cụ engineering có thể cần làm master Modbus | Như LOCAL + **nhả kết nối ghi**; nếu thiết bị chỉ nhận một client (ví dụ Huawei chỉ một client Modbus TCP, [07 IP-03](07-device-integration.md)) thì nhả cả kết nối đọc; telemetry gắn quality `BAD_COMM` (enum tầng 1 của [05 §16](05-domain-model.html)) và khoảng trống có lý do `MAINTENANCE`; không ghi số 0 thay dữ liệu thiếu | Banner "Bảo trì tại chỗ"; cảnh báo kết nối bị chặn theo cha–con |
 
 - **Phần cứng**: site Gate M2 có BESS phải có công tắc khóa chìa nối DI edge, **hoặc** chế độ local/remote của thiết bị native mà edge đọc được, có biên bản commissioning (K §3.8, FR-SEC-010, NFR-SEC-014).
 - **Quay lại `REMOTE`**: chỉ bằng thao tác tại chỗ. Edge vào trạng thái khởi động lại kiểu `SAFE_START` (đọc đủ ≥ 2 chu kỳ, đồng hồ hợp lệ) rồi chạy chiến lược mặc định; lịch `APPLY_SCHEDULE` còn hạn được nối lại từ slot hiện tại; lệnh tay đã hủy **không** tự khôi phục. [PROPOSAL]
@@ -856,7 +877,7 @@ Chiến lược mặc định (`default_strategy`, mức 12) là cấu hình có
 | `SAFE_START` → `NORMAL` | ≥ 2 chu kỳ đọc hợp lệ của điểm điều khiển, đồng hồ `SYNCED`/`DEGRADED`, cấu hình ký hợp lệ, interlock không tác động |
 | `NORMAL` → `FALLBACK_SCHEDULE` | Mất cloud, còn lịch hợp lệ |
 | `FALLBACK_SCHEDULE` → `DEFAULT_STRATEGY` | Hết lịch hoặc lịch không hợp lệ |
-| bất kỳ → `NATIVE_SAFE` | IL-03/IL-04/IL-08/IL-09, mất `MTR_POC`, BMS cũ, kill switch, LOCAL |
+| bất kỳ → `NATIVE_SAFE` | IL-03/IL-04/IL-08/IL-09, mất `MTR_POC`, BMS cũ, kill switch, LOCAL/MAINTENANCE (với LOCAL/MAINTENANCE: edge không ghi gì xuống thiết bị, §12.2) |
 | `NATIVE_SAFE` → `SAFE_START` | Điều kiện gây ra đã hết (với IL-08: cần xác nhận tại chỗ) |
 
 ---
@@ -867,6 +888,8 @@ Chiến lược mặc định (`default_strategy`, mức 12) là cấu hình có
 Đặc tả chi tiết cho FR-SEC-012, FR-SEC-013, FR-SEC-022, NFR-SEC-012, NFR-SEC-013, NFR-SEC-020, NFR-REL-010.
 
 ### 14.1 Vì sao
+
+**Phạm vi Gate**: giới hạn bán kính tác động áp dụng **từ Gate M1**, không đợi M2 — ở M1 cloud đã ghi tới nhiều site cùng lúc (bộ sinh lịch tầng 2 đẩy lịch native như principal dịch vụ, `SET_ESS_MODE`, `SET_PV_LIMIT`, `SET_SOC_RESERVE`, cấu hình lưới, OTA, `CONFIG_PUSH`). Ở M1 bắt buộc: C3 hai người (NFR-SEC-008), kill switch (NFR-SEC-013), Governor biến thể đếm (NFR-SEC-012 M1), toàn vẹn thời gian edge (NFR-SEC-028, vì kiểm hạn tại edge phụ thuộc đồng hồ). Phần chỉ có nghĩa khi edge làm chủ vòng (Governor ΔP, nâng hạng PDP-04/05 theo MW) bật ở M2 (13 CF-28/D-03).
 
 [FACT] Sự cố 11/2024 (inverter ở nhiều nước bị vô hiệu hóa từ xa do tranh chấp thương mại, nguồn không nêu hãng — Defense News, §2.5) và [FACT] Forescout "SUN:DOWN" (27/3/2025): 46 lỗ hổng mới ở sản phẩm Sungrow, Growatt, SMA (đã vá); 80% lỗ hổng hệ mặt trời công bố trong 3 năm trước là high/critical — https://forescout.com/press-releases/forescout-vedere-labs-uncovers-severe-systemic-security-risks-in-global-solar-power-infrastructure (nghiên cứu FusionSolar trước). [INFERENCE] Mẫu nguy hiểm nhất là "một tài khoản/khóa/đường cập nhật có quyền ghi → tác động đồng thời nhiều site". EMS của ta tạo đúng loại bề mặt này, nên phải giới hạn tác động ở nhiều tầng.
 
@@ -879,6 +902,7 @@ Chiến lược mặc định (`default_strategy`, mức 12) là cấu hình có
 | Site | ≤ 6 lệnh tay/phút; ≤ 12 đổi chế độ/giờ; `mode_change_min_interval_s` 300 | PDP + edge | FR-SEC-022 |
 | Người dùng | ≤ 30 lệnh/10 phút; > 5 site/lệnh → C2; > 10% MW BESS tenant → C3 | PDP | FR-SEC-022 |
 | API client | Mặc định 0 lệnh; P2: C1 trong SOE, chịu Governor | OAuth scope + PDP | FR-SEC-026 |
+| Tenant / nền tảng — **biến thể M1** (đếm, không cần mô hình ΔP) | Mỗi cửa sổ 5 phút: ≤ 10 site/tenant và ≤ 50 site/nền tảng nhận thay đổi ghi (lệnh native, lịch native, `CONFIG_PUSH`, cấu hình lưới); **mỗi lần chạy bộ sinh lịch** đổi lịch của ≤ 20 site (hoặc ≤ 20% số site của tenant, lấy số nhỏ hơn), phần còn lại xếp đợt sau và trải jitter 0–300 s; vượt → dừng đợt, cảnh báo Cao, cần `plan.approve` (người) để tiếp tục; lệnh an toàn hóa miễn trừ (PDP-15). Áp dụng từ Gate M1 cho mọi principal (người, `svc:scheduler-*`, `svc-config-*`) | Governor (chế độ đếm) dùng chung sổ cái | NFR-SEC-012 (M1) |
 | Tenant | Σ\|ΔP\| được lệnh trong 5 phút ≤ 20% MW BESS của tenant (hoặc trần tuyệt đối `max_delta_p_w`); vượt → xếp hàng + C3 | **Fleet Dispatch Governor** | NFR-SEC-012 |
 | Nền tảng | Σ\|ΔP\| mọi tenant trong 5 phút ≤ 5% tổng MW BESS quản lý; lệnh đồng loạt trải jitter 0–300 s (trừ điều độ và lệnh an toàn hóa) | Governor toàn cục | NFR-SEC-012 |
 | Bộ sinh lịch | Lịch mới không đổi quá 30% tổng năng lượng xả của tenant trong một slot so với lịch trước, nếu không có sự kiện giải thích (biểu giá mới, sự cố) → cần `plan.approve` | Validator kế hoạch ([08](08-energy-optimization.md)) | X-I-03 |
@@ -892,6 +916,7 @@ Chiến lược mặc định (`default_strategy`, mức 12) là cấu hình có
 - **Sổ cái**: `FleetDispatchLedger(scope, window_start, sum_abs_delta_p_w)` cửa sổ trượt 300 s ([05 §11](05-domain-model.html#s11)). Kiểm và ghi trong cùng transaction với `AUTHORIZED` để tránh đua.
 - **Miễn trừ**: lệnh an toàn hóa (về P = 0, kill switch, tắt điều khiển, `REVERT`) và lệnh `GRID_OPERATOR` không tiêu ngân sách (PDP-15). [PROPOSAL; cần mô phỏng vì "về 0" đồng loạt cũng là bước nhảy lớn — Q-I-14]
 - **Vượt ngân sách**: lệnh vào hàng đợi `PENDING_APPROVAL` (C3) kèm thông tin "vượt ngân sách đội X kW"; bộ sinh lịch tự trải slot (jitter) thay vì xin duyệt nếu cách trải đủ đưa về trong ngân sách.
+- **Biến thể M1**: sổ cái thêm `site_count` theo `(scope, window_start)`; mỗi lần chạy bộ sinh lịch có `run_id` và trần `max_sites_per_run`; Signer từ chối ký lệnh/lịch/cấu hình mang `run_id` đã vượt trần (lớp sau không tin lớp trước). Ngưỡng 10/50/20 là đề xuất, chỉnh sau mô phỏng (Q-I-14). Biến thể ΔP được bật thêm khi site đầu tiên lên M2; biến thể đếm vẫn giữ.
 - Ngưỡng 20%/5% là **đề xuất cần mô phỏng** (K §6 #30, Q-I-14). Ở quy mô MVP (vài MW), ngân sách tuyệt đối có thể quan trọng hơn %.
 
 ### 14.4 Kill switch
@@ -900,8 +925,11 @@ Chiến lược mặc định (`default_strategy`, mức 12) là cấu hình có
 |---|---|
 | Phạm vi | `SITE`, `TENANT`, `PLATFORM` (`RemoteControlSuspension`, [05 §11](05-domain-model.html#s11)) |
 | Engage | C1, không cần step-up, quyền theo [§5.4](#s5); có lý do (tự do) |
-| Hiệu lực | Cloud: PDP chặn mọi lệnh mới trong phạm vi ngay lập tức; Dispatcher hủy lệnh chưa gửi. Edge: nhận lệnh ký `REMOTE_CONTROL_SUSPEND` (C1, không hết hạn), đặt `remote_control_suspended = true`, hủy lệnh tay, **dừng lịch cloud** và chạy chiến lược mặc định cục bộ; vòng an toàn và tuân thủ lưới vẫn chạy |
-| Edge offline lúc engage | Lệnh xếp hàng với hạn dài (24 h) và gửi ngay khi edge online; cloud vẫn chặn lệnh mới; nếu edge offline thì vốn đã không nhận được lệnh mới |
+| Gate | **Bắt buộc từ Gate M1** (13 CF-28/D-03): ở M1 cloud đã ghi xuống nhiều site (lịch native tầng 2, `SET_ESS_MODE`, `SET_PV_LIMIT`, `SET_SOC_RESERVE`, cấu hình lưới, `CONFIG_PUSH`, OTA) |
+| Hiệu lực | Cloud: PDP chặn mọi lệnh mới trong phạm vi ngay lập tức; Dispatcher hủy lệnh chưa gửi; **bộ sinh lịch dừng đẩy lịch native và lịch edge**, pipeline `CONFIG_PUSH`/rollout cấu hình và OTA tạm dừng trong phạm vi (trừ tin trạng thái tạm ngưng và cấu hình "an toàn hóa" do C3 duyệt). Edge: nhận lệnh ký `REMOTE_CONTROL_SUSPEND` (C1, không hết hạn), đặt `remote_control_suspended = true`, hủy lệnh tay, **dừng lịch cloud** và chạy chiến lược mặc định cục bộ; vòng an toàn và tuân thủ lưới vẫn chạy |
+| Mang trạng thái (không phải lệnh có hạn) | Trạng thái tạm ngưng là **tin trạng thái ký, có version, retained** trên `down/config` (`type = REMOTE_CONTROL_STATE`, `{scope, suspended, suspension_id, state_version, issued_at}`, ký bằng khóa cấu hình, `typ = "ems-config+jws"`), đồng thời được đưa vào `EdgeConfigVersion` đã ký kế tiếp. Không có `expires_at`: trạng thái chỉ đổi khi có bản `state_version` cao hơn (engage hoặc `RESUME` C3). Edge lưu bền (fsync) và từ chối bản có `state_version` thấp hơn (chống rollback, tương tự ABU-02). Lệnh `REMOTE_CONTROL_SUSPEND` trên `down/cmd` chỉ là đường nhanh cho edge online, không thay trạng thái retained |
+| Edge offline lúc engage | Cloud chặn lệnh mới ngay; trạng thái retained chờ sẵn ở broker **không hết hạn**. Khi reconnect (dù offline bao lâu): edge **trước khi chạy bất kỳ slot lịch cloud nào** phải nhận và so trạng thái tạm ngưng retained với bản lưu bền; trong lúc chưa nhận được (timeout 60 s sau khi kết nối), edge giữ `DEFAULT_STRATEGY` thay vì nối lại `APPLY_SCHEDULE`. Nếu `suspended = true` → hủy lịch cloud đã lưu, chạy chiến lược mặc định. Trong thời gian offline, edge không biết về engage nên tiếp tục lịch đã nhận (≤ 7 ngày) — đây là giới hạn vốn có, được ghi rõ ở rủi ro §21.3 và giảm bằng hạn lịch ngắn nhất có thể |
+| Đối soát | S16: sau reconnect edge báo `remote_control_state_version` + `suspended`; cloud so với `RemoteControlSuspension` hiện hành; lệch → gửi lại tin trạng thái, cảnh báo Cao `CTRL.STATE_MISMATCH`, và PDP coi site là `SUSPENDED` cho tới khi khớp |
 | Release | C3 hai người; theo phạm vi: site/tenant do CONTROL_SUPERVISOR (+ ORG_ADMIN yêu cầu), nền tảng do hai `PLATFORM_ADMIN`; edge `RESUME` → `SAFE_START` → mặc định cho tới khi có lịch mới |
 | Tên hiển thị | "Tạm ngưng điều khiển từ xa"; không dùng chữ "E-stop" |
 | Kiểm thử | AC-SEC-08: mọi edge online trong phạm vi báo `REMOTE_CONTROL_SUSPENDED` ≤ 60 s |
@@ -1211,9 +1239,9 @@ Gói bằng chứng theo (site, khoảng thời gian), tạo bằng một thao t
 | Test chuỗi lệnh (đơn vị + tích hợp) | PDP, Signer, edge verifier, test vector vàng JWS | Mỗi build | 100% ca bắt buộc §19.3 | P0 |
 | DAST | API công khai, web | Hằng tuần trên staging; trước release | High chặn release | P1 |
 | Fuzzing adapter giao thức | §19.2 | Liên tục trong lab (nightly) + trước khi driver đạt `VERIFIED_LAB` | Không crash/treo/ghi ngoài ý muốn | P0 cho driver ghi; P1 cho driver đọc |
-| HIL an toàn | §19.3 | Trước mỗi release edge; trước Gate M2 site đầu tiên | Mọi ca đạt | P0 |
-| Pen-test bên thứ ba | Web, API, broker, đường lệnh, multi-tenant, edge phần cứng (UART/JTAG, boot, disk, cổng mạng), OTA | Trước site Gate M2 đầu tiên ở production; hằng năm; sau thay đổi lớn control plane | Critical/High đóng trước khi bật M2 | P0 (lần đầu), P1 (định kỳ) |
-| Red team theo ca lạm dụng | ABU-01, 03, 04, 08, 12, 16 | Hằng năm (từ Phase 1) | Báo cáo + hành động | P1 |
+| HIL an toàn | §19.3 | Trước mỗi release edge; ca áp dụng cho M1 (chữ ký, hạn, đồng hồ, LOCAL, kill switch, `M1StaticLimits`) trước site M1 có điều khiển đầu tiên; toàn bộ trước Gate M2 site đầu tiên | Mọi ca áp dụng đạt | P0 |
+| Pen-test bên thứ ba | (a) Web, API, broker ACL, đường lệnh ký (gồm lịch native, `CONFIG_PUSH`), multi-tenant, edge phần cứng (UART/JTAG, boot, disk, cổng mạng), OTA, kịch bản ca lạm dụng ABU-01/03/04/08/12/16; (b) lặp lại tập trung đường setpoint, arbiter, Governor ΔP, interlock | (a) trước site production đầu tiên có `control_enabled = true` (Gate M1); (b) trước site Gate M2 đầu tiên; sau đó hằng năm và sau thay đổi lớn control plane | Critical/High đóng trước khi bật điều khiển ở Gate tương ứng | P0 (a, b), P1 (định kỳ) |
+| Red team theo ca lạm dụng | ABU-01, 03, 04, 08, 12, 16 | Lần đầu nằm trong pen-test (a) trước site M1 có điều khiển; sau đó hằng năm | Báo cáo + hành động | P0 (lần đầu), P1 (định kỳ) |
 | Game day / chaos | Mất cloud 4 h, mất broker, KMS lỗi, DR | Hằng quý (game day mất cloud: P0 trước Gate M2) | Fallback đúng bảng §13.2 | P0/P1 |
 | Chương trình công bố lỗ hổng (VDP) | `security.txt`, e-mail có PGP | Liên tục | SLA vá: Critical cloud ≤ 72 h, Critical edge ≤ 14 ngày, High ≤ 30 ngày | P1 |
 
@@ -1254,15 +1282,20 @@ Kết quả mô phỏng không được dùng làm bằng chứng kiểm chứng
 | T-NFR-SEC-004-02 | Envelope sửa 1 byte trong `params` | `REJECTED_INVALID` | NFR-SEC-004 |
 | T-NFR-SEC-004-03 | `alg=none`, `kid` lạ, `kid` đã gỡ | `REJECTED_INVALID` | NFR-SEC-004 |
 | T-NFR-SEC-011-01 | Envelope tới sau `expires_at` 1 s / sau `max_latency_ms` | `REJECTED_STALE`; không ghi | AC-SEC-05 |
+| T-NFR-SEC-009-01 | Site M1 có `M1StaticLimits` (`export_limit_w` = 0, `import_cap_w` = 800 000): gửi cấu hình lưới xuất 50 kW; `SET_IMPORT_LIMIT` 1 MW; `SET_ESS_P` (type M2); site `control_enabled` chưa có bản `ACTIVE_ON_EDGE` | `DENIED: OUT_OF_SOE` / `OUT_OF_SOE` / `GATE`; edge `REJECTED_OUT_OF_LIMIT` nếu bị gửi; bật `control_enabled` bị chặn | NFR-SEC-009 |
+| T-NFR-SEC-012-02 | Gate M1: bộ sinh lịch đổi lịch native của 60 site trong một lần chạy | Chỉ ≤ trần site/lần chạy được ký; phần còn lại xếp đợt; cảnh báo Cao; Signer từ chối `run_id` vượt trần | NFR-SEC-012 (M1) |
 | T-NFR-SEC-028-01 | Lệch đồng hồ edge 10 phút bằng NTP giả | `UNSYNCED`/từ chối bước nhảy; IL-06 chặn lệnh | NFR-SEC-028 |
 | T-NFR-SEC-010-01…10 | Kích từng interlock IL-01…IL-10 | `REJECTED_INTERLOCK:<IL>`; hành động theo §11.4 | NFR-SEC-010 |
 | T-NFR-SEC-010-11 | Mất module DI | Interlock coi như tác động | NFR-SEC-010 |
 | T-NFR-SEC-012-01 | Lệnh làm Σ\|ΔP\| vượt 20% MW tenant | Xếp hàng + C3 | AC-SEC-07 |
 | T-NFR-SEC-013-01 | Engage kill switch tenant 50 edge mô phỏng | Mọi edge online `SUSPENDED` ≤ 60 s; lệnh mới bị từ chối | AC-SEC-08 |
+| T-NFR-SEC-013-02 | Edge đang chạy `APPLY_SCHEDULE` 7 ngày; cắt uplink; engage kill switch tenant; giữ offline > 24 h (ví dụ 30 h); nối lại | Edge nhận trạng thái retained, vào `suspended`, hủy lịch cloud cũ, chạy mặc định; **không** chạy slot lịch cũ nào sau reconnect (kể cả trong 60 s đầu); S16 báo khớp | NFR-SEC-013 |
+| T-NFR-SEC-013-03 | Phát lại tin trạng thái `suspended = false` cũ (version thấp) sau engage | Edge từ chối (version thấp); vẫn tạm ngưng | NFR-SEC-013 |
+| T-NFR-SEC-013-04 | Gate M1: engage kill switch site/tenant/nền tảng khi scheduler đang đẩy lịch native và có `CONFIG_PUSH` chờ | Không lịch native/`SET_ESS_MODE`/`CONFIG_PUSH` nào được ký/gửi trong phạm vi; edge không áp lịch native mới | NFR-SEC-013 |
 | T-NFR-SEC-008-01 | Người yêu cầu tự duyệt C3 / duyệt sau 15 phút | Bị chặn / `APPROVAL_EXPIRED` | AC-SEC-02, 03 |
 | T-NFR-SEC-007-01 | Bộ cross-tenant | 0 rò | AC-SEC-09 |
 | T-NFR-SEC-015-01 | `UPDATE`/`DELETE` audit bằng role app; sửa một hàng bằng superuser rồi chạy kiểm chuỗi | Bị từ chối; kiểm chuỗi phát hiện | AC-SEC-10 |
-| T-NFR-SEC-014-01 | Chuyển LOCAL khi đang có lệnh tay | Lệnh `CANCELLED`; từ chối lệnh mới; quay REMOTE không khôi phục lệnh | NFR-SEC-014 |
+| T-NFR-SEC-014-01 | Chuyển LOCAL (và MAINTENANCE) khi đang có lệnh tay và lịch | Lệnh `CANCELLED`; từ chối lệnh mới; bắt gói bus Modbus/CAN cho thấy **0 lệnh ghi** từ edge kể từ thời điểm phát hiện LOCAL tới khi quay REMOTE; thiết bị về native bằng cơ chế mất-master của chính nó; quay REMOTE không khôi phục lệnh tay | NFR-SEC-014 |
 | T-NFR-SEC-020-01 | OTA ảnh ký sai / phiên bản thấp hơn / health check lỗi | Từ chối / từ chối / rollback A/B | NFR-SEC-020 |
 | T-NFR-REL-015-01 | Tắt KMS, PDP, IdP lần lượt | Không lệnh mới; monitoring chạy; cảnh báo Khẩn cấp | NFR-REL-015 |
 | T-NFR-REL-011-01 | Chứng chỉ edge hết hạn | Điều khiển cục bộ tiếp tục; gia hạn qua IDevID | NFR-REL-011 |
@@ -1285,12 +1318,12 @@ Mọi yêu cầu là `[PROPOSAL]`. Mã 001–026 (SEC), 001–012 (REL), 001–0
 | NFR-SEC-005 | OIDC + PKCE; MFA cho mọi vai trò có quyền ghi/admin (WebAuthn ưu tiên); step-up ≤ 5 phút cho C2/C3; WebAuthn bắt buộc cho duyệt C3 và PLATFORM_ADMIN | P0 | M1 | §4 | AC-SEC-12; test step-up |
 | NFR-SEC-006 | RBAC theo cây + PDP cho mọi lệnh (PDP-01…15); SoD; quyết định PDP lưu và audit | P0 | M1 | §5 | Test chính sách đơn vị; T-NFR-SEC-008-01 |
 | NFR-SEC-007 | Cô lập tenant: RLS FORCE, role tách, `SET LOCAL`, lớp lọc thứ hai, cô lập MQTT/object/cache/job, test cross-tenant CI | P0 | M1 | §6 | T-NFR-SEC-007-01 |
-| NFR-SEC-008 | Hạng C0–C4; C3 hai người khác vai trò, cửa sổ ≤ 15 phút; hash nội dung lệnh gắn vào phê duyệt | P0 | M2 | §5.5, §11.5 | AC-SEC-02, 03 |
-| NFR-SEC-009 | SOE theo site, version, ký, đề xuất/duyệt khác người; edge từ chối lệnh ngoài SOE và SOE version thấp hơn | P0 | M2 | §11.3 | Test SOE |
+| NFR-SEC-008 | Hạng C0–C4; C3 hai người khác vai trò, cửa sổ ≤ 15 phút; hash nội dung lệnh gắn vào phê duyệt (nâng hạng theo ngữ cảnh MW của PDP-04/05 bật ở M2) | P0 | M1 (13 CF-28/D-03) | §5.5, §11.5 | AC-SEC-02, 03 |
+| NFR-SEC-009 | SOE theo site, version, ký, đề xuất/duyệt khác người; edge từ chối lệnh ngoài SOE và SOE version thấp hơn. Ở M1: tập con bắt buộc `M1StaticLimits` (trần xuất/nhập, sàn SOC, `allowed_command_types`) duyệt C3 trước khi bật `control_enabled` | P0 | M1 (`M1StaticLimits`); M2 (SOE đầy đủ) | §11.3, §11.3a | T-NFR-SEC-009-01; test SOE |
 | NFR-SEC-010 | Interlock IL-01…IL-10 tại edge; tín hiệu không đọc được = tác động | P0 | M2 | §11.4 | T-NFR-SEC-010-01…11 |
 | NFR-SEC-011 | Mọi lệnh có `expires_at` ≤ hạn tối đa type; từ chối lệnh không hạn/đến muộn; không gửi lại sau hạn | P0 | M1 | §11.6, §11.7 | T-NFR-SEC-011-01 |
-| NFR-SEC-012 | Fleet Dispatch Governor (tenant 20%/5 phút, nền tảng 5%/5 phút, jitter); vượt → C3 | P0 | M2 | §14.2, §14.3 | T-NFR-SEC-012-01; mô phỏng ngưỡng (Q-I-14) |
-| NFR-SEC-013 | Kill switch site/tenant/nền tảng: engage C1, release C3; tự engage khi DR/lộ khóa/bất thường | P0 | M2 | §14.4 | T-NFR-SEC-013-01 |
+| NFR-SEC-012 | Fleet Dispatch Governor. M1: biến thể đếm (site/tenant/nền tảng mỗi 5 phút, trần site mỗi lần chạy bộ sinh lịch, Signer kiểm `run_id`). M2: thêm biến thể ΔP (tenant 20%/5 phút, nền tảng 5%/5 phút, jitter); vượt → C3 | P0 | M1 (đếm); M2 (ΔP) | §14.2, §14.3 | T-NFR-SEC-012-01, 02; mô phỏng ngưỡng (Q-I-14) |
+| NFR-SEC-013 | Kill switch site/tenant/nền tảng: engage C1, release C3; dừng cả lịch native, lịch edge, `CONFIG_PUSH`, OTA trong phạm vi; trạng thái tạm ngưng là tin ký, có version, retained, không hết hạn; edge đối chiếu trước khi chạy lịch cloud sau reconnect; tự engage khi DR/lộ khóa/bất thường | P0 | M1 | §14.4 | T-NFR-SEC-013-01…04 |
 | NFR-SEC-014 | LOCAL/REMOTE/MAINTENANCE phần cứng (hoặc native đọc được, có biên bản) cho site M2 có BESS; quay lại REMOTE chỉ tại chỗ; không E-stop từ xa | P0 | M2 | §12 | T-NFR-SEC-014-01 |
 | NFR-SEC-015 | Audit append-only, hash chain theo tenant, kiểm hằng ngày, audit edge có chuỗi riêng; neo WORM P1 | P0 (WORM P1) | M1 | §7 | T-NFR-SEC-015-01 |
 | NFR-SEC-016 | Vault/KMS; khóa ký không xuất; khóa lệnh ≠ khóa cấu hình; credential hãng mã hóa theo tenant; quét secret CI; giới hạn tốc độ ký | P0 | M1 | §8 | Kiểm cấu hình KMS; quét secret |
@@ -1305,9 +1338,9 @@ Mọi yêu cầu là `[PROPOSAL]`. Mã 001–026 (SEC), 001–012 (REL), 001–0
 | NFR-SEC-025 | Lộ trình chứng nhận ISO 27001 → IEC 62443-4-2 (edge) → đánh giá 62443-3-3; không tuyên bố trước khi có chứng chỉ | P2 | — | §3 | Rà soát tài liệu marketing |
 | NFR-SEC-026 | Phân loại D0–D4; hosting VN mặc định (chờ pháp lý); DPIA và quy trình thông báo vi phạm DLCN (P1) | P0/P1 | M1 | §6.4, §3.3, §18.3 | Kiểm hạ tầng |
 | **NFR-SEC-027** (mới) | Hardening edge: secure boot; mã hóa đĩa; không mật khẩu mặc định chung (mật khẩu ngẫu nhiên theo thiết bị, bắt đổi); SSH/cổng debug tắt mặc định, chỉ mở qua tunnel; tiến trình điều khiển chạy quyền tối thiểu, tách tiến trình kết nối cloud; tường lửa host theo §10.3 | P0 (secure boot: P1 nếu phần cứng MVP không hỗ trợ, ghi rủi ro) | M1 | §9.1, §9.2, §10 | Pen-test phần cứng; checklist |
-| **NFR-SEC-028** (mới) | Toàn vẹn thời gian: ≥ 2 nguồn, NTS khi có, từ chối bước nhảy > 1 s khi không đồng thuận, `UNSYNCED` → IL-06 | P0 | M2 | §9.4 | T-NFR-SEC-028-01 |
+| **NFR-SEC-028** (mới) | Toàn vẹn thời gian: ≥ 2 nguồn, NTS khi có, từ chối bước nhảy > 1 s khi không đồng thuận, `UNSYNCED` → IL-06 (kiểm hạn lệnh/lịch tại edge ở M1 phụ thuộc đồng hồ) | P0 | M1 | §9.4 | T-NFR-SEC-028-01 |
 | **NFR-SEC-029** (mới) | Quy trình ứng phó sự cố: phân loại INC-*, khống chế ≤ 30 phút (Khẩn cấp), thông báo tenant ≤ 4 h, postmortem ≤ 5 ngày làm việc; thời hạn thông báo pháp định theo kết quả kiểm chứng Q-I-04 | P0 | M2 | §18 | Diễn tập bàn (tabletop) mỗi 6 tháng |
-| **NFR-SEC-030** (mới) | Cổng kiểm thử an toàn: driver ghi chỉ đạt `VERIFIED_LAB` sau fuzz §19.2 và ca HIL liên quan §19.3; release edge cần toàn bộ §19.3 đạt; pen-test bên thứ ba trước site Gate M2 đầu tiên | P0 | M2 | §19 | Báo cáo kiểm thử đính kèm release |
+| **NFR-SEC-030** (mới) | Cổng kiểm thử an toàn: driver ghi chỉ đạt `VERIFIED_LAB` sau fuzz §19.2 và ca HIL liên quan §19.3; release edge cần toàn bộ ca §19.3 áp dụng cho Gate của nó đạt. Pen-test bên thứ ba **(a)** web/API/broker ACL/đường lệnh ký/multi-tenant/edge phần cứng (UART/JTAG, boot, disk)/OTA trước site production đầu tiên có `control_enabled = true` (Gate M1); **(b)** lặp lại, tập trung đường setpoint/arbiter/Governor ΔP, trước site Gate M2 đầu tiên; Critical/High đóng trước khi bật | P0 | M1 (a); M2 (b) | §19 | Báo cáo kiểm thử đính kèm release |
 | **NFR-SEC-031** (mới) | Áp hàng loạt cấu hình/driver/SOE theo đợt (≤ 10 site đợt đầu, chờ 24 h), tự dừng khi có sự kiện an toàn mới | P1 | — | §14.2 | Test pipeline rollout |
 | **NFR-SEC-032** (mới) | Conduit IEC 104: NIC/VLAN riêng, allow-list IP master trong cấu hình ký, chỉ type lệnh đã cấu hình, xử lý mất liên kết theo §13.2; IEC 62351 khi điện lực yêu cầu | P1 có điều kiện | — | §9.6, §10.3 | Fuzz §19.2; test điều độ |
 
@@ -1324,7 +1357,7 @@ Mọi yêu cầu là `[PROPOSAL]`. Mã 001–026 (SEC), 001–012 (REL), 001–0
 | NFR-REL-007 | Mất `MTR_POC`/BMS cũ → BESS P = 0/native, PV giới hạn native ≤ 2 chu kỳ | P0 | M2 | §11.4, §13.2 | T-NFR-REL-007-01, 02 |
 | NFR-REL-008 | Edge OFFLINE sau ≈ 90 s; cảnh báo sau 5 phút | P0 | M1 | §9.3 | Test |
 | NFR-REL-009 | Tuân thủ giới hạn xuất: 0 vi phạm trong test; đưa về giới hạn ≤ 5 s (mục tiêu ≤ 2 s) | P0 | M1 | §16.1 | F-INT-27; HIL |
-| NFR-REL-010 | Kill switch lan truyền ≤ 60 s | P0 | M2 | §14.4 | T-NFR-SEC-013-01 |
+| NFR-REL-010 | Kill switch lan truyền ≤ 60 s | P0 | M1 | §14.4 | T-NFR-SEC-013-01 |
 | NFR-REL-011 | Hết hạn chứng chỉ không dừng điều khiển cục bộ; cảnh báo trước 14 ngày | P0 | M1 | §9.2 | T-NFR-REL-011-01 |
 | NFR-REL-012 | Không thi hành lệnh quá hạn sau khôi phục; đối soát ≤ 60 s | P0 | M1 | §11.7, §16.4 | T-NFR-REL-001-01 |
 | **NFR-REL-013** (mới) | `run_mode` của edge theo máy trạng thái §13.4; mọi chuyển là sự kiện audit, hiển thị ở header site | P0 | M2 | §13.4 | Test chuyển trạng thái |
@@ -1351,18 +1384,18 @@ Mọi yêu cầu là `[PROPOSAL]`. Mã 001–026 (SEC), 001–012 (REL), 001–0
 <a id="s20-gate"></a>
 ### 20.4 Điều kiện theo Gate
 
-Theo K §6 #27 và K §3.8 (phân pha). FR-SEC-021 (hồ sơ sẵn sàng Gate M2) kiểm các mục cột M2.
+Theo K §6 #27 và K §3.8 (phân pha), đã điều chỉnh theo 13 CF-28/D-03 (C3 vào Phase 1), D-12/CF-38 (TPM ở M2) và CF-32 (ACL `down/config`). Nguyên tắc: kiểm soát giới hạn bán kính tác động (C3, kill switch, Governor đếm, toàn vẹn thời gian, giới hạn tĩnh, pen-test) phải có **trước khi cloud ghi xuống site đầu tiên** (Gate M1 có `control_enabled`), vì M1 đã ghi tới nhiều site; cột M2 chỉ thêm những gì gắn với việc edge làm chủ vòng. FR-SEC-021 (hồ sơ sẵn sàng Gate M2) kiểm các mục cột M2.
 
 | Nhóm | Gate M1 (giám sát + cấu hình native có readback) | Gate M2 (edge làm chủ vòng, setpoint) | Phase 1/2 |
 |---|---|---|---|
-| Xác thực, phân quyền | NFR-SEC-005, 006, 023 | + PDP-04/05 nâng hạng; NFR-SEC-008 | SSO (P1) |
+| Xác thực, phân quyền | NFR-SEC-005, 006, 023; NFR-SEC-008 (C0–C4 + hàng đợi duyệt C3 hai người — 13 CF-28/D-03) | + PDP-04/05 nâng hạng theo ngữ cảnh MW/% SOE | SSO (P1) |
 | Cô lập, dữ liệu | NFR-SEC-007, 026 (phân loại + hosting) | — | DPIA (P1); silo (P2) |
-| Kênh, danh tính | NFR-SEC-002, 003, 017, 018, 027 | + NFR-SEC-028 | NFR-SEC-021, 022, 032 (P1) |
-| Lệnh | NFR-SEC-001, 004, 011 (mọi ghi tham số native qua edge đều ký và có hạn) | + NFR-SEC-009, 010, 012, 013, 014 | NFR-SEC-019 (P1) |
+| Kênh, danh tính | NFR-SEC-002, 003 (edge thiếu TPM/SE được phép như ngoại lệ ghi rủi ro R-33), 017, 018, 027, 028 | + **edge có TPM/secure element** (không bật M2 trên edge thiếu TPM/SE — 13 D-12, CF-38) | NFR-SEC-021, 022, 032 (P1) |
+| Lệnh | NFR-SEC-001, 004, 011 (mọi ghi tham số native qua edge đều ký và có hạn); NFR-SEC-009 phần `M1StaticLimits` ký, duyệt C3 hai người trong commissioning ([§11.3a](#s11-m1)); NFR-SEC-012 biến thể đếm; NFR-SEC-013 kill switch (dừng cả lịch native và `CONFIG_PUSH`) | + NFR-SEC-009 SOE đầy đủ, 010, 012 biến thể ΔP, 014 | NFR-SEC-019 (P1) |
 | Audit, secrets | NFR-SEC-015 (append-only + chuỗi), 016 | — | Neo WORM (P1) |
-| Độ tin cậy | NFR-REL-001, 003, 004 (mục tiêu), 005, 008, 009, 011, 012, 014, 015, 016 | + NFR-REL-002, 007, 010, 013, 017 (game day) | NFR-REL-006, 018 (P1) |
+| Độ tin cậy | NFR-REL-001, 003, 004 (mục tiêu), 005, 008, 009, 010, 011, 012, 014, 015, 016 | + NFR-REL-002, 007, 013, 017 (game day) | NFR-REL-006, 018 (P1) |
 | Quan sát | NFR-OBS-001, 002, 003, 006 (phần P0), 007 | + NFR-OBS-008 (trực ca 24/7), 009 | NFR-OBS-004, 005 (P1) |
-| Quy trình | NFR-SEC-024 phần P0 (SAST/SCA/secret/SBOM) | + NFR-SEC-029, 030 (pen-test trước site M2 đầu tiên) | NFR-SEC-024 đầy đủ, 025, 031 |
+| Quy trình | NFR-SEC-024 phần P0 (SAST/SCA/secret/SBOM); NFR-SEC-030 (a): pen-test bên thứ ba web/API/broker/đường lệnh/edge phần cứng/OTA + ca lạm dụng, trước site production đầu tiên có `control_enabled = true` | + NFR-SEC-029, NFR-SEC-030 (b): pen-test lặp lại trước site M2 đầu tiên | NFR-SEC-024 đầy đủ, 025, 031 |
 
 ### 20.5 Đối chiếu với 7 nhóm yêu cầu nền tảng của IEC 62443 (kiến thức nền, chỉ để kiểm tra độ phủ)
 
@@ -1424,7 +1457,8 @@ Bảng này **không** phải tuyên bố tuân thủ (K §6 #34).
 | I-R-06 | Pháp lý VN (lưu trữ, dữ liệu cá nhân, thông báo) chưa kiểm chứng | Cao / Trung bình | Hosting VN mặc định; kiểm chứng trước phát hành |
 | I-R-07 | Chuỗi cung ứng edge | Thấp / Rất cao | SBOM, ký build, canary |
 | I-R-08 | Đồng hồ edge sai làm hỏng kiểm hạn | Trung bình / Cao | NFR-SEC-028, IL-06 |
-| I-R-09 (mới) | Edge MVP không có TPM → khóa thiết bị lưu phần mềm | Trung bình / Trung bình | Ngoại lệ có thời hạn; thay phần cứng ở Phase 1 |
+| I-R-09 (mới) | Edge MVP không có TPM → khóa thiết bị lưu phần mềm (13 R-33) | Trung bình / Trung bình | Chỉ cho phép ở site chỉ giám sát và Gate M1 có ghi rủi ro; **không** bật Gate M2 trên edge thiếu TPM/SE (13 D-12); thay phần cứng trước Phase 2 |
+| I-R-12 (mới) | Edge offline khi kill switch engage tiếp tục lịch cloud đã nhận (≤ 7 ngày) cho tới khi nối lại | Thấp / Cao | Trạng thái tạm ngưng retained, không hết hạn, đối chiếu trước khi chạy lịch sau reconnect (§14.4); cloud không gửi lịch mới; giữ horizon lịch ở mức cần thiết (≥ 48 h) thay vì tối đa 7 ngày khi không cần |
 | I-R-10 (mới) | Bộ P0 an toàn quá nặng cho đội mới làm chậm Gate M2 | Cao / Trung bình | Phân pha §20.4; M1 trước, M2 theo site |
 | I-R-11 (mới) | Trực ca 24/7 chưa có khi bật site M2 đầu tiên | Trung bình / Cao | NFR-OBS-008 là điều kiện M2 |
 
@@ -1435,7 +1469,7 @@ Bảng này **không** phải tuyên bố tuân thủ (K §6 #34).
 
 | ID | Gửi | Vấn đề | Đề xuất |
 |---|---|---|---|
-| X-10-01 | 04 (Yêu cầu) | 10 đề xuất mã mới NFR-SEC-027…032, NFR-REL-013…018, NFR-OBS-008…009 (§20) | Xác nhận số hoặc đánh số lại; thêm vào §6 của 04 và bảng ánh xạ |
+| X-10-01 | 04 (Yêu cầu) | 10 đề xuất mã mới NFR-SEC-027…032, NFR-REL-013…018, NFR-OBS-008…009 (§20) | **Đã đóng (vòng sửa, 2026-10-10):** 04 đã thêm cả 14 mã với số giữ nguyên, có ưu tiên và gate, và thêm NFR-SEC-033 (commissioning) |
 | X-10-02 | 04 | Trả lời các mục 04 §8 gửi 10: (a) danh sách cảnh báo không được gác cho BR-ALM-03 ở §17.3; (b) xác nhận lan truyền kill switch ≤ 60 s (NFR-REL-010); (c) xác nhận `T_stale_poc` 3 s làm mặc định, chỉnh 2–5 s trong SOE (Q-D-01 vẫn mở); (d) giờ hành chính mặc định 08:00–17:00 T2–T6 giờ site, cấu hình theo tenant — xác nhận; (e) BR-TAR-05: đồng ý — thay đổi làm đổi lịch tối ưu ở site có điều khiển cần `cmd.c2` | Cập nhật 04 |
 | X-10-03 | 04 | Ma trận §5.4 bổ sung: tắt `control_enabled` (an toàn hóa, C1) cho OPERATOR/SITE_ENGINEER/CONTROL_SUPERVISOR/ORG_ADMIN; MFA bắt buộc cho `TECHNICIAN` (ticket là thao tác ghi) | Xác nhận hoặc điều chỉnh ma trận 04 §3.4 |
 | X-10-04 | 05 / 07 | Tên trạng thái phê duyệt lệch: 04 và 05 dùng `APPROVAL_REJECTED`, 07 §8.4 dùng `APPROVAL_DENIED`. 10 dùng `APPROVAL_REJECTED` theo 05 | 07 sửa theo 05 |
@@ -1444,10 +1478,14 @@ Bảng này **không** phải tuyên bố tuân thủ (K §6 #34).
 | X-10-07 | 06 (Kiến trúc) | ADR: cloud gửi ý định có hạn; ký tầng ứng dụng (JCS+JWS); hai mặt phẳng; RLS + silo; Fleet Governor; PDP engine; khóa lệnh ≠ khóa cấu hình; DR có kill switch tự động. Vẽ SVG zone/conduit theo mô tả §10.1 | Viết ADR, sơ đồ |
 | X-10-08 | 08 (Tối ưu) | Bộ sinh lịch là principal dịch vụ chịu PDP + Governor; validator giới hạn thay đổi 30%/slot; tự trải jitter khi vượt ngân sách | Thêm ràng buộc vào validator |
 | X-10-09 | 09 (UX/UI) | Màn: hàng đợi duyệt C3 (diff, MW, % ngân sách Governor, hạn); trạng thái điều khiển site (LOCAL/REMOTE, kill switch, Gate, SOE, interlock, `run_mode`); "Tạm ngưng điều khiển từ xa"; "Dừng vận hành từ xa"; không nút E-stop; trạng thái lệnh không lạc quan; mã lý do từ chối PDP dễ hiểu | Cấp UI-NN |
-| X-10-10 | 11 (Lộ trình) | Gate M2 cho site đầu tiên cần: pen-test bên thứ ba, game day mất cloud, trực ca 24/7, HIL §19.3 đạt. Chứng nhận: ISO 27001 (Phase 1–2), IEC 62443-4-2 cho edge (Phase 2) | Đưa vào lộ trình |
+| X-10-10 | 11 (Lộ trình) | Site M1 có điều khiển đầu tiên cần: pen-test bên thứ ba (a), C3 hai người, kill switch, Governor đếm, `M1StaticLimits`, toàn vẹn thời gian, HIL §19.3 phần M1. Gate M2 cho site đầu tiên cần thêm: pen-test (b), game day mất cloud, trực ca 24/7, HIL §19.3 đầy đủ, edge có TPM/SE (13 D-12). Chứng nhận: ISO 27001 (Phase 1–2), IEC 62443-4-2 cho edge (Phase 2) | Đưa vào lộ trình |
 | X-10-11 | 13 (Rủi ro) | Rủi ro I-R-01…11, câu hỏi Q-I-01…14, Q-10-01…03 | Cấp `R-NN`, `Q-NN` |
 | X-10-12 | 14 (Nguồn) | Danh sách URL ở §23; nội dung tiêu chuẩn/luật không URL là kiến thức nền | Cấp S-xxx; đánh dấu Low/Med |
 | X-10-13 | 03 (Danh mục) | Đã ghi vào [notes/_catalog-gaps.md](notes/_catalog-gaps.md): gói bằng chứng sự cố (forensic bundle) và sổ sự cố bảo mật/an toàn | Người viết 03 xử lý |
+| X-10-14 | 04 (Yêu cầu) | Cột Gate: NFR-SEC-008, 013, 028, NFR-REL-010 chuyển M1; NFR-SEC-012 tách M1 (đếm)/M2 (ΔP); NFR-SEC-009 thêm phần M1 `M1StaticLimits`; NFR-SEC-030 tách (a) M1 / (b) M2 (13 CF-28/D-03). Ma trận §3.4: vai trò được đổi `SiteControlConfig.default_strategy` (C2) — 10 đề xuất SITE_ENGINEER, CONTROL_SUPERVISOR | Cập nhật §6 và ma trận |
+| X-10-15 | 05 (Mô hình miền) | Thêm `M1StaticLimits` (tập con SOE, cùng lược đồ; trường mới `pv_limit_min_w`, `pv_limit_max_w`) và `RemoteControlSuspension.state_version`; trạng thái báo cáo edge thêm `remote_control_state_version`. Tin trạng thái MAINTENANCE dùng `BAD_COMM` + lý do khoảng trống `MAINTENANCE` (10 không cần mã `BAD_NOT_CONNECTED`) | Thêm vào §6, §11 |
+| X-10-16 | 07 (Tích hợp) / 06 (Kiến trúc) | Tin `REMOTE_CONTROL_STATE` ký, retained trên `down/config`; edge đối chiếu trước khi nối lại lịch cloud sau reconnect; S16 báo `remote_control_state_version`. Bước 9 chuỗi kiểm edge §8.7 dùng `M1StaticLimits` cho site M1. ACL `svc-ingest-ack` chỉ `TELEMETRY_ACK`/`RESEND_REQUEST` (ADR-16, CF-32) | Cập nhật 07 §7.1, §8.7; ADR ở 06 |
+| X-10-17 | 08 (Tối ưu) | Bộ sinh lịch tầng 2 có `run_id` và trần `max_sites_per_run` từ Gate M1; dừng khi kill switch engage | Thêm vào validator/scheduler |
 
 ---
 

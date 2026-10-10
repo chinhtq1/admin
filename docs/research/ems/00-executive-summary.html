@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tóm tắt điều hành EMS</title>
+<link rel="stylesheet" href="assets/ems-docs.css">
+<style>
+svg .arrowhead { fill: var(--d-edge); }
+svg .arrowhead.ctl { fill: var(--bad); }
+td.res { white-space: nowrap; font-weight: 600; }
+td.res.ok { color: var(--ok); }
+td.res.part { color: var(--warn); }
+td.res.no { color: var(--bad); }
+</style>
+</head>
+<body>
+<nav class="docnav"><div class="inner">
+  <a class="brand" href="index.html">EMS Research</a>
+  <a href="00-executive-summary.html" aria-current="page">00 Tóm tắt</a>
+  <a href="01-research-methodology.md">01 Phương pháp</a>
+  <a href="02-market-and-competitor-analysis.html">02 Thị trường</a>
+  <a href="03-functional-catalog.html">03 Chức năng</a>
+  <a href="04-business-requirements.md">04 Yêu cầu</a>
+  <a href="05-domain-model.html">05 Domain</a>
+  <a href="06-system-architecture.html">06 Kiến trúc</a>
+  <a href="07-device-integration.md">07 Tích hợp</a>
+  <a href="08-energy-optimization.md">08 Tối ưu</a>
+  <a href="09-ux-ui-specification.html">09 UX/UI</a>
+  <a href="10-security-and-reliability.md">10 An toàn</a>
+  <a href="11-mvp-and-roadmap.html">11 Lộ trình</a>
+  <a href="12-traceability-matrix.md">12 Truy vết</a>
+  <a href="13-open-questions-and-risks.md">13 Rủi ro</a>
+  <a href="14-source-register.md">14 Nguồn</a>
+</div></nav>
+<main>
+<header class="doc-header">
+  <div class="kicker">Tài liệu 00 · System Architect (Agent J) với Evidence Judge (Agent K) ký duyệt</div>
+  <h1>Tóm tắt điều hành: EMS C&amp;I đa site, đa hãng cho thị trường Việt Nam</h1>
+  <div class="meta">Phiên bản 1.0 · Ngày 2026-10-10 · Trạng thái: bản hợp nhất nội bộ sau vòng rà soát và sửa. <b>Chưa phát hành ra ngoài đội</b>: còn chờ kiểm chứng pháp lý, giấy phép và spot-check nguồn (V-01…V-14 ở <a href="14-source-register.md">14 §7</a>; <a href="13-open-questions-and-risks.md">13 §8</a>) · Ràng buộc bởi quyết định thống nhất của <a href="notes/K-review-round1.md">K-review-round1 §6</a></div>
+</header>
+
+<div class="layout-toc">
+<nav class="toc" aria-label="Mục lục">
+<ol>
+  <li><a href="#s1">1. Kết luận trong một trang</a></li>
+  <li><a href="#s2">2. Sản phẩm EMS nên là gì</a></li>
+  <li><a href="#s3">3. Khách hàng mục tiêu và ranh giới</a></li>
+  <li><a href="#s4">4. Phạm vi chức năng</a></li>
+  <li><a href="#s5">5. Kiến trúc đề xuất</a></li>
+  <li><a href="#s6">6. MVP và lộ trình</a></li>
+  <li><a href="#s7">7. Rủi ro lớn nhất</a></li>
+  <li><a href="#s8">8. Độ phủ bằng chứng và câu hỏi mở</a></li>
+  <li><a href="#s9">9. Quality gate</a></li>
+  <li><a href="#s10">10. Sửa chéo ở vòng hợp nhất</a></li>
+  <li><a href="#s11">11. Bộ tài liệu</a></li>
+</ol>
+</nav>
+<article>
+
+<!-- ============================================================ -->
+<h2 id="s1">1. Kết luận trong một trang</h2>
+
+<div class="callout">
+<p><b>Đề xuất.</b> Xây một <b>EMS behind-the-meter (sau công tơ) cho C&amp;I, đa site, đa hãng</b>, đặt trên một lớp giám sát và O&amp;M vững. Người dùng chính là đơn vị vận hành: installer/EPC, nhà thầu O&amp;M, ESCO. Chủ nhà máy C&amp;I đọc báo cáo. <span class="tag proposal">PROPOSAL</span> theo <a href="notes/K-review-round1.md">K §6 #1</a>.</p>
+</div>
+
+<ul>
+  <li><b>Giá trị ở Việt Nam đến theo thứ tự này:</b> (1) tuân thủ giới hạn xuất và trần nhập, (2) minh bạch chi phí theo TOU, (3) O&amp;M đa hãng, (4) tối ưu BESS. Peak shaving theo demand charge là P1. <span class="tag inference">INFERENCE</span> Thứ tự này dựa trên ba dữ kiện. Có 28.254 hệ mái nhà tự sản xuất tự tiêu thụ, nhưng chỉ khoảng 287 hệ đăng ký bán dư (<a href="https://vietnamnet.vn/en/rooftop-solar-saves-billions-of-dong-but-one-bottleneck-remains-2552186.html">S-013</a>, qua kết quả tìm kiếm). Cao điểm mới là 17h30–22h30 từ Thứ Hai đến Thứ Bảy theo QĐ 963 (<a href="https://thuvienphapluat.vn/van-ban/Tai-nguyen-Moi-truong/Quyet-dinh-963-QD-BCT-2026-khung-gio-cao-diem-thap-diem-cua-he-thong-dien-quoc-gia-703327.aspx">S-016</a>). Cơ sở tính giá hai thành phần còn <span class="tag unknown">UNKNOWN</span> (EL-016).</li>
+  <li><b>Site chỉ có PV là công dân hạng nhất.</b> BESS và EV là tùy chọn. Phase 1 phải bán được cho site không có pin. <span class="tag proposal">PROPOSAL</span> (K §6 #2).</li>
+  <li><b>Điều khiển an toàn quyết định kiến trúc.</b> Cloud không bao giờ nằm trong vòng bảo vệ và không ghi thẳng xuống thiết bị. Cloud chỉ gửi ý định đã ký và có hạn; edge của ta quyết định theo arbiter 12 mức. Không có API sửa thông số bảo vệ và không có E-stop từ xa. <span class="tag proposal">PROPOSAL</span> (K §6 #14–#16, #28).</li>
+  <li><b>MVP qua hai cổng.</b> <b>Gate M1</b>: giám sát, cộng cấu hình chế độ native của hãng có readback. <b>Gate M2</b>: edge của ta làm chủ vòng và nhận setpoint, bật theo từng site sau khi đủ bộ an toàn P0. Lộ trình giao M1 ở Phase 1 (139 FR) và M2 ở Phase 2. <span class="tag proposal">PROPOSAL</span> (<a href="11-mvp-and-roadmap.html">11</a>).</li>
+  <li><b>Khoảng trống thị trường.</b> Chưa sản phẩm nào trong mẫu 11 sản phẩm công bố đồng thời bốn điều: (a) chế độ native nhiều hãng trên một site có readback, (b) biểu giá Việt Nam có phiên bản, (c) nhật ký bằng chứng tuân thủ giới hạn xuất, (d) quy trình O&amp;M đa hãng cho installer. <span class="tag inference">INFERENCE</span> Đây là kết luận từ ma trận chỉ dựa trên snippet. "Không có tài liệu" không có nghĩa là "không hỗ trợ" (<a href="02-market-and-competitor-analysis.html#khac-biet">02 §11</a>).</li>
+  <li><b>Khả thi.</b> Phase 0+1+2 ước tính 322–515 người-tuần, tức khoảng 58–92 tuần đội với 8 kỹ sư. Đường găng là nhóm edge. <span class="tag inference">INFERENCE</span> (11 §1, §11).</li>
+  <li><b>Độ tin cậy.</b> Bằng chứng mới chỉ có <b>snippet tìm kiếm</b>. Không trang nào được mở trực tiếp, không văn bản pháp luật hay tiêu chuẩn nào được đọc toàn văn, và chưa URL nào được reviewer spot-check. Mọi yêu cầu tuân thủ pháp lý đều chờ kiểm chứng (§8).</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="s2">2. Sản phẩm EMS nên là gì</h2>
+
+<h3>2.1 Định nghĩa sản phẩm</h3>
+<p>Một nền tảng SaaS cộng gateway edge, quản lý dòng năng lượng sau công tơ của nhiều site C&amp;I. Tài sản gồm PV, BESS, lưới, phụ tải, tùy chọn trụ sạc EV và máy phát. Thiết bị có thể của nhiều hãng. Sản phẩm có hai mặt phẳng tách biệt <span class="tag proposal">PROPOSAL</span> (K §6 #25; <a href="06-system-architecture.html">06 ADR-01</a>):</p>
+<div class="cards">
+  <div class="card"><h4>Monitoring plane (luôn bật)</h4>
+  <p>Thu thập đa hãng qua edge, hoặc qua connector cloud hãng chỉ đọc với site chỉ giám sát. Gồm chuỗi thời gian và tổng hợp 5 phút; KPI và phân bổ dòng năng lượng có phiên bản; biểu giá Việt Nam có phiên bản với hóa đơn bóng; cảnh báo, ticket và O&amp;M; báo cáo và bằng chứng tuân thủ.</p></div>
+  <div class="card"><h4>Control plane (tắt mặc định theo site)</h4>
+  <p>Cấu hình chế độ native (M1) hoặc setpoint/lịch envelope cho edge (M2). Các thành phần: bộ sinh lịch luật TOU tầng 2, SOE (vùng vận hành an toàn) đã ký, PDP, phê duyệt C3 hai người, Fleet Governor, kill switch và audit append-only. Tầng 3 (MILP/MPC) là P1 và chỉ bật cho site đã có backtest thắng luật.</p></div>
+  <div class="card"><h4>Edge (bắt buộc ở site có lệnh)</h4>
+  <p>Driver Modbus/SunSpec (OCPP ở P1), lấy mẫu 1 s, buffer không mất dữ liệu khi mất mạng tới 7 ngày (mục tiêu 30 ngày), lịch dự phòng ≥ 48 h, arbiter 12 mức, SOE kẹp tại chỗ. Fallback mặc định: BESS về 0 hoặc về chế độ native, PV về giới hạn native.</p></div>
+</div>
+
+<h3>2.2 Sản phẩm này không phải là gì (12–18 tháng tới)</h3>
+<ul>
+  <li>Không phải nền tảng ESG/carbon, SCADA/EMS cấp lưới, controller microgrid (tách đảo, black start), hay sàn giao dịch điện. <span class="tag proposal">PROPOSAL</span> (K §6 #1; <a href="11-mvp-and-roadmap.html#s13">11 §13</a>).</li>
+  <li>Không thay firmware BMS/PCS và không thay công tơ thanh toán của EVN. Hóa đơn bóng không thay hóa đơn EVN.</li>
+  <li>Không gọi bất cứ thứ gì là "AI" nếu nó không phải mô hình học đã được đánh giá. Dự báo F0/F1 mang nhãn "Thống kê", lịch tầng 2 mang nhãn "Quy tắc" (K §6 #33).</li>
+  <li>Không quảng cáo phần trăm tiết kiệm. Tiết kiệm luôn tính bằng hóa đơn bóng so với baseline phản thực, trên cùng phiên bản biểu giá (K §6 #34).</li>
+</ul>
+
+<h3>2.3 Kế thừa và khác biệt so với hướng FusionSolar trước</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Chủ đề</th><th>Hướng FusionSolar (<a href="../fusionsolar/README.md">docs/research/fusionsolar</a>)</th><th>Quyết định EMS</th><th>Lý do</th></tr></thead>
+<tbody>
+<tr><td>Phạm vi</td><td>Giám sát/O&amp;M PV đa hãng, chỉ đọc</td><td>Giữ nguyên làm nền (Phase 1), thêm ghi native ở Gate M1 và vòng edge ở Gate M2</td><td>Zero-export và cao điểm buổi tối đẩy giá trị sang cấu hình và lập lịch <span class="tag inference">INFERENCE</span></td></tr>
+<tr><td>Quy ước dấu lưới</td><td>+ = xuất (theo <code>meterPower</code> của Huawei)</td><td>Lưới + = nhập, BESS + = xả; UI hiện số không dấu kèm nhãn chiều</td><td>Khớp OpenEMS/OBIS A+, mọi trần là số dương (K R-01)</td></tr>
+<tr><td>Tần suất dữ liệu</td><td>1–5 phút</td><td>Edge 1 s; cloud nhận tổng hợp 5 s/60 s/300 s, thanh ghi điện năng ở mỗi mốc 5 phút, sự kiện ngay lập tức</td><td>Vòng giới hạn và bằng chứng tuân thủ cần độ phân giải giây (K §6 #19)</td></tr>
+<tr><td>Edge</td><td>Edge kiểu OpenEMS để thu thập</td><td>Edge bắt buộc ở site có lệnh; runtime (OpenEMS hay tự xây) chờ PoC-03 và kiểm tra giấy phép</td><td>An toàn lệnh; giấy phép OpenEMS <span class="tag unknown">UNKNOWN</span> (ADR-07)</td></tr>
+<tr><td>Lưu trữ</td><td>TimescaleDB</td><td>TimescaleDB + Parquet, có điều kiện kiểm tra giấy phép TSL và PoC 1.000 site</td><td>TSL cấm bán dạng DBaaS; SaaS của ta có bị cấm không là <span class="tag unknown">UNKNOWN</span> (EL-090, <a href="https://www.tigerdata.com/docs/about/latest/timescaledb-editions">S-348</a>)</td></tr>
+<tr><td>Stack</td><td>Java/Spring Boot + Angular</td><td>Giữ nguyên. Tầng 3 bắt đầu bằng OR-Tools Java; sidecar Python chỉ khi có ADR</td><td>Đội đã quen (K R-22)</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="s3">3. Khách hàng mục tiêu và ranh giới</h2>
+
+<h3>3.1 Người mua và người dùng</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Persona (04 §3.1)</th><th>Vai trò với sản phẩm</th><th>Cần gì trước</th><th>Ưu tiên</th></tr></thead>
+<tbody>
+<tr><td>P3 O&amp;M / NOC operator</td><td><b>Người dùng hằng ngày</b></td><td>Cảnh báo đa hãng, ack, ticket, trạng thái điều khiển rõ ràng, dữ liệu cũ không hiện thành 0</td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>P4 Installer/EPC/commissioning</td><td>Người mua và người cấu hình</td><td>Onboarding nhanh, phép thử dấu công tơ, test giới hạn xuất, biên bản bàn giao</td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>P1 Chủ C&amp;I / CFO, P6 IPP/ESCO</td><td>Người xem báo cáo, người cấp quyền</td><td>Hóa đơn bóng theo khung giờ, đồng ý bật điều khiển, cấp quyền có thời hạn cho installer</td><td><span class="prio p0">P0</span> báo cáo</td></tr>
+<tr><td>P2 Energy manager</td><td>Phân tích</td><td>Pmax 30 phút, đo phụ theo phụ tải</td><td><span class="prio p0">P0</span>/<span class="prio p1">P1</span></td></tr>
+<tr><td>P5 BESS integrator</td><td>Đối tác thiết bị</td><td>Lớp supervisory tôn trọng giới hạn BMS, không làm mất bảo hành</td><td><span class="prio p0">P0</span>/<span class="prio p1">P1</span></td></tr>
+<tr><td>P7 Aggregator/VPP, PG điều độ lưới</td><td>Nguồn lệnh ngoài</td><td>DR/VPP (P2, chỉ "VPP-capable"); IEC 104 slave (P1 có điều kiện)</td><td><span class="prio p2">P2</span>/<span class="prio p1">P1</span></td></tr>
+</tbody></table></div>
+<p class="muted">Mọi persona và JTBD là nghiên cứu tại bàn. Chưa phỏng vấn khách nào (RQ-14, R-42). <span class="tag inference">INFERENCE</span></p>
+
+<h3>3.2 Ranh giới</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Trong phạm vi</th><th>Có điều kiện / sau</th><th>Ngoài phạm vi (12–18 tháng)</th></tr></thead>
+<tbody><tr>
+<td>Giám sát và O&amp;M đa hãng; site PV-only; giới hạn xuất/zero-export và trần nhập qua native (M1) rồi qua edge (M2); hóa đơn bóng TOU có hai lịch song song; BESS native và lịch luật tầng 2; cảnh báo và ticket; báo cáo và bằng chứng tuân thủ; multi-tenant cho installer</td>
+<td>Peak shaving theo demand (khi Q-03 đóng); ngân sách xuất 50% (khi Q-04 đóng); điều khiển EV qua OCPP 1.6J với security profile ≥ 2; tầng 3 MILP/MPC (sau backtest); IEC 104 slave (site trung áp bán dư); VPP/DR (P2, dạng "VPP-capable"); IEC 61850, DNP3, OpenADR, IEEE 2030.5 (P2)</td>
+<td>ESG/carbon platform; SCADA/EMS lưới; microgrid islanding và black start; giao dịch thị trường; sửa thông số bảo vệ (C4); E-stop từ xa; ghi lệnh qua cloud hãng ở MVP; app mobile native</td>
+</tr></tbody></table></div>
+
+<h3>3.3 Mô hình kinh doanh</h3>
+<p>Hãng thiết bị cho phần mềm miễn phí để bán phần cứng. Ví dụ, SolarEdge cho miễn phí lõi ONE for C&amp;I với người mua phần cứng (<a href="https://knowledge-center.solaredge.com/sites/kc/files/se-one-for-c&amp;i-overview.pdf">S-142</a>) <span class="tag fact">FACT</span>. Huawei SmartEMO đã có demand charge theo TOU từ 03/2026 (release note 31/03/2026, nghiên cứu FS trước, S-396) <span class="tag fact">FACT</span>. Vì vậy ta bán giá trị đa hãng, O&amp;M, biểu giá Việt Nam và bằng chứng tuân thủ, không bán dashboard. Hướng giá là hai gói tách theo mặt phẳng (giám sát; điều khiển) và dịch vụ giám sát hộ cho installer <span class="tag proposal">PROPOSAL</span>. Mức giá và sẵn sàng chi trả là <span class="tag unknown">UNKNOWN</span> (Q-19, R-46). Engine tính phí thuê bao chưa có F- (11 §9, Phase 4E).</p>
+
+<!-- ============================================================ -->
+<h2 id="s4">4. Phạm vi chức năng</h2>
+<p>Danh mục đầy đủ ở <a href="03-functional-catalog.html">03</a>: <b>270 tính năng trong 15 module</b>, trong đó 56 có tác động điều khiển và được gắn hạng lệnh tối thiểu cùng Gate. Yêu cầu kiểm thử được ở <a href="04-business-requirements.md">04</a>: <b>268 FR</b> (148 P0 / 95 P1 / 24 P2 / 1 CẤM) và <b>85 NFR</b> (SEC 33 · REL 18 · PERF 12 · DATA 13 · OBS 9). <span class="tag proposal">PROPOSAL</span></p>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Module</th><th>Nội dung chính</th><th class="num">MVP (P0)</th><th class="num">Phase 1 (P1)</th><th class="num">Phase 2 (P2)</th><th class="num">Ngoài</th><th class="num">⚠ Điều khiển</th></tr></thead>
+<tbody>
+<tr><td>M-ORG</td><td>Tenant, cây Org → Site → Device, RBAC, grant có hạn, đồng ý chủ tài sản</td><td class="num">12</td><td class="num">5</td><td class="num">1</td><td class="num">0</td><td class="num">0</td></tr>
+<tr><td>M-DASH</td><td>Danh mục site, energy flow, độ tươi dữ liệu, KPI danh mục</td><td class="num">7</td><td class="num">4</td><td class="num">1</td><td class="num">0</td><td class="num">0</td></tr>
+<tr><td>M-MON</td><td>Giám sát thời gian thực, connector Huawei Northbound chỉ đọc</td><td class="num">9</td><td class="num">3</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+<tr><td>M-HIST</td><td>Chuỗi, tổng hợp 5 phút, điện năng từ thanh ghi, quality ba tầng, phân bổ có phiên bản</td><td class="num">8</td><td class="num">6</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+<tr><td>M-REP</td><td>R1–R8, hóa đơn bóng + baseline B0, bằng chứng tuân thủ, trang phương pháp</td><td class="num">8</td><td class="num">11</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+<tr><td>M-TAR</td><td>Biểu giá có phiên bản, hai lịch TOU song song, nhiều biểu giá theo điểm đo</td><td class="num">6</td><td class="num">4</td><td class="num">1</td><td class="num">0</td><td class="num">0</td></tr>
+<tr><td>M-BESS</td><td>Giám sát BESS, chế độ native, SOE, dự phòng SOC (cấm: sửa bảo vệ, E-stop từ xa)</td><td class="num">10</td><td class="num">7</td><td class="num">1</td><td class="num">2</td><td class="num">9</td></tr>
+<tr><td>M-PV</td><td>Sản lượng, string, giới hạn PV qua native; PR chỉ khi có cảm biến POA</td><td class="num">5</td><td class="num">5</td><td class="num">3</td><td class="num">1</td><td class="num">3</td></tr>
+<tr><td>M-GRID</td><td>Giới hạn xuất, trần nhập, <code>MTR_POC</code> bắt buộc, rơ-le chống phát ngược</td><td class="num">8</td><td class="num">9</td><td class="num">2</td><td class="num">0</td><td class="num">8</td></tr>
+<tr><td>M-EV</td><td>Đo EV qua công tơ (MVP); OCPP/DLM (P1)</td><td class="num">1</td><td class="num">7</td><td class="num">2</td><td class="num">1</td><td class="num">6</td></tr>
+<tr><td>M-OPT</td><td>Arbiter 12 mức, chiến lược site, lịch luật tầng 2, kế hoạch 48 h; tầng 3 (P1)</td><td class="num">11</td><td class="num">9</td><td class="num">2</td><td class="num">1</td><td class="num">15</td></tr>
+<tr><td>M-ALM</td><td>Cảnh báo bốn mức (Khẩn cấp/Cao/Trung bình/Thông tin), ticket, trực ca; work order (P1)</td><td class="num">11</td><td class="num">11</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+<tr><td>M-INT</td><td>Edge, MQTT, driver, commissioning, <code>COMMISSIONING_TEST</code>, phát hành driver, OTA</td><td class="num">22</td><td class="num">8</td><td class="num">3</td><td class="num">0</td><td class="num">9</td></tr>
+<tr><td>M-SEC</td><td>Hạng lệnh C0–C4, envelope ký có hạn, MFA step-up, Governor, kill switch, audit, sẵn sàng M2</td><td class="num">21</td><td class="num">4</td><td class="num">2</td><td class="num">0</td><td class="num">5</td></tr>
+<tr><td>M-ADV</td><td>Dự báo F0/F1 "Thống kê" (MVP); dự báo đa nguồn, what-if (P1); ML chỉ khi đã đánh giá</td><td class="num">1</td><td class="num">4</td><td class="num">6</td><td class="num">4</td><td class="num">1</td></tr>
+<tr><th>Tổng</th><th></th><th class="num">140</th><th class="num">97</th><th class="num">24</th><th class="num">9</th><th class="num">56</th></tr>
+</tbody></table></div>
+<p class="muted">Nhãn "Phase 1/Phase 2" trong bảng là <b>hạng phát hành của 03</b>, không phải phase lộ trình của 11 (CF-29). Ánh xạ ở <a href="11-mvp-and-roadmap.html#s2-3">11 §2.3</a>.</p>
+<p>Các đặc tả đi kèm: mô hình miền <b>74 thực thể</b> có máy trạng thái (<a href="05-domain-model.html">05</a>); <b>khoảng 98 mã API</b> REST + SSE (<a href="06-system-architecture.html">06 §13</a>); <b>37 trang UI</b> (<a href="09-ux-ui-specification.html">09</a>); khoảng <b>340 mã test</b> truy vết về FR/NFR (<a href="12-traceability-matrix.md">12</a>).</p>
+
+<!-- ============================================================ -->
+<h2 id="s5">5. Kiến trúc đề xuất</h2>
+
+<figure>
+<div class="diagram">
+<svg viewBox="0 0 1000 600" role="img" aria-labelledby="arch-t arch-d">
+<title id="arch-t">Kiến trúc EMS: cloud hai mặt phẳng, broker MQTT, edge tại site</title>
+<desc id="arch-d">Người dùng web gọi monitoring plane và control plane qua REST và SSE. Monitoring plane lưu vào mon-db và đọc cloud hãng chỉ đọc. Control plane lưu vào ctl-db, ký bằng KMS và gửi ý định có hạn qua broker MQTT. Edge tại site kết nối outbound tới broker, gửi telemetry lên và nhận ý định xuống, rồi đọc ghi thiết bị qua Modbus, SunSpec, OCPP. Bảo vệ native của BMS, PCS và rơ-le nằm dưới cùng và luôn thắng.</desc>
+<defs>
+<marker id="m-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0,0 L10,5 L0,10 z"/></marker>
+<marker id="m-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead ctl" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<!-- users -->
+<rect class="box ext" x="40" y="18" width="230" height="44" rx="6"/>
+<text class="title" x="155" y="37" text-anchor="middle">API / webhook bên thứ ba</text>
+<text class="small" x="155" y="53" text-anchor="middle">P1 đọc · lệnh P2</text>
+<rect class="box" x="360" y="18" width="300" height="44" rx="6"/>
+<text class="title" x="510" y="37" text-anchor="middle">Web Angular (37 trang)</text>
+<text class="small" x="510" y="53" text-anchor="middle">operator · installer · chủ C&amp;I · REST + SSE</text>
+<!-- cloud zone -->
+<rect class="zone" x="10" y="80" width="980" height="225" rx="8"/>
+<text class="small" x="22" y="97">CLOUD · hosting tại VN mặc định (ADR-18) · không nằm trong vòng bảo vệ</text>
+<rect class="box" x="30" y="108" width="440" height="84" rx="6"/>
+<text class="title" x="250" y="128" text-anchor="middle">Monitoring plane (Spring Boot, fail-open có nhãn)</text>
+<text class="small" x="250" y="146" text-anchor="middle">ingest idempotent · chuỗi + tổng hợp 5 phút · quality · KPI</text>
+<text class="small" x="250" y="161" text-anchor="middle">biểu giá có phiên bản · hóa đơn bóng · cảnh báo/ticket</text>
+<text class="small" x="250" y="176" text-anchor="middle">báo cáo · bằng chứng tuân thủ · dự báo F0/F1</text>
+<rect class="box alt" x="530" y="108" width="440" height="84" rx="6"/>
+<text class="title" x="750" y="128" text-anchor="middle">Control plane (Spring Boot, fail-closed)</text>
+<text class="small" x="750" y="146" text-anchor="middle">Command service · PDP · C3 hai người · Governor · kill switch</text>
+<text class="small" x="750" y="161" text-anchor="middle">Planner tầng 2 (tầng 3 P1) · SOE / M1StaticLimits · Signer</text>
+<text class="small" x="750" y="176" text-anchor="middle">tắt mặc định theo site · không API C4</text>
+<rect class="box" x="30" y="210" width="250" height="46" rx="6"/>
+<text class="title" x="155" y="230" text-anchor="middle">mon-db</text>
+<text class="small" x="155" y="246" text-anchor="middle">PostgreSQL + TimescaleDB (+ Parquet)</text>
+<rect class="box" x="300" y="210" width="170" height="46" rx="6"/>
+<text class="title" x="385" y="230" text-anchor="middle">Connector cloud hãng</text>
+<text class="small" x="385" y="246" text-anchor="middle">chỉ đọc · site chỉ giám sát</text>
+<rect class="box alt" x="530" y="210" width="250" height="46" rx="6"/>
+<text class="title" x="655" y="230" text-anchor="middle">ctl-db</text>
+<text class="small" x="655" y="246" text-anchor="middle">lệnh · kế hoạch · SOE · audit (WORM)</text>
+<rect class="box alt" x="800" y="210" width="170" height="46" rx="6"/>
+<text class="title" x="885" y="230" text-anchor="middle">KMS/HSM · IdP</text>
+<text class="small" x="885" y="246" text-anchor="middle">khóa ký · MFA/WebAuthn</text>
+<text class="small" x="500" y="290" text-anchor="middle">RLS PostgreSQL + test cross-tenant trong CI · hai DB tách để truy vấn lịch sử không nghẽn đường lệnh</text>
+<!-- web edges -->
+<line class="edge" x1="440" y1="62" x2="300" y2="106" marker-end="url(#m-a)"/>
+<line class="edge" x1="580" y1="62" x2="700" y2="106" marker-end="url(#m-a)"/>
+<line class="edge dash" x1="155" y1="62" x2="155" y2="106" marker-end="url(#m-a)"/>
+<line class="edge" x1="155" y1="192" x2="155" y2="208" marker-end="url(#m-a)"/>
+<line class="edge" x1="385" y1="192" x2="385" y2="208" marker-start="url(#m-a)"/>
+<line class="edge" x1="655" y1="192" x2="655" y2="208" marker-end="url(#m-a)"/>
+<line class="edge" x1="885" y1="192" x2="885" y2="208" marker-end="url(#m-a)"/>
+<!-- vendor cloud + broker -->
+<rect class="box ext" x="40" y="330" width="230" height="44" rx="6"/>
+<text class="title" x="155" y="349" text-anchor="middle">Cloud hãng (Huawei Northbound)</text>
+<text class="small" x="155" y="365" text-anchor="middle">pull có hạn mức · 5 phút</text>
+<line class="edge dash" x1="230" y1="330" x2="360" y2="258" marker-end="url(#m-a)"/>
+<rect class="box" x="360" y="330" width="300" height="50" rx="6"/>
+<text class="title" x="510" y="350" text-anchor="middle">MQTT 5 broker (mTLS, ACL theo edge_id)</text>
+<text class="small" x="510" y="367" text-anchor="middle">ems/v1/{edge_id}/up/… · …/down/… (ADR-04)</text>
+<line class="edge" x1="450" y1="328" x2="330" y2="194" marker-end="url(#m-a)"/>
+<text class="small" x="300" y="282" text-anchor="end">telemetry 5 s/60 s/300 s</text>
+<line class="edge ctl" x1="700" y1="194" x2="590" y2="328" marker-end="url(#m-c)"/>
+<text class="small" x="700" y="282">ý định đã ký, có expires_at</text>
+<!-- site zone -->
+<rect class="zone" x="10" y="400" width="980" height="190" rx="8"/>
+<text class="small" x="22" y="417">SITE C&amp;I · edge bắt buộc khi có lệnh</text>
+<line class="edge" x1="230" y1="436" x2="450" y2="382" marker-start="url(#m-a)" marker-end="url(#m-a)"/>
+<text class="small" x="360" y="424">outbound only · seq + ack</text>
+<rect class="box ot" x="30" y="436" width="400" height="100" rx="6"/>
+<text class="title" x="230" y="456" text-anchor="middle">Edge của ta (gateway)</text>
+<text class="small" x="230" y="474" text-anchor="middle">driver khai báo · lấy mẫu 1 s · buffer ≥ 7 ngày (mục tiêu 30)</text>
+<text class="small" x="230" y="489" text-anchor="middle">arbiter 12 mức · SOE kẹp · kiểm chữ ký/hạn/seq</text>
+<text class="small" x="230" y="504" text-anchor="middle">lịch dự phòng ≥ 48 h · control_owner NATIVE | EDGE</text>
+<text class="small" x="230" y="519" text-anchor="middle">LOCAL/REMOTE · trạng thái kill switch ký, retained</text>
+<rect class="box" x="470" y="432" width="150" height="40" rx="6"/>
+<text class="title" x="545" y="450" text-anchor="middle">Công tơ MTR_POC</text>
+<text class="small" x="545" y="464" text-anchor="middle">bắt buộc cho chức năng lưới</text>
+<rect class="box" x="640" y="432" width="150" height="40" rx="6"/>
+<text class="title" x="715" y="450" text-anchor="middle">Inverter PV / logger</text>
+<text class="small" x="715" y="464" text-anchor="middle">controller native</text>
+<rect class="box" x="810" y="432" width="170" height="40" rx="6"/>
+<text class="title" x="895" y="450" text-anchor="middle">BESS: PCS + BMS</text>
+<text class="small" x="895" y="464" text-anchor="middle">watchdog bắt buộc cho setpoint</text>
+<rect class="box ext" x="470" y="508" width="150" height="40" rx="6"/>
+<text class="title" x="545" y="526" text-anchor="middle">Trụ sạc EV</text>
+<text class="small" x="545" y="540" text-anchor="middle">OCPP 1.6J SP ≥ 2 (P1)</text>
+<rect class="box" x="640" y="508" width="150" height="40" rx="6"/>
+<text class="title" x="715" y="526" text-anchor="middle">Phụ tải · MBA</text>
+<text class="small" x="715" y="540" text-anchor="middle">đo phụ · trần nhập</text>
+<rect class="box" x="810" y="508" width="170" height="40" rx="6"/>
+<text class="title" x="895" y="526" text-anchor="middle">Interlock tại chỗ</text>
+<text class="small" x="895" y="540" text-anchor="middle">E-stop cứng · PCCC · khóa LOCAL</text>
+<line class="edge ctl" x1="430" y1="490" x2="960" y2="490"/>
+<line class="edge ctl" x1="545" y1="490" x2="545" y2="474" marker-end="url(#m-c)"/>
+<line class="edge ctl" x1="715" y1="490" x2="715" y2="474" marker-end="url(#m-c)"/>
+<line class="edge ctl" x1="895" y1="490" x2="895" y2="474" marker-end="url(#m-c)"/>
+<line class="edge ctl" x1="545" y1="490" x2="545" y2="506" marker-end="url(#m-c)"/>
+<line class="edge ctl" x1="715" y1="490" x2="715" y2="506" marker-end="url(#m-c)"/>
+<line class="edge ctl" x1="895" y1="490" x2="895" y2="506" marker-end="url(#m-c)"/>
+<text class="small" x="230" y="560" text-anchor="middle">Modbus TCP/RTU · SunSpec · OCPP · CAN chỉ nghe</text>
+<text class="small" x="500" y="578" text-anchor="middle">Bảo vệ native (BMS/PCS/rơ-le) là mức 1 của arbiter và luôn thắng · không có API sửa bảo vệ · không có E-stop từ xa</text>
+</svg>
+</div>
+<figcaption>Hình 1. Kiến trúc tổng thể. Nét đỏ là đường có thể ghi xuống thiết bị: chỉ edge ghi, theo ý định đã ký và có hạn. Nét đứt là thành phần chỉ đọc hoặc P1/P2. Chi tiết C4 mức 1–3 ở <a href="06-system-architecture.html#s4">06 §4–§7</a>.</figcaption>
+</figure>
+
+<h3>5.1 Quyết định chính</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Chủ đề</th><th>Quyết định</th><th>Nhãn</th><th>Chi tiết</th></tr></thead>
+<tbody>
+<tr><td>Cấu trúc ứng dụng</td><td>Hai modular monolith Java/Spring Boot theo mặt phẳng; không microservices, không Kafka ở MVP (dùng transactional outbox)</td><td><span class="tag proposal">PROPOSAL</span></td><td>06 ADR-01, ADR-05</td></tr>
+<tr><td>Lệnh</td><td>Cloud gửi ý định đã ký, có <code>expires_at</code> (setpoint mặc định 15 phút, tối đa 1 h; lịch tối đa 7 ngày), mặc định revert khi hết hạn. Trạng thái APPLIED chỉ sau readback. Không gửi lại lệnh đã hết hạn. Ngoại lệ duy nhất là trạng thái tạm ngưng của kill switch: không hết hạn và chỉ gỡ bằng C3</td><td>Quyết định K</td><td>06 ADR-12–14; 07 §8; 10 §11, §14.4</td></tr>
+<tr><td>Arbiter (cố định mức 1–6)</td><td>1 bảo vệ native · 2 interlock tại chỗ · 3 giám sát an toàn edge · 4 tuân thủ lưới · 5 trần nhập vật lý · 6 dự phòng backup · 7 lệnh tay · 8 DR/VPP · 9 peak shaving demand · 10 cam kết EV · 11 lịch kinh tế · 12 chiến lược mặc định</td><td>Quyết định K</td><td>05 §11.1; 08; 10</td></tr>
+<tr><td>Hạng lệnh</td><td>C0–C4. C3 cần hai người duyệt (cấu hình lưới, <code>control_owner</code>, OTA, gỡ kill switch, bật <code>control_enabled</code>). C4 bị cấm. Org Admin mặc định không có quyền lệnh</td><td>Quyết định K</td><td>04 §2; 10 §5</td></tr>
+<tr><td>Hợp đồng dữ liệu</td><td>Raw: W, Wh, var, VA (bộ đếm Wh int64); API: kW/kWh; tên trường có hậu tố đơn vị. Lưu UTC, mỗi site có múi giờ IANA. <code>ts</code>/<code>ts_src</code>/<code>ts_ingest</code>; bucket nửa mở theo <code>bucket_start</code>. Quality ba tầng; không hiện 0 thay cho thiếu dữ liệu</td><td>Quyết định K</td><td>05 §17; 07 §7</td></tr>
+<tr><td>Messaging</td><td>MQTT 5 + mTLS, outbound-only, lô nén nhị phân, <code>seq</code> + ack, ingest idempotent. Broker production chọn sau PoC-02 và rà soát giấy phép (EMQX ≥ 5.9 là BSL 1.1). Pilot dùng Mosquitto 2.1 có tiêu chí thoát</td><td><span class="tag proposal">PROPOSAL</span></td><td>06 ADR-04; <a href="15-simulators-and-messaging.md">15 §7</a></td></tr>
+<tr><td>Lưu trữ và retention</td><td>TimescaleDB + Parquet, có điều kiện. Raw 13 tháng; 5 phút 5 năm; giờ trở lên suốt đời dự án. Audit lệnh online ≥ 13 tháng, WORM ≥ 5 năm</td><td>Quyết định K, chặn bởi Q-14</td><td>06 ADR-06; 05</td></tr>
+<tr><td>Tenant</td><td>Shared schema + RLS FORCE + lớp lọc ứng dụng + test cross-tenant chặn build</td><td>Quyết định K</td><td>06 ADR-08</td></tr>
+<tr><td>Tối ưu</td><td>Tầng 1 (luật edge) và tầng 2 (lịch luật TOU, Java) ở MVP. Tầng 3 MILP/MPC 48 h, slot 15 phút là P1 và chỉ bật khi backtest thắng luật. Tầng 4 VPP/DR là P2</td><td>Quyết định K</td><td>08; 06 ADR-11</td></tr>
+<tr><td>Edge runtime và phần cứng</td><td>Hợp đồng trước, runtime sau. PoC OpenEMS Edge so với runtime Java tự xây; mặc định dự phòng là tự xây. Site M2 cần TPM/secure element</td><td><span class="tag unknown">UNKNOWN</span> giấy phép</td><td>06 ADR-07, ADR-19</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="s6">6. MVP và lộ trình</h2>
+<p>Không có mốc lịch. Ước lượng là khoảng người-tuần (pw), sai số ±30% <span class="tag inference">INFERENCE</span>. Phase sau chỉ bắt đầu khi phase trước qua cổng. Phase 3–4 chạy theo trigger từ bằng chứng thị trường và pháp lý (<a href="11-mvp-and-roadmap.html">11</a>).</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Phase</th><th>Mục tiêu</th><th>Cổng ra</th><th class="num">pw</th></tr></thead>
+<tbody>
+<tr><td>0 Foundation</td><td>Gỡ điều kiện chặn: pháp lý, giấy phép TSL/OpenEMS/broker, PoC lưu trữ/broker/edge/RLS, phần cứng edge, phỏng vấn khách, chọn pilot, hợp đồng điểm/lệnh v1, virtual site v0</td><td>G0</td><td class="num">49–77</td></tr>
+<tr><td>1 Monitoring MVP</td><td>Giám sát đa hãng; giới hạn xuất/trần nhập qua native có readback và bằng chứng tuân thủ; hóa đơn bóng TOU + B0; cảnh báo và ticket; tầng 2 → lịch native BESS. Kill switch, Governor biến thể đếm, C3 và pen-test (a) phải có trước site đầu tiên bật <code>control_enabled</code></td><td>G1 = Gate M1</td><td class="num">180–285</td></tr>
+<tr><td>2 Operational EMS</td><td>Edge làm chủ vòng theo từng site (Gate M2): arbiter, SOE đầy đủ, interlock, Governor ΔP, HIL, pen-test (b), trực ca 24/7; gói O&amp;M (work order, SLA, PR/availability, đối soát hóa đơn)</td><td>G2 = site M2 đầu tiên đạt 30 ngày</td><td class="num">93–153 (+8–14 IEC 104 có điều kiện)</td></tr>
+<tr><td>3 Advanced (theo trigger)</td><td>Tầng 3, dự báo đa nguồn, demand, ngân sách xuất 50%, EV OCPP/DLM, API/webhook, báo cáo B1/B2</td><td>G3 theo track</td><td class="num">146–230</td></tr>
+<tr><td>4 Market (theo trigger)</td><td>VPP-capable/DR, DPPA, giao thức P2, white-label, chứng nhận</td><td>G4 theo track</td><td class="num">118–210</td></tr>
+</tbody></table></div>
+<ul>
+  <li><b>Phase 0+1</b>: 229–362 pw, khoảng 41–65 tuần đội với 8 kỹ sư. <b>Phase 0+1+2 (MVP theo K)</b>: 322–515 pw, khoảng 58–92 tuần đội với 8 kỹ sư hoặc 46–74 tuần với 10 kỹ sư. <span class="tag inference">INFERENCE</span></li>
+  <li><b>Pilot Phase 1</b>: (a) một site PV zero-export dùng Huawei SmartLogger; (b) một site đa hãng có công tơ PCC Modbus/SunSpec; (c) một site chỉ giám sát qua Huawei Northbound; (d) một site PV + BESS có chế độ native đã kiểm chứng cho milestone 1b. <span class="tag proposal">PROPOSAL</span></li>
+  <li><b>G1 phải có</b> (trích): mọi FR Phase 1 đạt AC; test tải 1.000 site; rút WAN 7 ngày mà không mất mẫu; cross-tenant 100%; phép thử dấu và test giới hạn xuất tại mỗi site có ghi; ≥ 2 pilot chạy ≥ 30 ngày; R2 đối chiếu với một hóa đơn EVN thật; không chữ "AI" nào; Q-33 (a), U-29, U-30 (tích hợp Huawei) và CF-40 đã đóng.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="s7">7. Rủi ro lớn nhất</h2>
+<p>Đánh giá khả năng và tác động là <span class="tag inference">INFERENCE</span> của nhóm viết. Sổ đầy đủ có 54 rủi ro, 59 câu hỏi, 21 quyết định cần chốt và 40 xung đột đã hòa giải (<a href="13-open-questions-and-risks.md">13</a>).</p>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>Rủi ro</th><th>Loại</th><th>Mã</th><th>Giảm thiểu chính</th><th>Chặn</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Giấy phép TimescaleDB TSL không cho mô hình SaaS; giấy phép OpenEMS hoặc thư viện GPL buộc công bố mã edge; license broker chưa có trong ngân sách</td><td>Kỹ thuật/pháp lý</td><td>R-08, R-09, R-49, R-50</td><td>Ý kiến pháp lý ở Phase 0; phương án dự phòng (tự xây edge, tách logic tổng hợp); SBOM chặn build</td><td>G0</td></tr>
+<tr><td>2</td><td>Edge là đường găng: runtime không đạt chu kỳ p99 ≤ 200 ms trên phần cứng rẻ, đội edge mỏng; phạm vi 148 FR P0 lớn so với đội 6–10 người</td><td>Kỹ thuật/giao hàng</td><td>R-11, R-43</td><td>PoC-03 sớm; native trước; milestone 1a/1b/1c; danh sách cắt (11 §11)</td><td>Toàn lộ trình</td></tr>
+<tr><td>3</td><td>Register map không công bố hoặc đổi theo firmware → sai dấu/scale; mô phỏng "xanh giả" vì sinh từ cùng map</td><td>Kỹ thuật</td><td>R-12, R-48</td><td>Driver theo dải firmware, phép thử dấu, lab L5, cấm map diễn đàn trong driver VERIFIED</td><td>G1</td></tr>
+<tr><td>4</td><td>Thiết bị không có watchdog/reversion → setpoint treo khi edge chết; lệnh ghi không tác dụng hoặc bị native đè</td><td>An toàn</td><td>R-25, R-13</td><td>Không setpoint cưỡng bức cho thiết bị không watchdog; readback bắt buộc; <code>FAILED_NO_EFFECT</code>; test F-INT-28</td><td>G2</td></tr>
+<tr><td>5</td><td>Lệnh hàng loạt do tài khoản hoặc khóa bị chiếm</td><td>An toàn</td><td>R-26, R-27</td><td>Governor, kill switch có từ M1, C3 hai người, WebAuthn, SOE kẹp tại edge, KMS không xuất khóa</td><td>G1/G2</td></tr>
+<tr><td>6</td><td>Điện lực không chấp nhận vòng phần mềm làm thiết bị chống phát ngược; ngày áp khung TOU QĐ 963 vào hóa đơn chưa rõ</td><td>Pháp lý</td><td>R-03, R-01</td><td>Native trước; đọc rơ-le chống phát ngược; hai lịch TOU song song</td><td>G1</td></tr>
+<tr><td>7</td><td>OEM cho dashboard miễn phí và mở rộng tính năng (SmartEMO, SolarEdge ONE); mô hình giá không bền</td><td>Thương mại</td><td>R-40, R-46</td><td>Bán giá trị đa hãng + O&amp;M + biểu giá VN + bằng chứng tuân thủ; hai gói theo mặt phẳng</td><td>Định vị</td></tr>
+<tr><td>8</td><td>Persona và thứ tự driver sai vì chưa phỏng vấn khách</td><td>Thương mại</td><td>R-42, R-41</td><td>≥ 5 phỏng vấn O&amp;M/installer, ≥ 2 chủ C&amp;I, ≥ 2 hóa đơn EVN ở Phase 0</td><td>G0</td></tr>
+<tr><td>9</td><td>Không có pilot BESS mà nhà cung cấp tủ cấp register map theo hợp đồng</td><td>Thương mại</td><td>R-45</td><td>Tìm pilot từ Phase 0; NDA với nhà phân phối; PCS nhỏ ở lab</td><td>G2</td></tr>
+<tr><td>10</td><td>Một FACT sai lọt vào tài liệu phát hành ra ngoài vì chưa URL nào được spot-check</td><td>Thương mại/pháp lý</td><td>R-53 (V-14)</td><td>Không phát hành 02 và phần đối thủ của 00 trước lượt kiểm chứng có mạng</td><td>Phát hành</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="s8">8. Độ phủ bằng chứng và câu hỏi mở</h2>
+
+<h3>8.1 Nguồn và giới hạn mạng</h3>
+<ul>
+  <li><span class="tag fact">FACT</span> Môi trường chặn việc tải trang trực tiếp. Chỉ WebSearch hoạt động, với hạn mức 200 truy vấn dùng chung. Hạn mức hết khi agent F đang làm. Các agent G, H, I, J, K, Registrar và cả vòng rà soát cuối không có truy vấn nào (<a href="01-research-methodology.md">01 §6</a>).</li>
+  <li><span class="tag fact">FACT</span> Sổ nguồn có <b>403 mục</b>: 387 URL (319 chỉ qua snippet; 68 đã có trong nghiên cứu FusionSolar trước) và 16 tệp nghiên cứu trước. 0 URL được fetch. 0 văn bản pháp luật hay tiêu chuẩn được đọc toàn văn. 0 URL được reviewer spot-check. 2 nguồn bị loại vì do AI sinh (rfp.wiki). 16 URL bị gắn cờ (<a href="14-source-register.md">14 §1, §4</a>).</li>
+  <li>Độ tin cậy của 387 nguồn URL: High 60 · Med–High 51 · Med 210 · Low–Med 35 · Low 31. Evidence ledger có 100 claim quan trọng nhất (EL-001…EL-100).</li>
+  <li><b>Cách đọc:</b> "FACT" trong bộ tài liệu nghĩa là có ít nhất một nguồn có tên, có URL, và snippet của nó nói điều đó. Nó không có nghĩa là đã đọc toàn văn. Bằng chứng mạnh nhất là quan sát trực tiếp FusionSolar (ảnh, network trace, mã nguồn), nhưng chỉ cho Huawei và chỉ với tài khoản demo.</li>
+</ul>
+
+<h3>8.2 Phân bố nhãn bằng chứng</h3>
+<p>Số lần nhãn xuất hiện trong deliverable 01–15, đếm bằng script. Đây là số nhãn, không phải số claim riêng biệt.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Nhãn</th><th class="num">Số lần</th><th class="num">Tỷ lệ</th><th>Tập trung ở</th></tr></thead>
+<tbody>
+<tr><td><span class="tag fact">FACT</span></td><td class="num">≈ 666</td><td class="num">≈ 38%</td><td>02 (ma trận đối thủ), 03, 07, 04</td></tr>
+<tr><td><span class="tag inference">INFERENCE</span></td><td class="num">≈ 309</td><td class="num">≈ 18%</td><td>02, 03, 08, 07, 06</td></tr>
+<tr><td><span class="tag proposal">PROPOSAL</span></td><td class="num">≈ 465</td><td class="num">≈ 27%</td><td>10, 07, 03, 06</td></tr>
+<tr><td><span class="tag unknown">UNKNOWN</span></td><td class="num">≈ 291</td><td class="num">≈ 17%</td><td>02, 03, 05, 07, 10</td></tr>
+<tr><th>Tổng</th><th class="num">≈ 1.731</th><th class="num">100%</th><th></th></tr>
+</tbody></table></div>
+
+<h3>8.3 Kiểm chứng phải làm trước khi phát hành ra ngoài</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Mã</th><th>Nội dung</th><th>Chặn</th></tr></thead>
+<tbody>
+<tr><td>V-01…V-05</td><td>Toàn văn NĐ 58 + 243 (VBHN 52), TT 29/2026; ngày áp QĐ 963 vào hóa đơn; cơ sở giá hai thành phần; QĐ 1570; TT 05/2025 Điều 31</td><td>00, 02, 04, 10; M-TAR, M-GRID</td></tr>
+<tr><td>V-06</td><td>Khung luật an ninh mạng và dữ liệu Việt Nam hiện hành</td><td>Hosting, retention (ADR-18)</td></tr>
+<tr><td>V-07, V-08</td><td>Giấy phép TimescaleDB TSL; giấy phép OpenEMS theo module</td><td>ADR-06, ADR-07</td></tr>
+<tr><td>V-09…V-13</td><td>Datasheet và register map chính thức của hãng; tiêu chuẩn; các URL bị gắn cờ</td><td>Driver VERIFIED</td></tr>
+<tr><td>V-14</td><td>Spot-check URL bởi reviewer (chưa làm được ở cả hai vòng)</td><td>Phát hành 02 và phần đối thủ của 00</td></tr>
+</tbody></table></div>
+
+<h3>8.4 Mười điều đang chặn (13 §1)</h3>
+<ol>
+  <li>Giấy phép TimescaleDB TSL cho SaaS (Q-14) → ADR-06, G0.</li>
+  <li>Giấy phép OpenEMS và thư viện giao thức (Q-15) → ADR-07, G0.</li>
+  <li>Khung pháp lý dữ liệu và an ninh mạng VN 2026 (Q-08) → hosting, G0.</li>
+  <li>Ngày áp khung TOU của QĐ 963 vào hóa đơn (Q-01) → lịch hóa đơn mặc định, G1.</li>
+  <li>Yêu cầu thiết bị chống phát ngược và việc chấp nhận vòng phần mềm (Q-05) → G1.</li>
+  <li>Chưa phỏng vấn khách thật, chưa có pilot ký (Q-18, Q-20) → G0.</li>
+  <li>Watchdog/reversion thực tế của thiết bị đích (Q-27) → G2.</li>
+  <li>Phần cứng edge (TPM, BOM) và lab thiết bị (Q-36) → G0.</li>
+  <li>Phạm vi MVP so với năng lực đội (Q-43) → toàn lộ trình.</li>
+  <li>Pilot BESS có register map theo hợp đồng (Q-28) → G2.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2 id="s9">9. Quality gate</h2>
+<p>File đề bài gốc (mục 15 về quality gate) không có trong kho. Bảng dưới dựng lại checklist từ các ràng buộc của nhiệm vụ: quy ước, quyết định thống nhất của K, và các điều cấm. Mỗi mục được kiểm bằng cách đọc file hoặc chạy script trên thư mục <code>docs/research/ems</code> ngày 2026-10-10.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>Mục</th><th>Kết quả</th><th>Bằng chứng</th><th>Khoảng trống còn lại</th></tr></thead>
+<tbody>
+<tr><td>QG-01</td><td>Đủ deliverable 00–14, cộng 15, index, README</td><td class="res ok">Đạt</td><td>Có 16 tài liệu đánh số, cộng <a href="index.html">index.html</a> và <a href="README.md">README.md</a></td><td>Thư mục <code>wireframes/</code> trống; wireframe nằm trong 09</td></tr>
+<tr><td>QG-02</td><td>Quy ước HTML/Markdown (nav, CSS chung, title, bảng bọc, H1 + dòng điều hướng)</td><td class="res ok">Đạt</td><td>Script: 8 file HTML (00, 02, 03, 05, 06, 09, 11, index) có docnav + <code>aria-current</code> + <code>assets/ems-docs.css</code>; 0 lỗi lồng thẻ; 0 id trùng. 9 file MD đánh số và README có H1 và dòng điều hướng</td><td>—</td></tr>
+<tr><td>QG-03</td><td>Liên kết chéo tương đối không hỏng</td><td class="res ok">Đạt</td><td>Script quét mọi <code>href</code> và liên kết MD trong 00–15, index, README: 0 file đích thiếu, 0 anchor HTML thiếu (sau khi viết 00/index)</td><td>Anchor Markdown chỉ kiểm theo quy tắc slug gần đúng</td></tr>
+<tr><td>QG-04</td><td>Nhận định quan trọng có nhãn bằng chứng</td><td class="res part">Đạt một phần</td><td>≈ 1.731 nhãn trong 01–15 (§8.2). 12 và 14 ít nhãn vì là bảng truy vết/sổ nguồn có cột độ tin cậy riêng</td><td>Không kiểm từng câu; cần rà soát của người đọc nghiệp vụ</td></tr>
+<tr><td>QG-05</td><td>Không bịa URL</td><td class="res part">Đạt có điều kiện</td><td>14 §4 xác nhận mọi URL truy được về snippet trong ghi chú hoặc về nghiên cứu FS trước; rfp.wiki bị loại</td><td>0 URL được mở hay spot-check (V-14)</td></tr>
+<tr><td>QG-06</td><td>Không gán cho hãng tính năng không có tài liệu</td><td class="res ok">Đạt</td><td>Ma trận 02 dùng Verified/Partial/Unknown/N/A; vòng sửa hạ G3/SIE, E1/GB, E1/STM, J2/AMP, X1/HTI, X1/STM xuống Partial</td><td>Ô Verified là "hãng tuyên bố", chưa kiểm thử độc lập</td></tr>
+<tr><td>QG-07</td><td>Không gọi luật cố định là AI</td><td class="res ok">Đạt</td><td>Grep "AI" trong 09: chỉ xuất hiện trong câu cấm. Nhãn UI: "Quy tắc", "Thống kê", "Tối ưu dựa trên dự báo"</td><td>—</td></tr>
+<tr><td>QG-08</td><td>Mô phỏng và ước tính có nhãn</td><td class="res ok">Đạt</td><td>Nhãn "Mô phỏng", "≈ ước tính" (04 §1.3, 09); tenant demo không có route tới edge thật (T-E2-06, R-52)</td><td>—</td></tr>
+<tr><td>QG-09</td><td>Cloud không vượt bảo vệ native; không API C4; không E-stop từ xa</td><td class="res ok">Đạt</td><td>04 §1.3; 06 ADR-12; 10 §5; 11 §13; arbiter mức 1–3</td><td>—</td></tr>
+<tr><td>QG-10</td><td>Hợp đồng dữ liệu thống nhất (dấu, đơn vị, thời gian, bucket, quality)</td><td class="res ok">Đạt</td><td>Grep "lưới + = xuất": chỉ trong ngữ cảnh lịch sử FusionSolar (05, 09, 14). Bảng hợp đồng ở 05 §17, 07 §7</td><td>—</td></tr>
+<tr><td>QG-11</td><td>Arbiter 12 mức cùng một thứ tự ở mọi tài liệu</td><td class="res ok">Đạt</td><td>Đối chiếu 04, 05 §11.1, 07, 08, 10: mức 8 DR/VPP, 9 peak shaving demand; mức 1–6 không cấu hình được</td><td>—</td></tr>
+<tr><td>QG-12</td><td>MVP hai cổng; PV-only hạng nhất; điều khiển tắt mặc định</td><td class="res ok">Đạt</td><td>11 §6–§7; 04 FR-SEC-005; 03 hành trình §8</td><td>—</td></tr>
+<tr><td>QG-13</td><td>Lệnh ký, có hạn, readback; kill switch nhất quán</td><td class="res ok">Đạt</td><td>04 §1.3 #3 + AC-SEC-08 (đã thêm ca reconnect); 07 §8.7 (đường safe-ify); 10 §14.4; 06 ADR-14; 03 F-SEC-11 (đã đổi sang <code>REMOTE_CONTROL_SUSPEND</code>, Gate M1)</td><td>—</td></tr>
+<tr><td>QG-14</td><td>Số đếm và truy vết F → FR → UI → API → T khớp nhau</td><td class="res part">Đạt một phần</td><td>03: 270/140; 04: 268 FR/148 P0; 11: 139 FR Phase 1 (đã cập nhật); 12: 268 FR, có cột lộ trình</td><td>04 §7.1 cột "Số F- trong 03" vẫn là 258 (trước khi bổ sung _catalog-gaps); 12 §4.1 còn đếm 70 NFR (04 có 85); GAP-12-06 (endpoint P1/P2) và GAP-12-19 còn mở</td></tr>
+<tr><td>QG-15</td><td>Không quảng cáo % tiết kiệm; không tuyên bố tuân thủ khi chưa có chứng chỉ</td><td class="res ok">Đạt</td><td>Grep "tiết kiệm N%": 0 kết quả; tiêu chuẩn ghi edition <code>UNKNOWN</code></td><td>—</td></tr>
+<tr><td>QG-16</td><td>Không có câu "tương thích mọi inverter/BESS"; không dùng thanh ghi diễn đàn cho driver verified</td><td class="res ok">Đạt</td><td>Grep: chỉ xuất hiện trong câu cấm (02, 03, 04, 05, 07, 09); 07 tách Huawei 47086 thành [FACT, Low] bị cấm cho VERIFIED</td><td>—</td></tr>
+<tr><td>QG-17</td><td>Số liệu Huawei ≤ 2 s/≤ 5 s ghi là tự công bố, kèm "SmartLogger5000B/SmartMGC5000B"</td><td class="res ok">Đạt</td><td>04 §5, 07 §2 (EL-025)</td><td>Model của PDF hash vẫn chưa chắc (K R-19)</td></tr>
+<tr><td>QG-18</td><td>Kiểm chứng pháp lý và giấy phép trước khi phát hành 00/02/04/10</td><td class="res no">Chưa đạt</td><td>V-01…V-08 mở (14 §7)</td><td>Bộ tài liệu chỉ dùng nội bộ cho tới khi xong</td></tr>
+<tr><td>QG-19</td><td>Kiểm chứng với khách hàng thật</td><td class="res no">Chưa đạt</td><td>0 phỏng vấn, 0 hóa đơn EVN thật (01 RQ-14)</td><td>F0-2 ở Phase 0; cổng G0</td></tr>
+<tr><td>QG-20</td><td>Rủi ro và câu hỏi có owner, phase và cổng</td><td class="res ok">Đạt</td><td>13 §6, §8: mỗi R có owner/phase; bảng cổng G0–G4</td><td>—</td></tr>
+<tr><td>QG-21</td><td>Nhãn mức cảnh báo Khẩn cấp/Cao/Trung bình/Thông tin; enum <code>CRITICAL</code> duy nhất</td><td class="res ok">Đạt</td><td>09 (19 lần), 05 <code>AlarmDefinition.default_severity</code>; "Nghiêm trọng" chỉ trong bảng so sánh với FS</td><td>—</td></tr>
+<tr><td>QG-22</td><td>Mục "gửi agent khác" trong log sửa đã được xử lý</td><td class="res part">Đạt phần lớn</td><td>§10 liệt kê 20 sửa chéo đã làm ở vòng hợp nhất</td><td>Còn: endpoint cho thực thể P1 mới (X-05-09); FR cho ForensicBundle/Incident (X-05-11); FR-INT-028 theo CF-39 (04); 07 §3/§8 và 10 §5.4 cho đường EV qua API CPO; tên lệnh C0 "pin 1 s" (X-05-10)</td></tr>
+</tbody></table></div>
+<p><b>Ký duyệt của Evidence Judge (K).</b> Bộ tài liệu đủ để dùng nội bộ làm cơ sở cho Phase 0. Nó <b>chưa đủ</b> để phát hành ra ngoài hay làm căn cứ tuân thủ pháp lý, vì QG-18, QG-19 và V-14 còn mở. Không phát hiện claim nào bị bác ở vòng 1 còn được dùng như FACT trong 00.</p>
+
+<!-- ============================================================ -->
+<h2 id="s10">10. Sửa chéo ở vòng hợp nhất</h2>
+<p>Agent J + K là người ghi duy nhất ở vòng này và đã áp các mục nhỏ, an toàn trong log sửa:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>File</th><th>Sửa</th><th>Nguồn yêu cầu</th></tr></thead>
+<tbody>
+<tr><td>03</td><td>F-SEC-10 thành C1 · Gate M1 (biến thể đếm) / M2 (ΔP); F-SEC-11 đổi sang <code>REMOTE_CONTROL_SUSPEND</code>/<code>RESUME</code>, C1 kích hoạt / C3 gỡ · Gate M1; cập nhật §10 và hành trình §8</td><td>Log 11, 04 #5</td></tr>
+<tr><td>04</td><td>FR-SEC-012 và NFR-SEC-012 thành <code>C1·M1 (đếm) / M2 (ΔP)</code>; FR-SEC-021 → F-SEC-25, FR-SEC-005 → F-ORG-17, FR-REP-008 → F-REP-19; ghi chú §7.1 dùng 140 F- MVP; AC-SEC-08 thêm ca reconnect sau khi suspend</td><td>Log 03, 06, 11</td></tr>
+<tr><td>05</td><td>Thêm §11.5: <code>native_default_profile</code>, <code>native_schedule_max_writes_per_day</code>, <code>DispatchPlan.tariff_version_id</code>/<code>tou_calendar_version_id</code>/<code>valid_until</code>, <code>PlanSlot.soc_floor_pct</code>/<code>soc_ceiling_pct</code>, <code>M1StaticLimits</code> (scope trên SOE), <code>state_version</code> của kill switch</td><td>X-07-08, log 08, X-10-15</td></tr>
+<tr><td>06</td><td>ADR-04 và D-06-03: Mosquitto 2.1 cho pilot với tiêu chí thoát (Q-59), thêm RabbitMQ 4.x vào PoC-02, bối cảnh BSL; 148 FR P0 ở ADR-01</td><td>Log 11, 13</td></tr>
+<tr><td>07</td><td><code>APPLY_SCHEDULE</code> nhận <code>soc_floor_pct</code>/<code>soc_ceiling_pct</code> (chỉ siết, không nới SOE); đóng X-07-08</td><td>X-07-08</td></tr>
+<tr><td>08</td><td>Đóng X-08-08 (R-54, trường mới ở 05, đổi tên trường slot)</td><td>Log 08</td></tr>
+<tr><td>10</td><td>Đóng X-10-01 (04 đã nhận 14 mã NFR với số giữ nguyên)</td><td>Log 04</td></tr>
+<tr><td>11</td><td>Phase 1 = 139 FR (thêm FR-BESS-020, FR-INT-031, F-INT-30/31); NFR-SEC-008, 009 (tối thiểu), 033 vào Phase 1; G1 thêm Q-33 (a), U-29, U-30, CF-40 và SOE tối thiểu; rủi ro R-48…R-52; 148 FR P0</td><td>Log 12, 13</td></tr>
+<tr><td>12</td><td>Đóng GAP-12-04, 08, 09, 10, 11, 13, 17; đóng một phần GAP-12-15; thêm T-FR-BESS-003-01…03</td><td>Log 06, 05, 08, 09</td></tr>
+<tr><td>13</td><td>Thêm R-53 (V-14, chưa spot-check URL) và R-54 (lịch native lặp vô hạn ở M1, từ R-08-10) vào sổ và bảng cổng; 148 FR P0</td><td>Log 14, 08</td></tr>
+<tr><td>01</td><td>§6.2 ghi vòng rà soát cuối cũng không có WebSearch, liên kết V-14 và R-53</td><td>Log 14</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="s11">11. Bộ tài liệu</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>Tài liệu</th><th>Trả lời câu hỏi</th></tr></thead>
+<tbody>
+<tr><td>01</td><td><a href="01-research-methodology.md">Phương pháp nghiên cứu</a></td><td>Nghiên cứu làm thế nào, tin được đến đâu</td></tr>
+<tr><td>02</td><td><a href="02-market-and-competitor-analysis.html">Thị trường và đối thủ</a></td><td>Nhóm sản phẩm EMS, 11 đối thủ, ranh giới, khoảng trống</td></tr>
+<tr><td>03</td><td><a href="03-functional-catalog.html">Danh mục chức năng</a></td><td>270 tính năng, hạng phát hành, cờ điều khiển</td></tr>
+<tr><td>04</td><td><a href="04-business-requirements.md">Yêu cầu nghiệp vụ</a></td><td>268 FR, 85 NFR, persona, quyền, tiêu chí chấp nhận</td></tr>
+<tr><td>05</td><td><a href="05-domain-model.html">Mô hình miền</a></td><td>Thực thể, máy trạng thái, hợp đồng dữ liệu, KPI</td></tr>
+<tr><td>06</td><td><a href="06-system-architecture.html">Kiến trúc hệ thống</a></td><td>C4, luồng dữ liệu, 19 ADR, PoC, API</td></tr>
+<tr><td>07</td><td><a href="07-device-integration.md">Tích hợp thiết bị</a></td><td>Giao thức, edge, hợp đồng điểm/lệnh, driver, commissioning</td></tr>
+<tr><td>08</td><td><a href="08-energy-optimization.md">Tối ưu năng lượng</a></td><td>Chiến lược, tầng điều khiển, arbiter, lịch native M1</td></tr>
+<tr><td>09</td><td><a href="09-ux-ui-specification.html">Đặc tả UX/UI</a></td><td>37 trang, lệnh nguy hiểm, trạng thái dữ liệu</td></tr>
+<tr><td>10</td><td><a href="10-security-and-reliability.md">An toàn và độ tin cậy</a></td><td>RBAC/PDP, C0–C4, SOE, kill switch, fail-safe, SLO</td></tr>
+<tr><td>11</td><td><a href="11-mvp-and-roadmap.html">MVP và lộ trình</a></td><td>Phase 0–4, cổng G0–G4, ước lượng</td></tr>
+<tr><td>12</td><td><a href="12-traceability-matrix.md">Ma trận truy vết</a></td><td>FR → F- → UI → API → test, khoảng trống</td></tr>
+<tr><td>13</td><td><a href="13-open-questions-and-risks.md">Câu hỏi mở và rủi ro</a></td><td>Q, A, CF, D, R, U và điều kiện cổng</td></tr>
+<tr><td>14</td><td><a href="14-source-register.md">Sổ nguồn</a></td><td>S-001…S-403, evidence ledger, hàng đợi kiểm chứng</td></tr>
+<tr><td>15</td><td><a href="15-simulators-and-messaging.md">Bộ mô phỏng và messaging</a></td><td>Virtual site, simulator, so sánh broker</td></tr>
+<tr><td>—</td><td><a href="notes/K-review-round1.md">K-review-round1</a> và <a href="notes/_conventions.md">quy ước</a></td><td>Phán quyết ràng buộc; quy tắc viết</td></tr>
+</tbody></table></div>
+
+</article>
+</div>
+</main>
+<footer class="docfoot">EMS Research · 00 Tóm tắt điều hành · v1.0 · 2026-10-10 · Nguồn: <a href="14-source-register.md">14</a> · Phán quyết: <a href="notes/K-review-round1.md">K vòng 1</a> · Mục lục: <a href="index.html">index</a></footer>
+</body>
+</html>

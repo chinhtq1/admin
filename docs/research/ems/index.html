@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nghiên cứu EMS — Mục lục</title>
+<link rel="stylesheet" href="assets/ems-docs.css">
+</head>
+<body>
+<nav class="docnav"><div class="inner">
+  <a class="brand" href="index.html" aria-current="page">EMS Research</a>
+  <a href="00-executive-summary.html">00 Tóm tắt</a>
+  <a href="01-research-methodology.md">01 Phương pháp</a>
+  <a href="02-market-and-competitor-analysis.html">02 Thị trường</a>
+  <a href="03-functional-catalog.html">03 Chức năng</a>
+  <a href="04-business-requirements.md">04 Yêu cầu</a>
+  <a href="05-domain-model.html">05 Domain</a>
+  <a href="06-system-architecture.html">06 Kiến trúc</a>
+  <a href="07-device-integration.md">07 Tích hợp</a>
+  <a href="08-energy-optimization.md">08 Tối ưu</a>
+  <a href="09-ux-ui-specification.html">09 UX/UI</a>
+  <a href="10-security-and-reliability.md">10 An toàn</a>
+  <a href="11-mvp-and-roadmap.html">11 Lộ trình</a>
+  <a href="12-traceability-matrix.md">12 Truy vết</a>
+  <a href="13-open-questions-and-risks.md">13 Rủi ro</a>
+  <a href="14-source-register.md">14 Nguồn</a>
+</div></nav>
+<main>
+<header class="doc-header">
+  <div class="kicker">Mục lục bộ nghiên cứu</div>
+  <h1>Nghiên cứu sản phẩm EMS C&amp;I đa site, đa hãng</h1>
+  <div class="meta">Phiên bản 1.0 · Ngày 2026-10-10 · Trạng thái: bản nội bộ, chưa phát hành ra ngoài (chờ kiểm chứng pháp lý, giấy phép và spot-check nguồn, xem <a href="14-source-register.md">14 §7</a>) · Mở rộng từ nghiên cứu <a href="../fusionsolar/README.md">Huawei FusionSolar</a></div>
+</header>
+
+<div class="callout">
+<p><b>Một câu.</b> Đề xuất một EMS behind-the-meter cho C&amp;I, đa site, đa hãng, xây trên lớp giám sát/O&amp;M. Phạm vi gồm PV, BESS, lưới, phụ tải và EV tùy chọn. Edge là bắt buộc ở site có lệnh; cloud chỉ gửi ý định đã ký và có hạn. MVP đi qua hai cổng: Gate M1 (giám sát + chế độ native có readback) và Gate M2 (edge làm chủ vòng, bật theo từng site). Bắt đầu đọc ở <a href="00-executive-summary.html">00 Tóm tắt điều hành</a>.</p>
+</div>
+
+<h2 id="docs">Danh sách tài liệu</h2>
+<p>File <code>.md</code> mở tốt nhất trong trình xem Markdown (GitHub/GitLab, VS Code). File <code>.html</code> mở trực tiếp bằng trình duyệt và không cần mạng.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>Tài liệu</th><th>Mục đích</th><th>Định dạng</th></tr></thead>
+<tbody>
+<tr><td>00</td><td><a href="00-executive-summary.html">Tóm tắt điều hành</a></td><td>Sản phẩm nên là gì, phạm vi, kiến trúc, lộ trình, rủi ro, độ phủ bằng chứng, quality gate</td><td>HTML</td></tr>
+<tr><td>01</td><td><a href="01-research-methodology.md">Phương pháp nghiên cứu</a></td><td>Quy trình, nhãn bằng chứng, giới hạn mạng, mối đe dọa tới tính hợp lệ, cách kiểm chứng tiếp</td><td>Markdown</td></tr>
+<tr><td>02</td><td><a href="02-market-and-competitor-analysis.html">Thị trường và đối thủ</a></td><td>Bảy nhóm sản phẩm EMS, bối cảnh Việt Nam, ma trận 11 sản phẩm, ranh giới và khoảng trống</td><td>HTML</td></tr>
+<tr><td>03</td><td><a href="03-functional-catalog.html">Danh mục chức năng</a></td><td>270 tính năng F- trong 15 module, hạng phát hành, cờ điều khiển và Gate</td><td>HTML</td></tr>
+<tr><td>04</td><td><a href="04-business-requirements.md">Yêu cầu nghiệp vụ</a></td><td>Persona, vai trò và quyền, hành trình, 268 FR, 85 NFR, tiêu chí chấp nhận</td><td>Markdown</td></tr>
+<tr><td>05</td><td><a href="05-domain-model.html">Mô hình miền</a></td><td>Thực thể, máy trạng thái, hợp đồng dữ liệu (dấu, đơn vị, thời gian, quality), KPI</td><td>HTML</td></tr>
+<tr><td>06</td><td><a href="06-system-architecture.html">Kiến trúc hệ thống</a></td><td>C4, luồng dữ liệu, edge, lưu trữ, API, 19 ADR, PoC bắt buộc</td><td>HTML</td></tr>
+<tr><td>07</td><td><a href="07-device-integration.md">Tích hợp thiết bị</a></td><td>Giao thức, hợp đồng điểm/lệnh edge↔cloud, driver, commissioning, lab</td><td>Markdown</td></tr>
+<tr><td>08</td><td><a href="08-energy-optimization.md">Tối ưu năng lượng</a></td><td>Chiến lược, bốn tầng điều khiển, arbiter 12 mức, lịch native M1, backtest</td><td>Markdown</td></tr>
+<tr><td>09</td><td><a href="09-ux-ui-specification.html">Đặc tả UX/UI</a></td><td>37 trang, điều hướng, lệnh nguy hiểm, trạng thái dữ liệu, wireframe</td><td>HTML</td></tr>
+<tr><td>10</td><td><a href="10-security-and-reliability.md">An toàn và độ tin cậy</a></td><td>RBAC/PDP, hạng lệnh C0–C4, SOE, kill switch, fail-safe, audit, SLO, pen-test</td><td>Markdown</td></tr>
+<tr><td>11</td><td><a href="11-mvp-and-roadmap.html">MVP và lộ trình</a></td><td>Phase 0–4, cổng G0–G4, ước lượng người-tuần, pilot, những gì không xây</td><td>HTML</td></tr>
+<tr><td>12</td><td><a href="12-traceability-matrix.md">Ma trận truy vết</a></td><td>FR → F- → module → thực thể → API → UI → test; sổ khoảng trống GAP-12</td><td>Markdown</td></tr>
+<tr><td>13</td><td><a href="13-open-questions-and-risks.md">Câu hỏi mở và rủi ro</a></td><td>Q, A, CF, D, R, U; điều kiện chặn phát hành và cổng phase</td><td>Markdown</td></tr>
+<tr><td>14</td><td><a href="14-source-register.md">Sổ nguồn</a></td><td>S-001…S-403, evidence ledger EL-001…EL-100, claim bị bác, hàng đợi kiểm chứng V-01…V-14</td><td>Markdown</td></tr>
+<tr><td>15</td><td><a href="15-simulators-and-messaging.md">Bộ mô phỏng và messaging</a></td><td>Virtual site, simulator thiết bị, so sánh broker MQTT và giấy phép</td><td>Markdown</td></tr>
+<tr><td>notes</td><td><a href="notes/K-review-round1.md">K-review-round1</a> · <a href="notes/_conventions.md">_conventions</a></td><td>Phán quyết ràng buộc của Evidence Judge; quy ước viết. Ghi chú nghiên cứu thô của từng agent nằm trong <code>notes/</code></td><td>Markdown</td></tr>
+</tbody></table></div>
+
+<h2 id="reading">Thứ tự đọc theo người đọc</h2>
+<div class="cards">
+  <div class="card"><h4>Lãnh đạo / nhà đầu tư (≈ 30 phút)</h4>
+  <ol><li><a href="00-executive-summary.html">00</a> §1–§8</li><li><a href="11-mvp-and-roadmap.html">11</a> §1 và §13</li><li><a href="13-open-questions-and-risks.md">13</a> §1</li><li><a href="02-market-and-competitor-analysis.html">02</a> §1</li></ol></div>
+  <div class="card"><h4>PM / BA</h4>
+  <ol><li><a href="00-executive-summary.html">00</a></li><li><a href="02-market-and-competitor-analysis.html">02</a></li><li><a href="03-functional-catalog.html">03</a></li><li><a href="04-business-requirements.md">04</a></li><li><a href="09-ux-ui-specification.html">09</a></li><li><a href="11-mvp-and-roadmap.html">11</a></li><li><a href="12-traceability-matrix.md">12</a></li></ol></div>
+  <div class="card"><h4>Kiến trúc sư / developer</h4>
+  <ol><li><a href="00-executive-summary.html">00</a> §5</li><li><a href="06-system-architecture.html">06</a></li><li><a href="05-domain-model.html">05</a></li><li><a href="07-device-integration.md">07</a></li><li><a href="08-energy-optimization.md">08</a></li><li><a href="15-simulators-and-messaging.md">15</a></li><li><a href="04-business-requirements.md">04</a> §6 (NFR)</li></ol></div>
+  <div class="card"><h4>Bảo mật / an toàn vận hành</h4>
+  <ol><li><a href="10-security-and-reliability.md">10</a></li><li><a href="07-device-integration.md">07</a> §8 (lệnh)</li><li><a href="06-system-architecture.html">06</a> ADR-12–15</li><li><a href="08-energy-optimization.md">08</a> §10</li><li><a href="13-open-questions-and-risks.md">13</a> §6.3</li></ol></div>
+  <div class="card"><h4>Người kiểm chứng nguồn / pháp chế</h4>
+  <ol><li><a href="01-research-methodology.md">01</a></li><li><a href="14-source-register.md">14</a> §5–§7</li><li><a href="notes/K-review-round1.md">K-review-round1</a></li><li><a href="13-open-questions-and-risks.md">13</a> §8</li></ol></div>
+</div>
+
+<h2 id="tags">Chú giải nhãn bằng chứng</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Nhãn</th><th>Nghĩa</th><th>Lưu ý trong bộ tài liệu này</th></tr></thead>
+<tbody>
+<tr><td><span class="tag fact">FACT</span></td><td>Có nguồn đáng tin hỗ trợ trực tiếp, kèm URL hoặc mã S-xxx</td><td>Bằng chứng mới chỉ là snippet tìm kiếm ("qua kết quả tìm kiếm"); không trang nào được đọc toàn văn. Có thể kèm mức High/Med/Low</td></tr>
+<tr><td><span class="tag inference">INFERENCE</span></td><td>Kết luận suy ra từ bằng chứng; nêu bằng chứng gốc</td><td>Mọi câu tổng quát hóa ("đa số", so sánh nhiều hãng) là INFERENCE</td></tr>
+<tr><td><span class="tag proposal">PROPOSAL</span></td><td>Đề xuất cho sản phẩm của ta</td><td>Phải nhất quán với quyết định thống nhất của K</td></tr>
+<tr><td><span class="tag unknown">UNKNOWN</span></td><td>Chưa đủ bằng chứng, hoặc nguồn mâu thuẫn chưa giải</td><td>Nêu cần kiểm chứng gì (V-xx, Q-xx)</td></tr>
+</tbody></table></div>
+<div class="legend">
+  <span>Ma trận đối thủ:</span>
+  <span><span class="st verified">Verified</span> hãng tuyên bố trong tài liệu</span>
+  <span><span class="st partial">Partial</span> có nhưng thiếu chi tiết</span>
+  <span><span class="st unknown">Unknown</span> không tìm thấy tài liệu (≠ không hỗ trợ)</span>
+  <span><span class="st na">N/A</span> không áp dụng</span>
+</div>
+<div class="legend">
+  <span>Ưu tiên:</span>
+  <span><span class="prio p0">P0</span> MVP</span>
+  <span><span class="prio p1">P1</span> sau MVP (hạng 03 "Phase 1")</span>
+  <span><span class="prio p2">P2</span> sau nữa (hạng 03 "Phase 2")</span>
+</div>
+
+<h2 id="ids">Mã định danh</h2>
+<p><code>F-&lt;MODULE&gt;-NN</code> tính năng (03) · <code>FR-/NFR-</code> yêu cầu (04) · <code>UI-NN</code> trang (09) · <code>API-&lt;nhóm&gt;-NN</code> (06) · <code>ADR-NN</code> (06) · <code>T-&lt;FR id&gt;</code> test (12) · <code>Q/A/CF/D/R/U-NN</code> (13) · <code>S-NNN</code>, <code>EL-NNN</code>, <code>V-NN</code> (14) · <code>K R-NN</code> phán quyết của Evidence Judge. Mã trong <code>notes/</code> là tạm thời.</p>
+
+</main>
+<footer class="docfoot">EMS Research · Mục lục · v1.0 · 2026-10-10 · <a href="README.md">README</a> · Quy ước: <a href="notes/_conventions.md">_conventions.md</a></footer>
+</body>
+</html>

@@ -6,7 +6,7 @@
 - **Người viết:** Source Registrar (sở hữu duy nhất file này và [01-research-methodology.md](01-research-methodology.md)).
 - **Phạm vi thu thập:** mọi URL xuất hiện trong `docs/research/ems/*.md`, `docs/research/ems/*.html` và `docs/research/ems/notes/*.md` tại ngày 2026-10-10 (tài liệu 02–11, 13 và ghi chú A, B, C, E, F, G, H, I, K). Thu bằng script quét chuỗi `http(s)://`, giải mã HTML entity, gộp trùng.
 - **Kết quả:** 391 chuỗi URL thô → **387 nguồn S-001…S-387** sau khi gộp 2 biến thể và loại 3 chuỗi không phải nguồn (§4.2). Thêm **16 tệp nghiên cứu FusionSolar trước** thành S-388…S-403 (§3). Evidence ledger có **100 claim** (EL-001…EL-100, §5).
-- **Giới hạn quan trọng:** không có URL nào được mở trực tiếp trong lượt nghiên cứu EMS. Fetch bị chặn. Hạn mức WebSearch dùng chung (200 lượt) đã hết trước khi Registrar bắt đầu: truy vấn spot-check duy nhất của Registrar trả về "web search budget is used up". Vì vậy sổ này **không xác minh lại nội dung** của bất kỳ URL nào. Nó chỉ ghi nhận URL, loại nguồn, cách các agent đã tiếp cận và claim mà tài liệu dựa vào. Chi tiết về hệ quả ở [01 §6](01-research-methodology.md#6-giới-hạn-mạng-và-hệ-quả-lên-độ-tin-cậy).
+- **Giới hạn quan trọng:** không có URL nào được mở trực tiếp trong lượt nghiên cứu EMS. Fetch bị chặn. Hạn mức WebSearch dùng chung (200 lượt) đã hết trước khi Registrar bắt đầu: truy vấn spot-check duy nhất của Registrar trả về "web search budget is used up". Vì vậy sổ này **không xác minh lại nội dung** của bất kỳ URL nào. Nó chỉ ghi nhận URL, loại nguồn, cách các agent đã tiếp cận và claim mà tài liệu dựa vào. Vòng review cuối cũng không còn hạn mức WebSearch, nên **chưa reviewer nào spot-check URL nào** trong S-001…S-387 (V-14). Chi tiết về hệ quả ở [01 §6](01-research-methodology.md#6-giới-hạn-mạng-và-hệ-quả-lên-độ-tin-cậy).
 
 ---
 
@@ -16,6 +16,7 @@
 - [1. Thống kê nhanh](#1-thống-kê-nhanh)
 - [2. Bảng nguồn S-001…S-387](#2-bảng-nguồn-s-001s-387)
 - [3. Tệp nghiên cứu trước S-388…S-403](#3-tệp-nghiên-cứu-trước-s-388s-403)
+  - [3.1 Bảng quy đổi mã tạm L/FS sang S-ID](#31-bảng-quy-đổi-mã-tạm-lfs-sang-s-id)
 - [4. URL đáng ngờ, nguồn bị loại và chuỗi không phải nguồn](#4-url-đáng-ngờ-nguồn-bị-loại-và-chuỗi-không-phải-nguồn)
 - [5. Evidence ledger (100 claim quan trọng nhất)](#5-evidence-ledger-100-claim-quan-trọng-nhất)
 - [6. Claims bị bác bỏ hoặc hạ cấp](#6-claims-bị-bác-bỏ-hoặc-hạ-cấp)
@@ -69,6 +70,7 @@
 | URL bị gắn cờ cần lưu ý | 16 — §4.1 |
 | Văn bản pháp lý Việt Nam đã đọc toàn văn | 0 |
 | Tiêu chuẩn IEC/IEEE/ISO đã đọc toàn văn | 0 |
+| URL đã được reviewer spot-check (K vòng 1 và vòng review cuối) | 0 — hết hạn mức WebSearch ở cả hai vòng; mọi FACT giữ trần độ tin cậy snippet (§0.1). Chặn phát hành ra bên ngoài tài liệu 02 (V-14, §7) |
 
 Phân bố theo nhóm chủ đề: A. Pháp lý VN 61 · B. Quốc tế 18 · C. Ampowr/InfinitePower 24 · D. Schneider/Siemens/ABB/Wärtsilä 35 · E. SolarEdge/Huawei/Sungrow/SMA 61 · F. OpenEMS/Stem/GridBeyond/giám sát 35 · G. Giao thức 82 · H. Miền năng lượng 31 · I. Dữ liệu 26 · J. Bảo mật 12 · K. Bị loại 2.
 
@@ -105,7 +107,7 @@ Bảng được nhóm theo chủ đề. URL đặt trong `<…>` để giữ ngu
 | S-021 | Thư viện Pháp luật — toàn văn QĐ 1279/QĐ-BCT 2025 | <https://thuvienphapluat.vn/phap-luat-nha-dat/toan-van-quyet-dinh-1279-qd-bct-2025-quy-dinh-ve-gia-ban-dien-3357.html> | Regulator (văn bản, cổng tra cứu) | 10/05/2025 (hiệu lực) | Snippet tìm kiếm | Med–High | 02, 03, 04, 08, 11, 13, nA | Bảng giá bán lẻ theo cấp điện áp; ví dụ 22–<110 kV 1.190/1.833/3.398 đ/kWh |
 | S-022 | LuatVietnam — QĐ 1279/QĐ-BCT | <https://luatvietnam.vn/dien-luc/quyet-dinh-1279-qd-bct-cua-bo-cong-thuong-quy-dinh-ve-gia-ban-dien-399752-d1.html> | Regulator (văn bản, cổng tra cứu) | 05/2025 | Snippet tìm kiếm | Med–High | nA | Như trên; giá bình quân 2.204,0655 đ/kWh |
 | S-023 | VietnamFinance — siết quy trình tăng giá điện | <https://vietnamfinance.vn/siet-lai-quy-trinh-tang-gia-dien-evn-khong-the-tu-dieu-chinh-tu-2-tro-len-d147425.html> | News | 07/2026 | Snippet tìm kiếm | Med | nA | NĐ 278/2026 sửa cơ chế điều chỉnh giá (ngưỡng 2%/5%) |
-| S-024 | Tạp chí Công Thương — thí điểm giá hai thành phần từ 1/1/2026 | <https://tapchicongthuong.vn/thi-diem-ap-dung-gia-dien-hai-thanh-phan-tu-1-1-2026-218800.htm> | News (ngành) | 2025 | Snippet tìm kiếm | Med | 02, 03, 04, 08, 11, 13, nA, nG | Đối tượng ≥ 200.000 kWh/tháng; song song 01–06/2026; thanh toán thí điểm 07/2026–07/2027; "công suất đăng ký" (cơ sở tính UNKNOWN theo R-16) |
+| S-024 | Tạp chí Công Thương — thí điểm giá hai thành phần từ 1/1/2026 | <https://tapchicongthuong.vn/thi-diem-ap-dung-gia-dien-hai-thanh-phan-tu-1-1-2026-218800.htm> | News (ngành) | 2025 | Snippet tìm kiếm | Med | 02, 03, 04, 08, 11, 13, nA, nG | Đối tượng ≥ 200.000 kWh/tháng; song song 01–06/2026; thanh toán thí điểm 07/2026–07/2027; "công suất đăng ký" (cơ sở tính UNKNOWN theo K R-16) |
 | S-025 | Luật sư Việt Nam — thí điểm giá hai thành phần đầu 2026 | <https://lsvn.vn/thi-diem-gia-ban-le-dien-hai-thanh-phan-tu-dau-nam-2026-a162900.html> | News | 2025 | Snippet tìm kiếm | Med | nA | Lộ trình thí điểm |
 | S-026 | Đại biểu Nhân dân — thử nghiệm giá hai thành phần từ 10/2025 | <https://daibieunhandan.vn/trien-khai-thu-nghiem-gia-ban-le-dien-hai-thanh-phan-tu-thang-10-2025-10390577.html> | News | 2025 | Snippet tìm kiếm | Med–High | 03, 04, 05, 08, 09, nC, nG, nH | Pmax = công suất trung bình chu kỳ tích phân lớn nhất tháng; "chu kỳ tích phân hiện nay đang là 30 phút" |
 | S-027 | Tạp chí Công Thương — EVN xây dựng hệ thống giá hai thành phần | <https://tapchicongthuong.vn/evn-xay-dung-he-thong-gia-ban-dien-hai-thanh-phan-264219.htm> | News (ngành) | 2025 | Snippet tìm kiếm | Med | 05, nC, nG | Công tơ đo xa xác định công suất theo chu kỳ 30 phút |
@@ -186,7 +188,7 @@ Bảng được nhóm theo chủ đề. URL đặt trong `<…>` để giữ ngu
 | S-092 | FME (NL) — case/news nhắc Ampowr | <https://fme.nl/node/14547> | Industry association | UNKNOWN | Snippet tìm kiếm | Low–Med | nC | Ngữ cảnh Ampowr (C ledger #23; claim gốc đã bị K bác vì đi kèm rfp.wiki) |
 | S-093 | Eniris — tài liệu tích hợp Ampowr hybrid | <https://manual-sofar.eniris.be/en/Controller/Devices/PV-hybrid-and-battery-inverters/Ampowr> | Third-party docs | UNKNOWN | Snippet tìm kiếm | Med | 07, nE | Unit ID Ampowr hybrid 247 (RTU)/255 (TCP) |
 | S-094 | Circontrol — "Cosmos" EV charging | <https://circontrol.com/cosmos-simplifying-ev-charging-management-since-2019/> | Vendor official | UNKNOWN | Snippet tìm kiếm | Med | nB | Sản phẩm trùng tên, KHÔNG liên quan Ampowr (ghi để tránh nhầm) |
-| S-095 | HT InfinitePower — What is EMS and its functions (trang seed) | <https://www.infinitepowerht.com/what-is-energy-management-system-ems-and-its-functions.html> | Vendor blog | UNKNOWN | Snippet tìm kiếm | Low (snippet một agent; B không thấy URL trong kết quả — R-18) | 03, 04, 05, 06, 07, 08, 13, nA, nB, nC, nG | Chỉ định nghĩa chung: EMS điều phối BMS/PCS; giám sát, lập lịch, chẩn đoán (cần nguồn thứ hai: Deye) |
+| S-095 | HT InfinitePower — What is EMS and its functions (trang seed) | <https://www.infinitepowerht.com/what-is-energy-management-system-ems-and-its-functions.html> | Vendor blog | UNKNOWN | Snippet tìm kiếm | Low (snippet một agent; B không thấy URL trong kết quả — K R-18) | 03, 04, 05, 06, 07, 08, 13, nA, nB, nC, nG | Chỉ định nghĩa chung: EMS điều phối BMS/PCS; giám sát, lập lịch, chẩn đoán (cần nguồn thứ hai: Deye) |
 | S-096 | HT InfinitePower — BMS vs EMS | <https://www.infinitepowerht.com/what-is-the-difference-between-bms-and-ems.html> | Vendor blog | UNKNOWN | Snippet tìm kiếm | Low–Med | nA | Phân lớp EMS ↔ BMS |
 | S-097 | HT InfinitePower — "AI-Powered EMS" | <https://www.infinitepowerht.com/ai-powered-ems-industrial-energy-storage.html> | Vendor blog (marketing) | UNKNOWN | Snippet tìm kiếm | Low | 02, 03, 04, nB, nC | Chỉ tuyên bố marketing (10–12% giảm phí đỉnh là ví dụ minh họa) — không coi là có AI |
 | S-098 | HT InfinitePower — 50 kWh BESS | <https://www.infinitepowerht.com/50kwh-battery-storage-system.html> | Vendor product page | UNKNOWN | Snippet tìm kiếm | Low–Med | 02, nB | EMS: lập lịch, giám sát, truy cập từ xa; CAN/RS-485/Ethernet/Wi-Fi |
@@ -200,7 +202,7 @@ Bảng được nhóm theo chủ đề. URL đặt trong `<…>` để giữ ngu
 
 | S-ID | Tiêu đề / nhà xuất bản | URL | Loại nguồn | Ngày xuất bản | Cách tiếp cận | Độ tin cậy | Dùng trong | Claim chính được hỗ trợ |
 |---|---|---|---|---|---|---|---|---|
-| S-104 | Schneider — EcoStruxure Microgrid Advisor handout | <https://download.schneider-electric.com/doc/998-20080341_US/EcoStruxure%20Microgrid%20Advisor%20Handout.pdf> | Vendor official (handout) | ~2017 | Snippet tìm kiếm | Low–Med (R-23) | 02, 06, 08, 09, nA, nB, nG, nH | MPC cloud từ giá/lịch sử/thời tiết; lịch 15 phút/72 h; dự phòng 48 h (48/72 mâu thuẫn) |
+| S-104 | Schneider — EcoStruxure Microgrid Advisor handout | <https://download.schneider-electric.com/doc/998-20080341_US/EcoStruxure%20Microgrid%20Advisor%20Handout.pdf> | Vendor official (handout) | ~2017 | Snippet tìm kiếm | Low–Med (K R-23) | 02, 06, 08, 09, nA, nB, nG, nH | MPC cloud từ giá/lịch sử/thời tiết; lịch 15 phút/72 h; dự phòng 48 h (48/72 mâu thuẫn) |
 | S-105 | Schneider — EcoStruxure Microgrid Advisor (product range; cũng xuất hiện không có "/" cuối) | <https://www.se.com/us/en/product-range/65896/> | Vendor official | UNKNOWN | Snippet tìm kiếm | Med | 02, 03, 08, nA, nB, nG | MPC, edge controller tại site |
 | S-106 | Microsoft Marketplace — Microgrid Advisor listing | <https://marketplace.microsoft.com/en-us/product/saas/869296.microgrid_advisor?tab=overview> | Vendor listing | UNKNOWN | Snippet tìm kiếm | Med | 02, 03, 04, nB | "48-hour advance default operation schedules" |
 | S-107 | Schneider — EcoStruxure Microgrid design guide (IEC) | <https://www.productinfo.schneider-electric.com/esxp_digital_apps_iec/mg/English/ESXP2GE020EN-05_Microgrid.pdf> | Vendor official (design guide) | UNKNOWN | Snippet tìm kiếm | Low–Med | 02, nB | Edge thực thi plan; cập nhật từ cloud mỗi 15 phút (một kết quả) |
@@ -259,7 +261,7 @@ Bảng được nhóm theo chủ đề. URL đặt trong `<…>` để giữ ngu
 | S-155 | BayWa r.e. — Huawei SmartLogger5000B | <https://solar-distribution.baywa-re.de/en/commercial-storage/huawei-gs-accessories/huawei-smartlogger5000b.html> | Distributor page | UNKNOWN | Snippet tìm kiếm | Med | nA | Như trên |
 | S-156 | Ahlsell — SmartLogger3000 | <https://www.ahlsell.se/products/el/energilager/tillbehor/2741919---smartlogger3000c01> | Retailer page | UNKNOWN | Snippet tìm kiếm | Med | 03, nA | ≤ 200 thiết bị; Modbus-TCP, IEC 60870-5-104 |
 | S-157 | Krannich — SmartLogger3000A01EU | <https://shop.krannich-solar.com/es-es/inversores/monitorizacion/10087/smart-logger-3000a01eu?c=469> | Retailer page | UNKNOWN | Snippet tìm kiếm | Med | nA | Như trên |
-| S-158 | SKE Solar — bản sao manual LUNA2000-(107-215) C&I Microgrid SmartLogger3000 V07 | <https://ske-solar.com/fileadmin/user_upload/UserManual_LUNA2000-_107-215__C_I-Microgrid-SmartLogger3000_V07_2025-11-30_EN.pdf> | Manual (mirror nhà phân phối) | 30/11/2025 (theo tên file) | Snippet tìm kiếm | Med | 02, nB, nG | Peak shaving chỉ trong kịch bản on/off-grid PQ/VSG — CHỈ trong phạm vi manual này (R-20); ≤ 20 ESS/30 inverter |
+| S-158 | SKE Solar — bản sao manual LUNA2000-(107-215) C&I Microgrid SmartLogger3000 V07 | <https://ske-solar.com/fileadmin/user_upload/UserManual_LUNA2000-_107-215__C_I-Microgrid-SmartLogger3000_V07_2025-11-30_EN.pdf> | Manual (mirror nhà phân phối) | 30/11/2025 (theo tên file) | Snippet tìm kiếm | Med | 02, nB, nG | Peak shaving chỉ trong kịch bản on/off-grid PQ/VSG — CHỈ trong phạm vi manual này (K R-20); ≤ 20 ESS/30 inverter |
 | S-159 | SKE Solar — Quick Guide C&I On-Grid ESS 215 kWh V01 | <https://ske-solar.com/fileadmin/user_upload/QuickGuide_C_I_On-Grid_ESS__Based_on_215KWH_Series_ESS__V01_2024-08-12_EN.pdf> | Manual (mirror nhà phân phối) | 12/08/2024 (theo tên file) | Snippet tìm kiếm | Med | nB | Cấu hình ESS on-grid C&I |
 | S-160 | Huawei — EMMA | <https://solar.huawei.com/en/products/EMMA> | Vendor official | UNKNOWN | Snippet tìm kiếm | High (tồn tại tính năng) | 02, 03, 08, nB, nG | Peak shaving, giới hạn feed-in, dự báo dư PV giữ SOC space reserve (hộ/thương mại nhỏ) |
 | S-161 | Huawei — EMMA specs | <https://solar.huawei.com/en/professionals/all-products/EMMA/specs> | Datasheet | UNKNOWN | Snippet tìm kiếm | Med | 07, nE | "Supports Modbus-TCP and third-party VPP integration" |
@@ -310,7 +312,7 @@ Bảng được nhóm theo chủ đề. URL đặt trong `<…>` để giữ ngu
 | S-201 | OpenEMS docs — core concepts | <https://openems.github.io/openems.io/openems/latest/coreconcepts.html> | OSS official docs | UNKNOWN | Snippet tìm kiếm | Med–High | 06, 07, nE | Edge/Backend/UI; Timestamped/Aggregated/Resend notification |
 | S-202 | OpenEMS docs — Edge configuration | <https://openems.github.io/openems.io/openems/latest/edge/configuration.html> | OSS official docs | UNKNOWN | Snippet tìm kiếm | Med–High | 05, nC, nH | ESS: âm = sạc, dương = xả |
 | S-203 | OpenEMS docs — scheduler | <https://openems.github.io/openems.io/openems/latest/edge/scheduler.html> | OSS official docs | UNKNOWN | Snippet tìm kiếm | Med | 07, nE, nH | Thứ tự controller trong scheduler |
-| S-204 | GitHub — OpenEMS repo | <https://github.com/OpenEMS/openems> | OSS repo | UNKNOWN | Snippet tìm kiếm | Med–High | 02, 03, 04, 06, nB, nG | Có file license EPL-2.0 và AGPL-3.0 (giấy phép từng module UNKNOWN — R-21) |
+| S-204 | GitHub — OpenEMS repo | <https://github.com/OpenEMS/openems> | OSS repo | UNKNOWN | Snippet tìm kiếm | Med–High | 02, 03, 04, 06, nB, nG | Có file license EPL-2.0 và AGPL-3.0 (giấy phép từng module UNKNOWN — K R-21) |
 | S-205 | GitHub — OpenEMS releases | <https://github.com/OpenEMS/openems/releases> | OSS repo | UNKNOWN | Snippet tìm kiếm | Med | 07, nE | Backend TimescaleDB (beta) |
 | S-206 | GitHub — OpenEMS controller ess.balancing | <https://github.com/OpenEMS/openems/tree/develop/io.openems.edge.controller.ess.balancing> | OSS repo | UNKNOWN | Snippet tìm kiếm | High | 02, 03, 04, 08, nB, nG | Cân bằng PCC về `targetGridSetpoint` (mặc định 0 W) |
 | S-207 | GitHub — OpenEMS issue #3972 | <https://github.com/OpenEMS/openems/issues/3972> | OSS repo | UNKNOWN | Snippet tìm kiếm | High | nC, nI | Controller ghi giá trị âm vào thanh ghi unsigned |
@@ -446,7 +448,7 @@ Bảng được nhóm theo chủ đề. URL đặt trong `<…>` để giữ ngu
 | S-327 | ACCURE — LFP SOC errors can exceed 15% | <https://www.accure.net/blogs/state-of-charge-soc-estimation-errors-for-lfp-batteries-can-exceed-15> | Vendor blog (có lợi ích) | UNKNOWN | Snippet tìm kiếm | Med | 03, 04, 05, nC, nG | OCV phẳng; coulomb counting trôi; lỗi SOC có thể > 15% |
 | S-328 | Clarke Energy — LFP SOC challenge | <https://www.clarke-energy.com/2026/lithium-iron-phosphate-bess-the-state-of-charge-challenge/> | Vendor blog | 2026 | Snippet tìm kiếm | Med | nC | Như trên |
 | S-329 | pv magazine USA — significance of SOC | <https://pv-magazine-usa.com/2024/09/25/the-significance-of-state-of-charge-in-energy-storage/> | News | 25/09/2024 | Snippet tìm kiếm | Med | nC | Như trên |
-| S-330 | Deye — BMS vs EMS vs PCS | <https://deye.com/nl/blog/bms-vs-ems-vs-pcs-bess-components/> | Vendor blog | UNKNOWN | Snippet tìm kiếm | Med–High | 03, 04, 05, 06, 08, nC | BMS bảo vệ; PCS thực thi; EMS điều độ; giới hạn BMS phải được PCS và EMS tôn trọng (nguồn thứ hai cho R-18) |
+| S-330 | Deye — BMS vs EMS vs PCS | <https://deye.com/nl/blog/bms-vs-ems-vs-pcs-bess-components/> | Vendor blog | UNKNOWN | Snippet tìm kiếm | Med–High | 03, 04, 05, 06, 08, nC | BMS bảo vệ; PCS thực thi; EMS điều độ; giới hạn BMS phải được PCS và EMS tôn trọng (nguồn thứ hai cho K R-18) |
 | S-331 | Power-Sonic — LFP cell datasheet | <https://cdn.power-sonic.com/documents/PSL-FP-IFP30135185EC_Data_Sheet.pdf> | Datasheet | UNKNOWN | Snippet tìm kiếm | High (cho cell đó) | nC | Cắt sạc 3,65 V; cắt xả 2,5 V; sạc 0–55 °C |
 | S-332 | Sunlith Energy — battery degradation | <https://sunlithenergy.com/?p=6409> | Vendor blog | UNKNOWN | Snippet tìm kiếm | Med | nC | Lão hóa = lịch + chu kỳ (mô hình cộng) |
 | S-333 | Okra Solar — battery lifetime | <https://www.okrasolar.com/blog/a-better-way-to-estimate-battery-lifetime> | Vendor blog | UNKNOWN | Snippet tìm kiếm | Med | nC | LFP chu kỳ phụ thuộc mạnh nhiệt độ |
@@ -530,11 +532,11 @@ Nghiên cứu Huawei FusionSolar (07/10/2026) nằm ở `docs/research/fusionsol
 |---|---|---|---|---|---|---|---|
 | S-388 | [`fusionsolar/README.md`](../fusionsolar/README.md) | Mục lục gói nghiên cứu, lưu ý giấy phép mã cộng đồng, mốc 01/12/2026 | Prior research | 07/10/2026 | High (mô tả gói) | 04, 07, 11, 13 | Hướng cũ: giám sát/O&M PV đa hãng, edge-first; UNKNOWN cần tài khoản installer; `huawei_solar` là AGPL-3.0 |
 | S-389 | [`01_bao_cao/Nền tảng Huawei FusionSolar.md`](../fusionsolar/01_bao_cao/) | Báo cáo tổng quan ban đầu | Prior research | 07/10/2026 | Med–High | (nguồn gốc của URL S-185, S-382) | Bối cảnh API, bảo mật, tài liệu Modbus Huawei |
-| S-390 | [`01_bao_cao/Phân rã sản phẩm FusionSolar.html`](../fusionsolar/01_bao_cao/) | Báo cáo reverse engineering 20 phần, bản đồ API web, ERD, blueprint MVP/V1/V2 | Prior research | 07/10/2026 | Med–High | nC | Quy ước dấu cũ (lưới + = xuất) đã được thay bằng R-01; blueprint monitoring |
+| S-390 | [`01_bao_cao/Phân rã sản phẩm FusionSolar.html`](../fusionsolar/01_bao_cao/) | Báo cáo reverse engineering 20 phần, bản đồ API web, ERD, blueprint MVP/V1/V2 | Prior research | 07/10/2026 | Med–High | nC | Quy ước dấu cũ (lưới + = xuất) đã được thay bằng K R-01; blueprint monitoring |
 | S-391 | [`02_wireframe/Wireframe nền tảng giám sát PV.html`](../fusionsolar/02_wireframe/) | 15 màn hình low-fi, nhãn Observed/From manuals/Proposed | Prior research | 07/10/2026 | Med (bản vẽ đề xuất) | 09, nH | Cơ sở IA và component Angular cho 09 |
 | S-392 | `04_ghi_chu_nghien_cuu/1_tong_quan/market_users_vietnam.md` | Thị trường, người dùng VN | Prior research | 07/10/2026 | Med | 02, nA | Bối cảnh installer/C&I VN; thị phần tự công bố |
 | S-393 | `04_ghi_chu_nghien_cuu/1_tong_quan/api_integration.md` | Northbound, OAuth Connect, Modbus SmartLogger/SDongle/EMMA | Prior research | 07/10/2026 | High | 06, 07, nE | Northbound pull 5 phút có hạn mức; control API async; một client Modbus |
-| S-394 | `04_ghi_chu_nghien_cuu/1_tong_quan/features_editions.md` | Tính năng theo phiên bản, gateway C&I | Prior research | 07/10/2026 | Med–High | 02, 03, nK | SmartLogger5000B **và** SmartMGC5000B là gateway C&I (cơ sở R-19) |
+| S-394 | `04_ghi_chu_nghien_cuu/1_tong_quan/features_editions.md` | Tính năng theo phiên bản, gateway C&I | Prior research | 07/10/2026 | Med–High | 02, 03, nK | SmartLogger5000B **và** SmartMGC5000B là gateway C&I (cơ sở K R-19) |
 | S-395 | `04_ghi_chu_nghien_cuu/1_tong_quan/architecture_security.md` | Kiến trúc, bảo mật, chính sách nhà cung cấp rủi ro cao | Prior research | 07/10/2026 | Med–High | 06, 07, 10, nE | Nguồn gốc S-379…S-384; Encrypted Modbus TCP outbound |
 | S-396 | `04_ghi_chu_nghien_cuu/2_phan_ra_san_pham/demo_observations.md` | Quan sát trực tiếp demo + network | Prior research (quan sát trực tiếp) | 07/10/2026 | High (cho điều đã thấy) | 02, 03, 05, nC, nG, nH, nK | Release note 31/03/2026 SmartEMO demand charge theo TOU; polling ~5 s; Smart I-V 401 với guest; năm Phật lịch lọt vào UI |
 | S-397 | `04_ghi_chu_nghien_cuu/2_phan_ra_san_pham/workflows_data_model.md` | Luồng nghiệp vụ, data model | Prior research | 07/10/2026 | Med–High | 03, 04, 05, 10, nC, nI | Vai trò/quyền, QR commissioning, thiếu xuất CSV |
@@ -547,6 +549,79 @@ Nghiên cứu Huawei FusionSolar (07/10/2026) nằm ở `docs/research/fusionsol
 
 Ghi chú: README nhắc thư mục `05_tai_lieu_huawei/` (NBI V500/V600) nhưng thư mục này **không có** trong kho tại 2026-10-10. Bản NBI V600R022C00 được trích qua mirror GitHub (S-178).
 
+### 3.1 Bảng quy đổi mã tạm L/FS sang S-ID
+
+Ma trận [02 §7](02-market-and-competitor-analysis.html#ma-tran), sổ bằng chứng [02 §13.2](02-market-and-competitor-analysis.html#bang-chung) và cột "Bằng chứng · đối thủ" của [03](03-functional-catalog.html) (dạng `B·Lnn`) dùng mã tạm L01…L49, L37b (lấy từ [ghi chú B §5](notes/B-competitors.md)) và FS-01…FS-15 (từ S-402). Bảng dưới quy đổi từng mã sang S-ID bằng cách khớp đúng chuỗi URL trong 02 §13.2 với cột URL của §2. Tất cả khớp chính xác; không có mã nào thiếu S-ID. Độ tin cậy và cách tiếp cận lấy theo dòng S-ID ở §2/§3, không theo cột "Tin cậy" của 02. Các nguồn này **chưa được reviewer spot-check** (V-14).
+
+| Mã tạm | S-ID | Ghi chú |
+|---|---|---|
+| L01 | S-080, S-081 | Ampowr Cosmos, trang EMS |
+| L02 | S-091, S-083 | Ampowr NIS2/ISO 27001 tự tuyên bố; backup power |
+| L03 | S-087, S-086 | Ampowr case van Pinxteren; imbalance trading |
+| L04 | S-089 | Ampowr case Hoge Duin (peak shaving 95 kW) — nguồn ô G1 |
+| L05 | S-090 | AmpiHealth |
+| L06 | S-082, S-084 | Ampowr peak shaving; generator steering |
+| L07 | S-386 | rfp.wiki — **bị loại** (§4.3), không dùng làm bằng chứng |
+| L08 | S-098, S-099 | HTI 50 kWh; commercial solutions |
+| L09 | S-102 | HTI container 1.000 kWh |
+| L10 | S-101 | HTI hybrid 261/522 kWh |
+| L11 | S-100 | HTI 125 kW/261 kWh |
+| L12 | S-097 | HTI "AI-Powered EMS" (EL-039) |
+| L13 | S-103 | HTI container 2.000 kWh — nguồn ô G1 |
+| L14 | S-105, S-104 | Schneider EMA trang sản phẩm; handout ~2017 — nguồn ô G1 |
+| L15 | S-106 | Schneider EMA Microsoft Marketplace |
+| L16 | S-107, S-108 | Schneider ESXP Microgrid PDF; ECC demo |
+| L17 | S-109 | Schneider brochure microgrid |
+| L18 | S-110 | Schneider ESXP cyber (IEC 62443) |
+| L19 | S-111, S-112 | Schneider EMO; pv-magazine-usa |
+| L20 | S-113, S-114 | Schneider PME; PME help |
+| L21 | S-115, S-116 | Siemens SICAM MGC brochures — nguồn ô G1 |
+| L22 | S-117 | Siemens SICAM MGC trang sản phẩm |
+| L23 | S-119 | Siemens slide 2022 (GOOSE ~70 ms) |
+| L24 | S-122 | Siemens whitepaper 2022 |
+| L25 | S-124 | ARC — Electrification X |
+| L26 | S-127, S-128 | ABB OPTIMAX tin; energy management |
+| L27 | S-131, S-130 | ABB OPTIMAX 6.4 "AI" (Verified*) |
+| L28 | S-133, S-134, S-135 | ABB e-mesh; Hitachi Energy 2021; thoái vốn Power Grids |
+| L29 | S-136 | ABB Energy and Asset Manager |
+| L30 | S-139, S-140 | SolarEdge ONE C&I; businesswire 12/2024 — nguồn ô G1 |
+| L31 | S-142 | SolarEdge ONE C&I overview |
+| L32 | S-143 | SolarEdge Site Admin user guide |
+| L33 | S-148 | SolarEdge mua Wevo |
+| L34 | S-144, S-145 | SolarEdge ONE Controller datasheet; user guide |
+| L35 | S-147 | SolarEdge feed-in limitation app note |
+| L36 | S-150 | Huawei C&I SmartPVMS |
+| L37 | S-154, S-153 | Huawei ≤ 2 s/≤ 5 s tự công bố, SmartLogger5000B/SmartMGC5000B (EL-025) — nguồn ô G1. Liên kết "datasheet SmartMGC5000B theo E F-28" trong 02 là S-153 (model tranh chấp, K R-19). S-155 (BayWa) hỗ trợ cùng claim nhưng 02 không trích |
+| L37b | S-158 | Manual LUNA2000-(107-215) C&I-Microgrid-SmartLogger3000 (phạm vi hẹp, K R-20) |
+| L38 | S-160 | Huawei EMMA |
+| L39 | S-163, S-180 | Huawei Northbound control APIs; Solytic |
+| L40 | S-120, S-121 | Siemens SICAM SCC; chứng chỉ WinCC OA IEC 62443 |
+| L41 | S-187, S-188, S-186 | Sungrow PowerStack 255CS — nguồn ô G1 |
+| L42 | S-191, S-193 | Sungrow iSolarCloud datasheet; Eniris docs |
+| L43 | S-200, S-206, S-214 | OpenEMS docs; repo balancing; forum — nguồn ô G1 (S-200) |
+| L44 | S-210, S-211, S-204 | OpenEMS release notes Zenodo; repo (giấy phép UNKNOWN, K R-21) |
+| L45 | S-216 | OpenEMS §14a EnWG (bayern-innovativ) |
+| L46 | S-218, S-220 | Stem PowerTrack EMS; thư cổ đông (số liệu Low) |
+| L47 | S-221 | Stem Athena (ô G1 chỉ Partial) |
+| L48 | S-222, S-224 | Stem DAS; AlsoEnergy PowerTrack flier |
+| L49 | S-225, S-226 | GridBeyond ViewPoint Lens; solarimpulse |
+| FS-01 | S-060 | meteocontrol reference Đông Nam Việt Packaging |
+| FS-02 | S-061 | meteocontrol reference MP Pack Đà Nẵng (zero-feed-in) |
+| FS-03 | S-059 | Gantner — năm dự án mái nhà VN |
+| FS-04 | S-232 | Solytic giá |
+| FS-05 | S-181 | meteocontrol VCOM nhập API Huawei |
+| FS-06 | S-229 | Power Factors Unity |
+| FS-07 | S-151 | Huawei SmartPVMS installer |
+| FS-07a | S-231 | AMMP |
+| FS-08 | S-192 | Sungrow iSolarCloud I-V (pv-magazine-usa) |
+| FS-09 | S-177 | FusionSolar 7.0 training slides (bản sao) |
+| FS-10 | S-234 | evcc — Huawei SCharger |
+| FS-11 | S-058 | Sungrow thị phần mái nhà VN tự công bố (2020) |
+| FS-12 | S-233 | Solar-Log Base datasheet |
+| FS-13 | S-046 | Advantech — QĐ 1570 (Low, EL-008) |
+| FS-14 | S-152 | Huawei Smart PV Plant Management |
+| FS-15 | S-396 | Release notes FusionSolar quan sát trực tiếp (không có URL công khai) |
+
 ---
 
 ## 4. URL đáng ngờ, nguồn bị loại và chuỗi không phải nguồn
@@ -557,12 +632,12 @@ Registrar đã thử spot-check bằng WebSearch nhưng hạn mức đã hết. 
 
 | S-ID | Vấn đề | Xử lý |
 |---|---|---|
-| S-095 | Trang seed InfinitePower: A/C/G ghi thấy qua snippet, B **không thấy** URL trong kết quả tìm kiếm (R-18) | Chỉ dùng cho định nghĩa chung, kèm S-330. Không gán tính năng sản phẩm. Độ tin cậy Low |
+| S-095 | Trang seed InfinitePower: A/C/G ghi thấy qua snippet, B **không thấy** URL trong kết quả tìm kiếm (K R-18) | Chỉ dùng cho định nghĩa chung, kèm S-330. Không gán tính năng sản phẩm. Độ tin cậy Low |
 | S-103 | URL có dấu "/" sau `.html` | Có thể là biến thể do công cụ tìm kiếm trả về. Giữ, Low–Med khi trích |
 | S-105 | Hai biến thể có/không "/" cuối (`…/65896` và `…/65896/`) | Gộp một S-ID |
 | S-129 | `energymanagement-calculator.abb.com` không có đường dẫn, không rõ nội dung | Không dùng làm bằng chứng tính năng OPTIMAX; dùng S-127, S-130 |
-| S-153 | Asset PDF dạng hash của solar.huawei.com; E gán cho SmartMGC5000B, A/B/G gán SmartLogger5000B (R-19) | Ghi "SmartLogger5000B/SmartMGC5000B"; số là tự công bố |
-| S-158 | Manual Huawei qua mirror nhà phân phối | Ràng buộc "peak shaving chỉ on/off-grid" chỉ đúng trong phạm vi manual này (R-20) |
+| S-153 | Asset PDF dạng hash của solar.huawei.com; E gán cho SmartMGC5000B, A/B/G gán SmartLogger5000B (K R-19) | Ghi "SmartLogger5000B/SmartMGC5000B"; số là tự công bố |
+| S-158 | Manual Huawei qua mirror nhà phân phối | Ràng buộc "peak shaving chỉ on/off-grid" chỉ đúng trong phạm vi manual này (K R-20) |
 | S-185 | Tài liệu Modbus Huawei tải lên diễn đàn ioBroker | Bản sao không chính thức; không dùng cho driver `VERIFIED_*` khi chưa có bản từ Huawei |
 | S-252 | Một số tài liệu ghi URL bị cắt trước `).pdf` | Sổ ghi dạng đầy đủ; người viết sửa trích dẫn khi chạm tới |
 | S-263 | Short link `docs.chariot.io/x/…` | Không truy được tiêu đề; Med |
@@ -608,7 +683,7 @@ Chọn theo mức ảnh hưởng tới quyết định P0/MVP, yêu cầu bắt 
 | EL-005 | Cuối 07/2026: 28.254 hệ TSXTTT (~1.614 MWp), chỉ ~287 hệ (~16,4 MW) đăng ký bán dư | FACT | S-013, S-014 | Số liệu từ EVN/báo | Med | — | Zero-export/giới hạn xuất là giá trị P0 số 1 |
 | EL-006 | Tới 08/2026 chưa ghi nhận giao dịch bán dư nào theo NĐ 243 | FACT | S-015 | "have not yet produced a single recorded sale" | Med | — | Không xây MVP quanh bán điện; bán dư là P1 |
 | EL-007 | Hệ trung áp không bán dư phải có thiết bị chống phát ngược; hạ áp chưa rõ | FACT (trung áp, theo tóm tắt) / UNKNOWN (hạ áp) | S-001, S-046 | Tóm tắt VBHN 52 và Advantech | Low–Med | K: không được viết "bắt buộc pháp lý cho mọi site" | Rơ-le chống phát ngược là bảo vệ native; phần mềm chỉ là lớp tuân thủ thứ 4 của arbiter |
-| EL-008 | QĐ 1570/QĐ-EVN yêu cầu kết nối điều độ Modbus TCP + IEC 104, "≥ 64 kbps, ≤ 125 ms" | FACT, Low (nguồn vendor có lợi ích) | S-046, S-047 | Tóm tắt của Advantech | Low | Chưa đọc QĐ 1570 | Không đưa số vào NFR; slave IEC 104 trên edge là P1 có điều kiện (R-10) |
+| EL-008 | QĐ 1570/QĐ-EVN yêu cầu kết nối điều độ Modbus TCP + IEC 104, "≥ 64 kbps, ≤ 125 ms" | FACT, Low (nguồn vendor có lợi ích) | S-046, S-047 | Tóm tắt của Advantech | Low | Chưa đọc QĐ 1570 | Không đưa số vào NFR; slave IEC 104 trên edge là P1 có điều kiện (K R-10) |
 | EL-009 | QĐ 963/QĐ-BCT (22/04/2026): cao điểm 17h30–22h30 T2–T7, thấp điểm 0h–6h, CN không cao điểm | FACT | S-016, S-017 | Bảng khung giờ | Med–High | Ngày áp vào hóa đơn: EL-010 | Lịch TOU là dữ liệu có phiên bản, không hard-code |
 | EL-010 | Khung giờ mới có thể chưa áp vào hóa đơn thực (07/2026) | UNKNOWN | S-018, S-019 | "chưa được áp dụng trên thực tế" | Low–Med | Nguồn khác nói đã/dự kiến áp từ 06/2026 | Hai lịch song song: lịch pháp lý và lịch hóa đơn |
 | EL-011 | Khung giờ cũ (TT 16/2014): cao điểm 9h30–11h30 và 17h–20h; thấp điểm 22h–4h | FACT | S-020 | Bảng khung giờ cũ | Med–High | — | Giữ để tính lại dữ liệu lịch sử |
@@ -616,8 +691,8 @@ Chọn theo mức ảnh hưởng tới quyết định P0/MVP, yêu cầu bắt 
 | EL-013 | NĐ 278/2026 sửa cơ chế điều chỉnh giá bình quân (ngưỡng 2%/5%) | FACT | S-023 | Ngưỡng điều chỉnh | Med | — | Giá có thể đổi bất kỳ lúc nào → `TariffVersion` có hiệu lực theo ngày |
 | EL-014 | Giá hai thành phần thí điểm cho khách ≥ 200.000 kWh/tháng; chạy song song 01–06/2026; thanh toán thí điểm 07/2026–07/2027 | FACT | S-024, S-025, S-028, S-029 | Lộ trình thí điểm | Med | Mốc 10/2025 vs 01/2026 | M-TAR hỗ trợ thành phần demand; peak shaving theo demand là P1 |
 | EL-015 | Chu kỳ tích phân công suất hiện nay là 30 phút | FACT | S-026, S-027 | "khoảng thời gian tích phân hiện nay đang là 30 phút" | Med | Block hay trượt: UNKNOWN | Cửa sổ demand mặc định 30 phút, giả định block |
-| EL-016 | Cơ sở tính thành phần công suất: công suất đăng ký hay Pmax đo | UNKNOWN | S-024, S-026 | A: "phần công suất đăng ký"; C: Pmax 30 phút | Low | Có (R-16) | `demand_basis ∈ {MEASURED_MAX, CONTRACTED}`, mặc định tắt |
-| EL-017 | Đại đa số C&I VN chưa trả phí công suất; khách thí điểm có thể đã trả từ 07/2026 | INFERENCE | S-014 | Suy từ lịch thí điểm | Med | Ghi chú A ban đầu gắn FACT (bị hạ, R-17) | Không hiển thị demand meter khi biểu giá không có thành phần demand |
+| EL-016 | Cơ sở tính thành phần công suất: công suất đăng ký hay Pmax đo | UNKNOWN | S-024, S-026 | A: "phần công suất đăng ký"; C: Pmax 30 phút | Low | Có (K R-16) | `demand_basis ∈ {MEASURED_MAX, CONTRACTED}`, mặc định tắt |
+| EL-017 | Đại đa số C&I VN chưa trả phí công suất; khách thí điểm có thể đã trả từ 07/2026 | INFERENCE | S-014 | Suy từ lịch thí điểm | Med | Ghi chú A ban đầu gắn FACT (bị hạ, K R-17) | Không hiển thị demand meter khi biểu giá không có thành phần demand |
 | EL-018 | Trạm sạc EV có biểu giá riêng (QĐ 14/2025, TT 60/2025); trạm kinh doanh có công tơ riêng | FACT | S-030, S-031 | Quy định giá trạm sạc | Med | Mức giá chưa đối chiếu | Nhiều biểu giá trong một site; `MTR_EV` |
 | EL-019 | TT 05/2025/TT-BCT Đ.31: cosφ ≥ 0,9 tại điểm đặt công tơ cho đối tượng theo điều kiện | FACT | S-042, S-043 | Ngưỡng cosφ | Med | Hai snippet mô tả đối tượng khác nhau | KPI PF tại POC; cảnh báo PF thấp (giám sát, không điều khiển Q ở MVP) |
 | EL-020 | Hệ số phát thải lưới VN 2023 = 0,6592 tCO2/MWh (CV 1726); 2024/2025 chưa công bố chính thức | FACT (2023) / UNKNOWN (2024–2025) | S-050, S-051, S-052, S-053 | 0,6592; ước 2024 0,681 | High (2023) | Ước tính khác nhau | EF là dữ liệu có phiên bản; giá trị ước tính gắn nhãn `PROVISIONAL_EF` |
@@ -630,7 +705,7 @@ Chọn theo mức ảnh hưởng tới quyết định P0/MVP, yêu cầu bắt 
 
 | # | Claim | Nhãn | S-IDs | Excerpt / diễn giải | Độ tin cậy | Bằng chứng mâu thuẫn | Hệ quả thiết kế |
 |---|---|---|---|---|---|---|---|
-| EL-025 | Bộ điều khiển site C&I của Huawei (SmartLogger5000B/SmartMGC5000B) công bố zero feed-in vòng kín ≤ 2 s, peak shaving/giới hạn công suất ≤ 5 s | FACT (tự công bố) | S-153, S-154, S-155, S-394 | "closed-loop control for zero feed-in within 2s" | Med | Model chính xác (R-19) | Mục tiêu tham chiếu cho NFR vòng nhanh; ưu tiên `control_owner = NATIVE` |
+| EL-025 | Bộ điều khiển site C&I của Huawei (SmartLogger5000B/SmartMGC5000B) công bố zero feed-in vòng kín ≤ 2 s, peak shaving/giới hạn công suất ≤ 5 s | FACT (tự công bố) | S-153, S-154, S-155 | "closed-loop control for zero feed-in within 2s" | Med | Model chính xác (K R-19); S-394 (nghiên cứu FS trước) chỉ xác nhận SmartLogger5000B và SmartMGC5000B đều là gateway C&I, **không** hỗ trợ con số ≤ 2 s/≤ 5 s | Mục tiêu tham chiếu cho NFR vòng nhanh; ưu tiên `control_owner = NATIVE` |
 | EL-026 | Huawei C&I: peak shaving chỉ hỗ trợ trong kịch bản on/off-grid (PQ/VSG) — **chỉ trong manual LUNA2000-(107-215) SmartLogger3000** | FACT (phạm vi hẹp) | S-158 | Như claim | Med | Mâu thuẫn với capacity control của SmartLogger5000B (S-154) và `set_capacity_control_periods` (S-297) | Ma trận chế độ hợp lệ theo model/firmware; không tổng quát hóa |
 | EL-027 | Huawei Northbound control API là task bất đồng bộ, chỉ ở OAuth Connect, cấm gọi lặp trước khi task xong | FACT | S-163, S-164, S-393 | "available only in OAuth Connect mode" | High | — | Connector cloud hãng chỉ dùng cho giám sát/lịch chậm, không cho điều khiển |
 | EL-028 | Huawei Northbound: lịch sử tối đa 10 thiết bị × 3 ngày ở 5 phút mỗi lần gọi; pull có hạn mức | FACT | S-165, S-393 | "5-minute data of a maximum of 10 devices… in three days" | High | — | Backfill theo lô; site có lệnh phải có edge của ta |
@@ -638,24 +713,24 @@ Chọn theo mức ảnh hưởng tới quyết định P0/MVP, yêu cầu bắt 
 | EL-030 | Huawei EU giữ 15 tháng dữ liệu thiết bị, 15 tháng báo cáo giờ, 5 năm ngày/tháng, 25 năm năm | FACT | S-174 | Bảng lưu giữ | High | APAC chưa rõ | Retention của ta: raw 13 tháng, 5 phút 5 năm, giờ+ suốt vòng đời |
 | EL-031 | meteocontrol đo 5 phút, truyền 15 phút, mỗi đêm hỏi lại 7 ngày | FACT | S-181 | Như claim | High | — | Cửa sổ tính lại CAGG ≥ 7 ngày; NFR không mất dữ liệu ≤ 7 ngày |
 | EL-032 | Huawei đổi chính sách API (09/2025), owner phải cấp quyền, làm hỏng tích hợp bên thứ ba | FACT | S-182, S-388 | Báo cáo cộng đồng | Med | — | Phụ thuộc cloud hãng là rủi ro khả dụng; edge-first |
-| EL-033 | Schneider EMA: MPC trên cloud từ giá/lịch sử/thời tiết/lịch vận hành; lịch mặc định 48 h khi mất server | FACT, Low–Med (một nguồn chính, ~2017) | S-104, S-105, S-106 | "48-hour advance default operation schedules" | Low–Med | 48 h vs 72 h (R-23) | Lịch dự phòng ≥ 48 h tại edge là PROPOSAL độc lập |
+| EL-033 | Schneider EMA: MPC trên cloud từ giá/lịch sử/thời tiết/lịch vận hành; lịch mặc định 48 h khi mất server | FACT, Low–Med (một nguồn chính, ~2017) | S-104, S-105, S-106 | "48-hour advance default operation schedules" | Low–Med | 48 h vs 72 h (K R-23) | Lịch dự phòng ≥ 48 h tại edge là PROPOSAL độc lập |
 | EL-034 | Schneider gửi lệnh qua hệ quản lý con (EV, BMS tòa nhà) thay vì thay thế chúng | FACT | S-109 | "Control orders… to existing managers" | Med–High | — | Supervisory trên controller native; không chạy hai vòng trên cùng biến |
 | EL-035 | Ampowr Cosmos tuyên bố "local backup feature": mất mạng vẫn chạy chiến lược và thu dữ liệu | FACT (tuyên bố hãng) | S-089, S-081 | "continue to perform strategies… through a local backup feature" | Med | — | Edge giữ lịch và chiến lược khi mất kết nối |
 | EL-036 | Ampowr tự tuyên bố ISO 27001, NIS2, host EU | FACT (tự tuyên bố) | S-091, S-085 | "ISO27001 certified and NIS2 compliant" | Med | Không thấy registry chứng chỉ | Ta không tuyên bố tuân thủ khi chưa có chứng chỉ |
 | EL-037 | Ampowr bid đồng thời Day-Ahead + imbalance + aFRR (Hà Lan) | FACT | S-087, S-086, S-088 | "bid together" | Med | Chỉ thị trường NL | Giao dịch thị trường ngoài phạm vi 12–18 tháng |
-| EL-038 | EMS lưu trữ điều phối BMS và PCS; giám sát, lập lịch, chẩn đoán | FACT, Low (seed, một agent) + nguồn thứ hai | S-095, S-330 | Định nghĩa chung | Low–Med | B không thấy S-095 (R-18) | Phân lớp EMS ↔ PCS ↔ BMS; chỉ dùng như định nghĩa |
-| EL-039 | Trang "AI-Powered EMS" của InfinitePower chỉ là tuyên bố marketing | FACT | S-097 | Ví dụ 10–12% giảm phí đỉnh | Low | — | Không gọi luật cố định là AI; quy tắc đặt tên AI/ML |
+| EL-038 | EMS lưu trữ điều phối BMS và PCS; giám sát, lập lịch, chẩn đoán | FACT, Low (seed, một agent) + nguồn thứ hai | S-095, S-330 | Định nghĩa chung | Low–Med | B không thấy S-095 (K R-18) | Phân lớp EMS ↔ PCS ↔ BMS; chỉ dùng như định nghĩa |
+| EL-039 | [FACT] Trang "AI-Powered EMS" của InfinitePower dùng nhãn "AI-Powered", nêu ví dụ 10–12% giảm phí đỉnh, không mô tả kỹ thuật (mô hình, dữ liệu, đánh giá). [INFERENCE] Coi trang là tuyên bố marketing, chưa phải bằng chứng năng lực AI | FACT (nội dung trang) / INFERENCE (đánh giá) | S-097 | Ví dụ 10–12% giảm phí đỉnh | Low | — | Không gọi luật cố định là AI; quy tắc đặt tên AI/ML |
 | EL-040 | Tủ BESS HT có EMS riêng (lập lịch, peak shaving, SOC, cảnh báo) nhưng không công bố register map/API | FACT / UNKNOWN (giao thức) | S-100, S-101, S-102, S-103 | "automated scheduling, peak shaving, SOC tracking" | Med | Dải DC mâu thuẫn giữa trang | Ta là lớp supervisory; driver cần map từ hãng |
 | EL-041 | SolarEdge ONE for C&I: lõi miễn phí cho người mua phần cứng, gói trả phí đưa ra dần | FACT | S-142 | "paid software packages… introduced gradually" | Med–High | — | Không cạnh tranh bằng dashboard; định giá theo giá trị đa hãng/điều khiển |
 | EL-042 | SolarEdge export limitation cần công tơ tại điểm đấu nối; công tơ tiêu thụ không được hỗ trợ | FACT | S-147 | "Consumption meters are not supported in export limitation use cases" | High | — | `MTR_POC` bắt buộc cho mọi điều khiển lưới |
 | EL-043 | SMA Data Manager M cần công tơ POI; peak shaving qua add-on Energy Maximizer | FACT | S-197, S-198 | Như claim | Med | — | Như EL-042 |
 | EL-044 | SolarEdge ONE Controller C&I: 2×RS485, CAN, 2×RJ45, Wi-Fi 6, BLE 5.3, 4DI/4DO; Modbus TCP cổng 1502 | FACT | S-144, S-145, S-146 | "Modbus TCP on port 1502" | High | Không thấy LTE (≠ không hỗ trợ) | Danh mục giao diện tham chiếu cho phần cứng edge |
 | EL-045 | Sungrow PowerStack 255CS tích hợp EMS/PCS/BMS, mở Modbus TCP cho EMS bên thứ ba | FACT | S-186, S-187, S-188 | "Modbus TCP… with EMS300CP or a third-party EMS" | Med | — | Đường tích hợp ưu tiên với tủ BESS Sungrow |
-| EL-046 | Peak shaving có tài liệu ở ≥ 8/11 sản phẩm được xét; là "table stakes" | INFERENCE | S-080, S-115, S-139, S-160, S-186, S-200, S-221 | Tổng hợp ma trận B | Med | Ghi chú B ban đầu gắn FACT "mọi sản phẩm" (bị hạ) | Peak shaving theo giới hạn nhập là P0 (vật lý); theo demand charge là P1 |
+| EL-046 | Peak shaving có tài liệu ở ≥ 8/11 sản phẩm được xét; là "table stakes" | INFERENCE | S-089 (Ampowr, L04), S-103 (HTI, L13), S-104, S-105 (Schneider, L14), S-115 (Siemens, L21), S-139 (SolarEdge, L30), S-153, S-154 (Huawei, L37), S-186 (Sungrow, L41), S-200 (OpenEMS, L43) | Tổng hợp ô G1 = Verified của ma trận [02 §7](02-market-and-competitor-analysis.html#ma-tran); Stem (L47, S-221) và GridBeyond (L49) chỉ Partial, ABB Unknown nên không tính | Med | Ghi chú B ban đầu gắn FACT "mọi sản phẩm" (bị hạ) | Peak shaving theo giới hạn nhập là P0 (vật lý); theo demand charge là P1 |
 | EL-047 | Các sản phẩm có tài liệu (Schneider, Ampowr, Huawei, OpenEMS, Stem) đều đặt vòng nhanh tại site | INFERENCE | S-104, S-089, S-154, S-200, S-218 | Tổng hợp | Med | — | Cloud không ở vòng nhanh; edge bắt buộc ở site có lệnh |
-| EL-048 | OpenEMS: lưới + = mua, ESS + = xả; Consumption = Grid + Production + Storage | FACT | S-212, S-202 | "positive: buy-from-grid"; "Negative values for Charge" | Med–High | Huawei `meterPower` + = xuất (S-399) | Quy ước dấu chuẩn R-01 |
+| EL-048 | OpenEMS: lưới + = mua, ESS + = xả; Consumption = Grid + Production + Storage | FACT | S-212, S-202 | "positive: buy-from-grid"; "Negative values for Charge" | Med–High | Huawei `meterPower` + = xuất (S-399) | Quy ước dấu chuẩn K R-01 |
 | EL-049 | OpenEMS `ess.balancing` cân bằng PCC về `targetGridSetpoint` (mặc định 0 W) | FACT | S-206, S-200 | "balanced to 0 Watt" | High | — | Mô hình setpoint lưới cho vòng edge |
-| EL-050 | Repo OpenEMS có file EPL-2.0 và AGPL-3.0; giấy phép từng module chưa rõ | UNKNOWN | S-204 | Hai file license | Med | E ghi chỉ EPL-2.0 (R-21) | Chặn ADR edge runtime tới khi pháp chế đọc LICENSE từng module; không tái dùng UI OpenEMS |
+| EL-050 | Repo OpenEMS có file EPL-2.0 và AGPL-3.0; giấy phép từng module chưa rõ | UNKNOWN | S-204 | Hai file license | Med | E ghi chỉ EPL-2.0 (K R-21) | Chặn ADR edge runtime tới khi pháp chế đọc LICENSE từng module; không tái dùng UI OpenEMS |
 | EL-051 | OpenEMS: API Modbus/TCP ghi kênh không phải đường điều khiển ESS; điều khiển qua controller + Power Solver | FACT | S-214 | Cảnh báo trên forum | Med | — | Một bộ phân xử (arbiter) duy nhất ở edge |
 | EL-052 | Stem PowerTrack EMS gồm portfolio, PPC, SCADA, edge UI, unit controller không phụ thuộc phần cứng | FACT | S-218, S-219 | "hardware-agnostic unit controllers" | Med–High | FY2025 định vị utility | Tham chiếu edge UI cục bộ (P1) |
 | EL-053 | Số tiết kiệm của vendor (Stem "tới 30%") là tuyên bố chưa kiểm chứng | FACT (về việc tuyên bố) | S-223, S-220 | "up to 30%" | Low | — | Không quảng cáo % tiết kiệm; dùng shadow bill so với baseline cùng phiên bản biểu giá |
@@ -772,6 +847,7 @@ Thứ tự theo mức chặn. "Chặn" = tài liệu/ADR không được phát h
 | V-11 | Edition tiêu chuẩn: IEC 62443, IEC 61724-1, IEC TS 63019, IEC 62898-2, IEEE 2030.7, ISA-101/18.2 | S-062, S-339, S-340, S-115, S-078 | Webstore IEC/IEEE/ISA | Mọi câu nhắc tiêu chuẩn |
 | V-12 | Giấy phép solver (HiGHS, CBC, OR-Tools, Timefold, SCIP) và tên controller OpenEMS | — (kiến thức nền) | Repo/LICENSE chính thức | ADR-OPT (tầng 3, P1) |
 | V-13 | Trang seed InfinitePower (S-095) và các URL gắn cờ §4.1 | S-095, S-310, S-335 | Mở trang khi có mạng | Không chặn (đã hạ nhãn) |
+| V-14 | Chưa URL nào được spot-check bởi reviewer, kể cả vòng review cuối (hết hạn mức WebSearch); mọi FACT giữ trần độ tin cậy snippet. Cần một lượt có mạng mở trực tiếp tối thiểu các nguồn của ô Verified trong ma trận 02 §7 (qua bảng §3.1), các nguồn EL gắn FACT và §4.1 | Toàn bộ S-001…S-387 (ưu tiên nguồn trong §3.1 và §5) | Mở trang, đối chiếu claim, ghi ngày đọc, nâng/hạ độ tin cậy theo §8 mục 3 | **Mọi phát hành ra bên ngoài của 02**; tuyên bố đối thủ trong 00 |
 
 ---
 
@@ -794,4 +870,6 @@ Thứ tự theo mức chặn. "Chặn" = tài liệu/ADR không được phát h
 - **Người viết 06:** chuỗi `https://enroll` trong API-INT-02 dễ bị công cụ quét hiểu nhầm là URL nguồn; đề xuất viết dạng đường dẫn tương đối `/v1/edge/enroll`.
 - **Người viết 12 (truy vết):** dùng EL-xxx của §5 làm cột "bằng chứng" cho FR/NFR; các yêu cầu dựa trên EL có nhãn UNKNOWN (EL-010, EL-016, EL-050) phải gắn cờ "chờ V-xx".
 - **Người viết 13:** V-01…V-13 nên có R-/Q- tương ứng nếu chưa có.
-- **Orchestrator:** cần một lượt có mạng/hạn mức tìm kiếm mới để chạy §7 và spot-check §4.1; sổ này không thể tự nâng độ tin cậy.
+- **Orchestrator:** cần một lượt có mạng/hạn mức tìm kiếm mới để chạy §7 (đặc biệt V-14) và spot-check §4.1. K vòng 1 và vòng review cuối đều không spot-check được URL nào; sổ này không thể tự nâng độ tin cậy.
+- **Người viết 02:** §13.2 dùng mã tạm L01…L49, L37b, FS-01…FS-15; bảng quy đổi sang S-ID nằm ở §3.1 của sổ này. Có thể thêm cột S-ID vào §13.2. Tài liệu không được phát hành ra bên ngoài khi V-14 chưa xong.
+- **Người viết 03:** cột "Bằng chứng · đối thủ" dùng `B·Lnn`; tra §3.1 để ra S-ID.

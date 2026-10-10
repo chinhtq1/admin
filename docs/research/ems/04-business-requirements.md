@@ -8,7 +8,7 @@
 | Người viết | Agent D (Functional Business Analyst) |
 | Phiên bản | 1.0 |
 | Ngày | 2026-10-10 |
-| Trạng thái | Bản nháp vòng 1. Đã áp toàn bộ "Danh sách quyết định thống nhất" của Evidence Judge ([K-review-round1 §6](notes/K-review-round1.md)). **Chưa được phát hành ra ngoài**: K §5 G-13 yêu cầu kiểm chứng pháp lý và giấy phép trước khi phát hành 04 (xem §9.3). |
+| Trạng thái | Bản nháp vòng 1 + vòng fix review chéo (C3/kill switch/SOE M1/`COMMISSIONING_TEST`/EV qua CPO/NFR từ 10, xem §8). Đã áp toàn bộ "Danh sách quyết định thống nhất" của Evidence Judge ([K-review-round1 §6](notes/K-review-round1.md)). **Chưa được phát hành ra ngoài**: K §5 G-13 yêu cầu kiểm chứng pháp lý và giấy phép trước khi phát hành 04 (xem §9.3). |
 | Neo mã | Mã tính năng `F-<MODULE>-NN` lấy nguyên từ [03 Danh mục chức năng](03-functional-catalog.html). Tài liệu này cấp mã chính thức `FR-<MODULE>-NNN`, `BR-<MODULE>-NN`, `NFR-<NHÓM>-NNN`. |
 
 ---
@@ -94,7 +94,7 @@ Các nguyên tắc dưới đây là ràng buộc cho **mọi** FR. Vi phạm m�
 
 1. **Cloud không bao giờ nằm trong vòng bảo vệ và không ghi trực tiếp vào thiết bị.** Cloud gửi ý định/lịch có hạn; edge arbiter + limit chain quyết định setpoint (K §6 #14).
 2. **Không có API sửa thông số bảo vệ** (grid code, ngưỡng BMS, rơ-le) và **không có E-stop từ xa** (C4, K §6 #14, #28).
-3. **Mọi lệnh có hạn** (`expires_at` bắt buộc), có chữ ký, có readback trước khi báo "đã áp dụng" (K §6 #21).
+3. **Mọi lệnh có hạn** (`expires_at` bắt buộc), có chữ ký, có readback trước khi báo "đã áp dụng" (K §6 #21). **Ngoại lệ duy nhất:** `REMOTE_CONTROL_SUSPEND` (kill switch) là lệnh đặt **trạng thái bền** tại edge, không có `expires_at` hiệu lực và chỉ được gỡ bằng `REMOTE_CONTROL_RESUME` hạng C3 (FR-SEC-013). Ngoại lệ này chỉ làm hệ thống an toàn hơn (dừng nhận lệnh từ xa), không bao giờ cấp quyền ghi. Hạn giao (delivery TTL) của bản tin suspend vẫn có, xem [10 §14.4](10-security-and-reliability.md). [PROPOSAL]
 4. **Điều khiển mặc định TẮT theo site**; bật là thao tác C3 sau commissioning và có đồng ý của chủ tài sản (K §6 #26).
 5. **Một vòng trên một biến:** `control_owner ∈ {NATIVE, EDGE}`, ưu tiên native (K §6 #15).
 6. **Thứ tự arbiter 12 mức cố định ở mức 1–6** (K §6 #16): (1) bảo vệ native · (2) interlock tại chỗ · (3) giám sát an toàn edge · (4) tuân thủ lưới · (5) trần nhập vật lý · (6) dự phòng backup · (7) lệnh tay · (8) DR/VPP · (9) peak shaving demand · (10) cam kết EV · (11) lịch kinh tế · (12) chiến lược mặc định.
@@ -131,7 +131,8 @@ Tiêu chí chấp nhận ở §5 tham chiếu các tham số dưới đây bằn
 | Xác thực | Step-up MFA | `auth_time` ≤ 5 phút trước lệnh C2/C3 | I §3.3 | PROPOSAL |
 | Xác thực | Phiên web | idle 30 phút, tuyệt đối 12 h; access token 5–10 phút | I §3.3 | PROPOSAL |
 | Nâng hạng | Ngưỡng C2 | setpoint > 80% giới hạn SOE; giảm `SOC_backup_reserve`; tắt tối ưu; lệnh tới > 5 site; ngoài giờ hành chính (mặc định 08:00–17:00 T2–T6 giờ site, cấu hình theo tenant) | I §3.7.4 | PROPOSAL |
-| Nâng hạng | Ngưỡng C3 | `DEVICE_ON_OFF`; đổi SOE; bật/tắt `control_enabled`; `SET_REVERSE_FEED_BLOCK` thủ công; xả/sạc cưỡng bức bỏ qua tối ưu > 30 phút; lệnh tác động > 10% MW BESS của tenant; reset lỗi; cập nhật firmware edge; bật lại kill switch | I §3.7.4 | PROPOSAL |
+| Nâng hạng | Ngưỡng C3 | `DEVICE_ON_OFF`; đổi SOE (gồm SOE tối thiểu M1, FR-BESS-020); đổi cấu hình lưới site; đổi `control_owner`; **bật** `control_enabled`; `SET_REVERSE_FEED_BLOCK` thủ công; xả/sạc cưỡng bức bỏ qua tối ưu > 30 phút; lệnh tác động > 10% MW BESS của tenant; reset lỗi; cập nhật firmware edge; **gỡ kill switch** (`REMOTE_CONTROL_RESUME`) | I §3.7.4; [10 §5.4](10-security-and-reliability.md) | PROPOSAL |
+| Hạ rủi ro | Thao tác an toàn hóa (C1) | **Tắt** `control_enabled`; **kích hoạt kill switch** (`REMOTE_CONTROL_SUSPEND`); `SET_ESS_P` về 0; `REVERT`; thu hồi đồng ý của chủ tài sản. Luôn C1, **miễn** PDP-04 (nâng hạng theo ngữ cảnh), PDP-11 (giới hạn tốc độ) và Fleet Governor; vẫn cần quyền và vẫn audit | [10 PDP-15, §5.4, §11.5](10-security-and-reliability.md) | PROPOSAL |
 | Tốc độ | Giới hạn lệnh | thiết bị ≤ 1 setpoint/2 s từ edge; site ≤ 6 lệnh thủ công/phút và ≤ 12 đổi chế độ/giờ; người dùng ≤ 30 lệnh/10 phút; `mode_change_min_interval` 300 s | I §3.7.2, §3.7.6 | PROPOSAL |
 | Đội | Fleet Dispatch Governor | Σ\|ΔP\| được lệnh trong 5 phút ≤ 20% MW BESS của tenant; toàn nền tảng ≤ 5% tổng MW quản lý; jitter 0–300 s cho lệnh đồng loạt (trừ điều độ) | K §6 #30; I §3.7.6 | PROPOSAL, cần mô phỏng |
 | Fallback | Lịch tại edge | ≥ 48 h; hết lịch → chiến lược mặc định của site | K §6 #17 | Quyết định K |
@@ -200,9 +201,9 @@ Role binding = (principal, role, scope_node) trên cây `Organization → Portfo
 | `OPERATOR` | Vận hành viên (NOC/O&M) | Xem, ack/gác cảnh báo, ticket, lệnh C1/C2 trong SOE, yêu cầu C3 | C1, C2; yêu cầu C3 | 03; I §3.4.1 |
 | `SITE_ENGINEER` | Kỹ sư site / commissioning | Cấu hình tài sản, điểm đo, driver, đề xuất SOE, chạy test commissioning, lệnh C1/C2 | C1, C2 (kể cả lệnh test trong checklist); yêu cầu C3 | 03; I §3.4.1 |
 | `CONTROL_SUPERVISOR` | Người duyệt điều khiển | Duyệt SOE, duyệt C3, bật điều khiển site, phát lệnh C1/C2 | C1, C2; **duyệt** C3 | 03; I §3.4.1 |
-| `ORG_ADMIN` | Quản trị tổ chức | Người dùng, vai trò, grant, gói, tài liệu; tắt kill switch tenant | **Không mặc định** (K §6 #29); chỉ tắt kill switch (C1) | 03; I §3.4.1 |
+| `ORG_ADMIN` | Quản trị tổ chức | Người dùng, vai trò, grant, gói, tài liệu; **kích hoạt** kill switch site/tenant; tắt `control_enabled` (an toàn hóa) | **Không mặc định** (K §6 #29); chỉ thao tác an toàn hóa C1: kích hoạt kill switch site/tenant, tắt `control_enabled`. **Gỡ** kill switch: chỉ yêu cầu (R), người duyệt C3 là `CONTROL_SUPERVISOR` ([10 §5.4, §14.4](10-security-and-reliability.md)) | 03; I §3.4.1 |
 | `VENDOR_SUPPORT` | Hỗ trợ của nền tảng (break-glass) | Truy cập có hạn, có phê duyệt và audit | Không | 03; I §3.4.1 |
-| `PLATFORM_ADMIN` | Vận hành nền tảng | Thư viện biểu giá EVN, thư viện driver, OTA edge (C3), kill switch toàn nền tảng, sức khỏe hệ thống. **Không** đọc dữ liệu tenant nếu không qua break-glass | Kill switch nền tảng (tắt C1); OTA C3 | **Bổ sung của 04** (PO trong 03) |
+| `PLATFORM_ADMIN` | Vận hành nền tảng | Thư viện biểu giá EVN, thư viện driver, OTA edge (C3), kill switch toàn nền tảng, sức khỏe hệ thống. **Không** đọc dữ liệu tenant nếu không qua break-glass | Kích hoạt kill switch nền tảng (C1); gỡ kill switch nền tảng (C3, hai `PLATFORM_ADMIN` khác người); OTA C3 | **Bổ sung của 04** (PO trong 03) |
 | `API_CLIENT` | Tài khoản máy | OAuth2 client credentials, scope tối thiểu, mặc định chỉ đọc | Không (P2: C1 trong SOE qua F-INT-21) | 03 F-SEC-22; I §3.3 |
 | `GRID_OPERATOR` | Nguồn điều độ (không phải người) | Lệnh IEC 104 tại edge tạo envelope nội bộ `source=GRID_OPERATOR` | Chỉ loại lệnh điều độ đã cấu hình | I §3.4.1; E §3.19 quy tắc 4 |
 
@@ -224,7 +225,7 @@ Role binding = (principal, role, scope_node) trên cây `Organization → Portfo
 | `asset.configure` | Sửa sổ tài sản, điểm đo, driver, cảm biến | — |
 | `tariff.configure` | Gán/tạo biểu giá, lịch TOU, kỳ hóa đơn cho site | — (BR-TAR-05 nâng lên xác nhận khi site có điều khiển) |
 | `tariff.library.manage` | Quản lý thư viện biểu giá EVN dùng chung | — |
-| `commissioning.execute` | Chạy bước checklist và lệnh test commissioning | C1–C2 (theo bước) |
+| `commissioning.execute` | Chạy bước checklist (C0/C1: đọc, `dry_run`, `CONFIG_PUSH`) và lệnh `COMMISSIONING_TEST` (C2, FR-INT-031) | C1; `COMMISSIONING_TEST` = C2 |
 | `soe.propose` | Soạn/đề xuất SOE và cấu hình lưới (`export_mode`, `export_limit_w`, `import_cap_w`) | yêu cầu C3 |
 | `soe.approve` | Duyệt SOE (không được duyệt bản mình đề xuất) | duyệt C3 |
 | `cmd.c1` | Phát lệnh C1 | C1 |
@@ -232,8 +233,9 @@ Role binding = (principal, role, scope_node) trên cây `Organization → Portfo
 | `cmd.c3.request` | Tạo yêu cầu lệnh C3 | C3 (bước 1) |
 | `cmd.c3.approve` | Duyệt lệnh C3 của người khác, khác vai trò | C3 (bước 2) |
 | `control.enable` | Yêu cầu/duyệt bật `control_enabled` (đi qua C3) | C3 |
-| `killswitch.engage` | Tắt kênh lệnh từ xa (site/tenant; nền tảng chỉ `PLATFORM_ADMIN`) | C1 |
-| `killswitch.release` | Bật lại kênh lệnh từ xa | C3 |
+| `control.disable` | Tắt `control_enabled` của site (an toàn hóa, PDP-15) | C1 |
+| `killswitch.engage` | **Kích hoạt** kill switch (engage): edge nhận `REMOTE_CONTROL_SUSPEND`, ngừng nhận lệnh từ xa (site/tenant; nền tảng chỉ `PLATFORM_ADMIN`) | C1 (an toàn hóa) |
+| `killswitch.release` | **Gỡ** kill switch (release): `REMOTE_CONTROL_RESUME`, edge về `SAFE_START` rồi nhận lệnh từ xa lại | C3 |
 | `plan.approve` | Duyệt thủ công DispatchPlan vượt guardrail | C2 (≥ C3 nếu cho phép xả dưới dự phòng ở site lớn) |
 | `user.manage` | Mời, vô hiệu hóa người dùng; gán vai trò | — |
 | `grant.issue` | Cấp/thu hồi grant cho tổ chức installer/O&M (chỉ tenant chủ tài sản) | — |
@@ -271,8 +273,9 @@ Ký hiệu: ✓ có · R chỉ yêu cầu (cần người khác duyệt) · S tr
 | `cmd.c3.request` | — | — | — | R | R | R | — | R (OTA) | — |
 | `cmd.c3.approve` | — | — | — | — | — | ✓ | — | ✓ (chỉ OTA, khác người yêu cầu) | — |
 | `control.enable` | — | — | — | — | R | ✓ (duyệt) | — | — | — |
-| `killswitch.engage` | — | — | — | ✓ (site) | — | ✓ | ✓ (site, tenant) | ✓ (nền tảng) | — |
-| `killswitch.release` | — | — | — | — | — | R/✓ (C3) | R | R/✓ (C3, nền tảng) | — |
+| `control.disable` | — | — | — | ✓ | ✓ | ✓ | ✓ | — | — |
+| `killswitch.engage` (kích hoạt, C1) | — | — | — | ✓ (site) | — | ✓ (site, tenant) | ✓ (site, tenant) | ✓ (nền tảng) | — |
+| `killswitch.release` (gỡ, C3) | — | — | — | — | — | R/✓ (C3, site/tenant) | R | R/✓ (C3, nền tảng, khác người) | — |
 | `plan.approve` | — | — | — | — | — | ✓ | — | — | — |
 | `user.manage`, `tenant.configure` | — | — | — | — | — | — | ✓ | — | — |
 | `grant.issue` | ✓ nếu là chủ tài sản được ủy quyền | — | — | — | — | — | ✓ | — | — |
@@ -342,6 +345,7 @@ Ghi chú:
   3. **Khám phá thiết bị:** quét Modbus/SunSpec trên bus/OT LAN; fingerprint model/firmware → đề xuất driver và `capability_profile` (FR-INT-005).
   4. **Gán driver:** chọn `DriverProfile@version`; hệ thống hiển thị trạng thái kiểm chứng (`VERIFIED_LAB`, `VERIFIED_FIELD`, `COMMUNITY`, `UNVERIFIED`). Driver không `VERIFIED_*` chỉ được đọc (FR-INT-003, BR-INT-02).
   5. **Xác minh map điểm (point mapping verification)** — FR-INT-020: với mỗi thiết bị, so ≥ 1 giá trị đọc qua driver với giá trị tham chiếu (màn hình/HMI thiết bị, đồng hồ cầm tay, nameplate): công suất, điện áp, bộ đếm năng lượng, SOC. Kiểm hệ số scale, thứ tự word 32 bit, đơn vị, sentinel. Ghi kết quả "Khớp / Lệch (giá trị, %)". Màn L4 hiện giá trị thô, hệ số scale, mã quality (FR-MON-007).
+  5b. **Mở phiên thử tại chỗ** — FR-INT-031: kỹ sư yêu cầu phiên trên app, nhấn nút trên edge trong 120 s; mọi bước ghi 6, 8 (khi ghi thử), 9, 10 chỉ dùng lệnh `COMMISSIONING_TEST` (C2, step-up + lý do) trong phong bì test.
   6. **Phép thử dấu** — FR-INT-016: tạo tình huống biết trước (ví dụ BESS sạc nhỏ, giới hạn PV) và kiểm hướng P, Q, thanh ghi nhập/xuất ở mọi điểm đo.
   7. **Cấu hình chủ vòng:** chọn `control_owner` cho từng chức năng (zero-export, import cap, SOC guard) (FR-OPT-003).
   8. **Cấu hình và kiểm chứng native** (nếu dùng Gate M1): đặt giới hạn xuất/chế độ native, readback (FR-GRID-004, FR-BESS-003).
@@ -378,10 +382,10 @@ Ghi chú:
 
 ### 4.5 WF-04 — Kích hoạt Gate M1 (cấu hình native có readback)
 
-- **Persona:** P4, PS, P1. **FR:** FR-SEC-005, FR-GRID-003, FR-GRID-004, FR-GRID-006, FR-BESS-003, FR-OPT-005.
+- **Persona:** P4, PS, P1. **FR:** FR-SEC-005, FR-SEC-007, FR-BESS-020, FR-GRID-003, FR-GRID-004, FR-GRID-006, FR-BESS-003, FR-OPT-005.
 - **Tiền điều kiện:** site `active`; edge của ta đã claim (K §6 #13); driver ghi của controller native `VERIFIED_*`; `MTR_POC` đã qua phép thử dấu.
 - **Luồng chính:**
-  1. Site Engineer đề xuất cấu hình lưới (`export_mode`, `export_limit_w`, `import_cap_w`) và `control_owner = NATIVE` cho từng chức năng mà native hỗ trợ.
+  1. Site Engineer đề xuất **SOE tối thiểu Gate M1** (FR-BESS-020: cấu hình lưới `export_mode`, `export_limit_w`, `import_cap_w`; SOC min/max hiệu dụng nếu có BESS; danh sách lệnh cho phép) và `control_owner = NATIVE` cho từng chức năng mà native hỗ trợ; Control Supervisor duyệt C3 (FR-SEC-007).
   2. Chủ tài sản ghi nhận đồng ý bật điều khiển (đồng ý điện tử, lưu vào tài liệu site) (FR-SEC-005).
   3. Yêu cầu C3 "bật `control_enabled`, Gate M1" → Control Supervisor duyệt trong ≤ 15 phút (FR-SEC-007).
   4. Edge ghi tham số native (giới hạn xuất, chế độ TOU/capacity control…) qua driver, đọc lại, báo `APPLIED` hoặc `FAILED_*` (FR-INT-007).
@@ -492,7 +496,7 @@ Ghi chú:
 ### 4.14 WF-13 — Kill switch và Fleet Governor
 
 - **FR:** FR-SEC-012, FR-SEC-013.
-- **Luồng kill switch:** (1) Người có `killswitch.engage` chọn phạm vi (site/tenant; nền tảng chỉ `PLATFORM_ADMIN`), nhập lý do — thao tác C1, không cần người duyệt. (2) Cloud gửi lệnh ký `REMOTE_CONTROL_SUSPENDED` tới mọi edge trong phạm vi; edge chạy chiến lược mặc định cục bộ, từ chối mọi lệnh từ xa trừ lệnh bật lại hợp lệ. (3) Bật lại là C3 (hai người). Kill switch **không phải E-stop** và không tác động bảo vệ native.
+- **Luồng kill switch** (thuật ngữ cố định: **kích hoạt** = engage, C1; **gỡ** = release, C3; không dùng "bật/tắt" trơn): (1) Người có `killswitch.engage` chọn phạm vi (site/tenant; nền tảng chỉ `PLATFORM_ADMIN`), nhập lý do — thao tác an toàn hóa C1, không cần người duyệt, không cần step-up, miễn PDP-04/PDP-11/Governor (PDP-15), vẫn audit. (2) Cloud chặn ngay mọi lệnh mới trong phạm vi và gửi lệnh ký `REMOTE_CONTROL_SUSPEND` tới mọi edge trong phạm vi; lệnh này **không hết hạn** (ngoại lệ của nguyên tắc §1.3 #3); edge đặt trạng thái `REMOTE_CONTROL_SUSPENDED`, hủy lệnh tay, dừng lịch cloud, chạy chiến lược mặc định cục bộ, từ chối mọi lệnh từ xa trừ `REMOTE_CONTROL_RESUME` hợp lệ. Edge offline lúc kích hoạt nhận lệnh khi online lại. (3) **Gỡ** kill switch là C3 (hai người, khác vai trò): site/tenant do `CONTROL_SUPERVISOR` duyệt (ORG_ADMIN chỉ được yêu cầu), nền tảng do hai `PLATFORM_ADMIN`; edge nhận `REMOTE_CONTROL_RESUME` → `SAFE_START` → chiến lược mặc định cho tới khi có lịch mới. Kill switch **không phải E-stop** và không tác động bảo vệ native ([10 §14.4](10-security-and-reliability.md)).
 - **Luồng Governor:** lệnh làm tổng |ΔP| của tenant trong 5 phút vượt ngưỡng → lệnh vào hàng đợi và nâng C3; lệnh đồng loạt nhiều site được trải jitter 0–300 s (trừ điều độ).
 
 ### 4.15 WF-14 — Dữ liệu trễ và restatement
@@ -571,7 +575,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 - **BR-ORG-04** Gán vai trò có quyền lệnh (`OPERATOR`, `SITE_ENGINEER`, `CONTROL_SUPERVISOR`) phải được audit và thông báo cho chủ tài sản của site.
 - **BR-ORG-05** Site ở `planned` không ingest; ở `commissioning` ingest nhưng gắn cờ commissioning, loại khỏi KPI danh mục và availability; chỉ lệnh test trong checklist được phép (IL-10).
 - **BR-ORG-06** Tài sản ở `maintenance`: lệnh tới tài sản đó bị từ chối, edge chạy mặc định/native cho tài sản đó; cảnh báo của tài sản vào trạng thái "ngoài dịch vụ".
-- **BR-ORG-07** `suspended` yêu cầu lý do, bật kill switch theo site, chỉ giữ cảnh báo an toàn và kết nối.
+- **BR-ORG-07** `suspended` yêu cầu lý do, kích hoạt kill switch theo site, chỉ giữ cảnh báo an toàn và kết nối.
 - **BR-ORG-08** `decommissioned` là trạng thái cuối; không có chuyển ngược.
 
 **Tiền điều kiện / hậu điều kiện.** Tiền: tenant và người dùng có `user.manage` hoặc `asset.configure`. Hậu: mọi thay đổi dữ liệu chủ có audit với giá trị trước/sau; thay đổi ảnh hưởng tính toán (kWp theo thời gian, sự kiện công tơ) tạo dirty bucket (FR-HIST-006).
@@ -900,7 +904,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | FR-REP-005 | Báo cáo phát hành phải là snapshot bất biến với `report_version`, `data_as_of`, `tariff_version`, `calc_version`, `ef_version` (nếu có), `attribution_version`; restatement tạo phiên bản mới và thông báo người nhận; snapshot giữ ≥ 5 năm. | F-REP-10 | P0 | MVP | — | F-P15, F-P22 |
 | FR-REP-006 | Hệ thống phải xuất CSV (UTF-8 có BOM, ISO 8601 có offset + cột UTC, đơn vị trong header, cột quality), XLSX (sheet Metadata), PDF render server-side; ≤ 100.000 hàng trả ngay, lớn hơn chạy job nền với link ký số hết hạn ≤ 7 ngày; mọi lần xuất có audit và tôn trọng RBAC. | F-REP-11 | P0 | MVP | — | F-P21 |
 | FR-REP-007 | Hệ thống phải xuất bằng chứng tuân thủ giới hạn xuất: nhật ký mọi thay đổi chế độ/giới hạn xuất–nhập (ai, khi nào, cũ → mới, readback), số lần và tổng thời lượng vi phạm xuất theo kỳ, kết quả test commissioning (FR-INT-017). Không ghi câu "đạt yêu cầu pháp lý". | F-REP-13 | P0 | MVP | — | A D-05 |
-| FR-REP-008 | Mọi báo cáo phải ghi phương pháp và nhãn: số ước tính có "≈ ước tính"; số mô phỏng có "Mô phỏng"; không có câu % tiết kiệm quảng cáo; không tuyên bố tuân thủ IPMVP/ISO 50001/IEC 61724-1. | F-REP-02, F-REP-07 | P0 | MVP | — | K §6 #33, #34 |
+| FR-REP-008 | Mọi báo cáo phải ghi phương pháp và nhãn: số ước tính có "≈ ước tính"; số mô phỏng có "Mô phỏng"; không có câu % tiết kiệm quảng cáo; không tuyên bố tuân thủ IPMVP/ISO 50001/IEC 61724-1. | F-REP-02, F-REP-07, F-REP-19 | P0 | MVP | — | K §6 #33, #34 |
 | FR-REP-009 | Hệ thống nên tạo R4 Hiệu suất PV (Yf, PR chỉ khi có POA, PR hiệu chỉnh nhiệt, PR loại trừ curtail, % thời gian bị loại, K15, xếp hạng inverter). | F-REP-04 | P1 | Phase 1 | — | F §3.11 R4 |
 | FR-REP-010 | Hệ thống nên tạo R5 BESS (throughput, EFC kèm `E_ref`, RTE kèm ranh giới, xu hướng SOH, aux, thời gian ở mỗi chế độ, giờ derate). | F-REP-05 | P1 | Phase 1 | — | C-P05 |
 | FR-REP-011 | Hệ thống nên tạo R6 Availability (thời gian, điện năng, dữ liệu; loại trừ theo hợp đồng; mất kết nối báo riêng). | F-REP-06 | P1 | Phase 1 | — | C-P13 |
@@ -1066,7 +1070,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | FR-BESS-004 | Operator phải chọn được `site_strategy ∈ {SELF_CONSUMPTION, PEAK_SHAVING, TOU_SCHEDULE, BACKUP_HOLD, IDLE}`: (a) chiến lược mặc định của site là cấu hình có phiên bản, đổi là C2; (b) override tạm `SET_ESS_MODE` có hạn ≤ 24 h, C1. Chỉ hiện chế độ có trong `capability_profile`; tôn trọng `mode_change_min_interval`; hiển thị nguồn lệnh và hạn. | F-BESS-05 | P0 | MVP | C1·M1 (override), C2 (mặc định) | K R-15; E §3.19 |
 | FR-BESS-005 | Operator phải gửi được `SET_ESS_P` với hạn mặc định 15 phút, tối đa 1 h, `on_expiry = REVERT_DEFAULT`; hộp xác nhận "hiện tại → mới" kèm giới hạn sẽ áp và tác động dự kiến lên P lưới; `APPLIED` chỉ sau readback; `APPLIED_CLAMPED` báo giá trị thực. Setpoint > 80% giới hạn SOE nâng C2. | F-BESS-06 | P0 | MVP | C1·M2 | K §6 #21; I §3.7.4 |
 | FR-BESS-006 | Hệ thống phải cho `SET_SOC_RESERVE` trong giới hạn hãng và SOE; tăng mức là C1, giảm mức là C2 (lý do bắt buộc). | F-BESS-07 | P0 | MVP | C1·M1 / C2 | I §3.7.4 |
-| FR-BESS-007 | Hệ thống phải quản lý SOE theo site có version: P sạc/xả max, SOC min/max hiệu dụng, dự phòng, `export_limit_w`, `import_cap_w`, ramp, ΔP tối đa/lệnh, `mode_change_min_interval`, chu kỳ/ngày tối đa, `T_stale_bms`, `T_stale_poc`, danh sách lệnh cho phép. Site Engineer đề xuất, Control Supervisor duyệt (khác người), ký số, đẩy xuống edge; edge từ chối lệnh ngoài SOE. | F-BESS-08 | P0 | MVP | C3·M2 | I §3.7.2 |
+| FR-BESS-007 | Hệ thống phải quản lý **SOE đầy đủ (Gate M2)** theo site có version, mở rộng SOE tối thiểu M1 (FR-BESS-020) thêm: P sạc/xả max, dự phòng, ramp, ΔP tối đa/lệnh, `mode_change_min_interval`, chu kỳ/ngày tối đa, `T_stale_bms`, `T_stale_poc`. Site Engineer đề xuất, Control Supervisor duyệt (khác người), ký số, đẩy xuống edge; edge từ chối lệnh ngoài SOE. Cùng thực thể và chuỗi version với FR-BESS-020 (không phải thực thể thứ hai). | F-BESS-08 | P0 | MVP | C3·M2 | I §3.7.2 |
 | FR-BESS-008 | Hệ thống phải hiển thị chuỗi giới hạn: P thực tế / setpoint / P cho phép và nguồn giới hạn (BMS, PCS, SOE, lưới, arbiter) với mã lý do (`CLAMPED_BY_BMS`…). | F-BESS-09 | P0 | MVP | — | C §3.7; G §3.11 |
 | FR-BESS-009 | Edge phải giám sát an toàn BESS tự động không cần cloud: dữ liệu BMS cũ hơn `T_stale_bms` hoặc BMS báo lỗi → P = 0 hoặc chế độ native; SOC guard theo SOE (có hysteresis); thiết bị `requires_native_fallback` không nhận setpoint P cưỡng bức. | F-BESS-10 | P0 | MVP | C1·M2 (tự động) | K §6 #16, #17 |
 | FR-BESS-010 | Hệ thống phải đọc tín hiệu PCCC/khí/nhiệt phòng pin (DI hoặc Modbus) khi có và kích hoạt interlock IL-08 (cấm sạc/xả theo lệnh từ xa khi có báo động). | F-BESS-18 | P0 | MVP | — | I IL-08; K G-12 |
@@ -1079,6 +1083,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | FR-BESS-017 | Hệ thống nên theo dõi nguồn gốc năng lượng trong pin (từ PV hay lưới) để quy kết điện xuất khi BESS xả. | F-BESS-15 | P1 | Phase 1 | — | C-P04; Q-C04 |
 | FR-BESS-018 | Hệ thống nên cho "Dừng/khởi động vận hành từ xa" PCS (`DEVICE_ON_OFF`, không gọi là E-stop), hai người duyệt, thông báo chủ site; không cho lịch tự động. | F-BESS-16 | P1 | Phase 1 | C3·M2 | I §3.7.7 |
 | FR-BESS-019 | Hệ thống có thể cho reset lỗi từ xa chỉ khi hãng cho phép, hai người duyệt; mặc định reset tại chỗ. | F-BESS-17 | P2 | Phase 2 | C3·M2 | I §3.7.7 |
+| FR-BESS-020 | Hệ thống phải có **SOE tối thiểu Gate M1** theo site, có version, ký số, đề xuất/duyệt C3 hai người (FR-SEC-007), gồm: (a) cấu hình lưới `export_mode`, `export_limit_w`, `import_cap_w`, `allow_grid_charge`, `allow_ess_export` (FR-GRID-003); (b) SOC min/max hiệu dụng (chỉ khi site có BESS; không rộng hơn giới hạn hãng, FR-BESS-002); (c) danh sách type lệnh cho phép tại site (lấy giao của bảng C0–C4 ở Gate M1 với `capability_profile`). PDP (cloud) và edge kiểm mọi lệnh C0–C2 ở Gate M1 với SOE tối thiểu này + `capability_profile`; trường SOE đầy đủ chưa có thì coi là không áp dụng và lệnh M2 bị từ chối. Bật `control_enabled` Gate M1 (FR-SEC-005) yêu cầu đã có SOE tối thiểu được duyệt. Gate M2 nâng chính SOE này lên đầy đủ (FR-BESS-007). | F-BESS-08, F-GRID-03 | P0 | MVP | C3·M1 | Phát hiện review vòng fix (05/07/10 kiểm "trong SOE" ở M1); [PROPOSAL] |
 
 **Quy tắc nghiệp vụ**
 
@@ -1089,7 +1094,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 - **BR-BESS-05** Ngoại lệ dự phòng: khi trần nhập (mức 5) bị đe dọa, edge được xả xuống dưới `SOC_backup_reserve` tới `S_res_hard` nếu SOE cho phép (`allow_reserve_dip_for_import_cap`), mã lý do `RESERVE_DIPPED_FOR_IMPORT_CAP` (G §3.8).
 - **BR-BESS-06** Không có setpoint vô thời hạn từ xa; hết hạn luôn về mặc định đã định trước, không "giữ nguyên".
 
-**Tiền/hậu điều kiện.** Tiền cho lệnh: site `active`, `control_enabled`, `REMOTE`, Gate phù hợp, thiết bị `VERIFIED_*`, SOE hiệu lực (M2). Hậu: nhật ký lệnh đầy đủ; trạng thái thực tế đọc lại.
+**Tiền/hậu điều kiện.** Tiền cho lệnh: site `active`, `control_enabled`, `REMOTE`, Gate phù hợp, thiết bị `VERIFIED_*`, SOE hiệu lực (Gate M1: SOE tối thiểu FR-BESS-020; Gate M2: SOE đầy đủ FR-BESS-007). Hậu: nhật ký lệnh đầy đủ; trạng thái thực tế đọc lại.
 
 **Dữ liệu vào / ra**
 
@@ -1097,7 +1102,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 |---|---|
 | Điểm `ess.*` (p, soc, soh, p_charge_max, p_discharge_max, e_charge, e_discharge, mode, state, cell min/max), cảnh báo BMS/PCS, SOE, `capability_profile`, tín hiệu PCCC | Lệnh `SET_ESS_MODE`, `SET_ESS_P`, `SET_SOC_RESERVE`, cấu hình native; trạng thái lệnh; chuỗi giới hạn và mã lý do; KPI BESS (P1) |
 
-**Phân quyền.** Xem: `site.read`. Override chế độ/setpoint/dự phòng: `cmd.c1`/`cmd.c2`. Đổi chiến lược mặc định: `cmd.c2`. SOE: `soe.propose` + `soe.approve`. Dừng PCS (P1): `cmd.c3.request` + `cmd.c3.approve`.
+**Phân quyền.** Xem: `site.read`. Override chế độ/setpoint/dự phòng: `cmd.c1`/`cmd.c2`. Đổi chiến lược mặc định: `cmd.c2`. SOE (tối thiểu M1 và đầy đủ M2): `soe.propose` + `soe.approve`. Dừng PCS (P1): `cmd.c3.request` + `cmd.c3.approve`.
 
 **Lỗi và trường hợp biên**
 
@@ -1120,6 +1125,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 - **AC-BESS-06** Given nhận lệnh có tham số ngoài SOE (ví dụ ΔP > `delta_P_max_per_cmd`), When edge kiểm, Then `REJECTED_OUT_OF_LIMIT` và không có ghi nào xuống thiết bị.
 - **AC-BESS-07** Given quét toàn bộ OpenAPI của cloud và edge, When tìm endpoint ghi ngưỡng BMS, grid code, rơ-le hoặc E-stop, Then không có endpoint nào (FR-BESS-011).
 - **AC-BESS-08** Given Huawei capacity control không có trong `capability_profile` của site, When mở hộp chọn chiến lược, Then PEAK_SHAVING không xuất hiện.
+- **AC-BESS-09** Given site Gate M1 có SOE tối thiểu v1 (`soc_max_eff` = 90%, danh sách lệnh không có `SET_ESS_P`), When Operator gửi `SET_SOC_RESERVE` lên 95% hoặc gửi `SET_ESS_P`, Then PDP từ chối trước khi ký (`DENIED: OUT_OF_SOE` / `DENIED: COMMAND_NOT_ALLOWED`) và nếu bản tin vẫn tới edge thì edge trả `REJECTED_OUT_OF_LIMIT`; When site chưa có SOE tối thiểu được duyệt, Then yêu cầu bật `control_enabled` Gate M1 bị chặn (FR-BESS-020).
 
 **Phụ thuộc.** M-SEC (PDP, ký, phê duyệt, interlock), M-OPT (arbiter, lịch), M-INT (driver, readback, watchdog), M-GRID (`MTR_POC`), [08 Tối ưu](08-energy-optimization.md), [10 An toàn](10-security-and-reliability.md).
 
@@ -1236,7 +1242,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 |---|---|---|---|---|---|---|
 | FR-GRID-001 | Hệ thống phải cho khai báo GridConnection và `MTR_POC` (hoặc `MTR_POC_LV` khi không đặt được CT/VT trung áp, kèm hiệu chỉnh tổn hao MBA): ranh giới, `ct_ratio`, `vt_ratio`, `accuracy_class`, quan hệ với công tơ thanh toán EVN. | F-GRID-01 | P0 | MVP | — | K §6 #10 |
 | FR-GRID-002 | Hệ thống phải có danh mục điểm đo chuẩn `MTR_PV`, `MTR_BESS`, `MTR_AUX`, `MTR_LOAD_i`, `MTR_EV_i`, `MTR_GEN`, `DC_PV`/`DC_BAT`; mỗi điểm có `aux_inside_boundary`, `sign_convention` gốc, `R_wrap`, nhãn đầu/cuối chu kỳ, nguồn timestamp. | F-GRID-02 | P0 | MVP | — | K §6 #10 |
-| FR-GRID-003 | Hệ thống phải lưu cấu hình lưới site: `export_mode ∈ {ZERO_EXPORT, EXPORT_LIMIT, EXPORT_ENERGY_BUDGET}` (budget là P1), `export_limit_w`, `import_cap_w`, `allow_grid_charge`, `allow_ess_export`; có version, audit; là một phần của SOE; thay đổi là C3. | F-GRID-03 | P0 | MVP | C3·M1 | K R-27 |
+| FR-GRID-003 | Hệ thống phải lưu cấu hình lưới site: `export_mode ∈ {ZERO_EXPORT, EXPORT_LIMIT, EXPORT_ENERGY_BUDGET}` (budget là P1), `export_limit_w`, `import_cap_w`, `allow_grid_charge`, `allow_ess_export`; có version, audit; là phần (a) của SOE tối thiểu Gate M1 (FR-BESS-020), cùng version với SOE; thay đổi là C3 (hai người, FR-SEC-007, có ở Gate M1). | F-GRID-03 | P0 | MVP | C3·M1 | K R-27 |
 | FR-GRID-004 | Hệ thống phải đặt và kiểm chứng zero-export/giới hạn xuất trên logger/EMS hãng (`control_owner = NATIVE`): ghi tham số, đọc lại, giám sát kết quả tại `MTR_POC`. | F-GRID-04 | P0 | MVP | C2·M1 | K §6 #15, #36 |
 | FR-GRID-005 | Khi native không có chức năng, edge phải chạy vòng giới hạn xuất 1 s (PI có anti-windup, hysteresis bất đối xứng: giảm nhanh, tăng chậm), ưu tiên sạc BESS trước khi cắt PV; mất `MTR_POC` quá `T_stale_poc` → PV về giới hạn native, BESS P = 0. | F-GRID-05 | P0 | MVP | C2·M2 | G §3.3(a)(b) |
 | FR-GRID-006 | Hệ thống phải giữ P_nhập ≤ `import_cap_w` bằng BESS xả (và giảm EV khi có, P1); native trước, edge khi cần; là mức 5 của arbiter; cảnh báo khi vượt quá `T_import_alarm`. | F-GRID-06 | P0 | MVP | C2·M1 | G §3.3(c); K §6 #16 |
@@ -1323,7 +1329,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | US-EV-03 | Energy manager (P2) | sạc xe bằng PV dư ở site zero-export | dùng PV lẽ ra bị cắt | FR-EV-007 |
 | US-EV-04 | Kỹ sư (P4) | tích hợp với CSMS sẵn có của nhà cung cấp trạm sạc | không có hai CSMS tranh nhau một trụ | FR-EV-004 |
 
-**Luồng chính (P1).** (1) Kỹ sư khai báo trụ sạc, connector, công suất, số pha, `I_min`, giao thức, CSMS sở hữu. (2) Chọn đường: edge làm CSMS tối giản (OCPP 1.6J SP ≥ 2) hoặc tích hợp API CPO. (3) Cài `TxDefaultProfile` an toàn. (4) DLM tại edge phân bổ theo dư POC, ưu tiên, kWh cần. (5) Lỗi: mất kết nối trụ → trụ dùng profile mặc định an toàn.
+**Luồng chính (P1).** (1) Kỹ sư khai báo trụ sạc, connector, công suất, số pha, `I_min`, giao thức, CSMS sở hữu. (2) Chọn đường: edge làm CSMS tối giản (OCPP 1.6J SP ≥ 2) hoặc tích hợp API CPO (mặc định chỉ đọc; ghi chỉ qua edge theo FR-EV-004). (3) Cài `TxDefaultProfile` an toàn. (4) DLM tại edge phân bổ theo dư POC, ưu tiên, kWh cần. (5) Lỗi: mất kết nối trụ → trụ dùng profile mặc định an toàn.
 
 **Yêu cầu chức năng**
 
@@ -1332,7 +1338,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | FR-EV-001 | Hệ thống phải hỗ trợ điểm đo `MTR_EV_i` cho từng trụ hoặc nhóm; EV tách khỏi tải nền trong cân bằng năng lượng (K32). | F-EV-01 | P0 | MVP | — | C §3.3 T6 |
 | FR-EV-002 | Hệ thống nên giám sát trụ qua OCPP: trạng thái connector, phiên (bắt đầu/kết thúc, kWh từ MeterValues), lỗi; qua CSMS cục bộ trên edge hoặc API CPO. | F-EV-02 | P1 | Phase 1 | — | C K32 |
 | FR-EV-003 | Edge nên làm CSMS OCPP 1.6J tối giản cho smart charging khi site không có CSMS của CPO; Security Profile ≥ 2 (TLS + Basic), mục tiêu Profile 3; credential OCPP sinh ngẫu nhiên theo site. | F-EV-03 | P1 | Phase 1 | C1·M2 | K §6 #32 |
-| FR-EV-004 | Hệ thống nên nhận dữ liệu phiên và gửi giới hạn công suất qua API CPO khi khách đã có CSMS; không chạy CSMS thứ hai trên cùng trụ. | F-EV-04 | P1 | Phase 1 | C1·M2 | E PR-E-10 |
+| FR-EV-004 | Hệ thống nên nhận dữ liệu phiên từ CSMS của CPO (chỉ đọc, qua connector) khi khách đã có CSMS; không chạy CSMS thứ hai trên cùng trụ. **Ghi giới hạn công suất qua API CPO chỉ được phép khi đủ mọi điều kiện:** (1) lời gọi API CPO do **edge của site** thực hiện (edge là client của API CPO), không phải cloud gọi cloud; cloud chỉ gửi ý định `SET_EV_LIMIT` trong envelope ký (FR-SEC-008) qua PDP và Fleet Governor như mọi lệnh khác; (2) giới hạn gửi sang CPO có hạn: TTL ≤ `expires_at` của envelope (mặc định 15 phút, tối đa 1 h) và API CPO phải hỗ trợ trường hạn/thời lượng của profile (tương đương `validTo`); (3) readback: edge đọc lại profile/giới hạn đang hiệu lực hoặc công suất phiên từ dữ liệu CPO, chỉ báo `APPLIED` khi khớp, không khớp → `FAILED_NO_EFFECT`; (4) fallback khi mất cloud, mất edge↔CPO hoặc API CPO lỗi: giới hạn hết hạn về profile mặc định an toàn do CPO cấu hình (tương đương TxDefaultProfile), giá trị này được ghi nhận ở commissioning; edge tiếp tục giữ trần nhập bằng tài nguyên khác (BESS/PV) theo arbiter; (5) mọi bước audit (FR-SEC-014). API CPO không đáp ứng (2) và (3) → tích hợp **chỉ đọc**; ghi qua CPO là cờ riêng theo site, mặc định tắt, cho tới khi có ADR và driver CPO `VERIFIED_*`. Không có đường cloud→cloud ghi tới CPO. | F-EV-04 | P1 | Phase 1 (đọc); ghi: Phase 1 có điều kiện | C1·M2 (ghi) | E PR-E-10; K §6 #14; [PROPOSAL] |
 | FR-EV-005 | Hệ thống nên cho `SET_EV_LIMIT` (A hoặc W, số pha) qua ChargePointMaxProfile/TxProfile có `validTo`; giá trị ≥ `I_min` (mặc định 6 A) hoặc 0 để tạm dừng; tham gia trần nhập; hết hạn → TxDefaultProfile an toàn. | F-EV-05 | P1 | Phase 1 | C1·M2 | E §3.19; G §3.3(f) |
 | FR-EV-006 | Edge nên chạy DLM: phân bổ theo dư POC, `I_min`, ưu tiên, kWh cần trước giờ đi; cập nhật ≤ 1 lần/10–30 s mỗi trụ; quirk hãng trong driver. | F-EV-06 | P1 | Phase 1 | C1·M2 | G §3.3(f) |
 | FR-EV-007 | Hệ thống nên có chế độ sạc chỉ bằng PV dư (hoặc tối thiểu + PV dư). | F-EV-07 | P1 | Phase 1 | C1·M2 | G §3.1 |
@@ -1360,6 +1366,8 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | Profile OCPP mặc định của hãng đè TxProfile (quirk) | Driver xử lý; readback dòng thực tế; `APPLIED_CLAMPED` nếu lệch |
 | Trụ mất kết nối | TxDefaultProfile an toàn có hiệu lực; năng lượng tính từ `MTR_EV_i` nếu có |
 | Dư POC < `I_min` cho mọi phiên | Tạm dừng phiên ưu tiên thấp nhất trước |
+| Đường API CPO (FR-EV-004): API CPO lỗi hoặc edge mất Internet | Edge không gửi lại giới hạn cũ; giới hạn đã gửi hết hạn ở phía CPO về profile mặc định an toàn; trần nhập do BESS/PV gánh theo arbiter; cảnh báo Cao `EV_CPO_LINK_LOST` |
+| API CPO không hỗ trợ hạn profile hoặc không đọc lại được | Cờ ghi qua CPO không bật được (chỉ đọc); UI ghi "Chỉ giám sát — CSMS của CPO" |
 
 **Tiêu chí chấp nhận**
 
@@ -1367,6 +1375,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 - **AC-EV-02** (P1) Given trần nhập còn dư 10 kW và 3 phiên ưu tiên khác nhau, ba pha 230 V, When DLM chạy, Then phiên ưu tiên cao nhất nhận ≥ 6 A/pha, các phiên không đủ chỗ nhận 0 A, và tổng không vượt dư.
 - **AC-EV-03** (P1) Given `SET_EV_LIMIT` hạn 30 phút, When hết hạn, Then trụ về TxDefaultProfile an toàn và trạng thái `EXPIRED`.
 - **AC-EV-04** (P1) Given trụ có CSMS của CPO, When kỹ sư bật CSMS cục bộ trên edge cho cùng trụ, Then hệ thống chặn.
+- **AC-EV-05** (P1) Given site có CSMS của CPO và cờ ghi qua CPO bật, When Operator gửi `SET_EV_LIMIT` 22 kW hạn 15 phút, Then cloud chỉ gửi envelope ký tới edge (không có lời gọi cloud→API CPO trong log egress của cloud), edge gọi API CPO với thời lượng ≤ 15 phút, trạng thái chỉ thành `APPLIED` sau khi edge đọc lại giới hạn từ CPO; When API CPO không trả hạn/thời lượng profile, Then hệ thống không cho bật cờ ghi.
 
 **Phụ thuộc.** M-GRID (trần nhập), M-OPT (arbiter mức 10), M-INT (OCPP), M-TAR (biểu giá EV), M-SEC (D3).
 
@@ -1644,9 +1653,9 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | FR-INT-013 | Hệ thống phải có trang "Thiết bị được hỗ trợ": model + firmware + trạng thái kiểm chứng + chức năng đọc/ghi; không có câu "tương thích mọi thiết bị". | F-INT-23 | P0 | MVP | — | K §6 #35 |
 | FR-INT-014 | Phải có bộ mô phỏng thiết bị nội bộ (Modbus inverter/PCS/BMS/công tơ có dấu cấu hình được, OCPP charger, lỗi giao tiếp, thiết bị không có watchdog) và lab HIL; dùng trong CI và test an toàn. | F-INT-24 | P0 | MVP | — | K G-05; GAP-13 |
 | FR-INT-015 | Hệ thống phải có checklist commissioning theo topology (WF-02): claim → kết nối/đồng hồ → khám phá → gán driver → xác minh map → phép thử dấu → chủ vòng → cấu hình native → test giới hạn xuất → (M2) test watchdog/LOCAL-REMOTE → (M2) SOE → biên bản; mỗi bước có bằng chứng, người làm, thời điểm; bước bắt buộc chưa đạt thì không cho `active`. | F-INT-25 | P0 | MVP | — | K G-02 |
-| FR-INT-016 | Hệ thống phải có phép thử dấu cho mỗi điểm đo: tạo tình huống biết trước (BESS sạc nhỏ ≥ 5% P định mức hoặc ≥ 5 kW trong ≥ 60 s; giới hạn PV), kiểm hướng P, Q, thanh ghi nhập/xuất; ghi kết quả vào biên bản. | F-INT-26 | P0 | MVP | C1·M1 | K §6 #10 |
-| FR-INT-017 | Hệ thống phải có test giới hạn xuất: kịch bản giảm tải/tăng PV; đo thời gian đưa xuất về ≤ giới hạn + tol và số giây vượt; đạt khi ≤ 5 s (mục tiêu tham chiếu ≤ 2 s); lưu làm bằng chứng (FR-REP-007). | F-INT-27 | P0 | MVP | C2·M1 | E F-28 |
-| FR-INT-018 | Hệ thống phải có test watchdog và fail-safe: rút cáp edge↔thiết bị, mất `MTR_POC`, edge mất cloud, chuyển LOCAL; kiểm thiết bị về mặc định trong `revert_timeout_s` và BESS P = 0/native; thiết bị không đạt → `requires_native_fallback = true`. | F-INT-28 | P0 | MVP | C2·M2 | K §6 #17 |
+| FR-INT-016 | Hệ thống phải có phép thử dấu cho mỗi điểm đo: tạo tình huống biết trước (BESS sạc nhỏ ≥ 5% P định mức hoặc ≥ 5 kW trong ≥ 60 s, trong phong bì test; giới hạn PV), kiểm hướng P, Q, thanh ghi nhập/xuất; ghi kết quả vào biên bản. Mọi thao tác ghi của phép thử chỉ chạy qua lệnh `COMMISSIONING_TEST` (FR-INT-031, NFR-SEC-033). | F-INT-26 | P0 | MVP | C2·M1 (qua `COMMISSIONING_TEST`) | K §6 #10 |
+| FR-INT-017 | Hệ thống phải có test giới hạn xuất: kịch bản giảm tải/tăng PV; đo thời gian đưa xuất về ≤ giới hạn + tol và số giây vượt; đạt khi ≤ 5 s (mục tiêu tham chiếu ≤ 2 s); lưu làm bằng chứng (FR-REP-007). Thao tác ghi chỉ qua `COMMISSIONING_TEST` (FR-INT-031, NFR-SEC-033). | F-INT-27 | P0 | MVP | C2·M1 (qua `COMMISSIONING_TEST`) | E F-28 |
+| FR-INT-018 | Hệ thống phải có test watchdog và fail-safe: rút cáp edge↔thiết bị, mất `MTR_POC`, edge mất cloud, chuyển LOCAL; kiểm thiết bị về mặc định trong `revert_timeout_s` và BESS P = 0/native; thiết bị không đạt → `requires_native_fallback = true`. Setpoint thử chỉ qua `COMMISSIONING_TEST` (FR-INT-031, NFR-SEC-033); site đang M1/M2 phải quay về `commissioning` hoặc bảo trì có phiên test để chạy lại. | F-INT-28 | P0 | MVP | C2·M2 (qua `COMMISSIONING_TEST`) | K §6 #17 |
 | FR-INT-019 | Hệ thống phải sinh biên bản commissioning PDF: cấu hình, kết quả từng test, phiên bản driver/SOE, chữ ký người làm và người nghiệm thu; lưu vào tài liệu site. | F-INT-29 | P0 | MVP | — | K G-02 |
 | FR-INT-020 | Hệ thống phải có bước xác minh map điểm: với mỗi thiết bị, so ≥ 1 giá trị công suất, 1 điện áp, 1 bộ đếm năng lượng (và SOC với BESS) với giá trị tham chiếu (màn hình thiết bị, đồng hồ cầm tay, nameplate); đạt khi lệch công suất ≤ 2% hoặc ≤ 1 kW, điện áp ≤ 1%, đơn vị/scale đúng; ghi "Khớp/Lệch". | F-INT-25, F-INT-03, F-MON-06 | P0 | MVP | — | K G-02; E §3.2 |
 | FR-INT-021 | Hệ thống nên có connector cloud chỉ đọc cho Sungrow iSolarCloud, SMA, Solis, Growatt, Deye: rate limiter theo endpoint, backfill ban đêm, quality `UNCERTAIN_VENDOR_CLOUD`. | F-INT-13 | P1 | Phase 1 | — | E PR-E-11 |
@@ -1659,6 +1668,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | FR-INT-028 | Hệ thống có thể ghi qua cloud hãng (Huawei OAuth Connect control API, task async, không gọi chồng) chỉ cho lịch chậm, cờ riêng, C2 trở lên. | F-INT-14 | P2 | Phase 2 | C2·M1 | I NFR-SEC-018 |
 | FR-INT-029 | Hệ thống có thể có adapter IEC 61850 MMS client, DNP3 outstation, OpenADR 3.x VEN, IEEE 2030.5 client. | F-INT-18 | P2 | Phase 2 | — | K §6 #32 |
 | FR-INT-030 | Hệ thống có thể cho API lệnh cho bên thứ ba: scope ghi cho client máy (C1 trong SOE), qua PDP và Fleet Governor, mặc định 0 lệnh. | F-INT-21 | P2 | Phase 2 | C1·M2 | I §3.7.6 |
+| FR-INT-031 | Hệ thống phải có lệnh `COMMISSIONING_TEST` là **đường ghi duy nhất** cho phép thử dấu, test giới hạn xuất và test watchdog (FR-INT-016…018). Chỉ chấp nhận khi: (1) site ở trạng thái `commissioning` (IL-10 chặn mọi type khác); (2) edge ở trạng thái con `MAINTENANCE/COMMISSIONING_TEST`, mở bằng **xác nhận có mặt tại chỗ** (mã phiên từ cloud + nút vật lý trên edge qua DI/GPIO trong ≤ 120 s; site có công tắc ở `LOCAL` thì không mở được); phiên tối đa 2 h; (3) biên độ trong **phong bì test**: \|P\| ≤ min(10% P định mức, 50 kW), ≤ 10 phút mỗi bước, không vượt SOE nháp hay giới hạn native; (4) `on_expiry = REVERT_DEFAULT` bắt buộc; thoát phiên (hết hạn, rút cáp, khởi động lại edge) → `REVERT_DEFAULT` + readback; (5) hạng C2 (step-up MFA ≤ 5 phút, lý do bắt buộc), quyền `commissioning.execute`; (6) `dry_run` trước mỗi bước; (7) mỗi bước, mỗi lần vào/ra phiên ghi audit (người, mã phiên, thời điểm nhấn nút) và biên bản (FR-INT-019). Chi tiết trạng thái con ở [07 §9.4](07-device-integration.md). | F-INT-26, F-INT-27, F-INT-28 (chờ 03 cấp F- riêng) | P0 | MVP | C2·M1 | 07 §9.4; 10 IL-10, §5.4; [PROPOSAL] |
 
 **Quy tắc nghiệp vụ**
 
@@ -1700,6 +1710,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 - **AC-INT-07** Given edge nhận config không có chữ ký hợp lệ, When xử lý, Then edge từ chối, giữ config cũ và báo `REJECTED_SIGNATURE`.
 - **AC-INT-08** Given OTA canary 1% có một edge rollback, When pipeline đánh giá, Then rollout dừng trước bước 10% và PO nhận cảnh báo.
 - **AC-INT-09** Given kết nối lại sau mất cloud, When edge báo lệnh đang hiệu lực khác danh sách cloud, Then cloud sinh cảnh báo "lệch trạng thái lệnh sau kết nối lại" và không tự gửi lại lệnh đã hết hạn.
+- **AC-INT-10** Given site `commissioning`, BESS 500 kW, kỹ sư yêu cầu phiên test, When (a) không nhấn nút trên edge trong 120 s, (b) công tắc ở `LOCAL`, (c) nhấn nút đúng hạn, Then chỉ (c) mở phiên `MAINTENANCE/COMMISSIONING_TEST`; trong phiên, `COMMISSIONING_TEST` sạc 60 kW bị từ chối `REJECTED_OUT_OF_LIMIT` (phong bì = min(50 kW; 50 kW)), sạc 25 kW hạn 5 phút được `APPLIED` sau readback, mọi type khác (`SET_ESS_P`, `APPLY_SCHEDULE`) bị `REJECTED_INTERLOCK:IL-10`; hết 5 phút hoặc thoát phiên thì BESS về mặc định có readback (FR-INT-031).
 
 **Phụ thuộc.** M-SEC (chứng chỉ, ký, OT/IT), M-MON, M-HIST, M-GRID, M-BESS, [07 Tích hợp](07-device-integration.md) (checklist chi tiết, hợp đồng điểm/lệnh), [06 Kiến trúc](06-system-architecture.html) (ADR edge runtime).
 
@@ -1730,16 +1741,16 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 |---|---|---|---|---|
 | US-SEC-01 | Chủ C&I (P1) | điều khiển từ xa tắt mặc định và chỉ bật khi tôi đồng ý | không ai tác động tài sản của tôi khi tôi chưa biết | FR-SEC-005 |
 | US-SEC-02 | Control Supervisor (PS) | hàng đợi duyệt lệnh nguy hiểm có diff và tác động MW | quyết định nhanh và đúng | FR-SEC-007 |
-| US-SEC-03 | Quản trị tổ chức (PA) | tắt toàn bộ điều khiển từ xa của tenant bằng một thao tác | phản ứng khi nghi tài khoản bị chiếm | FR-SEC-013 |
+| US-SEC-03 | Quản trị tổ chức (PA) | kích hoạt kill switch để tạm ngưng toàn bộ điều khiển từ xa của tenant bằng một thao tác | phản ứng khi nghi tài khoản bị chiếm | FR-SEC-013 |
 | US-SEC-04 | Operator (P3) | một trang cho biết vì sao lệnh của tôi bị từ chối | khỏi đoán mò | FR-SEC-011 |
 | US-SEC-05 | Chủ tài sản (P6) | nhật ký không sửa được của mọi lệnh và phê duyệt | giải quyết tranh chấp bảo hành và hợp đồng | FR-SEC-014 |
 | US-SEC-06 | Kỹ sư (P4) | biết site còn thiếu gì để bật Gate M2 | chuẩn bị đủ trước khi xin duyệt | FR-SEC-021 |
 
 **Luồng chính.** WF-05 (Gate M2), WF-07 (lệnh và phê duyệt), WF-13 (kill switch, Governor), WF-12 (grant).
 
-**Trạng thái lệnh (mở rộng từ E §3.19 theo K §6 #21).** `CREATED → [PENDING_APPROVAL → APPROVED | APPROVAL_REJECTED | APPROVAL_EXPIRED] → AUTHORIZED → SENT → RECEIVED → ACCEPTED | REJECTED_{STALE, INVALID, UNSUPPORTED, OUT_OF_LIMIT, LOWER_PRIORITY, INTERLOCK:<IL>, SIGNATURE, REPLAY} → DISPATCHED → APPLIED | APPLIED_CLAMPED | FAILED_{DEVICE_EXCEPTION, NO_EFFECT, TIMEOUT} → SUPERSEDED | CANCELLED | EXPIRED → COMPLETED`; phía cloud: `SENT` quá `expires_at` không có `RECEIVED` → `UNDELIVERED`. Enum cuối cùng thuộc [05](05-domain-model.html).
+**Trạng thái lệnh (mở rộng từ E §3.19 theo K §6 #21).** `CREATED → DENIED | PENDING_APPROVAL | AUTHORIZED` (`DENIED` = PDP từ chối, trạng thái kết thúc); `PENDING_APPROVAL → AUTHORIZED | APPROVAL_REJECTED | APPROVAL_EXPIRED`; `AUTHORIZED → SENT → RECEIVED → ACCEPTED | REJECTED_{STALE, INVALID, UNSUPPORTED, OUT_OF_LIMIT, LOWER_PRIORITY, INTERLOCK:<IL>, SIGNATURE, REPLAY} → DISPATCHED → APPLIED | APPLIED_CLAMPED | FAILED_{DEVICE_EXCEPTION, NO_EFFECT, TIMEOUT} → SUPERSEDED | CANCELLED | EXPIRED → COMPLETED`; phía cloud: `SENT` quá `expires_at` không có `RECEIVED` → `UNDELIVERED`. `APPROVED`/`REJECTED` **không** phải trạng thái của `DispatchCommand` mà là giá trị `CommandApproval.decision`; lệnh được duyệt đi thẳng `PENDING_APPROVAL → AUTHORIZED`. `REMOTE_CONTROL_SUSPEND` không có `EXPIRED` (trạng thái bền, gỡ bằng `REMOTE_CONTROL_RESUME`). Enum cuối cùng thuộc [05](05-domain-model.html).
 
-**Interlock tại edge (I §3.7.3).** IL-01 LOCAL/MAINTENANCE · IL-02 E-stop đang tác động · IL-03 BMS lỗi hoặc dữ liệu BMS cũ > `T_stale_bms` · IL-04 mất `MTR_POC` · IL-05 driver chưa `VERIFIED_*` hoặc `BAD_COMM` · IL-06 đồng hồ không `SYNCED` · IL-07 lệnh `GRID_OPERATOR` xung đột · IL-08 PCCC/khí/nhiệt báo động · IL-09 cửa tủ/bảo trì (nếu có DI) · IL-10 site đang `commissioning` (trừ lệnh test trong checklist).
+**Interlock tại edge (I §3.7.3).** IL-01 LOCAL/MAINTENANCE · IL-02 E-stop đang tác động · IL-03 BMS lỗi hoặc dữ liệu BMS cũ > `T_stale_bms` · IL-04 mất `MTR_POC` · IL-05 driver chưa `VERIFIED_*` hoặc `BAD_COMM` · IL-06 đồng hồ không `SYNCED` · IL-07 lệnh `GRID_OPERATOR` xung đột · IL-08 PCCC/khí/nhiệt báo động · IL-09 cửa tủ/bảo trì (nếu có DI) · IL-10 site đang `commissioning` (từ chối mọi type trừ `COMMISSIONING_TEST` trong phiên `MAINTENANCE/COMMISSIONING_TEST` và `dry_run`, FR-INT-031).
 
 **Yêu cầu chức năng**
 
@@ -1749,15 +1760,15 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | FR-SEC-002 | MFA bắt buộc cho mọi vai trò có quyền ghi và admin (ưu tiên WebAuthn, TOTP phụ, không chỉ SMS); step-up ≤ 5 phút cho C2/C3. | F-SEC-02 | P0 | MVP | — | K §6 #27 |
 | FR-SEC-003 | Mọi request phải qua RBAC theo cây; mọi lệnh phải qua PDP đánh giá chủ thể (vai trò, `auth_time`, loại client), tài nguyên (`lifecycle`, `control_enabled`, `local_remote`, `kill_switch`, Gate, driver, SOE), hành động (loại, hạng, ΔP, TTL), ngữ cảnh (ngân sách đội, giờ, số lệnh gần đây); kết quả PDP gồm hạng thực tế và lý do từ chối. | F-SEC-03 | P0 | MVP | — | K §6 #29 |
 | FR-SEC-004 | Tenant phải cô lập bằng PostgreSQL RLS với FORCE, role ứng dụng không owner/không BYPASSRLS, `SET LOCAL` mỗi transaction, lọc lớp thứ hai trong repository; cô lập ở MQTT ACL, object storage, cache, job; test cross-tenant tự động trong CI cho mọi endpoint. | F-SEC-04 | P0 | MVP | — | K §6 #29 |
-| FR-SEC-005 | Monitoring plane và control plane phải tách danh tính dịch vụ, credential, topic, quyền DB, namespace, quy trình release; `control_enabled` mặc định `false`; bật là C3 sau commissioning và chỉ khi có bản ghi đồng ý của chủ tài sản. | F-SEC-05 | P0 | MVP | C3·M1 | K §6 #26 |
-| FR-SEC-006 | Hệ thống phải phân hạng mọi loại lệnh C0–C4 (bảng §2 ngưỡng nâng hạng); C4 không có API; PDP nâng hạng theo ngữ cảnh, không bao giờ hạ dưới hạng tối thiểu của loại lệnh. | F-SEC-06 | P0 | MVP | C3·M2 | K §6 #28 |
-| FR-SEC-007 | Hệ thống phải có hàng đợi phê duyệt C3: người duyệt khác người yêu cầu và khác vai trò, cả hai step-up MFA; hiển thị diff trước/sau, tác động MW, site, hạn; cửa sổ duyệt ≤ 15 phút; hết hạn → `APPROVAL_EXPIRED`; thông báo chủ site. | F-SEC-06 | P0 | MVP | C3·M2 | I FR-SEC-001 (mã tạm) |
-| FR-SEC-008 | Mọi lệnh phải đóng gói trong envelope: `command_id` (UUID v7, idempotency), `correlation_id`, `source` (GRID_OPERATOR/OPERATOR/SCHEDULE/OPTIMIZER/DR/API), `issued_by`, `target`, `type`, `params`, `valid_from`, `expires_at` (bắt buộc), `on_expiry` (mặc định `REVERT_DEFAULT`), `supersedes`, `max_latency_ms`, `tolerance`, `dry_run`, `seq` đơn điệu theo (site, signer), `danger_class`, `approval_ref`, `kid`, chữ ký JWS (KMS) bắt buộc; ack do edge ký. | F-SEC-07 | P0 | MVP | — | K §6 #21, R-11 |
+| FR-SEC-005 | Monitoring plane và control plane phải tách danh tính dịch vụ, credential, topic, quyền DB, namespace, quy trình release; `control_enabled` mặc định `false`; **bật** là C3 sau commissioning, chỉ khi có bản ghi đồng ý của chủ tài sản và (Gate M1) SOE tối thiểu đã duyệt (FR-BESS-020); **tắt** là thao tác an toàn hóa C1 (OPERATOR, SITE_ENGINEER, CONTROL_SUPERVISOR, ORG_ADMIN), không cần duyệt, miễn PDP-04/PDP-11/Governor, vẫn audit. | F-SEC-05, F-ORG-17 | P0 | MVP | C3·M1 (bật); C1 (tắt) | K §6 #26; 10 PDP-15 |
+| FR-SEC-006 | Hệ thống phải phân hạng mọi loại lệnh C0–C4 (bảng §2 ngưỡng nâng hạng); C4 không có API; PDP nâng hạng theo ngữ cảnh, không bao giờ hạ dưới hạng tối thiểu của loại lệnh; thao tác an toàn hóa luôn C1 (§2 "Hạ rủi ro"). Phân hạng và hạng tối thiểu theo loại lệnh có từ **Gate M1** vì cấu hình lưới (FR-GRID-003), `control_owner` (FR-OPT-003), OTA (FR-INT-012), bật điều khiển (FR-SEC-005) đã là C3 ở M1 (13 CF-28/D-03). Chỉ phần nâng hạng theo ngữ cảnh của lệnh M2 (PDP-04/05: > 10% MW BESS tenant, xả/sạc cưỡng bức > 30 phút, setpoint > 80% SOE) bật cùng Gate M2. | F-SEC-06 | P0 | MVP | C3·M1 (nâng hạng ngữ cảnh PDP-04/05: M2) | K §6 #28; 13 CF-28, D-03 |
+| FR-SEC-007 | Hệ thống phải có hàng đợi phê duyệt C3 từ **Gate M1** (13 CF-28/D-03): người duyệt khác người yêu cầu và khác vai trò, cả hai step-up MFA; hiển thị diff trước/sau, tác động MW, site, hạn; cửa sổ duyệt ≤ 15 phút; hết hạn → `APPROVAL_EXPIRED`; thông báo chủ site. Áp cho mọi C3 ở M1 (cấu hình lưới, SOE tối thiểu, `control_owner`, bật `control_enabled`, OTA, gỡ kill switch) và C3 ở M2. | F-SEC-06 | P0 | MVP | C3·M1 | I FR-SEC-001 (mã tạm); 13 CF-28, D-03 |
+| FR-SEC-008 | Mọi lệnh phải đóng gói trong envelope: `command_id` (UUID v7, idempotency), `correlation_id`, `source` (GRID_OPERATOR/OPERATOR/SCHEDULE/OPTIMIZER/DR/API), `issued_by`, `target`, `type`, `params`, `valid_from`, `expires_at` (bắt buộc), `on_expiry` (mặc định `REVERT_DEFAULT`), `supersedes`, `max_latency_ms`, `tolerance`, `dry_run`, `seq` đơn điệu theo (site, signer), `danger_class`, `approval_ref`, `kid`, chữ ký JWS (KMS) bắt buộc; ack do edge ký. **Ngoại lệ duy nhất về hạn:** `REMOTE_CONTROL_SUSPEND` đặt trạng thái bền, không hết hạn hiệu lực, chỉ gỡ bằng `REMOTE_CONTROL_RESUME` (C3); vẫn có chữ ký, `command_id`, `seq` và hạn giao bản tin (FR-SEC-013). | F-SEC-07 | P0 | MVP | — | K §6 #21, R-11; 10 §11.6, §14.4 |
 | FR-SEC-009 | Hệ thống phải theo dõi trạng thái lệnh theo máy trạng thái ở trên; không gửi lại sau `expires_at`; retry chỉ trong hạn; UI không cập nhật lạc quan — chỉ hiện "đã áp dụng" sau `APPLIED`/`APPLIED_CLAMPED`. | F-SEC-07, F-SEC-14 | P0 | MVP | — | H §3.12 |
 | FR-SEC-010 | Edge phải thực thi IL-01…IL-10 trả `REJECTED_INTERLOCK:<code>`; site Gate M2 có BESS phải có công tắc LOCAL/REMOTE phần cứng nối DI, hoặc chế độ local/remote của thiết bị native mà edge đọc được và có biên bản commissioning. | F-SEC-08 | P0 | MVP | C1·M2 | K §3.8 |
 | FR-SEC-011 | Hệ thống phải có trang trạng thái điều khiển site: LOCAL/REMOTE, kill switch, Gate, SOE version, interlock đang tác động, nguồn lệnh thắng, fallback đang chạy, `control_owner` từng chức năng, thiết bị `requires_native_fallback`. | F-SEC-09 | P0 | MVP | — | I FR-SEC-002 (mã tạm) |
-| FR-SEC-012 | Hệ thống phải có Fleet Dispatch Governor: Σ\|ΔP\| được lệnh trong 5 phút ≤ ngưỡng tenant (mặc định 20% MW BESS) và ngưỡng nền tảng; jitter 0–300 s cho lệnh đồng loạt (trừ điều độ); vượt → hàng đợi + C3. | F-SEC-10 | P0 | MVP | C1·M2 | K §6 #30 |
-| FR-SEC-013 | Hệ thống phải có kill switch điều khiển từ xa theo site/tenant/nền tảng: edge nhận lệnh ký `REMOTE_CONTROL_SUSPENDED` và chạy chiến lược mặc định cục bộ; tắt là C1, bật lại là C3; tên hiển thị không dùng chữ "E-stop". | F-SEC-11 | P0 | MVP | C3·M2 | K §6 #30 |
+| FR-SEC-012 | Hệ thống phải có Fleet Dispatch Governor: Σ\|ΔP\| được lệnh trong 5 phút ≤ ngưỡng tenant (mặc định 20% MW BESS) và ngưỡng nền tảng; jitter 0–300 s cho lệnh đồng loạt (trừ điều độ); vượt → hàng đợi + C3. **Biến thể đếm (Gate M1):** số site nhận thay đổi ghi mỗi 5 phút có trần theo tenant/nền tảng, trần site mỗi lần chạy bộ sinh lịch, Signer kiểm `run_id` ([10 NFR-SEC-012](10-security-and-reliability.md)). **Biến thể ΔP (Gate M2):** ngưỡng Σ\|ΔP\| ở trên. | F-SEC-10 | P0 | MVP | C1·M1 (đếm) / M2 (ΔP) | K §6 #30; 10 §14.2, §20.4 |
+| FR-SEC-013 | Hệ thống phải có kill switch điều khiển từ xa theo site/tenant/nền tảng. **Kích hoạt** (engage) là thao tác an toàn hóa C1, không cần duyệt hay step-up, miễn PDP-04/PDP-11/Governor, có lý do và audit: cloud chặn ngay lệnh mới trong phạm vi và gửi lệnh ký `REMOTE_CONTROL_SUSPEND` (không hết hạn); edge đặt trạng thái `REMOTE_CONTROL_SUSPENDED`, hủy lệnh tay, dừng lịch cloud, chạy chiến lược mặc định cục bộ; vòng an toàn và tuân thủ lưới vẫn chạy. **Gỡ** (release) là C3 hai người bằng `REMOTE_CONTROL_RESUME` (site/tenant: CONTROL_SUPERVISOR duyệt; nền tảng: hai PLATFORM_ADMIN) → edge `SAFE_START`. Quyền theo §3.4. Tên hiển thị "Tạm ngưng điều khiển từ xa", không dùng chữ "E-stop". Có từ Gate M1 vì M1 đã có lệnh ghi (cấu hình native, chế độ). | F-SEC-11 | P0 | MVP | C1 (kích hoạt) / C3 (gỡ)·M1 | K §6 #30; 10 §14.4, PDP-15 |
 | FR-SEC-014 | Hệ thống phải có audit append-only: đăng nhập/MFA, đổi quyền, grant, SOE/config/driver map, mọi chuyển trạng thái lệnh và kế hoạch, phê duyệt, kill switch, xuất dữ liệu, break-glass, OTA, lệnh điều độ; role ứng dụng chỉ INSERT; hash chain theo tenant; edge giữ audit cục bộ và đồng bộ; trực tuyến ≥ 13 tháng, lưu trữ ≥ 5 năm. | F-SEC-12 | P0 | MVP | — | K §6 #31, R-25 |
 | FR-SEC-015 | Hệ thống phải có nhật ký lệnh cho người dùng: vòng đời từng lệnh (tạo → gửi → edge chấp nhận/từ chối kèm lý do → readback → hết hạn/bị thay), ai, khi nào, từ đâu, trước/sau; lọc theo site, người, loại, kết quả. | F-SEC-14 | P0 | MVP | — | H-P13 |
 | FR-SEC-016 | PDP phải chặn setpoint P cưỡng bức tới thiết bị `requires_native_fallback = true`; chỉ cho đổi giữa chế độ native an toàn. | F-SEC-15 | P0 | MVP | — | K §6 #17 |
@@ -1765,7 +1776,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | FR-SEC-018 | Edge phải phân vùng OT/IT: 2 NIC, không định tuyến WAN↔OT, chỉ outbound 8883/443 (+ NTP, DNS, OTA), là Modbus master duy nhất, IEC 104 trên conduit riêng; chính sách giữ/chặn kênh cloud riêng của hãng do khách chọn và ghi trong biên bản. | F-SEC-17 | P0 | MVP | — | I §3.6 |
 | FR-SEC-019 | Hệ thống phải phân loại dữ liệu D0–D4 và áp quy tắc mã hóa/xuất theo lớp; hosting tại Việt Nam mặc định (chờ kiểm chứng pháp lý); DPIA và quy trình thông báo vi phạm dữ liệu cá nhân là P1. | F-SEC-18 | P0 | MVP | — | K §6 #31; Q-I-04 |
 | FR-SEC-020 | Hệ thống phải áp chính sách lưu giữ ở §2 (raw 13 tháng; 5 phút 5 năm; ≥ 1 h vòng đời; audit 13 tháng trực tuyến + ≥ 5 năm; kế hoạch bị thay trước khi chạy: tóm tắt + hash 30 ngày). | F-SEC-19 | P0 | MVP | — | K §6 #31 |
-| FR-SEC-021 | Hệ thống phải tính **hồ sơ sẵn sàng Gate M2** theo site và chỉ cho bật M2 khi tất cả đạt: (1) site `active`; (2) `MTR_POC` qua phép thử dấu; (3) SOE đã duyệt và ký; (4) interlock áp dụng được đã cấu hình và test; (5) LOCAL/REMOTE theo FR-SEC-010; (6) test watchdog đạt cho từng thiết bị đích hoặc `requires_native_fallback` đã xử lý; (7) driver ghi `VERIFIED_*`; (8) mọi người có quyền lệnh trên site đã đăng ký MFA; (9) khóa ký lệnh hoạt động; (10) audit append-only hoạt động; (11) Fleet Governor và kill switch hoạt động cho tenant; (12) đồng hồ edge `SYNCED`; (13) đồng ý của chủ tài sản. Điều kiện chuyển sang không đạt khi đang M2 → M2 tạm ngưng (WF-05 E1). | F-SEC-05, F-SEC-06, F-SEC-07, F-SEC-08, F-SEC-10, F-SEC-11, F-INT-28, F-BESS-08 | P0 | MVP | C3·M2 | K §6 #27; GAP (xem §8) |
+| FR-SEC-021 | Hệ thống phải tính **hồ sơ sẵn sàng Gate M2** theo site và chỉ cho bật M2 khi tất cả đạt: (1) site `active`; (2) `MTR_POC` qua phép thử dấu; (3) SOE đầy đủ (FR-BESS-007) đã duyệt và ký; (4) interlock áp dụng được đã cấu hình và test; (5) LOCAL/REMOTE theo FR-SEC-010; (6) test watchdog đạt cho từng thiết bị đích hoặc `requires_native_fallback` đã xử lý; (7) driver ghi `VERIFIED_*`; (8) mọi người có quyền lệnh trên site đã đăng ký MFA; (9) khóa ký lệnh hoạt động; (10) audit append-only hoạt động; (11) Fleet Governor và kill switch hoạt động cho tenant; (12) đồng hồ edge `SYNCED`; (13) đồng ý của chủ tài sản; (14) điều kiện nền tảng trước site Gate M2 **đầu tiên**: NFR-SEC-028 (toàn vẹn thời gian), NFR-SEC-029 (quy trình sự cố), NFR-SEC-030 (cổng kiểm thử an toàn, pen-test), NFR-REL-013 (`run_mode` edge), NFR-REL-017 (game day mất cloud), NFR-OBS-008 (trực ca 24/7), NFR-OBS-009 (forensic bundle). Điều kiện chuyển sang không đạt khi đang M2 → M2 tạm ngưng (WF-05 E1). | F-SEC-25 (chính); F-SEC-05, F-SEC-06, F-SEC-07, F-SEC-08, F-SEC-10, F-SEC-11, F-INT-28, F-BESS-08 | P0 | MVP | C3·M2 | K §6 #27; GAP (xem §8) |
 | FR-SEC-022 | PDP phải áp giới hạn tốc độ: site ≤ 6 lệnh thủ công/phút và ≤ 12 đổi chế độ/giờ; người dùng ≤ 30 lệnh/10 phút; > 5 site/lệnh → C2; > 10% MW đội → C3; edge ≤ 1 setpoint/2 s tới mỗi thiết bị. | F-SEC-03, F-SEC-10 | P0 | MVP | — | I §3.7.6 |
 | FR-SEC-023 | Hệ thống nên neo audit: Merkle root mỗi giờ ký KMS ghi vào object storage WORM ≥ 5 năm; xuất audit CSV/JSON kèm bằng chứng hash; công cụ kiểm chuỗi hằng ngày. | F-SEC-13 | P1 | Phase 1 | — | K §3.8; Q-I-13 |
 | FR-SEC-024 | Hệ thống nên có hỗ trợ từ xa có kiểm soát: reverse tunnel theo yêu cầu, chủ site cho phép, ≤ 2 h, ghi phiên; break-glass có phê duyệt. | F-SEC-20 | P1 | Phase 1 | — | I §3.5 |
@@ -1779,7 +1790,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 - **BR-SEC-01** Tenant chỉ được thu hẹp quyền lệnh so với ma trận §3.4, không mở rộng.
 - **BR-SEC-02** SoD: người đề xuất SOE ≠ người duyệt; người yêu cầu C3 ≠ người duyệt và khác vai trò; `ORG_ADMIN` không có quyền lệnh mặc định.
 - **BR-SEC-03** Hạng thực tế = max(hạng tối thiểu của loại lệnh, hạng do ngữ cảnh theo §2). Không lệnh nào bị hạ hạng.
-- **BR-SEC-04** Lệnh từ xa chỉ hợp lệ khi `lifecycle = active` ∧ `control_enabled` ∧ `local_remote = REMOTE` ∧ `kill_switch = OFF` ∧ Gate phù hợp với loại lệnh.
+- **BR-SEC-04** Lệnh từ xa chỉ hợp lệ khi `lifecycle = active` ∧ `control_enabled` ∧ `local_remote = REMOTE` ∧ không có kill switch đang kích hoạt trong phạm vi ∧ Gate phù hợp với loại lệnh.
 - **BR-SEC-05** Kiểm tra ở ba nơi, lớp sau không tin lớp trước: cloud (quyền, PDP, SOE, Governor) → edge (chữ ký, hạn, `seq`, interlock, SOE đã ký) → thiết bị (giới hạn native, watchdog).
 - **BR-SEC-06** Không có "E-stop từ xa", không có API sửa thông số bảo vệ (C4).
 - **BR-SEC-07** Không tuyên bố tuân thủ IEC 62443/ISO 27001 khi chưa có chứng chỉ; tuyên bố bảo mật của hãng ghi là "tự tuyên bố".
@@ -1794,7 +1805,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 |---|---|
 | Danh tính, `auth_time`, binding, grant, trạng thái site/thiết bị, SOE, ngân sách đội, yêu cầu lệnh | Quyết định PDP (cho/từ chối, hạng, lý do), envelope ký, hàng đợi duyệt, trạng thái lệnh, audit, hồ sơ sẵn sàng M2 |
 
-**Phân quyền.** Theo ma trận §3.4. Xem audit: `audit.read`. Kill switch: `killswitch.engage`/`killswitch.release`.
+**Phân quyền.** Theo ma trận §3.4. Xem audit: `audit.read`. Kích hoạt kill switch: `killswitch.engage` (C1); gỡ kill switch: `killswitch.release` (C3). Tắt `control_enabled`: `control.disable` (C1).
 
 **Lỗi và trường hợp biên**
 
@@ -1816,12 +1827,14 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 - **AC-SEC-05** Given envelope `expires_at` = T, When edge nhận lúc T + 1 s, Then `REJECTED_STALE` và không ghi xuống thiết bị.
 - **AC-SEC-06** Given site ở LOCAL (DI), When gửi `SET_ESS_P`, Then `REJECTED_INTERLOCK:IL-01` và UI hiện "Đang điều khiển tại chỗ".
 - **AC-SEC-07** Given tenant có 10 MW BESS, When các lệnh trong 5 phút có Σ|ΔP| = 2,1 MW, Then lệnh làm vượt 2,0 MW vào hàng đợi và cần duyệt C3.
-- **AC-SEC-08** Given kill switch tenant được bật bởi ORG_ADMIN, When đo, Then mọi edge của tenant đang online báo `REMOTE_CONTROL_SUSPENDED` trong ≤ 60 s và mọi lệnh mới bị từ chối; bật lại cần C3.
+- **AC-SEC-08** Given ORG_ADMIN **kích hoạt** kill switch tenant (C1, không cần người duyệt), When đo, Then mọi edge của tenant đang online báo trạng thái `REMOTE_CONTROL_SUSPENDED` trong ≤ 60 s sau khi nhận `REMOTE_CONTROL_SUSPEND`, mọi lệnh mới bị PDP từ chối, và kill switch vẫn hiệu lực sau 24 h (không hết hạn); When ORG_ADMIN cố **gỡ** kill switch, Then chỉ tạo được yêu cầu C3 và `REMOTE_CONTROL_RESUME` chỉ được ký sau khi CONTROL_SUPERVISOR khác người duyệt. Given một edge offline lúc kích hoạt (kể cả offline > 24 h), When edge reconnect, Then edge đối chiếu trạng thái tạm ngưng retained (ký, có version) **trước** khi chạy bất kỳ slot lịch cloud nào, hủy lịch cloud đã lưu và chạy chiến lược mặc định; bản ghi version cũ hơn bị từ chối ([10 T-NFR-SEC-013-02/03](10-security-and-reliability.md); [06 ADR-14](06-system-architecture.html)).
 - **AC-SEC-09** Given CI chạy bộ test cross-tenant, When một endpoint trả dữ liệu tenant khác, Then build thất bại.
 - **AC-SEC-10** Given role DB của ứng dụng, When thực hiện `UPDATE` hoặc `DELETE` trên bảng audit, Then bị từ chối.
 - **AC-SEC-11** Given site thiếu điều kiện (6) cho PCS P1, When yêu cầu Gate M2, Then hồ sơ sẵn sàng hiện "Chưa đạt: test watchdog PCS P1" và yêu cầu không gửi được.
 - **AC-SEC-12** Given người dùng có quyền ghi chưa đăng ký MFA, When đăng nhập, Then bắt buộc đăng ký MFA trước khi vào trang có thao tác ghi.
 - **AC-SEC-13** Given lệnh `SET_ESS_P` đã `ACCEPTED` nhưng chưa readback, When xem UI, Then giá trị hiển thị là "đang chờ xác nhận", không phải giá trị mới.
+- **AC-SEC-14** Given site Gate M1 (chưa có M2), When SITE_ENGINEER đổi `export_limit_w` từ 0 lên 50.000 W, Then yêu cầu vào hàng đợi C3 (FR-SEC-007), chỉ áp dụng sau khi một CONTROL_SUPERVISOR khác người duyệt có step-up MFA; SOE tối thiểu tăng version; hết 15 phút không duyệt → `APPROVAL_EXPIRED`, cấu hình cũ giữ nguyên.
+- **AC-SEC-15** Given site đang `control_enabled = true` và người dùng vừa phát 6 lệnh trong phút (đã chạm giới hạn tốc độ), When OPERATOR chọn tắt `control_enabled`, Then thao tác được chấp nhận ngay là C1 (không step-up, không người duyệt, không bị PDP-11/Governor chặn), có bản ghi audit, và edge chạy chiến lược mặc định trong ≤ 60 s.
 
 **Phụ thuộc.** Tất cả module có lệnh; M-ORG (binding, grant); M-INT (chứng chỉ, ký ack); [10 An toàn](10-security-and-reliability.md) (STRIDE, abuse case, SLO, DR); [06 Kiến trúc](06-system-architecture.html) (ADR: "Cloud gửi ý định có hạn", "Lệnh ký tầng ứng dụng", "RLS + silo", "Fleet Governor").
 
@@ -1940,7 +1953,7 @@ Mọi NFR là `[PROPOSAL]`. Cột "Kiểm chứng" ghi cách nghiệm thu; "PoC"
 
 ### 6.2 NFR-REL — Độ tin cậy và an toàn vận hành
 
-| ID | Yêu cầu | Mục tiêu | Ưu tiên | Kiểm chứng | Căn cứ |
+| ID | Yêu cầu | Mục tiêu | Ưu tiên · Gate | Kiểm chứng | Căn cứ |
 |---|---|---|---|---|---|
 | NFR-REL-001 | Fail-safe khi mất cloud | Edge giữ vòng cục bộ (zero-export, trần nhập, limit chain), chạy lịch ≥ 48 h, rồi chiến lược mặc định; lệnh tay chạy tới `expires_at` | P0 | Game day chặn broker 4 h trên HIL | I NFR-REL-001 (mã tạm) |
 | NFR-REL-002 | Fail-safe khi mất edge↔thiết bị | Thiết bị về mặc định trong `revert_timeout_s` (10–60 s); thiết bị không có watchdog chỉ đổi chế độ native | P0 | FR-INT-018 | I NFR-REL-002 (mã tạm) |
@@ -1951,9 +1964,15 @@ Mọi NFR là `[PROPOSAL]`. Cột "Kiểm chứng" ghi cách nghiệm thu; "PoC"
 | NFR-REL-007 | Phản ứng khi dữ liệu an toàn cũ | Mất `MTR_POC` quá `T_stale_poc` hoặc BMS quá `T_stale_bms` → BESS P = 0/native, PV về giới hạn native trong ≤ 2 chu kỳ điều khiển | P0 | HIL | K §6 #17 |
 | NFR-REL-008 | Phát hiện edge offline | OFFLINE sau ≈ 90 s (3 heartbeat 30 s); cảnh báo sau 5 phút | P0 | Test | I §3.9 |
 | NFR-REL-009 | Tuân thủ giới hạn xuất | Số sự kiện vi phạm xuất (định nghĩa §2) = 0 trong test commissioning và test hồi quy HIL; vòng edge đưa xuất về giới hạn ≤ 5 s (mục tiêu ≤ 2 s) | P0 | FR-INT-017; HIL | G NFR-REL-0xx (mã tạm) |
-| NFR-REL-010 | Lan truyền kill switch | Mọi edge online trong phạm vi nhận `REMOTE_CONTROL_SUSPENDED` ≤ 60 s | P0 | Test | Đề xuất của 04 |
+| NFR-REL-010 | Lan truyền kill switch | Mọi edge online trong phạm vi nhận `REMOTE_CONTROL_SUSPEND` và báo trạng thái `REMOTE_CONTROL_SUSPENDED` ≤ 60 s sau khi kích hoạt; trạng thái không hết hạn, chỉ gỡ bằng `REMOTE_CONTROL_RESUME` (C3) | P0 · M1 | Test (AC-SEC-08) | Đề xuất của 04; 10 §14.4 |
 | NFR-REL-011 | Hạn chứng chỉ và khóa | Hết hạn chứng chỉ edge không làm dừng điều khiển cục bộ; cảnh báo trước 14 ngày khi gia hạn lỗi | P0 | Test | I §3.5 |
 | NFR-REL-012 | Không thi hành lệnh cũ | Sau khi khôi phục kết nối hoặc khôi phục cloud, không lệnh nào quá `expires_at` được gửi hoặc thực thi; đối soát trạng thái lệnh trong ≤ 60 s sau kết nối lại | P0 | Test | I §3.7.5, §3.15 |
+| NFR-REL-013 | `run_mode` của edge | Máy trạng thái `run_mode` theo [10 §13.4](10-security-and-reliability.md); mọi chuyển trạng thái là sự kiện audit, hiển thị ở header site | P0 · M2 | Test chuyển trạng thái | Mã đề xuất của 10 §20, 04 xác nhận cùng số |
+| NFR-REL-014 | Bền vững khi mất nguồn edge | Buffer có journal; bảng `command_id` và `last_seq` ghi bền (fsync) trước khi chấp nhận lệnh; mất nguồn đột ngột không làm hỏng cấu hình đã ký (A/B cấu hình) | P0 · M1 | Test cắt nguồn 100 lần ngẫu nhiên | 10 §11.7, §20 |
+| NFR-REL-015 | Control plane fail-closed | IdP, PDP, KMS/Signer hoặc DB lệnh lỗi → không phát lệnh mới; monitoring plane chạy độc lập | P0 · M1 | T-NFR-REL-015-01 (10) | 10 D-10-09, §16.5 |
+| NFR-REL-016 | Ưu tiên và backpressure | `event`, `cmd-ack`, `state` không bao giờ bị bỏ; quota kết nối/byte theo edge và tenant tại broker; xả buffer có giới hạn và jitter; quá tải thì giảm ưu tiên `backfill` trước | P0 · M1 | Test tải phục hồi | 10 §9.3, §16.6 |
+| NFR-REL-017 | Game day và chaos | Game day mất cloud 4 h hằng quý (P0 trước site Gate M2 đầu tiên); chaos KMS/broker/DR theo lịch (P1) | P0/P1 · M2 | Biên bản game day | 10 §16.4, §19.1 |
+| NFR-REL-018 | Trình tự DR | Khi failover DR: tự kích hoạt kill switch nền tảng, khôi phục monitoring trước, kiểm chuỗi audit và `seq` sàn, mở lại control plane bằng gỡ kill switch C3 | P1 | Diễn tập DR | 10 §16.4 |
 
 ### 6.3 NFR-DATA — Dữ liệu
 
@@ -1975,7 +1994,7 @@ Mọi NFR là `[PROPOSAL]`. Cột "Kiểm chứng" ghi cách nghiệm thu; "PoC"
 
 ### 6.4 NFR-OBS — Quan sát hệ thống
 
-| ID | Yêu cầu | Mục tiêu | Ưu tiên | Căn cứ |
+| ID | Yêu cầu | Mục tiêu | Ưu tiên · Gate | Căn cứ |
 |---|---|---|---|---|
 | NFR-OBS-001 | Bộ metric tối thiểu | Ingest lag, mẫu/s, edge online %, độ trễ lệnh theo trạng thái, tỷ lệ `FAILED_*`/`APPLIED_CLAMPED`/`REJECTED_INTERLOCK`, số lệnh/phút theo tenant, Σ\|ΔP\| đội/5 phút, số site chạy fallback, chứng chỉ sắp hết hạn, độ lệch đồng hồ edge | P0 | I §3.14 |
 | NFR-OBS-002 | Telemetry sức khỏe edge | `clock_state`, `clock_offset_ms`, `buffer_fill_pct`, `uplink_state`, `cycle_time_ms`, phiên bản firmware/config | P0 | E §3.18 |
@@ -1984,12 +2003,14 @@ Mọi NFR là `[PROPOSAL]`. Cột "Kiểm chứng" ghi cách nghiệm thu; "PoC"
 | NFR-OBS-005 | SLO và error budget | SLO tách theo dịch vụ (§6.2 NFR-REL-004); hết budget Command API → đóng băng release control plane | P1 | I §3.14 |
 | NFR-OBS-006 | Giám sát an ninh | Đăng nhập bất thường, lệnh ngoài giờ, lệnh từ client mới, nhiều `REJECTED_STALE/REPLAY`, đứt hash chain audit (kiểm hằng ngày), thiết bị lạ trên OT LAN | P0 (bốn tín hiệu đầu + hash chain), P1 (thiết bị lạ OT) | I §3.14 |
 | NFR-OBS-007 | Chất lượng dữ liệu | Coverage, độ trễ ingest p50/p95, tỷ lệ SUSPECT theo site/thiết bị, cấp cho R8 | P0 | F-P23 |
+| NFR-OBS-008 | Cảnh báo nền tảng và trực ca | Danh mục cảnh báo nền tảng có mức (Khẩn cấp / Cao / Trung bình / Thông tin), runbook cho từng cảnh báo; trực ca (on-call) 24/7 từ site Gate M2 đầu tiên; danh sách cảnh báo an toàn không được tạm gác | P0 · M2 (điều kiện trước site M2 đầu tiên, FR-SEC-021 (14)) | 10 §17.3; Q-10-02 |
+| NFR-OBS-009 | Bằng chứng điều tra | Forensic bundle theo (site, khoảng thời gian); log edge vòng tròn ≥ 30 ngày có `clock_state` mỗi bản ghi; ghim được cửa sổ dữ liệu 1 s | P0 (bundle, log) · M2; P1 (ghim dữ liệu) | 10 §18.4 |
 
 ### 6.5 NFR-SEC — Tóm tắt bảo mật (chi tiết ở [10 An toàn](10-security-and-reliability.md))
 
-Mã NFR-SEC-001…025 **giữ cùng số** với mã tạm của I vì nội dung ánh xạ một–một sau khi áp K; NFR-SEC-026 là mục `NFR-DATA-0xx` của I chuyển sang. Điều này là quyết định đánh số chính thức của 04 (K §6 #38).
+Mã NFR-SEC-001…025 **giữ cùng số** với mã tạm của I vì nội dung ánh xạ một–một sau khi áp K; NFR-SEC-026 là mục `NFR-DATA-0xx` của I chuyển sang. NFR-SEC-027…032, NFR-REL-013…018, NFR-OBS-008…009 là mã đề xuất của [10 §20](10-security-and-reliability.md); 04 **xác nhận cùng số** (không trùng, không đánh số lại) để 06/10/12/13 không phải sửa trích dẫn. NFR-SEC-033 là mã mới của 04 cho `COMMISSIONING_TEST`. Điều này là quyết định đánh số chính thức của 04 (K §6 #38). Cột "Gate" ghi cổng đầu tiên mà yêu cầu phải đạt (— = không gắn cổng điều khiển).
 
-| ID | Yêu cầu tóm tắt | Ưu tiên | FR liên quan |
+| ID | Yêu cầu tóm tắt | Ưu tiên · Gate | FR liên quan |
 |---|---|---|---|
 | NFR-SEC-001 | Cloud và edge không ghi thông số bảo vệ; không có API cho C4 | P0 | FR-BESS-011 |
 | NFR-SEC-002 | Tách monitoring plane và control plane; control tắt mặc định theo site | P0 | FR-SEC-005 |
@@ -1998,12 +2019,12 @@ Mã NFR-SEC-001…025 **giữ cùng số** với mã tạm của I vì nội dun
 | NFR-SEC-005 | OIDC + PKCE; MFA cho mọi vai trò có quyền ghi/admin; step-up ≤ 5 phút cho C2/C3 | P0 | FR-SEC-001, FR-SEC-002 |
 | NFR-SEC-006 | RBAC theo cây + PDP cho mọi lệnh; SoD | P0 | FR-SEC-003 |
 | NFR-SEC-007 | Cô lập tenant bằng RLS FORCE + test cross-tenant trong CI | P0 | FR-SEC-004 |
-| NFR-SEC-008 | Phân hạng C0–C4; hai người duyệt C3; cửa sổ ≤ 15 phút | P0 | FR-SEC-006, FR-SEC-007 |
-| NFR-SEC-009 | SOE theo site, version, ký số, đề xuất/duyệt bởi hai người | P0 | FR-BESS-007 |
+| NFR-SEC-008 | Phân hạng C0–C4; hai người duyệt C3 (khác người, khác vai trò); cửa sổ ≤ 15 phút; hash nội dung lệnh gắn vào phê duyệt. Có từ Gate M1 (13 CF-28/D-03); nâng hạng theo ngữ cảnh PDP-04/05 cho lệnh M2 bật cùng M2 | P0 · M1 | FR-SEC-006, FR-SEC-007 |
+| NFR-SEC-009 | SOE theo site, version, ký số, đề xuất/duyệt bởi hai người: SOE tối thiểu ở Gate M1, SOE đầy đủ ở Gate M2 | P0 · M1 (tối thiểu), M2 (đầy đủ) | FR-BESS-020, FR-BESS-007, FR-GRID-003 |
 | NFR-SEC-010 | Interlock IL-01…IL-10 tại edge | P0 | FR-SEC-010 |
-| NFR-SEC-011 | Mọi lệnh có `expires_at`; từ chối lệnh không hạn hoặc đến muộn; không gửi lại sau hạn | P0 | FR-SEC-008, FR-SEC-009 |
-| NFR-SEC-012 | Fleet Dispatch Governor | P0 | FR-SEC-012 |
-| NFR-SEC-013 | Kill switch điều khiển từ xa (tắt C1, bật C3) | P0 | FR-SEC-013 |
+| NFR-SEC-011 | Mọi lệnh có `expires_at`; từ chối lệnh không hạn hoặc đến muộn; không gửi lại sau hạn. Ngoại lệ duy nhất: `REMOTE_CONTROL_SUSPEND` (trạng thái bền, gỡ bằng `REMOTE_CONTROL_RESUME` C3) | P0 · M1 | FR-SEC-008, FR-SEC-009, FR-SEC-013 |
+| NFR-SEC-012 | Fleet Dispatch Governor: biến thể đếm ở M1, biến thể ΔP ở M2 | P0 · M1 (đếm) / M2 (ΔP) | FR-SEC-012 |
+| NFR-SEC-013 | Kill switch điều khiển từ xa: kích hoạt C1 (`REMOTE_CONTROL_SUSPEND`, không hết hạn), gỡ C3 (`REMOTE_CONTROL_RESUME`) | P0 · M1 | FR-SEC-013 |
 | NFR-SEC-014 | LOCAL/REMOTE phần cứng (hoặc native đọc được có biên bản) cho site Gate M2 có BESS; không có E-stop từ xa | P0 | FR-SEC-010 |
 | NFR-SEC-015 | Audit append-only + hash chain theo tenant; edge audit cục bộ | P0 (neo WORM P1) | FR-SEC-014, FR-SEC-023 |
 | NFR-SEC-016 | Vault/KMS; khóa ký không xuất; credential hãng mã hóa theo tenant; quét secrets CI | P0 | FR-SEC-017 |
@@ -2017,6 +2038,13 @@ Mã NFR-SEC-001…025 **giữ cùng số** với mã tạm của I vì nội dun
 | NFR-SEC-024 | Quy trình phát triển an toàn theo tinh thần IEC 62443-4-1 (threat model, SAST/SCA/SBOM, pen-test năm, VDP, SLA vá) | P1 | — |
 | NFR-SEC-025 | Lộ trình chứng nhận; không tuyên bố trước khi có chứng chỉ | P2 | FR-SEC-027 |
 | NFR-SEC-026 | Phân loại dữ liệu D0–D4; hosting VN mặc định; DPIA và quy trình thông báo vi phạm dữ liệu cá nhân (P1) | P0/P1 | FR-SEC-019 |
+| NFR-SEC-027 | Hardening edge: secure boot; mã hóa đĩa; không mật khẩu mặc định chung (ngẫu nhiên theo thiết bị, bắt đổi); SSH/cổng debug tắt mặc định, chỉ mở qua tunnel; tiến trình điều khiển quyền tối thiểu, tách tiến trình kết nối cloud; tường lửa host | P0 · M1 (secure boot: P1 nếu phần cứng MVP không hỗ trợ, ghi rủi ro) | FR-INT-002, FR-SEC-018 |
+| NFR-SEC-028 | Toàn vẹn thời gian edge: ≥ 2 nguồn, NTS khi có; từ chối bước nhảy > 1 s khi không đồng thuận; `UNSYNCED` → IL-06 | P0 · M2 | FR-INT-010, FR-SEC-010 |
+| NFR-SEC-029 | Quy trình ứng phó sự cố: phân loại INC-*, khống chế ≤ 30 phút (Khẩn cấp), thông báo tenant ≤ 4 h, postmortem ≤ 5 ngày làm việc; thời hạn thông báo pháp định chờ kiểm chứng (Q-I-04, UNKNOWN) | P0 · M2 | FR-SEC-014 |
+| NFR-SEC-030 | Cổng kiểm thử an toàn: driver ghi chỉ đạt `VERIFIED_LAB` sau fuzz và ca HIL liên quan; release edge cần toàn bộ ca HIL an toàn đạt; pen-test bên thứ ba trước site Gate M2 đầu tiên | P0 · M2 | FR-INT-003, FR-INT-014, FR-SEC-021 |
+| NFR-SEC-031 | Áp hàng loạt cấu hình/driver/SOE theo đợt (≤ 10 site đợt đầu, chờ 24 h), tự dừng khi có sự kiện an toàn mới | P1 | FR-INT-011, FR-BESS-007 |
+| NFR-SEC-032 | Conduit IEC 104: NIC/VLAN riêng, allow-list IP master trong cấu hình ký, chỉ type lệnh đã cấu hình, xử lý mất liên kết; IEC 62351 khi điện lực yêu cầu (Q-I-03, UNKNOWN) | P1 có điều kiện | FR-INT-023, FR-GRID-013 |
+| NFR-SEC-033 | An toàn lệnh `COMMISSIONING_TEST`: chỉ khi site `commissioning` (IL-10) và edge ở `MAINTENANCE/COMMISSIONING_TEST` mở bằng xác nhận có mặt tại chỗ (nút vật lý qua DI/GPIO ≤ 120 s sau mã phiên, không qua mạng); phong bì test \|P\| ≤ min(10% P định mức, 50 kW), ≤ 10 phút mỗi bước, phiên ≤ 2 h; `on_expiry = REVERT_DEFAULT` bắt buộc, thoát phiên → revert + readback; hạng C2 (step-up + lý do); audit mỗi bước. Kiểm chứng: AC-INT-10, T-FR-INT-016b (07) | P0 · M1 | FR-INT-016, FR-INT-017, FR-INT-018, FR-INT-031 |
 
 ---
 
@@ -2034,18 +2062,18 @@ Mọi tính năng trong 03 có ít nhất một FR hoặc một dòng ràng bu�
 | M-HIST | 14 | 17 | 11 / 6 / 0 / 0 | — |
 | M-REP | 18 | 19 | 8 / 11 / 0 / 0 | — |
 | M-TAR | 11 | 12 | 7 / 4 / 1 / 0 | — |
-| M-BESS | 20 | 19 | 10 / 7 / 1 / 1 | — |
+| M-BESS | 20 | 20 | 11 / 7 / 1 / 1 | — |
 | M-PV | 14 | 13 | 5 / 5 / 3 / 0 | F-PV-14 |
 | M-GRID | 19 | 19 | 8 / 9 / 2 / 0 | — |
 | M-EV | 11 | 10 | 1 / 7 / 2 / 0 | F-EV-11 |
 | M-OPT | 21 | 21 | 11 / 8 / 2 / 0 | F-OPT-21 |
 | M-ALM | 22 | 22 | 11 / 11 / 0 / 0 | — |
-| M-INT | 29 | 30 | 20 / 7 / 3 / 0 | — |
+| M-INT | 29 | 31 | 21 / 7 / 3 / 0 | — |
 | M-SEC | 24 | 28 | 22 / 4 / 2 / 0 | — |
 | M-ADV | 15 | 12 | 2 / 4 / 6 / 0 | F-ADV-12…15 |
-| **Tổng** | **258** | **266** | **146 / 95 / 24 / 1** | **7** |
+| **Tổng** | **258** | **268** | **148 / 95 / 24 / 1** | **7** |
 
-Ghi chú: số FR P0 (146) lớn hơn số F- MVP (130) vì 04 tách một số tính năng MVP thành nhiều FR kiểm thử được (ví dụ FR-ORG-006, FR-DASH-008, FR-HIST-003, FR-HIST-008, FR-REP-008, FR-TAR-007, FR-OPT-002, FR-INT-020, FR-SEC-021, FR-SEC-022, FR-ADV-002) và tạo FR cho mục ngang (quy tắc hiển thị, nhãn). Bảng đếm được kiểm tra lại bằng script khi lưu tài liệu này.
+Ghi chú: số FR P0 (148) lớn hơn số F- MVP (140, theo 03 sau bổ sung _catalog-gaps) vì 04 tách một số tính năng MVP thành nhiều FR kiểm thử được (ví dụ FR-ORG-006, FR-DASH-008, FR-HIST-003, FR-HIST-008, FR-REP-008, FR-TAR-007, FR-OPT-002, FR-INT-020, FR-INT-031, FR-BESS-020, FR-SEC-021, FR-SEC-022, FR-ADV-002) và tạo FR cho mục ngang (quy tắc hiển thị, nhãn). Bảng đếm được kiểm tra lại bằng script khi lưu tài liệu này.
 
 ### 7.2 Ánh xạ mã tạm của G (FR-OPT-0xx tạm) sang mã chính thức
 
@@ -2081,6 +2109,8 @@ Ghi chú: số FR P0 (146) lớn hơn số F- MVP (130) vì 04 tách một số 
 | NFR-REL-004 (SLO) | NFR-REL-004, NFR-OBS-005 |
 | NFR-REL-005 (RPO/RTO, hai DC) | NFR-REL-005 (sao lưu, P0), NFR-REL-006 (hai DC, P1) |
 | NFR-OBS-001 | NFR-OBS-004 |
+| 10 §20 (mã đề xuất) NFR-SEC-027…032, NFR-REL-013…018, NFR-OBS-008…009 | Cùng số, chính thức hóa ở §6.2, §6.4, §6.5 (vòng fix; không đánh số lại) |
+| — (mới của 04, vòng fix) | NFR-SEC-033 (`COMMISSIONING_TEST`) |
 | FR-SEC-001 (màn phê duyệt) | FR-SEC-007 |
 | FR-SEC-002 (trạng thái điều khiển site) | FR-SEC-011 |
 | FR-SEC-003 (xuất audit có bằng chứng) | FR-SEC-023 |
@@ -2151,9 +2181,20 @@ Ghi chú: số FR P0 (146) lớn hơn số F- MVP (130) vì 04 tách một số 
 | 08 Tối ưu | AC-OPT-02/03 là tiêu chí nghiệm thu bộ sinh lịch tầng 2; xác nhận `α`, cách chọn chiến lược mặc định an toàn; tầng 2 chạy 05:30 giờ site và theo sự kiện. |
 | 09 UX/UI | Màn mới cần UI-NN: hồ sơ sẵn sàng Gate M2, hàng đợi phê duyệt C3, nhật ký lệnh, ticket (danh sách + chi tiết), checklist commissioning + xác minh map, quản lý grant, kill switch; giao diện vai trò `TECHNICIAN` (chỉ ticket được giao, L4 chỉ đọc). |
 | 10 An toàn | Chốt danh sách cảnh báo an toàn không được tạm gác (BR-ALM-03); lan truyền kill switch ≤ 60 s (NFR-REL-010); `T_stale_poc` = 3 s; giờ hành chính cho nâng hạng C2; xác nhận BR-TAR-05 (đổi lịch tối ưu ở site có điều khiển cần `cmd.c2`). |
-| 11 Lộ trình | GAP-05 (kéo baseline B0 vào MVP?), GAP-08 (luồng sự cố MVP dừng ở ticket), thứ tự Gate M1 → M2 theo site; 146 FR P0 là phạm vi MVP lớn — cần chia mốc nội bộ. |
+| 11 Lộ trình | GAP-05 (kéo baseline B0 vào MVP?), GAP-08 (luồng sự cố MVP dừng ở ticket), thứ tự Gate M1 → M2 theo site; 148 FR P0 là phạm vi MVP lớn — cần chia mốc nội bộ. |
 | 12 Truy vết | Sinh `T-<FR id>` từ AC-<MODULE>-NN; dùng bảng §7 cho mã tạm. |
-| 13 Rủi ro | Câu hỏi mới ở §9.1 (Q-D-01…Q-D-08 là mã tạm của 04). |
+| 13 Rủi ro | Câu hỏi mới ở §9.1 (Q-D-01…Q-D-08 là mã tạm của 04). CF-28/D-03 đã áp: FR-SEC-006/007, NFR-SEC-008 = `C3·M1`. |
+
+**Vấn đề phát sinh ở vòng fix (04 đã sửa phía mình; các tài liệu dưới cần đồng bộ):**
+
+| Gửi | Nội dung |
+|---|---|
+| 03 Danh mục | Cấp F- riêng cho lệnh `COMMISSIONING_TEST` (FR-INT-031, hiện tạm neo F-INT-26/27/28) và cho SOE tối thiểu Gate M1 (FR-BESS-020, hiện neo F-BESS-08, F-GRID-03). Đổi tên lệnh kill switch thành `REMOTE_CONTROL_SUSPEND`/`REMOTE_CONTROL_RESUME` (trạng thái edge: `REMOTE_CONTROL_SUSPENDED`); dùng cặp từ "kích hoạt (C1) / gỡ (C3)" thay cho "tắt/bật lại". |
+| 05 Domain | Trạng thái `DispatchCommand` theo 04 §5.14 nay khớp 05: `PENDING_APPROVAL → AUTHORIZED`, thêm `DENIED`; `APPROVED` chỉ là `CommandApproval.decision`. SOE cần trường phân biệt phạm vi `MIN_M1`/`FULL_M2` trên cùng chuỗi version (FR-BESS-020, FR-BESS-007). |
+| 07 Tích hợp | Thêm đường lệnh EV qua API CPO do **edge** gọi (FR-EV-004: envelope ký, TTL ≤ `expires_at`, readback từ dữ liệu CPO, fallback về profile mặc định của CPO; API CPO không đáp ứng → chỉ đọc) vào §3/§8 như đã làm cho FR-INT-028; xác nhận tham chiếu FR-INT-031/NFR-SEC-033 cho §9.4. |
+| 10 An toàn | 04 xác nhận cùng số NFR-SEC-027…032, NFR-REL-013…018, NFR-OBS-008…009 (X-10-01 đóng); thêm NFR-SEC-033 (`COMMISSIONING_TEST`); thêm vào §5.4/§11 dòng ghi giới hạn EV qua API CPO (do edge thực thi, PDP + Governor) cho FR-EV-004; NFR-SEC-008 nay Gate M1 (bảng §20 của 10 còn ghi M2). |
+| 11 Lộ trình | SOE tối thiểu (FR-BESS-020) thuộc Phase 1/Gate M1; SOE đầy đủ (FR-BESS-007) giữ Phase 2/V1. FR-SEC-013 (kill switch) nay `C1/C3·M1`, cần ở Phase 1. Số FR: 268, P0: 148. |
+| 12 Truy vết | Thêm dòng cho FR-BESS-020, FR-INT-031, NFR-SEC-027…033, NFR-REL-013…018, NFR-OBS-008…009, AC-BESS-09, AC-INT-10, AC-EV-05, AC-SEC-14, AC-SEC-15; đổi Hạng·Gate của FR-SEC-006/007/013, FR-INT-016/017/018; đóng GAP-12-02 (FR-EV-004) và GAP-12-03 (`COMMISSIONING_TEST`). |
 
 ---
 
@@ -2169,7 +2210,7 @@ Ghi chú: số FR P0 (146) lớn hơn số F- MVP (130) vì 04 tách một số 
 | Q-D-04 | O&M Việt Nam dùng ticket trong nền tảng hay CMMS riêng; kỹ thuật viên có tài khoản không? | Vai trò `TECHNICIAN`, FR-ALM-016…020 | GAP-01 |
 | Q-D-05 | Chủ C&I có chấp nhận đồng ý điện tử để bật điều khiển, hay cần văn bản ký? | FR-SEC-005, WF-04 | — |
 | Q-D-06 | `T_offline_alarm_connector` = 30 phút có quá chậm với khách chỉ giám sát? | Cảnh báo kết nối | FR-ALM-004 |
-| Q-D-07 | Phạm vi 146 FR P0 có khả thi cho một đội mới; tách MVP nội bộ thành M1 trước, M2 sau? | Lộ trình | 11 |
+| Q-D-07 | Phạm vi 148 FR P0 có khả thi cho một đội mới; tách MVP nội bộ thành M1 trước, M2 sau? | Lộ trình | 11 |
 | Q-D-08 | Chủ tài sản có cần duyệt từng thay đổi SOE hay chỉ nhận thông báo? | SoD, thời gian bật M2 | FR-BESS-007 |
 
 Các câu hỏi đã có trong ghi chú vẫn mở và được tham chiếu trong module: Q-A01 (ngày áp QĐ 963), Q-A03/Q-C04 (ngân sách 50%), Q-A09 (thiết bị chống phát ngược hạ áp), Q-C02 (dữ liệu công tơ EVN), Q-C05/Q-C06 (PF, ramp), Q-E-01 (bảng điểm IEC 104), Q-F01 (giấy phép TSL), Q-F06 (độ chính xác dự báo), Q-F10 (kỳ chốt), Q-G09/Q-G10, Q-H04/Q-H06, Q-I-04 (luật an ninh mạng/dữ liệu), Q-I-07 (watchdog từng hãng), Q-I-08 (RLS trên CAGG), Q-I-13 (WORM tại VN), R-16 (cơ sở giá hai thành phần).

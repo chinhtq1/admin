@@ -73,22 +73,22 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <div class="table-wrap"><table class="phase">
 <thead><tr><th>Phase</th><th>Mục tiêu một câu</th><th>Cổng ra</th><th>Cỡ</th><th>Người-tuần (khoảng)</th></tr></thead>
 <tbody>
-<tr><td>0 Foundation</td><td>Gỡ các điều kiện chặn (giấy phép, pháp lý, PoC, phần cứng edge, phỏng vấn, pilot) và dựng nền kỹ thuật</td><td>G0</td><td>L</td><td class="num">45–71</td></tr>
-<tr><td>1 Monitoring MVP</td><td>Giám sát đa hãng + tuân thủ giới hạn xuất qua controller native + minh bạch chi phí TOU + cảnh báo/ticket, có thể bán</td><td>G1 = Gate M1 phát hành</td><td>XL</td><td class="num">172–272</td></tr>
-<tr><td>2 Operational EMS</td><td>Edge của ta làm chủ vòng theo từng site (Gate M2) với bộ an toàn P0; gói vận hành O&amp;M</td><td>G2 = site M2 đầu tiên đạt 30 ngày</td><td>L–XL</td><td class="num">96–158 (+8–14 IEC 104 có điều kiện)</td></tr>
+<tr><td>0 Foundation</td><td>Gỡ các điều kiện chặn (giấy phép, pháp lý, PoC, phần cứng edge, phỏng vấn, pilot) và dựng nền kỹ thuật</td><td>G0</td><td>L</td><td class="num">49–77</td></tr>
+<tr><td>1 Monitoring MVP</td><td>Giám sát đa hãng + tuân thủ giới hạn xuất qua controller native + minh bạch chi phí TOU + cảnh báo/ticket, có thể bán</td><td>G1 = Gate M1 phát hành</td><td>XL</td><td class="num">180–285</td></tr>
+<tr><td>2 Operational EMS</td><td>Edge của ta làm chủ vòng theo từng site (Gate M2) với bộ an toàn P0; gói vận hành O&amp;M</td><td>G2 = site M2 đầu tiên đạt 30 ngày</td><td>L–XL</td><td class="num">93–153 (+8–14 IEC 104 có điều kiện)</td></tr>
 <tr><td>3 Advanced EMS</td><td>Tối ưu dựa trên dự báo (tầng 3), demand, ngân sách xuất, EV, phân tích và API — theo trigger</td><td>G3 theo track</td><td>XL</td><td class="num">146–230 (nếu chạy mọi track)</td></tr>
 <tr><td>4 Commercial/Market</td><td>VPP-capable/DR, DPPA, giao thức P2, white-label, chứng nhận — theo trigger</td><td>G4 theo track</td><td>XL</td><td class="num">118–210</td></tr>
 </tbody></table></div>
 
 <p><b>Bốn quyết định chính của tài liệu này</b> (chi tiết và phương án ở <a href="13-open-questions-and-risks.md#5-quyết-định-cần-chốt-d-nn">13 §5</a>):</p>
 <ol>
-  <li><b>MVP theo K (Gate M1 + Gate M2) được giao trong hai phase.</b> Phase 1 phát hành giám sát và Gate M1; Phase 2 bật Gate M2 theo từng site. Lý do: giá trị số 1–3 ở Việt Nam đạt được ở Gate M1, còn bộ an toàn P0 của Gate M2 cần HIL, pen-test và trực ca 24/7 (D-01). <span class="tag proposal">PROPOSAL</span></li>
+  <li><b>MVP theo K (Gate M1 + Gate M2) được giao trong hai phase.</b> Phase 1 phát hành giám sát và Gate M1; Phase 2 bật Gate M2 theo từng site. Lý do: giá trị số 1–3 ở Việt Nam đạt được ở Gate M1, còn bộ an toàn P0 của Gate M2 cần HIL, pen-test lặp lại và trực ca 24/7 (D-01). Các kiểm soát giới hạn bán kính tác động (kill switch F-SEC-11, Governor biến thể đếm F-SEC-10, pen-test bên thứ ba lần (a)) có ở Phase 1, trước site đầu tiên có <code>control_enabled = true</code>, vì Gate M1 đã ghi xuống thiết bị khách (<a href="10-security-and-reliability.md">10 §14.4, §20.4</a>). <span class="tag proposal">PROPOSAL</span></li>
   <li><b>Phân hạng lệnh C0–C4 và phê duyệt hai người C3 kéo vào Phase 1</b>, vì cấu hình lưới, cờ chủ vòng và OTA edge ở Gate M1 đã là C3 (CF-28, D-03). <span class="tag proposal">PROPOSAL</span></li>
   <li><b>Baseline B0</b> ("chi phí nếu không có PV và BESS ≈ ước tính") vào Phase 1 trong báo cáo R2 (GAP-05, D-02). <span class="tag proposal">PROPOSAL</span></li>
   <li><b>IEC 104, ngân sách xuất 50%, peak shaving theo demand, EV và tầng 3 có trigger rõ ràng</b> thay vì mốc cố định, vì bằng chứng Việt Nam hiện cho thấy giá trị của chúng còn hẹp (§3). <span class="tag inference">INFERENCE</span></li>
 </ol>
 
-<div class="callout warn"><b>Khả thi.</b> Phase 0 + 1 + 2 (MVP theo K) ước tính 313–501 người-tuần. Với đội 8 kỹ sư và hệ số tập trung 0,7, con số này tương đương khoảng 56–89 tuần đội; với 10 kỹ sư là 45–72 tuần. Phase 0 + 1 riêng là 217–343 người-tuần (khoảng 39–61 tuần đội với 8 kỹ sư). Đường găng là nhóm edge. Lập luận và danh sách cắt ở <a href="#s11">§11</a>. <span class="tag inference">INFERENCE</span></div>
+<div class="callout warn"><b>Khả thi.</b> Phase 0 + 1 + 2 (MVP theo K) ước tính 322–515 người-tuần. Với đội 8 kỹ sư và hệ số tập trung 0,7, con số này tương đương khoảng 58–92 tuần đội; với 10 kỹ sư là 46–74 tuần. Phase 0 + 1 riêng là 229–362 người-tuần (khoảng 41–65 tuần đội với 8 kỹ sư). Đường găng là nhóm edge. Lập luận và danh sách cắt ở <a href="#s11">§11</a>. <span class="tag inference">INFERENCE</span></div>
 
 <!-- ============================================================ -->
 <h2 id="s2">2. Cơ sở lập kế hoạch</h2>
@@ -112,8 +112,8 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <div class="table-wrap"><table>
 <thead><tr><th>Hạng ở 03/04</th><th>Số FR (04)</th><th>Phase lộ trình</th><th>Ghi chú</th></tr></thead>
 <tbody>
-<tr><td>MVP, không gắn Gate M2</td><td class="num">133</td><td>Phase 1 (trừ FR-OPT-002 → Phase 2)</td><td>Cộng FR-SEC-006/007 kéo lên (CF-28) và FR-BESS-011 (cấm C4, mọi phiên bản) → 135 FR ở Phase 1</td></tr>
-<tr><td>MVP, Gate M2</td><td class="num">13</td><td>Phase 2</td><td>FR-BESS-005, 007, 009; FR-GRID-005; FR-OPT-001, 004; FR-INT-018; FR-SEC-010, 012, 013, 021 (FR-SEC-006/007 đã lên Phase 1)</td></tr>
+<tr><td>MVP, không gắn Gate M2</td><td class="num">133</td><td>Phase 1 (trừ FR-OPT-002 → Phase 2)</td><td>Cộng FR-SEC-006/007 kéo lên (CF-28), FR-BESS-011 (cấm C4, mọi phiên bản), FR-SEC-012 (biến thể đếm) và FR-SEC-013 (kill switch) kéo lên vì 10 §20.4 đặt NFR-SEC-012 (đếm) và NFR-SEC-013 ở cột M1 → 137 FR; cộng FR-BESS-020 (SOE tối thiểu M1) và FR-INT-031 (<code>COMMISSIONING_TEST</code>) do 04 thêm ở vòng sửa → <b>139 FR ở Phase 1</b></td></tr>
+<tr><td>MVP, Gate M2</td><td class="num">13</td><td>Phase 2</td><td>FR-BESS-005, 007, 009; FR-GRID-005; FR-OPT-001, 004; FR-INT-018; FR-SEC-010, 021; FR-SEC-012 chỉ phần biến thể ΔP (FR đã đếm ở Phase 1). FR-SEC-006/007, FR-SEC-012 (đếm), FR-SEC-013 đã lên Phase 1</td></tr>
 <tr><td>Later (Phase 1)</td><td class="num">95</td><td>26 FR vào Phase 2 (vận hành O&amp;M, điều kiện an toàn M2); 3 FR có điều kiện ở Phase 2; còn lại Phase 3</td><td>Danh sách ở §7.2 và §8.2</td></tr>
 <tr><td>Later (Phase 2)</td><td class="num">24</td><td>Phase 4</td><td>§9.2</td></tr>
 <tr><td>Out of scope / CẤM</td><td>—</td><td>Không làm</td><td>§13</td></tr>
@@ -188,14 +188,14 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <rect class="box" x="236" y="220" width="206" height="44" rx="5"/><text x="244" y="238">Ingest, tổng hợp, quality</text><text class="small" x="244" y="254">W4 · F-HIST-01…07, 10</text>
 <rect class="box" x="236" y="280" width="206" height="44" rx="5"/><text x="244" y="298">Dashboard, biểu giá, R1–R3, R8</text><text class="small" x="244" y="314">W6, W7 · hóa đơn bóng + B0</text>
 <rect class="box" x="236" y="340" width="206" height="44" rx="5"/><text x="244" y="358">Cảnh báo L0/L1 + ticket</text><text class="small" x="244" y="374">W8 · F-ALM-01…14, 21</text>
-<rect class="box alt" x="236" y="400" width="206" height="44" rx="5"/><text x="244" y="418">Gate M1: native + C3 + tầng 2</text><text class="small" x="244" y="434">W9, W10 · lệnh ký, có hạn, readback</text>
+<rect class="box alt" x="236" y="400" width="206" height="44" rx="5"/><text x="244" y="418">Gate M1: native + C3 + kill switch</text><text class="small" x="244" y="434">W9, W10 · ký, có hạn, readback, tầng 2</text>
 <rect class="gate" x="264" y="470" width="150" height="40" rx="5"/><text class="title" x="280" y="495">G1 · Gate M1 GA</text>
 
 <!-- Phase 2 -->
 <rect class="box" x="472" y="40" width="206" height="44" rx="5"/><text x="480" y="58">Arbiter 12 mức + tầng 1 + SOE</text><text class="small" x="480" y="74">V1 · F-OPT-01/03, F-BESS-06/08/10</text>
-<rect class="box" x="472" y="100" width="206" height="44" rx="5"/><text x="480" y="118">Bộ an toàn P0 của M2</text><text class="small" x="480" y="134">V2 · interlock, Governor, kill switch</text>
+<rect class="box" x="472" y="100" width="206" height="44" rx="5"/><text x="480" y="118">Bộ an toàn P0 của M2</text><text class="small" x="480" y="134">V2 · interlock, Governor ΔP, sẵn sàng</text>
 <rect class="box" x="472" y="160" width="206" height="44" rx="5"/><text x="480" y="178">Driver 4 tủ BESS + watchdog</text><text class="small" x="480" y="194">V3 · F-INT-28, Q-27, Q-28</text>
-<rect class="box" x="472" y="220" width="206" height="44" rx="5"/><text x="480" y="238">HIL, game day, pen-test, 24/7</text><text class="small" x="480" y="254">V3, V4 · NFR-OBS-008</text>
+<rect class="box" x="472" y="220" width="206" height="44" rx="5"/><text x="480" y="238">HIL, game day, pen-test (b), 24/7</text><text class="small" x="480" y="254">V3, V4 · NFR-OBS-008</text>
 <rect class="box" x="472" y="280" width="206" height="44" rx="5"/><text x="480" y="298">Gói O&amp;M: work order, SLA, PM</text><text class="small" x="480" y="314">V7 · F-ALM-07…18</text>
 <rect class="box" x="472" y="340" width="206" height="44" rx="5"/><text x="480" y="358">PR/availability, DQ, đối soát</text><text class="small" x="480" y="374">V8–V10</text>
 <rect class="box ext" x="472" y="400" width="206" height="44" rx="5"/><text x="480" y="418">Slave IEC 104 (điều kiện)</text><text class="small" x="480" y="434">V12 · trigger D-07</text>
@@ -276,14 +276,15 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <tr><td>Q-08 pháp lý dữ liệu</td><td>ADR-18 hosting, retention</td><td>Môi trường production phải đặt đúng nơi ngay từ Phase 1</td><td>Q-08, R-05</td></tr>
 <tr><td>Giấy phép TSL (Q-14), PoC-01, PoC-04</td><td>Ingest/tổng hợp (W4), RLS</td><td>ADR-06, ADR-08</td><td>Q-14, Q-38, R-08, R-18</td></tr>
 <tr><td>Giấy phép OpenEMS (Q-15), PoC-03, phần cứng</td><td>Edge (W2)</td><td>ADR-07, ADR-19; đường găng</td><td>Q-15, Q-36, R-11</td></tr>
-<tr><td>PoC-02 broker + Q-16</td><td>Uplink MQTT</td><td>ADR-04</td><td>Q-16</td></tr>
+<tr><td>PoC-02 broker + Q-16 + rà soát giấy phép broker (Q-E2-01, Q-E2-02)</td><td>Uplink MQTT; ngân sách license broker</td><td>ADR-04; EMQX ≥ 5.9 là BSL 1.1, HiveMQ Enterprise là thương mại (<a href="15-simulators-and-messaging.md#7-lựa-chọn-broker">15 §7</a>)</td><td>Q-16, Q-E2-01, Q-E2-02</td></tr>
+<tr><td>Pen-test bên thứ ba (a), kill switch, Governor đếm</td><td>Site đầu tiên có <code>control_enabled = true</code> (kể cả pilot Phase 1); G1</td><td>Gate M1 đã ghi xuống thiết bị khách (lịch native, <code>SET_ESS_MODE</code>, cấu hình lưới, OTA); 10 NFR-SEC-030 (a), X-10-10</td><td>R-13</td></tr>
 <tr><td>Hợp đồng điểm/lệnh v1</td><td>Driver, ingest, lệnh</td><td>Edge và cloud phát triển song song theo hợp đồng (06 D-06-08)</td><td>—</td></tr>
 <tr><td>Phỏng vấn, thị phần</td><td>Thứ tự driver, ticket/work order</td><td>FR-INT-006; D-08</td><td>Q-18, Q-20, R-41</td></tr>
 <tr><td>Lab L5</td><td>Driver <code>VERIFIED_LAB</code></td><td>Không ghi xuống thiết bị qua driver chưa kiểm chứng (K #35)</td><td>R-12</td></tr>
 <tr><td>Edge + driver + command service</td><td>Gate M1</td><td>Mọi ghi native đi qua edge, có ký và readback (K R-11)</td><td>R-13</td></tr>
 <tr><td>G1</td><td>Phase 2</td><td>Vòng edge dựng trên edge, driver, lệnh đã chạy ổn ở M1</td><td>—</td></tr>
 <tr><td>Driver 4 tủ BESS + test watchdog</td><td>G2</td><td>Không có thiết bị đích đủ điều kiện thì không có site M2</td><td>Q-27, Q-28, R-25, R-45</td></tr>
-<tr><td>HIL, game day, pen-test, trực 24/7</td><td>G2</td><td>Điều kiện M2 của 10 (X-10-10)</td><td>R-32</td></tr>
+<tr><td>HIL, game day, pen-test lặp lại (b), trực 24/7</td><td>G2</td><td>Điều kiện M2 của 10 (X-10-10)</td><td>R-32</td></tr>
 <tr><td>G2 + ≥ 90 ngày dữ liệu + PoC-05</td><td>3A tầng 3</td><td>Cổng bật tầng 3 (08 §14.4)</td><td>Q-50, Q-51, R-24</td></tr>
 <tr><td>Q-03 / Q-04 / khách EV</td><td>3C / 3D / 3E</td><td>Giá trị chưa chứng minh tới khi có văn bản và khách</td><td>D-14, D-15, D-16</td></tr>
 <tr><td>Q-13 / khách DPPA</td><td>4A / 4B</td><td>Không có cơ chế trả tiền đã biết</td><td>Q-13</td></tr>
@@ -304,28 +305,28 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <div class="table-wrap"><table>
 <thead><tr><th>Workstream</th><th>Nội dung</th><th>Mã liên quan</th><th class="num">pw</th></tr></thead>
 <tbody>
-<tr><td>F0-1 Pháp lý và giấy phép</td><td>Điều phối tư vấn luật: K G-13 (NĐ 58/243, TT 29/2026, QĐ 963, thí điểm hai thành phần, QĐ 1570, luật dữ liệu), giấy phép TSL, OpenEMS, broker</td><td>Q-01, Q-03…Q-06, Q-08, Q-14…Q-16</td><td class="num">3–5</td></tr>
+<tr><td>F0-1 Pháp lý và giấy phép</td><td>Điều phối tư vấn luật: K G-13 (NĐ 58/243, TT 29/2026, QĐ 963, thí điểm hai thành phần, QĐ 1570, luật dữ liệu), giấy phép TSL, OpenEMS. <b>Giấy phép broker production</b>: EMQX ≥ 5.9 là BSL 1.1 (cluster cần license; grant một node không áp khi tích hợp vào sản phẩm bán cho bên thứ ba), HiveMQ Enterprise là thương mại, HiveMQ CE không có cluster (<a href="15-simulators-and-messaging.md#7-lựa-chọn-broker">15 §7.1</a>) <span class="tag fact">FACT</span> (qua kết quả tìm kiếm); SaaS của ta có thuộc ngoại lệ BSL hay không là <span class="tag unknown">UNKNOWN</span> (Q-E2-01); giá và điều khoản HiveMQ Enterprise tự host tại VN (Q-E2-02). Lập ước tính tổng chi phí broker 3 năm (license + vận hành) cho mọi ứng viên PoC-02 (15 §7.2 mục 3, 6)</td><td>Q-01, Q-03…Q-06, Q-08, Q-14…Q-16, Q-E2-01, Q-E2-02</td><td class="num">4–6</td></tr>
 <tr><td>F0-2 Khám phá khách hàng</td><td>Phỏng vấn O&amp;M/installer/chủ C&amp;I; thu hóa đơn EVN, danh mục thiết bị; kiểm thử khả dụng wireframe UI-01/03/14/16 với 5 operator (R-09-06)</td><td>Q-18…Q-20, Q-23, A-01</td><td class="num">6–10</td></tr>
 <tr><td>F0-3 PoC-01 lưu trữ</td><td>1.000 site giả lập, 35 k mẫu/s, đỉnh 350 k; CAGG; tính lại</td><td>ADR-06, NFR-PERF-004</td><td class="num">4–6</td></tr>
-<tr><td>F0-4 PoC-02 broker</td><td>10.000 edge mTLS, Message Expiry, ACL theo <code>edge_id</code></td><td>ADR-04</td><td class="num">3–4</td></tr>
+<tr><td>F0-4 PoC-02 broker</td><td>Cùng một bộ test (T-E2-04 đổi broker; T-E2-05 10.000 edge mTLS, rớt một node broker) trên EMQX Enterprise và HiveMQ Enterprise (license dùng thử, chỉ sau rà soát giấy phép ở F0-1) và RabbitMQ 4.x (mở); Message Expiry, ACL theo <code>edge_id</code>; hợp đồng không phụ thuộc broker (15 §7.2). Quyết định broker cho pilot: Mosquitto 2.1 một node + standby nóng với tiêu chí thoát (&gt; 200 edge, cần HA không gián đoạn, hoặc PoC-02 xong), hoặc dùng ngay ứng viên production (Q-E2-07; khác ADR-04 hiện tại "Mosquitto chỉ dev/lab", người viết 06 quyết) <span class="tag proposal">PROPOSAL</span></td><td>ADR-04, Q-E2-01…03, Q-E2-07</td><td class="num">4–6</td></tr>
 <tr><td>F0-5 PoC-03 edge runtime</td><td>OpenEMS Edge vs runtime Java tự xây trên 2–3 phần cứng ứng viên; chu kỳ p99 ≤ 200 ms với 5.000 điểm</td><td>ADR-07, ADR-19, NFR-PERF-006</td><td class="num">6–10</td></tr>
 <tr><td>F0-6 PoC-04, PoC-06</td><td>RLS + SECURITY DEFINER trên hypertable/CAGG; SSE 4.000 kết nối</td><td>ADR-08, ADR-03</td><td class="num">2–3</td></tr>
 <tr><td>F0-7 Hợp đồng v1</td><td>Schema telemetry/lệnh/ack (Protobuf + JSON Schema), vector vàng, quy ước dấu/đơn vị/bucket theo K #4–#8</td><td>NFR-DATA-003, FR-INT-003</td><td class="num">4–6</td></tr>
 <tr><td>F0-8 Nền kỹ thuật</td><td>CI/CD, test kiến trúc (ranh giới mặt phẳng), khung test cross-tenant, Keycloak, môi trường VN, quan sát cơ bản</td><td>ADR-01, ADR-17, NFR-SEC-007</td><td class="num">8–12</td></tr>
-<tr><td>F0-9 Bộ mô phỏng lõi</td><td>Modbus server nạp register map YAML; công tơ có dấu cấu hình được; SunSpec chain; edge ảo hàng loạt</td><td>F-INT-24, FR-INT-014</td><td class="num">6–10</td></tr>
+<tr><td>F0-9 Bộ mô phỏng lõi</td><td>Modbus server nạp register map YAML; công tơ có dấu cấu hình được; SunSpec chain; edge ảo hàng loạt. <b>Milestone virtual site v0</b> (<a href="15-simulators-and-messaging.md#3-thiết-kế-virtual-site">15 §3</a>): sinh thanh ghi từ cùng register map YAML của driver; mô hình PV + tải + BESS (SOC, CCL/DCL) + công tơ POC cân bằng; REST tiêm lỗi; Toxiproxy; chạy trong CI với kịch bản tất định (tầng L2–L4 theo <a href="15-simulators-and-messaging.md#4-kế-hoạch-kiểm-thử-dùng-simulator-và-giới-hạn">15 §4.1</a>)</td><td>F-INT-24, FR-INT-014</td><td class="num">8–13</td></tr>
 <tr><td>F0-10 Phần cứng và lab</td><td>RFQ 2–3 nhà cung cấp gateway; đặt mua lab theo 07 §11.4 (phần cho Phase 1)</td><td>Q-36, ADR-19</td><td class="num">3–5</td></tr>
-<tr><td colspan="3"><b>Tổng Phase 0 · cỡ L</b></td><td class="num"><b>45–71</b></td></tr>
+<tr><td colspan="3"><b>Tổng Phase 0 · cỡ L</b></td><td class="num"><b>49–77</b></td></tr>
 </tbody></table></div>
 
 <h3>5.3 Không bao gồm</h3>
 <ul>
   <li>Tính năng cho người dùng cuối; mọi tính năng F- của Phase 1.</li>
   <li>PoC-05 solver (để trước Phase 3A).</li>
-  <li>Pen-test bên thứ ba (để trước G2).</li>
+  <li>Thực hiện pen-test bên thứ ba: lần (a) ở Phase 1 (milestone 1c, trước site đầu tiên có <code>control_enabled = true</code>); lần (b) trước G2. Phase 0 chỉ chọn đơn vị và chốt phạm vi.</li>
 </ul>
 
 <h3>5.4 Phụ thuộc</h3>
-<p>Tư vấn luật bên ngoài; nhà cung cấp phần cứng; khách đồng ý phỏng vấn. Không phụ thuộc phase nào trước.</p>
+<p>Tư vấn luật bên ngoài (gồm giấy phép broker); nhà cung cấp phần cứng; license dùng thử EMQX Enterprise và HiveMQ Enterprise cho PoC-02; khách đồng ý phỏng vấn. Không phụ thuộc phase nào trước. Ngân sách license broker production chưa có số liệu <span class="tag unknown">UNKNOWN</span> (Q-E2-01, Q-E2-02) và không nằm trong pw (§2).</p>
 
 <h3>5.5 Cổng ra G0</h3>
 <ol>
@@ -334,12 +335,14 @@ td.ids { font-family: var(--mono); font-size: 12px; }
   <li>Kết quả kiểm chứng pháp lý cho Q-08 (hosting) có văn bản; Q-01, Q-05 có câu trả lời hoặc quyết định "chạy hai lịch/ native trước" được ghi.</li>
   <li>≥ 5 phỏng vấn O&amp;M/installer có biên bản; thứ tự driver xác nhận hoặc sửa (Q-20); quyết định D-08 (ticket/work order) và D-21 (vai trò TECHNICIAN).</li>
   <li>≥ 2 site pilot Phase 1 có thư ý định (một PV zero-export Huawei SmartLogger; một đa hãng có công tơ PCC Modbus/SunSpec) + 1 site chỉ giám sát; ≥ 1 ứng viên pilot BESS cho Phase 2.</li>
-  <li>Hợp đồng v1 đóng băng, vector vàng và bộ mô phỏng chạy trong CI.</li>
+  <li>Hợp đồng v1 đóng băng, vector vàng và bộ mô phỏng chạy trong CI; milestone virtual site v0 (F0-9) đạt: ít nhất một kịch bản tất định PV + BESS + <code>MTR_POC</code> và một ca tiêm lỗi mạng chạy trong CI.</li>
+  <li>Rà soát giấy phép broker production có văn bản (Q-E2-01, Q-E2-02); ước tính tổng chi phí 3 năm (license + vận hành) cho ít nhất hai ứng viên PoC-02 ghi vào ADR-04; quyết định broker cho pilot Phase 1 (Mosquitto 2.1 có tiêu chí thoát, hoặc ứng viên production) đã ghi (Q-E2-07).</li>
+  <li>Đơn vị pen-test bên thứ ba đã chọn; phạm vi lần (a) đã chốt theo 10 NFR-SEC-030.</li>
   <li>Năng lực đội xác nhận (Q-43); kế hoạch Phase 1 ước lượng lại theo đội thật.</li>
 </ol>
 
 <h3>5.6 Rủi ro</h3>
-<p>R-05, R-08, R-09, R-11, R-18, R-41, R-42 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
+<p>R-05, R-08, R-09, R-11, R-18, R-41, R-42, R-48, R-49, R-50 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
 
 <h3>5.7 Phần cứng, lab, pilot</h3>
 <ul>
@@ -361,13 +364,13 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 </ul>
 
 <h3>6.2 Milestone nội bộ</h3>
-<p>Theo 04 Q-D-07, Phase 1 chia ba milestone nội bộ để có bản chạy pilot sớm. Không có mốc lịch.</p>
+<p>Theo 04 Q-D-07, Phase 1 chia ba milestone nội bộ để có bản chạy pilot sớm. Không có mốc lịch. Pilot 1a/1b chỉ ghi xuống thiết bị (<code>control_enabled = true</code>) sau khi qua <b>điều kiện trước ghi đầu tiên</b> ở §6.6; trước đó pilot chỉ giám sát. Vì vậy pen-test lần (a), kill switch và Governor đếm thuộc đường găng của pilot có ghi, không chỉ của G1. <span class="tag proposal">PROPOSAL</span></p>
 <div class="table-wrap"><table>
 <thead><tr><th>Milestone</th><th>Nội dung</th><th>Pilot</th></tr></thead>
 <tbody>
 <tr><td>1a · PV + tuân thủ lưới</td><td>Tenant/IAM, edge, driver công tơ + Huawei SmartLogger, ingest/tổng hợp, dashboard L1–L3, R1/R8, biểu giá + hóa đơn bóng R2 (+ B0), cảnh báo + ticket, cấu hình giới hạn xuất native + test F-INT-27 + bằng chứng F-REP-13, commissioning (phép thử dấu)</td><td>Site PV zero-export; site chỉ giám sát</td></tr>
 <tr><td>1b · BESS native</td><td>Giám sát BESS, mô hình pin, chế độ native, chọn <code>site_strategy</code>, dự phòng SOC, trần nhập native, tầng 2 → lịch native, kế hoạch 48 h, thực tế/kế hoạch, giải thích slot, dự báo F0/F1, tín hiệu PCCC, R3</td><td>Site PV + BESS dùng EMMA/LUNA hoặc tủ có chế độ native đã kiểm chứng</td></tr>
-<tr><td>1c · Cứng hóa và phát hành</td><td>Test tải L7, HIL L5 cho driver M1, quy trình phát triển an toàn phần P0 (SAST/SCA/secret/SBOM), diễn tập khôi phục PITR, tài liệu vận hành</td><td>Mọi site Phase 1</td></tr>
+<tr><td>1c · Cứng hóa và phát hành</td><td>Test tải L7, HIL L5 cho driver M1, quy trình phát triển an toàn phần P0 (SAST/SCA/secret/SBOM), diễn tập khôi phục PITR, tài liệu vận hành, virtual site v1 (15 §3.4, §4), pen-test bên thứ ba lần (a) và đóng lỗi Critical/High</td><td>Mọi site Phase 1</td></tr>
 </tbody></table></div>
 
 <h3>6.3 Bao gồm (F- và FR-)</h3>
@@ -380,17 +383,17 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <tr><td>M-HIST</td><td class="ids">F-HIST-01…07, 10</td><td class="ids">FR-HIST-001…011</td><td>Một thuật toán phân bổ có <code>attribution_version</code></td></tr>
 <tr><td>M-REP</td><td class="ids">F-REP-01, 02, 03, 08, 10, 11, 13</td><td class="ids">FR-REP-001…008</td><td>R2 có dòng B0 (D-02); trang phương pháp tĩnh (<code>_catalog-gaps</code>)</td></tr>
 <tr><td>M-TAR</td><td class="ids">F-TAR-01…06</td><td class="ids">FR-TAR-001…007</td><td>QĐ 963 + TT 16/2014 (lịch sử); hai lịch song song; ngày đặc biệt</td></tr>
-<tr><td>M-BESS</td><td class="ids">F-BESS-01, 03, 04, 05, 07, 09, 18 (cấm: 19, 20)</td><td class="ids">FR-BESS-001…004, 006, 008, 010, 011</td><td>FR-BESS-008 hiển thị giới hạn native; chuỗi giới hạn đầy đủ ở Phase 2</td></tr>
+<tr><td>M-BESS</td><td class="ids">F-BESS-01, 03, 04, 05, 07, 09, 18 (cấm: 19, 20)</td><td class="ids">FR-BESS-001…004, 006, 008, 010, 011, 020 (SOE tối thiểu, C3·M1)</td><td>FR-BESS-008 hiển thị giới hạn native; chuỗi giới hạn đầy đủ ở Phase 2</td></tr>
 <tr><td>M-PV</td><td class="ids">F-PV-01…05</td><td class="ids">FR-PV-001…005</td><td>F-PV-03 giới hạn PV qua native</td></tr>
 <tr><td>M-GRID</td><td class="ids">F-GRID-01, 02, 03, 04, 06, 07, 13</td><td class="ids">FR-GRID-001…004, 006, 007, 008</td><td><code>MTR_POC</code> bắt buộc cho chức năng lưới</td></tr>
 <tr><td>M-EV</td><td class="ids">F-EV-01</td><td class="ids">FR-EV-001</td><td>Chỉ đo qua công tơ</td></tr>
 <tr><td>M-OPT</td><td class="ids">F-OPT-02, 04, 05, 06, 07, 08, 10, 11</td><td class="ids">FR-OPT-003, 005…011</td><td>Tầng 2 → lịch native; nhãn UI "Quy tắc"</td></tr>
 <tr><td>M-ALM</td><td class="ids">F-ALM-01…06, 08, 09, 13, 14, 21</td><td class="ids">FR-ALM-001…011</td><td>Chi tiết cảnh báo có liên hệ trực ca của site (GAP-08)</td></tr>
-<tr><td>M-INT</td><td class="ids">F-INT-01…12, 23, 24, 25, 26, 27, 29</td><td class="ids">FR-INT-001…017, 019, 020</td><td>Driver 1–3 theo FR-INT-006; quy trình phát hành driver (<code>_catalog-gaps</code>)</td></tr>
-<tr><td>M-SEC</td><td class="ids">F-SEC-01…07, 09, 12, 14…19</td><td class="ids">FR-SEC-001…009, 011, 014…020, 022</td><td>FR-SEC-006/007 kéo lên (CF-28); bản ghi đồng ý của chủ tài sản (<code>_catalog-gaps</code>)</td></tr>
+<tr><td>M-INT</td><td class="ids">F-INT-01…12, 23, 24, 25, 26, 27, 29, 30, 31</td><td class="ids">FR-INT-001…017, 019, 020, 031 (<code>COMMISSIONING_TEST</code>, C2·M1, NFR-SEC-033)</td><td>Driver 1–3 theo FR-INT-006; quy trình phát hành driver (<code>_catalog-gaps</code>)</td></tr>
+<tr><td>M-SEC</td><td class="ids">F-SEC-01…07, 09, 10 (biến thể đếm), 11, 12, 14…19</td><td class="ids">FR-SEC-001…009, 011, 012 (biến thể đếm), 013, 014…020, 022</td><td>FR-SEC-006/007 kéo lên (CF-28); F-SEC-10 biến thể đếm và F-SEC-11 kill switch kéo lên theo 10 §14.4, §20.4 (M1 đã ghi tới nhiều site); bản ghi đồng ý của chủ tài sản (<code>_catalog-gaps</code>)</td></tr>
 <tr><td>M-ADV</td><td class="ids">F-ADV-01</td><td class="ids">FR-ADV-001, 002</td><td>F0/F1 nhãn "Thống kê"</td></tr>
 </tbody></table></div>
-<p>Tổng: 135 FR. NFR theo cột Gate M1 của <a href="10-security-and-reliability.md">10 §20.4</a>: NFR-SEC-001…007, 011, 015…018, 020, 023, 026; NFR-REL-001, 003, 004 (mục tiêu), 005, 008, 009, 011, 012; NFR-PERF-001…011; NFR-DATA-001…013; NFR-OBS-001, 002, 003, 006 (phần P0), 007.</p>
+<p>Tổng: 139 FR (137 + FR-BESS-020, FR-INT-031; công việc nằm trong W9 và W11, không đổi khoảng pw). NFR theo cột Gate M1 của <a href="10-security-and-reliability.md">10 §20.4</a>: NFR-SEC-001…007, 008, 009 (phần tối thiểu: <code>M1StaticLimits</code>, 10 §11.3a), 011, 012 (biến thể đếm), 013, 015…018, 020, 023, 026, 028, 030 (a), 033; NFR-REL-001, 003, 004 (mục tiêu), 005, 008, 009, 010, 011, 012; NFR-PERF-001…011; NFR-DATA-001…013; NFR-OBS-001, 002, 003, 006 (phần P0), 007.</p>
 
 <h3>6.4 Không bao gồm</h3>
 <ul>
@@ -414,14 +417,22 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <tr><td>W6 UI dashboard, giám sát, lịch sử</td><td>F-DASH-01…07, F-MON-03…06, 08, 09, F-PV-01…05, F-BESS-01, F-GRID-07, F-EV-01</td><td class="num">18–28</td></tr>
 <tr><td>W7 Biểu giá, hóa đơn bóng, báo cáo, xuất, bằng chứng tuân thủ</td><td>F-TAR-01…06, F-REP-01, 02, 03, 08, 10, 11, 13</td><td class="num">14–22</td></tr>
 <tr><td>W8 Cảnh báo, thông báo, ticket</td><td>F-ALM-01…06, 08, 09, 13, 14, 21</td><td class="num">12–18</td></tr>
-<tr><td>W9 Đường lệnh Gate M1</td><td>Command service, signer, envelope, hạn, readback, PDP, duyệt C3, giới hạn tốc độ, trang trạng thái điều khiển; chế độ native, giới hạn xuất, trần nhập, giới hạn PV, dự phòng SOC, <code>control_owner</code> (F-SEC-03, 05, 06, 07, 09, 14, 15; F-BESS-03…05, 07; F-GRID-01…04, 06, 13; F-PV-03; F-OPT-02)</td><td class="num">22–34</td></tr>
+<tr><td>W9 Đường lệnh Gate M1</td><td>Command service, signer, envelope, hạn, readback, PDP, duyệt C3, giới hạn tốc độ, trang trạng thái điều khiển; chế độ native, giới hạn xuất, trần nhập, giới hạn PV, dự phòng SOC, <code>control_owner</code> (F-SEC-03, 05, 06, 07, 09, 14, 15; F-BESS-03…05, 07; F-GRID-01…04, 06, 13; F-PV-03; F-OPT-02). <b>Giới hạn bán kính tác động M1:</b> kill switch F-SEC-11 phạm vi site/tenant/nền tảng, engage C1, release C3, dừng cả lịch native, <code>SET_ESS_MODE</code>, <code>CONFIG_PUSH</code>, OTA trong phạm vi; trạng thái tạm ngưng ký, có version, retained, edge đối chiếu sau reconnect (NFR-SEC-013, NFR-REL-010, +3–5 pw). Governor F-SEC-10 biến thể đếm: ≤ 10 site/tenant và ≤ 50 site/nền tảng nhận thay đổi ghi mỗi 5 phút, trần site mỗi lần chạy bộ sinh lịch, Signer kiểm <code>run_id</code> (NFR-SEC-012 M1, +2–3 pw; ngưỡng là PROPOSAL của 10)</td><td class="num">27–42</td></tr>
 <tr><td>W10 Tầng 2 + ánh xạ lịch native + màn kế hoạch + F0/F1</td><td>F-OPT-04…08, 10, 11, F-ADV-01</td><td class="num">10–16</td></tr>
 <tr><td>W11 Commissioning</td><td>F-INT-25, 26, 27, 29, F-ORG-05</td><td class="num">8–12</td></tr>
-<tr><td>W12 Kiểm thử và cứng hóa</td><td>Mở rộng bộ mô phỏng, L4 tiêm lỗi, L5 HIL driver M1, L7 tải, SAST/SCA/SBOM, diễn tập PITR</td><td class="num">12–18</td></tr>
-<tr><td colspan="2"><b>Tổng Phase 1 · cỡ XL</b> (biên cao chạm XXL)</td><td class="num"><b>172–272</b></td></tr>
+<tr><td>W12 Kiểm thử và cứng hóa</td><td>Mở rộng bộ mô phỏng, L4 tiêm lỗi, L5 HIL driver M1, L7 tải, SAST/SCA/SBOM, diễn tập PITR. <b>Milestone virtual site v1</b> (<a href="15-simulators-and-messaging.md#4-kế-hoạch-kiểm-thử-dùng-simulator-và-giới-hạn">15 §4</a>): ma trận lỗi 15 §3.4 chạy hằng đêm, ca T-E2-01…06, edge ảo cho L7, tenant demo "Mô phỏng" không có route tới edge thật. Điều phối pen-test lần (a) và sửa lỗi (công đơn vị bên thứ ba không tính trong pw, §2)</td><td class="num">15–23</td></tr>
+<tr><td colspan="2"><b>Tổng Phase 1 · cỡ XL</b> (biên cao chạm XXL)</td><td class="num"><b>180–285</b></td></tr>
 </tbody></table></div>
 
 <h3>6.6 Cổng ra G1 (Gate M1 phát hành)</h3>
+<p><b>Điều kiện trước ghi đầu tiên</b> — phải đạt trước site đầu tiên có <code>control_enabled = true</code>, kể cả pilot 1a/1b, và là một phần của G1 (10 NFR-SEC-030 (a), X-10-10): <span class="tag proposal">PROPOSAL</span></p>
+<ol>
+  <li>Pen-test bên thứ ba lần (a) phạm vi web, API, broker ACL, đường lệnh ký (gồm lịch native và <code>CONFIG_PUSH</code>), multi-tenant, edge phần cứng (UART/JTAG, boot, disk, cổng mạng), OTA, cùng kịch bản ca lạm dụng ABU-01/03/04/08/12/16 (<a href="10-security-and-reliability.md">10 §19</a>); không còn lỗi Critical/High mở.</li>
+  <li>Kill switch: T-NFR-SEC-013-01 đạt (engage tenant với 50 edge mô phỏng, mọi edge online <code>SUSPENDED</code> ≤ 60 s, lệnh mới bị từ chối; NFR-REL-010) và T-NFR-SEC-013-04 đạt (không lịch native/<code>SET_ESS_MODE</code>/<code>CONFIG_PUSH</code> nào được ký hay gửi trong phạm vi bị tạm ngưng).</li>
+  <li>Governor biến thể đếm: T-NFR-SEC-012-02 đạt (bộ sinh lịch đổi lịch native của 60 site trong một lần chạy chỉ ký được tới trần; phần còn lại xếp đợt, có cảnh báo Cao).</li>
+  <li>C3 hai người hoạt động cho cấu hình lưới, <code>control_owner</code>, OTA (CF-28, D-03).</li>
+</ol>
+<p><b>Tiêu chí G1:</b></p>
 <ol>
   <li>Mọi FR ở §6.3 đạt tiêu chí chấp nhận AC-&lt;MODULE&gt;-NN của 04; test <code>T-&lt;FR id&gt;</code> do 12 sinh chạy trong CI.</li>
   <li>Test tải L7 với 1.000 site giả lập đạt NFR-PERF-001…004, 007, 008 (06 §16).</li>
@@ -433,15 +444,21 @@ td.ids { font-family: var(--mono); font-size: 12px; }
   <li>Rà soát UI/báo cáo: không chỗ nào gọi là "AI"; mọi số ước tính có "≈"; không hiển thị 0 thay cho "không có dữ liệu" (04 §1.3).</li>
   <li>Trang "Thiết bị được hỗ trợ" chỉ liệt kê model + firmware + trạng thái kiểm chứng; không có câu "tương thích mọi inverter/BESS".</li>
   <li>Diễn tập khôi phục PITR đạt RPO/RTO của NFR-REL-005.</li>
+  <li>Tích hợp Huawei đóng theo <a href="13-open-questions-and-risks.md">13</a>: Q-33 (a) (đọc Northbound), U-29 (tài khoản Northbound + đồng ý chủ tài sản), U-30 (register map ghi SmartLogger/EMMA chính thức có readback, kiểm ở lab). CF-40 đóng: 03, 07, 10, 12 thống nhất <code>COMMISSIONING_TEST</code> theo FR-INT-031/NFR-SEC-033.</li>
+  <li>SOE tối thiểu M1 (FR-BESS-020 / <code>M1StaticLimits</code>) ở trạng thái <code>ACTIVE_ON_EDGE</code> tại mọi site có <code>control_enabled = true</code> (T-NFR-SEC-009-01).</li>
+  <li>Bốn điều kiện trước ghi đầu tiên ở trên vẫn hiệu lực ở bản phát hành G1 (pen-test (a) lặp lại nếu control plane thay đổi lớn sau lần chạy trước, theo 10 §19).</li>
+  <li>Milestone virtual site v1 đạt: ma trận lỗi 15 §3.4 chạy hằng đêm xanh; T-E2-01…06 đạt; test chứng minh tenant demo không có route tới edge thật (T-E2-06).</li>
+  <li>Broker production đã chọn và có license hợp lệ theo ý kiến pháp lý (Q-E2-01/02), hoặc pilot vẫn chạy Mosquitto 2.1 trong tiêu chí thoát đã ghi ở G0.</li>
 </ol>
 
 <h3>6.7 Rủi ro</h3>
-<p>R-01, R-03, R-07, R-12, R-13, R-14, R-16, R-17, R-31, R-35, R-37, R-38, R-39, R-43, R-44 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
+<p>R-01, R-03, R-07, R-12, R-13, R-14, R-16, R-17, R-31, R-35, R-37, R-38, R-39, R-43, R-44, R-48, R-51, R-52 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
 
 <h3>6.8 Phần cứng, lab, pilot</h3>
 <ul>
   <li><b>Thiết bị thật bắt buộc:</b> lab L5 theo §5.7; edge phần cứng tham chiếu cho mỗi site pilot có edge (FR-INT-001). Edge thiếu TPM chỉ được dùng theo D-12.</li>
   <li><b>Bộ mô phỏng:</b> mọi ca lỗi (L4), test tải (L7), site sandbox "Mô phỏng" cho đào tạo.</li>
+  <li><b>Bên ngoài:</b> đơn vị pen-test bên thứ ba cho lần (a) (chọn ở Phase 0); license broker production nếu chọn EMQX/HiveMQ Enterprise (chi phí <span class="tag unknown">UNKNOWN</span>, Q-E2-01/02). Broker pilot theo quyết định G0: Mosquitto 2.1 một node + standby nóng chỉ trong tiêu chí thoát (<a href="15-simulators-and-messaging.md#7-lựa-chọn-broker">15 §7.2</a>).</li>
   <li><b>Pilot:</b> (a) site PV zero-export có Huawei SmartLogger; (b) site đa hãng có công tơ PCC Modbus/SunSpec; (c) site chỉ giám sát qua Huawei Northbound; (d) cho milestone 1b: một site PV + BESS có chế độ native đã kiểm chứng (EMMA/LUNA hoặc tủ tương đương). Nếu không có (d), milestone 1b chỉ chạy trên lab và phát hành với nhãn "đang thử nghiệm" cho BESS.</li>
 </ul>
 
@@ -451,7 +468,7 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <h3>7.1 Mục tiêu</h3>
 <ul>
   <li>Edge của ta làm chủ vòng (<code>control_owner = EDGE</code>) và nhận setpoint/lịch envelope ở <b>từng site</b> đạt hồ sơ sẵn sàng FR-SEC-021, khi native không có chức năng cần thiết.</li>
-  <li>Đưa bộ an toàn P0 của Gate M2 vào vận hành: arbiter 12 mức, SOE ký số, interlock, LOCAL/REMOTE, Fleet Dispatch Governor, kill switch, trực ca 24/7.</li>
+  <li>Đưa bộ an toàn P0 của Gate M2 vào vận hành: arbiter 12 mức, SOE ký số, interlock, LOCAL/REMOTE, Fleet Dispatch Governor biến thể ΔP, trực ca 24/7; kill switch và Governor đếm đã có từ Phase 1 và được kiểm lại với vòng edge.</li>
   <li>Hoàn thiện quy trình O&amp;M cho persona P3 (người dùng hằng ngày): work order, SLA, bảo trì định kỳ, leo thang, Zalo (nếu D-09 xác nhận).</li>
   <li>Cung cấp phân tích O&amp;M PV và BESS có giá trị lặp lại hằng tháng: PR (chỉ khi có POA), availability, KPI BESS, đối soát hóa đơn.</li>
 </ul>
@@ -460,14 +477,14 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <div class="table-wrap"><table>
 <thead><tr><th>Nhóm</th><th>Tính năng (03)</th><th>Yêu cầu (04)</th><th>Lý do ở Phase 2</th></tr></thead>
 <tbody>
-<tr><td>Gate M2 (MVP theo K)</td><td class="ids">F-BESS-06, 08, 10; F-GRID-05; F-OPT-01, 03; F-INT-28; F-SEC-08, 10, 11</td><td class="ids">FR-BESS-005, 007, 009; FR-GRID-005; FR-OPT-001, 002, 004; FR-INT-018; FR-SEC-010, 012, 013, 021</td><td>Bộ P0 của M2 (K #27, #30)</td></tr>
+<tr><td>Gate M2 (MVP theo K)</td><td class="ids">F-BESS-06, 08, 10; F-GRID-05; F-OPT-01, 03; F-INT-28; F-SEC-08, 10 (biến thể ΔP)</td><td class="ids">FR-BESS-005, 007, 009; FR-GRID-005; FR-OPT-001, 002, 004; FR-INT-018; FR-SEC-010, 021; FR-SEC-012 phần ΔP (đã đếm ở Phase 1)</td><td>Bộ P0 của M2 (K #27, #30). Kill switch F-SEC-11 và Governor đếm đã có từ Phase 1; ở đây chỉ kiểm lại trên đường setpoint</td></tr>
 <tr><td>Điều kiện an toàn M2 kéo từ hạng P1</td><td class="ids">F-MON-11; F-ALM-22; F-SEC-13, 20, 21</td><td class="ids">FR-MON-012; FR-ALM-022; FR-SEC-023, 024, 025</td><td>HMI cục bộ khi mất Internet (CF-33); phát hiện điều khiển ngoài (R-13, R-30); neo WORM, hỗ trợ từ xa có kiểm soát, observability cho trực ca</td></tr>
 <tr><td>Gói O&amp;M</td><td class="ids">F-ALM-07, 10, 12, 15, 16, 17, 18</td><td class="ids">FR-ALM-012, 013, 015…019</td><td>Giá trị số 3; GAP-01, GAP-08; mệt mỏi cảnh báo (R-44)</td></tr>
 <tr><td>Phân tích O&amp;M và vận hành dữ liệu</td><td class="ids">F-PV-06, 07; F-REP-04, 05, 06; F-BESS-11; F-HIST-09, 11, 12; F-ORG-06, 12, 13</td><td class="ids">FR-PV-006, 007; FR-REP-009, 010, 011; FR-BESS-013; FR-HIST-013, 014, 015; FR-ORG-012, 014, 015</td><td>Báo cáo tháng cho O&amp;M; mở rộng onboarding nhiều site</td></tr>
 <tr><td>Minh bạch chi phí</td><td class="ids">F-TAR-10; F-INT-22</td><td class="ids">FR-TAR-011; FR-INT-027</td><td>Giá trị số 2; nhập lịch sử cho backtest sau này (GAP-14)</td></tr>
 <tr><td>Có điều kiện</td><td class="ids">F-INT-16, F-GRID-12; F-INT-13 (connector theo Q-20)</td><td class="ids">FR-INT-023, FR-GRID-013; FR-INT-021</td><td>Trigger D-07; connector chỉ khi phỏng vấn cho thấy thị phần</td></tr>
 </tbody></table></div>
-<p>Tổng: 38 FR (+3 có điều kiện). Bổ sung khoảng trống catalog: hồ sơ sẵn sàng M2 theo site, theo dõi đáp ứng vật lý <code>tracking_state</code>, gói bằng chứng sự cố (forensic bundle), sổ sự cố nền tảng (<code>_catalog-gaps</code>). NFR theo cột Gate M2 của <a href="10-security-and-reliability.md">10 §20.4</a>: NFR-SEC-008…010, 012…014 và các mã đề xuất của 10 (NFR-SEC-028…030, NFR-REL-013, 017, NFR-OBS-008, 009); NFR-REL-002, 007, 010.</p>
+<p>Tổng: 36 FR (+3 có điều kiện). Bổ sung khoảng trống catalog: hồ sơ sẵn sàng M2 theo site, theo dõi đáp ứng vật lý <code>tracking_state</code>, gói bằng chứng sự cố (forensic bundle), sổ sự cố nền tảng (<code>_catalog-gaps</code>). NFR theo cột Gate M2 của <a href="10-security-and-reliability.md">10 §20.4</a>: NFR-SEC-008…010, 012 (biến thể ΔP), 014 và các mã đề xuất của 10 (NFR-SEC-029, 030 (b), NFR-REL-013, 017, NFR-OBS-008, 009); NFR-REL-002, 007. NFR-SEC-013, 028, 030 (a) và NFR-REL-010 đã ở Phase 1.</p>
 
 <h3>7.3 Không bao gồm</h3>
 <ul>
@@ -483,7 +500,7 @@ td.ids { font-family: var(--mono); font-size: 12px; }
   <li>G1 đạt; edge, driver và đường lệnh M1 đã chạy ổn ở pilot.</li>
   <li>Một dòng tủ BESS có map theo hợp đồng (Q-28) và câu trả lời watchdog/reversion cho từng model đích (Q-27).</li>
   <li>KMS/HSM cho khóa ký đạt yêu cầu (Q-44, R-21).</li>
-  <li>Đơn vị pen-test bên thứ ba; mô hình trực ca 24/7 (D-18, Q-24).</li>
+  <li>Đơn vị pen-test bên thứ ba cho lần (b) lặp lại; mô hình trực ca 24/7 (D-18, Q-24).</li>
   <li>Chủ tài sản đồng ý bật điều khiển (Q-23); phần cứng edge có TPM/secure element cho site M2 (D-12).</li>
 </ul>
 
@@ -492,8 +509,8 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <thead><tr><th>Workstream</th><th>Phạm vi</th><th class="num">pw</th></tr></thead>
 <tbody>
 <tr><td>V1 Arbiter, tầng 1, limit chain, SOE, máy trạng thái ESS, vòng giới hạn xuất edge</td><td>F-OPT-01, 03, F-BESS-06, 08, 09 (đầy đủ), 10, F-GRID-05</td><td class="num">18–30</td></tr>
-<tr><td>V2 Bộ an toàn: interlock + LOCAL/REMOTE, Governor, kill switch, hồ sơ sẵn sàng, bản ghi đồng ý</td><td>F-SEC-08, 10, 11, FR-SEC-021</td><td class="num">12–20</td></tr>
-<tr><td>V3 Kiểm chứng: driver 4 lên <code>VERIFIED_LAB</code>, test watchdog/fail-safe, HIL 10 §19.3, game day, điều phối pen-test và sửa lỗi</td><td>F-INT-28, NFR-REL-001, 002, 007</td><td class="num">14–24</td></tr>
+<tr><td>V2 Bộ an toàn: interlock + LOCAL/REMOTE, Governor biến thể ΔP + jitter, hồ sơ sẵn sàng, bản ghi đồng ý (kill switch và Governor đếm đã ở W9)</td><td>F-SEC-08, 10 (ΔP), FR-SEC-021</td><td class="num">9–15</td></tr>
+<tr><td>V3 Kiểm chứng: driver 4 lên <code>VERIFIED_LAB</code>, test watchdog/fail-safe, HIL 10 §19.3, game day, điều phối pen-test lần (b) và sửa lỗi</td><td>F-INT-28, NFR-REL-001, 002, 007</td><td class="num">14–24</td></tr>
 <tr><td>V4 Sẵn sàng vận hành: SLO, trực ca, runbook, forensic bundle, sổ sự cố</td><td>F-SEC-21, NFR-OBS-008, 009</td><td class="num">6–10</td></tr>
 <tr><td>V5 Phát hiện điều khiển ngoài, <code>tracking_state</code></td><td>F-ALM-22</td><td class="num">3–5</td></tr>
 <tr><td>V6 HMI cục bộ trên edge</td><td>F-MON-11</td><td class="num">4–6</td></tr>
@@ -502,7 +519,7 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <tr><td>V9 KPI BESS + R5</td><td>F-BESS-11, F-REP-05</td><td class="num">4–6</td></tr>
 <tr><td>V10 Đối soát hóa đơn + nhập CSV/load profile</td><td>F-TAR-10, F-INT-22</td><td class="num">4–7</td></tr>
 <tr><td>V11 Neo WORM + hỗ trợ từ xa có kiểm soát</td><td>F-SEC-13, 20</td><td class="num">5–8</td></tr>
-<tr><td colspan="2"><b>Tổng Phase 2 · cỡ L–XL</b></td><td class="num"><b>96–158</b></td></tr>
+<tr><td colspan="2"><b>Tổng Phase 2 · cỡ L–XL</b></td><td class="num"><b>93–153</b></td></tr>
 <tr><td>V12 (điều kiện) Slave IEC 104 + lệnh <code>GRID_OPERATOR</code></td><td>F-INT-16, F-GRID-12; master 104 mô phỏng</td><td class="num">8–14</td></tr>
 <tr><td>V13 (điều kiện) Mỗi connector cloud thêm</td><td>F-INT-13</td><td class="num">4–8 / hãng</td></tr>
 </tbody></table></div>
@@ -512,8 +529,8 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <ol>
   <li>Hồ sơ sẵn sàng FR-SEC-021 đạt đủ 13 điều kiện tại site.</li>
   <li>Mọi ca HIL bắt buộc của <a href="10-security-and-reliability.md">10 §19.3</a> đạt; T-FR-INT-018 (rút cáp edge↔PCS, mất <code>MTR_POC</code>, chặn broker, chuyển LOCAL, tắt nguồn edge) đạt; game day mất cloud 4 h đạt NFR-REL-001.</li>
-  <li>Pen-test bên thứ ba không còn lỗi Critical/High mở.</li>
-  <li>Kill switch lan truyền ≤ 60 s (NFR-REL-010); Governor chặn đúng khi vượt ngân sách (mô phỏng).</li>
+  <li>Pen-test bên thứ ba lần (b), tập trung đường setpoint, arbiter, Governor ΔP, interlock, không còn lỗi Critical/High mở (10 NFR-SEC-030 (b)).</li>
+  <li>Kill switch chạy lại T-NFR-SEC-013-01…03 với edge làm chủ vòng (lịch edge bị hủy, chạy mặc định); Governor biến thể ΔP chặn đúng khi vượt ngân sách (T-NFR-SEC-012-01, mô phỏng).</li>
   <li>Trực ca 24/7 hoạt động với runbook; người có quyền lệnh tại site đã đăng ký MFA.</li>
   <li>Driver tủ BESS ở <code>VERIFIED_LAB</code>; thiết bị không có watchdog được đánh dấu <code>requires_native_fallback</code>.</li>
 </ol>
@@ -714,20 +731,20 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <h2 id="s11">11. Lập luận khả thi của MVP</h2>
 
 <h3>11.1 Phạm vi</h3>
-<p>MVP theo K (Gate M1 + Gate M2) gồm 146 FR P0 ở 04, cộng NFR P0. Lộ trình giao 135 FR ở Phase 1 và 12 FR M2 + 26 FR kéo từ hạng P1 ở Phase 2. Kéo P1 vào Phase 2 là có chủ đích: một số mục là điều kiện an toàn của M2 (HMI cục bộ, phát hiện điều khiển ngoài, observability), số còn lại là giá trị O&amp;M lặp lại (work order, PR, đối soát).</p>
+<p>MVP theo K (Gate M1 + Gate M2) gồm 148 FR P0 ở 04, cộng NFR P0. Lộ trình giao 139 FR ở Phase 1 (gồm FR-SEC-012 biến thể đếm và FR-SEC-013 kéo lên từ nhóm M2) và 10 FR M2 + 26 FR kéo từ hạng P1 ở Phase 2. Kéo P1 vào Phase 2 là có chủ đích: một số mục là điều kiện an toàn của M2 (HMI cục bộ, phát hiện điều khiển ngoài, observability), số còn lại là giá trị O&amp;M lặp lại (work order, PR, đối soát).</p>
 
 <h3>11.2 Năng lực</h3>
 <div class="table-wrap"><table>
 <thead><tr><th>Kịch bản</th><th class="num">pw</th><th class="num">Tuần đội, 6 kỹ sư</th><th class="num">Tuần đội, 8 kỹ sư</th><th class="num">Tuần đội, 10 kỹ sư</th></tr></thead>
 <tbody>
-<tr><td>Phase 0 + 1 (phát hành Gate M1)</td><td class="num">217–343</td><td class="num">52–82</td><td class="num">39–61</td><td class="num">31–49</td></tr>
-<tr><td>Phase 0 + 1 + 2 (MVP theo K)</td><td class="num">313–501</td><td class="num">75–119</td><td class="num">56–89</td><td class="num">45–72</td></tr>
+<tr><td>Phase 0 + 1 (phát hành Gate M1)</td><td class="num">229–362</td><td class="num">55–86</td><td class="num">41–65</td><td class="num">33–52</td></tr>
+<tr><td>Phase 0 + 1 + 2 (MVP theo K)</td><td class="num">322–515</td><td class="num">77–123</td><td class="num">58–92</td><td class="num">46–74</td></tr>
 </tbody></table></div>
 <p>Công thức: tuần đội = pw ÷ (N × 0,7). Không phải mốc lịch; chưa tính thời gian chờ pháp lý, phần cứng, pilot. <span class="tag inference">INFERENCE</span></p>
 
 <h3>11.3 Lập luận</h3>
 <ol>
-  <li><b>Phase 1 khả thi trong 12–18 tháng với 8–10 kỹ sư</b> (39–61 hoặc 31–49 tuần đội), vì nó dựa vào controller native cho mọi tác động vật lý: không có vòng nhanh của ta, không có arbiter chạy vòng, không cần HIL an toàn đầy đủ. Với 6 kỹ sư, Phase 1 chạm biên trên 18 tháng; cần áp danh sách cắt §11.4. <span class="tag inference">INFERENCE</span></li>
+  <li><b>Phase 1 khả thi trong 12–18 tháng với 8–10 kỹ sư</b> (41–65 hoặc 33–52 tuần đội cho Phase 0 + 1), vì nó dựa vào controller native cho mọi tác động vật lý: không có vòng nhanh của ta, không có arbiter chạy vòng, không cần HIL an toàn đầy đủ. Với 6 kỹ sư, Phase 1 chạm biên trên 18 tháng; cần áp danh sách cắt §11.4. <span class="tag inference">INFERENCE</span></li>
   <li><b>MVP đầy đủ theo K khó vừa 18 tháng với dưới 10 kỹ sư.</b> Đây là lý do của D-01: phát hành Gate M1 để có doanh thu và dữ liệu pilot, rồi bật M2 theo site. Không cắt bộ an toàn để kịp mốc. <span class="tag proposal">PROPOSAL</span></li>
   <li><b>Đường găng là edge.</b> Phần edge của F0-5, W2, một phần W9/W11, V1 và phần edge của V2 cộng lại khoảng 66–98 pw. Với 2 kỹ sư edge và hệ số 0,7, riêng phần này mất 47–70 tuần đội, dài hơn các workstream cloud. Đòn bẩy: (a) thêm kỹ sư edge thứ ba; (b) nếu Q-15 cho phép, dùng OpenEMS Edge cho lớp driver/scheduler (D-04) — chỉ quyết sau PoC-03; (c) native trước làm giảm logic edge ở Phase 1. <span class="tag inference">INFERENCE</span></li>
   <li><b>Các lựa chọn kiến trúc giảm công sức:</b> modular monolith, không Kafka, REST + SSE, một DB chuỗi thời gian (06 ADR-01/03/05); driver khai báo YAML thay cho code theo hãng (07 §6.2); tầng 2 là luật xác định, không solver. <span class="tag proposal">PROPOSAL</span></li>
@@ -744,17 +761,17 @@ td.ids { font-family: var(--mono); font-size: 12px; }
   <li>Cảm biến thời tiết (F-MON-08) chỉ đọc G_POA và T_module. 1–2 pw.</li>
   <li>Bảng site cho chủ một site (F-DASH-07) dùng lại L2. 1–2 pw.</li>
 </ol>
-<p><b>Không bao giờ cắt:</b> F-SEC-01…07, 12, 14, 16…19; F-INT-02, 08…12, 26, 27; F-HIST-02, 05; F-REP-10, 13; FR-ADV-002; F-BESS-19/20 ở trạng thái cấm.</p>
+<p><b>Không bao giờ cắt:</b> F-SEC-01…07, 10 (biến thể đếm), 11, 12, 14, 16…19; pen-test lần (a); F-INT-02, 08…12, 26, 27; F-HIST-02, 05; F-REP-10, 13; FR-ADV-002; F-BESS-19/20 ở trạng thái cấm.</p>
 
 <!-- ============================================================ -->
 <h2 id="s12">12. Kiểm thử, lab và pilot theo phase</h2>
-<p>Đáp ứng phần lộ trình của K G-05. Tầng kiểm thử theo <a href="07-device-integration.md">07 §11.1</a> (L1 giải mã driver … L7 tải), kiểm thử kiến trúc theo <a href="06-system-architecture.html#s16">06 §16</a>, an toàn/bảo mật theo <a href="10-security-and-reliability.md">10 §19</a>, backtest theo <a href="08-energy-optimization.md">08 §14</a>.</p>
+<p>Đáp ứng phần lộ trình của K G-05. Tầng kiểm thử theo <a href="07-device-integration.md">07 §11.1</a> (L1 giải mã driver … L7 tải), kiểm thử kiến trúc theo <a href="06-system-architecture.html#s16">06 §16</a>, an toàn/bảo mật theo <a href="10-security-and-reliability.md">10 §19</a>, backtest theo <a href="08-energy-optimization.md">08 §14</a>, virtual site và broker theo <a href="15-simulators-and-messaging.md">15 §2–§4, §7</a>.</p>
 <div class="table-wrap"><table>
 <thead><tr><th>Phase</th><th>Bộ mô phỏng (nhãn "Mô phỏng")</th><th>Thiết bị thật / HIL</th><th>Kiểm thử chặn cổng</th><th>Pilot</th></tr></thead>
 <tbody>
-<tr><td>0</td><td>Modbus server từ register map YAML, công tơ có dấu cấu hình được, SunSpec chain, edge ảo hàng loạt</td><td>2–3 gateway ứng viên</td><td>PoC-01…04, 06; test hợp đồng L2; cross-tenant</td><td>Chọn và ký thư ý định</td></tr>
-<tr><td>1</td><td>PCS/BMS có/không watchdog, "ghi không tác dụng", tiêm lỗi L4</td><td>Lab L5: SmartLogger + SUN2000, EMMA + hybrid, 2 công tơ, DI/DO</td><td>L1–L5 cho driver 1–3; T-FR-INT-007, 008, 009, 016, 017; L7 1.000 site; PITR</td><td>2–3 site + 1 site chỉ giám sát</td></tr>
-<tr><td>2</td><td>Master 104 (điều kiện); kịch bản Governor đội</td><td>+ PCS/tủ BESS nhỏ, công tắc LOCAL/REMOTE, proxy lỗi</td><td>10 §19.3 toàn bộ; T-FR-INT-018; T-NFR-SEC-004, 011; game day 4 h; pen-test</td><td>1 site PV + BESS M2</td></tr>
+<tr><td>0</td><td>Modbus server từ register map YAML, công tơ có dấu cấu hình được, SunSpec chain, edge ảo hàng loạt; virtual site v0 (15 §3)</td><td>2–3 gateway ứng viên</td><td>PoC-01…04, 06 (PoC-02 trên nhiều broker, T-E2-04/05); test hợp đồng L2; cross-tenant</td><td>Chọn và ký thư ý định</td></tr>
+<tr><td>1</td><td>PCS/BMS có/không watchdog, "ghi không tác dụng", tiêm lỗi L4; virtual site v1 (ma trận 15 §3.4 hằng đêm, T-E2-01…06)</td><td>Lab L5: SmartLogger + SUN2000, EMMA + hybrid, 2 công tơ, DI/DO</td><td>L1–L5 cho driver 1–3; T-FR-INT-007, 008, 009, 016, 017; L7 1.000 site; PITR; trước ghi đầu tiên: pen-test (a), T-NFR-SEC-013-01, 04, T-NFR-SEC-012-02</td><td>2–3 site + 1 site chỉ giám sát</td></tr>
+<tr><td>2</td><td>Master 104 (điều kiện); kịch bản Governor đội</td><td>+ PCS/tủ BESS nhỏ, công tắc LOCAL/REMOTE, proxy lỗi</td><td>10 §19.3 toàn bộ; T-FR-INT-018; T-NFR-SEC-004, 011; game day 4 h; pen-test (b)</td><td>1 site PV + BESS M2</td></tr>
 <tr><td>3</td><td>Charger OCPP có quirk; backtest no look-ahead; chạy bóng</td><td>+ charger AC OCPP 1.6J</td><td>Cổng tầng 3 (08 §14.4); T-FR-EV-005</td><td>Site có ≥ 90 ngày dữ liệu; site EV; khách thí điểm hai thành phần (điều kiện)</td></tr>
 <tr><td>4</td><td>Sự kiện DR mô phỏng</td><td>Công cụ test 61850/DNP3 (UNKNOWN)</td><td>Theo track; đánh giá chứng nhận</td><td>Đối tác DR/DPPA (điều kiện)</td></tr>
 </tbody></table></div>
@@ -800,8 +817,9 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <tr><td><a href="07-device-integration.md">07</a></td><td>Lab §11.4 tách thành phần Phase 1 và Phase 2 như §5.7, §7.8 (X-07-07 đã xử lý).</td></tr>
 <tr><td><a href="08-energy-optimization.md">08</a></td><td>B0 vào Phase 1 (X-08-07, D-02); tầng 3 ở Phase 3A theo trigger (CF-37).</td></tr>
 <tr><td><a href="09-ux-ui-specification.html">09</a></td><td>Dòng B0 trong R2 và UI-19 ở Phase 1 (X-09-06). UI-24 (trạng thái điều khiển) có ở Phase 1 với nội dung M1; phần M2 ở Phase 2.</td></tr>
-<tr><td><a href="10-security-and-reliability.md">10</a></td><td>Điều kiện M2 (X-10-10) nằm ở G2a; chứng nhận ở Phase 4F; D-12 (không M2 trên edge thiếu TPM) chặt hơn D-10-13.</td></tr>
-<tr><td><a href="13-open-questions-and-risks.md">13</a></td><td>Mã Q/R/D/CF dùng trong tài liệu này do 13 cấp.</td></tr>
+<tr><td><a href="10-security-and-reliability.md">10</a></td><td>Điều kiện trước ghi đầu tiên của X-10-10 (pen-test (a), kill switch, Governor đếm, C3) nằm ở §6.6; điều kiện M2 (X-10-10) nằm ở G2a; chứng nhận ở Phase 4F; D-12 (không M2 trên edge thiếu TPM) chặt hơn D-10-13.</td></tr>
+<tr><td><a href="13-open-questions-and-risks.md">13</a></td><td>Mã Q/R/D/CF dùng trong tài liệu này do 13 cấp. Cần cấp mã Q-NN cho Q-E2-01, 02, 03, 07 của 15 (giấy phép/giá broker, Mosquitto pilot) vì chúng là mục cổng G0.</td></tr>
+<tr><td><a href="15-simulators-and-messaging.md">15</a></td><td>Virtual site v0 ở F0-9 (G0), v1 ở W12 (G1); PoC-02 so ba broker theo 15 §7.2; Mosquitto 2.1 cho pilot là quyết định G0. Ngôn ngữ virtual site (Python hay Java) ghi ở 06/11 theo 15 §2 — tài liệu này chưa quyết, để PoC Phase 0.</td></tr>
 </tbody></table></div>
 
 <!-- ============================================================ -->
@@ -817,12 +835,16 @@ td.ids { font-family: var(--mono); font-size: 12px; }
   <li>https://vietnamnet.vn/en/rooftop-solar-saves-billions-of-dong-but-one-bottleneck-remains-2552186.html</li>
   <li>https://www.pv-magazine.com/2026/09/22/vietnam-pushes-provinces-to-accelerate-rooftop-solar-rollout/</li>
   <li>https://vneconomy.vn/automotive/quy-dinh-moi-ve-gia-ban-dien-cho-tram-sac-xe-dien.htm</li>
+  <li>https://www.emqx.com/en/content/license-faq (giấy phép EMQX BSL 1.1; theo 15 §11)</li>
+  <li>https://docs.emqx.com/en/emqx/latest/deploy/license.md (theo 15 §11)</li>
+  <li>https://community.hivemq.com/t/cluster-support-in-community-edition-ce/737 (HiveMQ CE không có cluster; theo 15 §11)</li>
+  <li>https://mosquitto.org/blog/2026/01/version-2-1-0-released/ (theo 15 §11)</li>
 </ul>
-<p>Nguồn nội bộ: <a href="notes/K-review-round1.md">K-review-round1</a>, <a href="notes/_catalog-gaps.md">_catalog-gaps</a>, tài liệu 02–10, nghiên cứu FusionSolar trước (<a href="../fusionsolar/README.md">../fusionsolar/README.md</a>).</p>
+<p>Nguồn nội bộ: <a href="notes/K-review-round1.md">K-review-round1</a>, <a href="notes/_catalog-gaps.md">_catalog-gaps</a>, tài liệu 02–10, <a href="15-simulators-and-messaging.md">15 Bộ mô phỏng và messaging</a>, nghiên cứu FusionSolar trước (<a href="../fusionsolar/README.md">../fusionsolar/README.md</a>).</p>
 
 </article>
 </div>
 </main>
-<footer class="docfoot">Tài liệu 11 · MVP và lộ trình · v1.0 · 2026-10-10 · Product/Delivery Lead (phối hợp Agent J). Ràng buộc bởi <a href="notes/K-review-round1.md">K vòng 1</a>. Liên quan: <a href="03-functional-catalog.html">03</a> · <a href="04-business-requirements.md">04</a> · <a href="06-system-architecture.html">06</a> · <a href="10-security-and-reliability.md">10</a> · <a href="13-open-questions-and-risks.md">13</a>.</footer>
+<footer class="docfoot">Tài liệu 11 · MVP và lộ trình · v1.0 · 2026-10-10 · Product/Delivery Lead (phối hợp Agent J). Ràng buộc bởi <a href="notes/K-review-round1.md">K vòng 1</a>. Liên quan: <a href="03-functional-catalog.html">03</a> · <a href="04-business-requirements.md">04</a> · <a href="06-system-architecture.html">06</a> · <a href="10-security-and-reliability.md">10</a> · <a href="13-open-questions-and-risks.md">13</a> · <a href="15-simulators-and-messaging.md">15</a>.</footer>
 </body>
 </html>
