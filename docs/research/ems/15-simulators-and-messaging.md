@@ -5,6 +5,7 @@
 - Phiên bản 1 · Ngày 2026-10-10 · Trạng thái: đề xuất, chờ PoC-02 và ý kiến pháp lý về giấy phép broker.
 - Trả lời câu hỏi: *"Nghiên cứu các source các thiết bị simulator và dùng MQTT hoặc message nào không"*.
 - Ghi chú nghiên cứu gốc, bảng bằng chứng đầy đủ (E2-01…E2-50) và câu hỏi mở: [notes/E2-simulators-messaging.md](notes/E2-simulators-messaging.md). Mọi FACT lấy qua kết quả tìm kiếm (không mở trang, không clone repo). Nhãn: `[FACT]`, `[INFERENCE]`, `[PROPOSAL]`, `[UNKNOWN]`.
+- **Vòng nhất quán 2026-10-10:** đề xuất §10.3 đã được áp vào 06 (ADR-04, ADR-05 — CF-41, CF-42), 07 (§7.1, §8.2a, §11.2a), 11 (F0-1, F0-4, F0-9, G0/G1). Shortlist PoC-02 ở 06 ADR-04 nay thêm ứng viên mở Apache BifroMQ và fork EMQX LibreMQ/OpenQTT (chỉ khi chứng minh được duy trì), do người dùng hỏi về bản cộng đồng miễn phí. Mã chính thức: R-15-01 → R-48, R-15-02…04 → R-49, R-15-05 → R-50, R-15-06 → R-52, R-15-08 → R-51; thêm R-55…R-58, D-22…D-24, Q-60…Q-62 ([13](13-open-questions-and-risks.md)). URL ở §11 đã có mã S-404…S-539 ([14](14-source-register.md)).
 - Tài liệu này **mở rộng** 06 (ADR-03/04/05, PoC-02) và 07 (§7, §8, §11), tuân theo K §6 (R-01 dấu P, R-12 topic, #20 uplink, #33 nhãn "Mô phỏng").
 
 ## Mục lục

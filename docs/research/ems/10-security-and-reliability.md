@@ -339,7 +339,8 @@ Bổ sung cho ma trận quyền của [04 §3.4](04-business-requirements.md) th
 | `SET_EXPORT_LIMIT`, `SET_IMPORT_LIMIT` (tạm thời, chặt hơn cấu hình) | C2 | M1/M2 | — | — | — | ✓² | ✓² | ✓² | — | — | — |
 | Đổi cấu hình lưới site (`export_mode`, `export_limit_w`, `import_cap_w`) | C3 | M1 | — | — | — | — | R | A | — | — | — |
 | `APPLY_SCHEDULE` thủ công / duyệt kế hoạch vượt guardrail | C1 / C2 | M1/M2 | — | — | — | ✓ / — | ✓ / — | ✓ / ✓² | — | — | — |
-| `SET_EV_LIMIT` (P1) | C1 | M2 | — | — | — | ✓ | ✓ | ✓ | — | — | — |
+| `SET_EV_LIMIT` (P1) — edge làm CSMS hoặc edge gọi API CPO ([07 §8.10](07-device-integration.md#810-lệnh-ev-qua-api-của-cpocsms-bên-ngoài-p1-fr-ev-004-proposal)) | C1 | M2 | — | — | — | ✓ | ✓ | ✓ | — | — | — |
+| Bật/tắt ghi qua API CPO (`cpo_write_enabled`, API-EV-03) / ghi qua cloud hãng (FR-INT-028) | C3 bật / C1 tắt | M2 / M1 | — | — | — | — | R | A | — | — | — |
 | Đề xuất / duyệt `M1StaticLimits` (M1) / SOE đầy đủ (M2) | C3 | M1/M2 | — | — | — | — | R | A (không duyệt bản mình) | — | — | — |
 | Bật `control_enabled` / Gate M2 | C3 | M1/M2 | — | — | — | — | R | A | — | — | — |
 | Tắt `control_enabled` (an toàn hóa) | C1 | — | — | — | — | ✓ | ✓ | ✓ | ✓ | — | — |
@@ -357,6 +358,7 @@ Bổ sung cho ma trận quyền của [04 §3.4](04-business-requirements.md) th
 Ghi chú:
 - `ORG_ADMIN` không có quyền lệnh mặc định (K §6 #29); muốn phát lệnh phải tự gán `OPERATOR`, có audit và thông báo chủ tài sản.
 - `GRID_OPERATOR` không phải người dùng: lệnh IEC 104 tạo envelope nội bộ tại edge, mức arbiter 4, không qua PDP cloud ([07 §8.9](07-device-integration.md)); xác thực bằng conduit CD-05 ([§10](#s10)).
+- **Đường ghi qua hệ thống bên ngoài (CF-39)**: `SET_EV_LIMIT` tới CSMS của CPO và lệnh ghi qua cloud hãng (FR-INT-028) đi **cùng chuỗi** PDP → Fleet Governor → envelope ký → edge như mọi lệnh; edge của site là client gọi API bên ngoài, cloud không gọi API ghi của CPO/hãng (không có đường cloud → cloud). TTL phía bên ngoài ≤ `expires_at`; bên ngoài không hỗ trợ hạn hoặc không đọc lại được → chỉ đọc. Site không có edge không được bật. [PROPOSAL]
 - Bộ sinh lịch tầng 2/tầng 3 (`svc:scheduler-*`) phát `APPLY_SCHEDULE` như một principal dịch vụ có quyền C1, chịu PDP và Governor như người (X-I-03). [PROPOSAL]
 
 ### 5.5 Phê duyệt hai người (C3)
@@ -491,7 +493,7 @@ Theo [05 §14](05-domain-model.html#s14): `event_id` (UUID v7), `ts` (UTC), `ten
 - Khóa ký không bao giờ rời KMS/HSM; dịch vụ gửi digest để ký. Giới hạn tốc độ ký theo signer (chống lạm dụng khi dịch vụ bị chiếm): mặc định ≤ 50 chữ ký/giây toàn nền tảng, cảnh báo khi vượt p99 lịch sử × 3. [PROPOSAL]
 - **KMS/Signer không sẵn sàng → không phát lệnh mới** (fail-closed); edge tiếp tục cục bộ; cảnh báo PO ([04 §5.14](04-business-requirements.md)).
 - **Lộ khóa ký lệnh**: (1) kill switch nền tảng; (2) đẩy cấu hình ký bằng khóa cấu hình loại bỏ `kid` bị lộ khỏi danh sách tin cậy; (3) phát hành `kid` mới; (4) tăng `seq` sàn; (5) tháo kill switch theo C3 từng tenant. Khóa cấu hình và khóa lệnh là **hai khóa khác nhau** để một khóa lộ không tự hợp thức hóa khóa còn lại. [PROPOSAL]
-- Credential cloud hãng: không lưu credential có quyền ghi nếu không dùng (FR-INT-028, P2); ưu tiên token có phạm vi chỉ đọc nếu hãng hỗ trợ. [FACT] Huawei 9/2025 thêm bước chủ hệ thống phải cấp quyền API cho installer, làm các tích hợp bên thứ ba ngừng chạy cho tới khi được cấp — https://community.home-assistant.io/t/fusion-solar-doesnt-work-anymore/927417 (nghiên cứu FusionSolar trước). [INFERENCE] Connector cần trạng thái `AUTH_REVOKED` riêng và cảnh báo, không coi là lỗi mạng.
+- Credential CPO (FR-EV-004) và cloud hãng: tách credential đọc (connector, monitoring plane) và credential ghi (chỉ edge của site dùng, control plane); không lưu credential có quyền ghi nếu cờ ghi tắt (FR-EV-004, FR-INT-028 theo CF-39); ưu tiên token có phạm vi chỉ đọc nếu hãng hỗ trợ. [FACT] Huawei 9/2025 thêm bước chủ hệ thống phải cấp quyền API cho installer, làm các tích hợp bên thứ ba ngừng chạy cho tới khi được cấp — https://community.home-assistant.io/t/fusion-solar-doesnt-work-anymore/927417 (nghiên cứu FusionSolar trước). [INFERENCE] Connector cần trạng thái `AUTH_REVOKED` riêng và cảnh báo, không coi là lỗi mạng.
 
 ---
 
@@ -558,6 +560,7 @@ Khóa ký lệnh / cấu hình / OTA / audit: JWK set có kid, không phải X.5
 | OCPP charger → edge (edge làm CSMS tối giản) | OCPP 1.6J Security Profile ≥ 2 (TLS + Basic Auth với mật khẩu ngẫu nhiên theo charger), mục tiêu Profile 3 (chứng chỉ client); charger chỉ thấy cổng OCPP của edge trên OT LAN | P1, NFR-SEC-021 |
 | IEC 104 master điều độ → edge | Conduit CD-05: NIC/VLAN riêng, chỉ chấp nhận IP master đã cấu hình (trong cấu hình đã ký), chỉ type lệnh đã cấu hình; IEC 62351 [UNKNOWN] theo yêu cầu điện lực | P1 có điều kiện, NFR-SEC-032 (mới) |
 | Modbus TCP server của edge cho SCADA khách (F-INT-17) | Cổng riêng trên OT LAN hoặc VLAN khách; **chỉ đọc** mặc định; allow-list IP | P1 |
+| Edge → API CSMS của CPO (ghi giới hạn EV, FR-EV-004) | HTTPS TLS ≥ 1.2, chỉ tới endpoint CPO đã cấu hình trong cấu hình ký (allow-list); credential **ghi** riêng với credential **đọc** của connector, lưu trong vault theo §8, không đọc lại qua API; hạn mức gọi theo hợp đồng CPO; mọi lời gọi audit | P1, NFR-SEC-018 (mở rộng), cờ mặc định tắt |
 | Webhook ra ngoài (F-INT-20) | HTTPS, ký HMAC, chống SSRF (chặn IP nội bộ/metadata), retry có backoff | P1 |
 
 ---
@@ -851,6 +854,7 @@ Mẫu watchdog thường gặp [INFERENCE, kiến thức nền chưa kiểm ch�
 | PV qua logger hãng (`control_owner = NATIVE`) | Logger | Logger tiếp tục vòng zero-export/giới hạn xuất native | Chỉ đặt tham số và giám sát; mất edge không ảnh hưởng vòng native | — | Readback tham số; test giới hạn xuất (F-INT-27) |
 | Hybrid inverter (pin LV) | Theo hãng | Chế độ "third-party/remote" có timeout [UNKNOWN theo hãng] | Chỉ đổi giữa chế độ native an toàn nếu không có timeout | Cảnh báo | Như PCS |
 | Charger EV — mất edge (edge là CSMS, P1) | Charger | Áp TxDefaultProfile/ChargePointMaxProfile an toàn đã cài sẵn (ví dụ giới hạn site/số charger) | Luôn cài profile mặc định an toàn trước khi điều khiển động | Cảnh báo | Test ngắt WebSocket. [FACT] OCPP 1.6 có ChargePointMaxProfile, TxDefaultProfile, TxProfile; với Easee, TxDefaultProfile 0 A có thể đè TxProfile 20 A — https://developer.easee.com/docs/ocpp-smart-charging ; https://www.bender.de/docs/charge-controller/OCPP/ocpp-smart-charging/ (qua kết quả tìm kiếm, ghi chú E): hành vi khác nhau theo hãng, phải test từng model |
+| Charger EV qua CSMS của CPO (edge gọi API CPO, P1) | Edge (lỗi API/timeout) / cloud (90 s) | CSMS của CPO áp profile mặc định an toàn đã ghi nhận khi commissioning khi giới hạn hết hạn | Không gửi lại giới hạn cũ; giới hạn đã gửi tự hết hạn (TTL ≤ `expires_at`); giữ trần nhập bằng BESS/PV theo arbiter | Cảnh báo Cao `EV_CPO_LINK_LOST` | Test mock CPO: CPO không trả lời, trả sai, mất edge↔CPO (T-FR-EV-004) |
 | Genset | — | Controller genset tự quản | Chỉ đọc ở MVP; start/stop là P2 | — | — |
 | Rơ-le / DO của edge | Edge reboot | DO về trạng thái mất điện (de-energized) phải là trạng thái an toàn — thiết kế đấu dây quy định | Không dùng DO thay bảo vệ | — | Kiểm tra sơ đồ đấu DO trong commissioning |
 | Cảm biến bức xạ/thời tiết | Edge | — | Không ảnh hưởng điều khiển; PR = N/A khi thiếu POA; quality `FROZEN`/`BAD_*` | Cảnh báo Trung bình | — |

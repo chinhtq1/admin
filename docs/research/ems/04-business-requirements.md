@@ -1665,7 +1665,7 @@ Mỗi module theo cùng khung: mục đích → persona → user story → luồ
 | FR-INT-025 | Hệ thống nên có API REST đọc: OAuth2 client credentials, scope tối thiểu, mặc định chỉ đọc, hạn mức công bố theo tenant, phân trang theo thời gian, giới hạn cửa sổ theo độ phân giải, version trong đường dẫn, tài liệu công khai. | F-INT-19 | P1 | Phase 1 | — | K G-11 |
 | FR-INT-026 | Hệ thống nên có webhook: cảnh báo mở/đóng, trạng thái lệnh, báo cáo sẵn sàng, ticket; ký HMAC, retry có backoff, idempotency key. | F-INT-20 | P1 | Phase 1 | — | E §3.11 |
 | FR-INT-027 | Hệ thống nên cho nhập CSV lịch sử và file load profile công tơ EVN khi có, gắn origin và quality. | F-INT-22 | P1 | Phase 1 | — | GAP-14 |
-| FR-INT-028 | Hệ thống có thể ghi qua cloud hãng (Huawei OAuth Connect control API, task async, không gọi chồng) chỉ cho lịch chậm, cờ riêng, C2 trở lên. | F-INT-14 | P2 | Phase 2 | C2·M1 | I NFR-SEC-018 |
+| FR-INT-028 | Hệ thống có thể ghi qua cloud hãng (Huawei OAuth Connect control API, task async, không gọi chồng) chỉ cho lịch chậm (theo giờ), cờ riêng theo site **mặc định tắt**, và chỉ khi đủ mọi điều kiện của **CF-39** ([13 §4.2](13-open-questions-and-risks.md#42-xung-đột-mới-do-131112-phát-hiện)): (1) lệnh qua PDP, hạng ≥ C2, Fleet Governor và envelope ký (FR-SEC-008) như lệnh edge; ở site có edge, **edge là client gọi API hãng** và arbiter của edge vẫn giữ trần nhập/giới hạn xuất bằng tài nguyên khác; (2) có hạn: thời hạn phía hãng ≤ `expires_at` của envelope; API hãng không hỗ trợ hạn → cấm ghi; (3) readback qua API đọc của hãng hoặc Modbus cục bộ, chỉ `APPLIED` khi khớp, không khớp → `FAILED_NO_EFFECT`; (4) hành vi mặc định khi mất liên lạc (chế độ native) đã kiểm khi commissioning; (5) không dùng cho vòng nhanh hay mức 1–6 của arbiter; site không có edge điều khiển cùng chức năng; (6) audit mọi bước (FR-SEC-014). Site chỉ giám sát (không edge) **không** được bật cho tới khi Evidence Judge chấp nhận ngoại lệ có lý do. Không thỏa → chỉ đọc (NFR-SEC-018). Chi tiết: [07 §8.8](07-device-integration.md#88-lệnh-ghi-qua-cloud-hãng-p2--theo-cf-39). | F-INT-14 | P2 | Phase 2 | C2·M1 | I NFR-SEC-018; CF-39 |
 | FR-INT-029 | Hệ thống có thể có adapter IEC 61850 MMS client, DNP3 outstation, OpenADR 3.x VEN, IEEE 2030.5 client. | F-INT-18 | P2 | Phase 2 | — | K §6 #32 |
 | FR-INT-030 | Hệ thống có thể cho API lệnh cho bên thứ ba: scope ghi cho client máy (C1 trong SOE), qua PDP và Fleet Governor, mặc định 0 lệnh. | F-INT-21 | P2 | Phase 2 | C1·M2 | I §3.7.6 |
 | FR-INT-031 | Hệ thống phải có lệnh `COMMISSIONING_TEST` là **đường ghi duy nhất** cho phép thử dấu, test giới hạn xuất và test watchdog (FR-INT-016…018). Chỉ chấp nhận khi: (1) site ở trạng thái `commissioning` (IL-10 chặn mọi type khác); (2) edge ở trạng thái con `MAINTENANCE/COMMISSIONING_TEST`, mở bằng **xác nhận có mặt tại chỗ** (mã phiên từ cloud + nút vật lý trên edge qua DI/GPIO trong ≤ 120 s; site có công tắc ở `LOCAL` thì không mở được); phiên tối đa 2 h; (3) biên độ trong **phong bì test**: \|P\| ≤ min(10% P định mức, 50 kW), ≤ 10 phút mỗi bước, không vượt SOE nháp hay giới hạn native; (4) `on_expiry = REVERT_DEFAULT` bắt buộc; thoát phiên (hết hạn, rút cáp, khởi động lại edge) → `REVERT_DEFAULT` + readback; (5) hạng C2 (step-up MFA ≤ 5 phút, lý do bắt buộc), quyền `commissioning.execute`; (6) `dry_run` trước mỗi bước; (7) mỗi bước, mỗi lần vào/ra phiên ghi audit (người, mã phiên, thời điểm nhấn nút) và biên bản (FR-INT-019). Chi tiết trạng thái con ở [07 §9.4](07-device-integration.md). | F-INT-26, F-INT-27, F-INT-28 (chờ 03 cấp F- riêng) | P0 | MVP | C2·M1 | 07 §9.4; 10 IL-10, §5.4; [PROPOSAL] |
@@ -2056,24 +2056,24 @@ Mọi tính năng trong 03 có ít nhất một FR hoặc một dòng ràng bu�
 
 | Module | Số F- trong 03 | Số FR (04) | P0 / P1 / P2 / CẤM | F- chỉ ở §5.16 |
 |---|---|---|---|---|
-| M-ORG | 16 | 18 | 12 / 5 / 1 / 0 | — |
+| M-ORG | 18 | 18 | 12 / 5 / 1 / 0 | — |
 | M-DASH | 12 | 13 | 8 / 4 / 1 / 0 | — |
 | M-MON | 12 | 13 | 10 / 3 / 0 / 0 | — |
 | M-HIST | 14 | 17 | 11 / 6 / 0 / 0 | — |
-| M-REP | 18 | 19 | 8 / 11 / 0 / 0 | — |
+| M-REP | 19 | 19 | 8 / 11 / 0 / 0 | — |
 | M-TAR | 11 | 12 | 7 / 4 / 1 / 0 | — |
 | M-BESS | 20 | 20 | 11 / 7 / 1 / 1 | — |
 | M-PV | 14 | 13 | 5 / 5 / 3 / 0 | F-PV-14 |
 | M-GRID | 19 | 19 | 8 / 9 / 2 / 0 | — |
 | M-EV | 11 | 10 | 1 / 7 / 2 / 0 | F-EV-11 |
-| M-OPT | 21 | 21 | 11 / 8 / 2 / 0 | F-OPT-21 |
+| M-OPT | 23 | 21 | 11 / 8 / 2 / 0 | F-OPT-21 |
 | M-ALM | 22 | 22 | 11 / 11 / 0 / 0 | — |
-| M-INT | 29 | 31 | 21 / 7 / 3 / 0 | — |
-| M-SEC | 24 | 28 | 22 / 4 / 2 / 0 | — |
+| M-INT | 33 | 31 | 21 / 7 / 3 / 0 | — |
+| M-SEC | 27 | 28 | 22 / 4 / 2 / 0 | — |
 | M-ADV | 15 | 12 | 2 / 4 / 6 / 0 | F-ADV-12…15 |
-| **Tổng** | **258** | **268** | **148 / 95 / 24 / 1** | **7** |
+| **Tổng** | **270** | **268** | **148 / 95 / 24 / 1** | **7** |
 
-Ghi chú: số FR P0 (148) lớn hơn số F- MVP (140, theo 03 sau bổ sung _catalog-gaps) vì 04 tách một số tính năng MVP thành nhiều FR kiểm thử được (ví dụ FR-ORG-006, FR-DASH-008, FR-HIST-003, FR-HIST-008, FR-REP-008, FR-TAR-007, FR-OPT-002, FR-INT-020, FR-INT-031, FR-BESS-020, FR-SEC-021, FR-SEC-022, FR-ADV-002) và tạo FR cho mục ngang (quy tắc hiển thị, nhãn). Bảng đếm được kiểm tra lại bằng script khi lưu tài liệu này.
+Ghi chú: số FR P0 (148) lớn hơn số F- MVP (140, theo 03 sau bổ sung _catalog-gaps) vì 04 tách một số tính năng MVP thành nhiều FR kiểm thử được (ví dụ FR-ORG-006, FR-DASH-008, FR-HIST-003, FR-HIST-008, FR-REP-008, FR-TAR-007, FR-OPT-002, FR-INT-020, FR-INT-031, FR-BESS-020, FR-SEC-021, FR-SEC-022, FR-ADV-002) và tạo FR cho mục ngang (quy tắc hiển thị, nhãn). Bảng đếm được kiểm tra lại bằng script khi lưu tài liệu này. **Sửa vòng nhất quán 2026-10-10:** bản trước ghi 258 F-; đếm lại theo `id="f-…"` của [03](03-functional-catalog.html) là **270** (khớp bảng tổng của 03 §2), vì 03 đã thêm 12 F- từ `_catalog-gaps` (M-ORG +2, M-REP +1, M-OPT +2, M-INT +4, M-SEC +3). Số FR (268) và phân bố ưu tiên không đổi. Độ phủ của 12 F- mới: F-ORG-17 (FR-SEC-005, ConsentRecord), F-REP-19 và F-SEC-25 (FR-SEC-021) đã có FR; F-INT-31 → FR-INT-031; F-ORG-18 → một phần FR-DASH-012 (phần tùy chọn hiển thị P0 chưa có FR riêng); F-SEC-26 → NFR-OBS-009; F-SEC-27 → NFR-SEC-029. **Chưa có FR riêng** (gửi vòng sau của 04, ghi ở 12 §6.3): F-INT-30 (phát hành/thu hồi driver), F-INT-32 (`tracking_state`), F-INT-33 (sandbox API công khai), F-OPT-22 (phiên bản chiến lược), F-OPT-23 (shadow mode), F-ORG-18 (phần MVP).
 
 ### 7.2 Ánh xạ mã tạm của G (FR-OPT-0xx tạm) sang mã chính thức
 
@@ -2191,8 +2191,8 @@ Ghi chú: số FR P0 (148) lớn hơn số F- MVP (140, theo 03 sau bổ sung _c
 |---|---|
 | 03 Danh mục | Cấp F- riêng cho lệnh `COMMISSIONING_TEST` (FR-INT-031, hiện tạm neo F-INT-26/27/28) và cho SOE tối thiểu Gate M1 (FR-BESS-020, hiện neo F-BESS-08, F-GRID-03). Đổi tên lệnh kill switch thành `REMOTE_CONTROL_SUSPEND`/`REMOTE_CONTROL_RESUME` (trạng thái edge: `REMOTE_CONTROL_SUSPENDED`); dùng cặp từ "kích hoạt (C1) / gỡ (C3)" thay cho "tắt/bật lại". |
 | 05 Domain | Trạng thái `DispatchCommand` theo 04 §5.14 nay khớp 05: `PENDING_APPROVAL → AUTHORIZED`, thêm `DENIED`; `APPROVED` chỉ là `CommandApproval.decision`. SOE cần trường phân biệt phạm vi `MIN_M1`/`FULL_M2` trên cùng chuỗi version (FR-BESS-020, FR-BESS-007). |
-| 07 Tích hợp | Thêm đường lệnh EV qua API CPO do **edge** gọi (FR-EV-004: envelope ký, TTL ≤ `expires_at`, readback từ dữ liệu CPO, fallback về profile mặc định của CPO; API CPO không đáp ứng → chỉ đọc) vào §3/§8 như đã làm cho FR-INT-028; xác nhận tham chiếu FR-INT-031/NFR-SEC-033 cho §9.4. |
-| 10 An toàn | 04 xác nhận cùng số NFR-SEC-027…032, NFR-REL-013…018, NFR-OBS-008…009 (X-10-01 đóng); thêm NFR-SEC-033 (`COMMISSIONING_TEST`); thêm vào §5.4/§11 dòng ghi giới hạn EV qua API CPO (do edge thực thi, PDP + Governor) cho FR-EV-004; NFR-SEC-008 nay Gate M1 (bảng §20 của 10 còn ghi M2). |
+| 07 Tích hợp | Thêm đường lệnh EV qua API CPO do **edge** gọi (FR-EV-004: envelope ký, TTL ≤ `expires_at`, readback từ dữ liệu CPO, fallback về profile mặc định của CPO; API CPO không đáp ứng → chỉ đọc) vào §3/§8 như đã làm cho FR-INT-028; xác nhận tham chiếu FR-INT-031/NFR-SEC-033 cho §9.4. **Vòng nhất quán 2026-10-10: đã xử lý** (07 §8.8, §8.10; 10 §5.4, §9.6, §13.2). |
+| 10 An toàn | 04 xác nhận cùng số NFR-SEC-027…032, NFR-REL-013…018, NFR-OBS-008…009 (X-10-01 đóng); thêm NFR-SEC-033 (`COMMISSIONING_TEST`); thêm vào §5.4/§11 dòng ghi giới hạn EV qua API CPO (do edge thực thi, PDP + Governor) cho FR-EV-004; NFR-SEC-008 nay Gate M1 (bảng §20 của 10 còn ghi M2). **Vòng nhất quán 2026-10-10:** phần EV qua API CPO đã thêm vào 10 §5.4/§9.6/§13.2. |
 | 11 Lộ trình | SOE tối thiểu (FR-BESS-020) thuộc Phase 1/Gate M1; SOE đầy đủ (FR-BESS-007) giữ Phase 2/V1. FR-SEC-013 (kill switch) nay `C1/C3·M1`, cần ở Phase 1. Số FR: 268, P0: 148. |
 | 12 Truy vết | Thêm dòng cho FR-BESS-020, FR-INT-031, NFR-SEC-027…033, NFR-REL-013…018, NFR-OBS-008…009, AC-BESS-09, AC-INT-10, AC-EV-05, AC-SEC-14, AC-SEC-15; đổi Hạng·Gate của FR-SEC-006/007/013, FR-INT-016/017/018; đóng GAP-12-02 (FR-EV-004) và GAP-12-03 (`COMMISSIONING_TEST`). |
 

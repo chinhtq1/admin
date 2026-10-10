@@ -277,7 +277,7 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <tr><td>Q-08 pháp lý dữ liệu</td><td>ADR-18 hosting, retention</td><td>Môi trường production phải đặt đúng nơi ngay từ Phase 1</td><td>Q-08, R-05</td></tr>
 <tr><td>Giấy phép TSL (Q-14), PoC-01, PoC-04</td><td>Ingest/tổng hợp (W4), RLS</td><td>ADR-06, ADR-08</td><td>Q-14, Q-38, R-08, R-18</td></tr>
 <tr><td>Giấy phép OpenEMS (Q-15), PoC-03, phần cứng</td><td>Edge (W2)</td><td>ADR-07, ADR-19; đường găng</td><td>Q-15, Q-36, R-11</td></tr>
-<tr><td>PoC-02 broker + Q-16 + rà soát giấy phép broker (Q-E2-01, Q-E2-02)</td><td>Uplink MQTT; ngân sách license broker</td><td>ADR-04; EMQX ≥ 5.9 là BSL 1.1, HiveMQ Enterprise là thương mại (<a href="15-simulators-and-messaging.md#7-lựa-chọn-broker">15 §7</a>)</td><td>Q-16, Q-E2-01, Q-E2-02</td></tr>
+<tr><td>PoC-02 broker + rà soát giấy phép broker (Q-16, Q-61, Q-62)</td><td>Uplink MQTT; ngân sách license broker</td><td>ADR-04; EMQX ≥ 5.9 là BSL 1.1, HiveMQ Enterprise là thương mại (<a href="15-simulators-and-messaging.md#7-lựa-chọn-broker">15 §7</a>)</td><td>Q-16, Q-61, Q-62, D-22</td></tr>
 <tr><td>Pen-test bên thứ ba (a), kill switch, Governor đếm</td><td>Site đầu tiên có <code>control_enabled = true</code> (kể cả pilot Phase 1); G1</td><td>Gate M1 đã ghi xuống thiết bị khách (lịch native, <code>SET_ESS_MODE</code>, cấu hình lưới, OTA); 10 NFR-SEC-030 (a), X-10-10</td><td>R-13</td></tr>
 <tr><td>Hợp đồng điểm/lệnh v1</td><td>Driver, ingest, lệnh</td><td>Edge và cloud phát triển song song theo hợp đồng (06 D-06-08)</td><td>—</td></tr>
 <tr><td>Phỏng vấn, thị phần</td><td>Thứ tự driver, ticket/work order</td><td>FR-INT-006; D-08</td><td>Q-18, Q-20, R-41</td></tr>
@@ -306,15 +306,15 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <div class="table-wrap"><table>
 <thead><tr><th>Workstream</th><th>Nội dung</th><th>Mã liên quan</th><th class="num">pw</th></tr></thead>
 <tbody>
-<tr><td>F0-1 Pháp lý và giấy phép</td><td>Điều phối tư vấn luật: K G-13 (NĐ 58/243, TT 29/2026, QĐ 963, thí điểm hai thành phần, QĐ 1570, luật dữ liệu), giấy phép TSL, OpenEMS. <b>Giấy phép broker production</b>: EMQX ≥ 5.9 là BSL 1.1 (cluster cần license; grant một node không áp khi tích hợp vào sản phẩm bán cho bên thứ ba), HiveMQ Enterprise là thương mại, HiveMQ CE không có cluster (<a href="15-simulators-and-messaging.md#7-lựa-chọn-broker">15 §7.1</a>) <span class="tag fact">FACT</span> (qua kết quả tìm kiếm); SaaS của ta có thuộc ngoại lệ BSL hay không là <span class="tag unknown">UNKNOWN</span> (Q-E2-01); giá và điều khoản HiveMQ Enterprise tự host tại VN (Q-E2-02). Lập ước tính tổng chi phí broker 3 năm (license + vận hành) cho mọi ứng viên PoC-02 (15 §7.2 mục 3, 6)</td><td>Q-01, Q-03…Q-06, Q-08, Q-14…Q-16, Q-E2-01, Q-E2-02</td><td class="num">4–6</td></tr>
+<tr><td>F0-1 Pháp lý và giấy phép</td><td>Điều phối tư vấn luật: K G-13 (NĐ 58/243, TT 29/2026, QĐ 963, thí điểm hai thành phần, QĐ 1570, luật dữ liệu), giấy phép TSL, OpenEMS. <b>Giấy phép broker production</b>: EMQX ≥ 5.9 là BSL 1.1 (cluster cần license; grant một node không áp khi tích hợp vào sản phẩm bán cho bên thứ ba), HiveMQ Enterprise là thương mại, HiveMQ CE không có cluster (<a href="15-simulators-and-messaging.md#7-lựa-chọn-broker">15 §7.1</a>) <span class="tag fact">FACT</span> (qua kết quả tìm kiếm); SaaS của ta có thuộc ngoại lệ BSL hay không là <span class="tag unknown">UNKNOWN</span> (13 Q-16); giá và điều khoản HiveMQ Enterprise tự host tại VN (Q-16 b); LICENSE của Apache BifroMQ và mức duy trì fork LibreMQ/OpenQTT (Q-61, Q-62). Giấy phép TSL khi nhúng trong SaaS: nguồn thứ cấp mâu thuẫn, đọc <code>LICENSE-TIMESCALE</code> và hỏi Timescale (Q-14). Lập ước tính tổng chi phí broker 3 năm (license + vận hành) cho mọi ứng viên PoC-02 và <b>dự trù ngân sách license broker</b> (R-49; 15 §7.2 mục 3, 6)</td><td>Q-01, Q-03…Q-06, Q-08, Q-14…Q-16, Q-61, Q-62</td><td class="num">4–6</td></tr>
 <tr><td>F0-2 Khám phá khách hàng</td><td>Phỏng vấn O&amp;M/installer/chủ C&amp;I; thu hóa đơn EVN, danh mục thiết bị; kiểm thử khả dụng wireframe UI-01/03/14/16 với 5 operator (R-09-06)</td><td>Q-18…Q-20, Q-23, A-01</td><td class="num">6–10</td></tr>
 <tr><td>F0-3 PoC-01 lưu trữ</td><td>1.000 site giả lập, 35 k mẫu/s, đỉnh 350 k; CAGG; tính lại</td><td>ADR-06, NFR-PERF-004</td><td class="num">4–6</td></tr>
-<tr><td>F0-4 PoC-02 broker</td><td>Cùng một bộ test (T-E2-04 đổi broker; T-E2-05 10.000 edge mTLS, rớt một node broker) trên EMQX Enterprise và HiveMQ Enterprise (license dùng thử, chỉ sau rà soát giấy phép ở F0-1) và RabbitMQ 4.x (mở); Message Expiry, ACL theo <code>edge_id</code>; hợp đồng không phụ thuộc broker (15 §7.2). Quyết định broker cho pilot: Mosquitto 2.1 một node + standby nóng với tiêu chí thoát (&gt; 200 edge, cần HA không gián đoạn, hoặc PoC-02 xong), hoặc dùng ngay ứng viên production (Q-E2-07; khác ADR-04 hiện tại "Mosquitto chỉ dev/lab", người viết 06 quyết) <span class="tag proposal">PROPOSAL</span></td><td>ADR-04, Q-E2-01…03, Q-E2-07</td><td class="num">4–6</td></tr>
+<tr><td>F0-4 PoC-02 broker</td><td>Cùng một bộ test (T-E2-04 đổi broker; T-E2-05 10.000 edge mTLS, rớt một node broker) trên shortlist của <a href="06-system-architecture.html#adr-04">06 ADR-04</a>: ứng viên mở Apache BifroMQ và RabbitMQ 4.x (LibreMQ/OpenQTT chỉ khi Q-61 chứng minh được duy trì), baseline trả phí EMQX Enterprise và HiveMQ Enterprise (license dùng thử, sau rà soát ở F0-1); Message Expiry, Correlation Data, Content Type, ACL theo <code>edge_id</code>; hợp đồng không phụ thuộc broker (15 §7.2). Bảng chi phí 3 năm. Broker pilot: Mosquitto 2.1 một node + standby nóng với tiêu chí thoát (&gt; 200 edge, site M2 cần HA, hoặc PoC-02 xong) — <b>06 ADR-04 đã cho phép</b> (CF-42; Q-59 cho phần kỹ thuật) <span class="tag proposal">PROPOSAL</span></td><td>ADR-04, D-22, Q-16, Q-59, Q-61, Q-62</td><td class="num">4–6</td></tr>
 <tr><td>F0-5 PoC-03 edge runtime</td><td>OpenEMS Edge vs runtime Java tự xây trên 2–3 phần cứng ứng viên; chu kỳ p99 ≤ 200 ms với 5.000 điểm</td><td>ADR-07, ADR-19, NFR-PERF-006</td><td class="num">6–10</td></tr>
 <tr><td>F0-6 PoC-04, PoC-06</td><td>RLS + SECURITY DEFINER trên hypertable/CAGG; SSE 4.000 kết nối</td><td>ADR-08, ADR-03</td><td class="num">2–3</td></tr>
 <tr><td>F0-7 Hợp đồng v1</td><td>Schema telemetry/lệnh/ack (Protobuf + JSON Schema), vector vàng, quy ước dấu/đơn vị/bucket theo K #4–#8</td><td>NFR-DATA-003, FR-INT-003</td><td class="num">4–6</td></tr>
 <tr><td>F0-8 Nền kỹ thuật</td><td>CI/CD, test kiến trúc (ranh giới mặt phẳng), khung test cross-tenant, Keycloak, môi trường VN, quan sát cơ bản</td><td>ADR-01, ADR-17, NFR-SEC-007</td><td class="num">8–12</td></tr>
-<tr><td>F0-9 Bộ mô phỏng lõi</td><td>Modbus server nạp register map YAML; công tơ có dấu cấu hình được; SunSpec chain; edge ảo hàng loạt. <b>Milestone virtual site v0</b> (<a href="15-simulators-and-messaging.md#3-thiết-kế-virtual-site">15 §3</a>): sinh thanh ghi từ cùng register map YAML của driver; mô hình PV + tải + BESS (SOC, CCL/DCL) + công tơ POC cân bằng; REST tiêm lỗi; Toxiproxy; chạy trong CI với kịch bản tất định (tầng L2–L4 theo <a href="15-simulators-and-messaging.md#4-kế-hoạch-kiểm-thử-dùng-simulator-và-giới-hạn">15 §4.1</a>)</td><td>F-INT-24, FR-INT-014</td><td class="num">8–13</td></tr>
+<tr><td>F0-9 Bộ mô phỏng lõi</td><td>Modbus server nạp register map YAML; công tơ có dấu cấu hình được; SunSpec chain; edge ảo hàng loạt. <b>Milestone virtual site v0</b> (<a href="15-simulators-and-messaging.md#3-thiết-kế-virtual-site">15 §3</a>): sinh thanh ghi từ cùng register map YAML của driver; mô hình PV + tải + BESS (SOC, CCL/DCL) + công tơ POC cân bằng; REST tiêm lỗi; Toxiproxy; chạy trong CI với kịch bản tất định (tầng L2–L4 theo <a href="15-simulators-and-messaging.md#4-kế-hoạch-kiểm-thử-dùng-simulator-và-giới-hạn">15 §4.1</a>). Môi trường dev <code>docker compose</code> + CI Testcontainers với Mosquitto 2.x; chốt ngôn ngữ virtual site (Python pymodbus + pvlib, hoặc Java) và chính sách GPL chỉ cho công cụ test + SBOM/kiểm giấy phép trong CI (D-24, R-50)</td><td>F-INT-24, FR-INT-014, D-24</td><td class="num">8–13</td></tr>
 <tr><td>F0-10 Phần cứng và lab</td><td>RFQ 2–3 nhà cung cấp gateway; đặt mua lab theo 07 §11.4 (phần cho Phase 1)</td><td>Q-36, ADR-19</td><td class="num">3–5</td></tr>
 <tr><td colspan="3"><b>Tổng Phase 0 · cỡ L</b></td><td class="num"><b>49–77</b></td></tr>
 </tbody></table></div>
@@ -327,7 +327,7 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 </ul>
 
 <h3>5.4 Phụ thuộc</h3>
-<p>Tư vấn luật bên ngoài (gồm giấy phép broker); nhà cung cấp phần cứng; license dùng thử EMQX Enterprise và HiveMQ Enterprise cho PoC-02; khách đồng ý phỏng vấn. Không phụ thuộc phase nào trước. Ngân sách license broker production chưa có số liệu <span class="tag unknown">UNKNOWN</span> (Q-E2-01, Q-E2-02) và không nằm trong pw (§2).</p>
+<p>Tư vấn luật bên ngoài (gồm giấy phép broker); nhà cung cấp phần cứng; license dùng thử EMQX Enterprise và HiveMQ Enterprise (baseline trả phí) cho PoC-02, cùng ứng viên mở BifroMQ và RabbitMQ 4.x; khách đồng ý phỏng vấn. Không phụ thuộc phase nào trước. Ngân sách license broker production chưa có số liệu <span class="tag unknown">UNKNOWN</span> (Q-16) và không nằm trong pw (§2).</p>
 
 <h3>5.5 Cổng ra G0</h3>
 <ol>
@@ -337,13 +337,13 @@ td.ids { font-family: var(--mono); font-size: 12px; }
   <li>≥ 5 phỏng vấn O&amp;M/installer có biên bản; thứ tự driver xác nhận hoặc sửa (Q-20); quyết định D-08 (ticket/work order) và D-21 (vai trò TECHNICIAN).</li>
   <li>≥ 2 site pilot Phase 1 có thư ý định (một PV zero-export Huawei SmartLogger; một đa hãng có công tơ PCC Modbus/SunSpec) + 1 site chỉ giám sát; ≥ 1 ứng viên pilot BESS cho Phase 2.</li>
   <li>Hợp đồng v1 đóng băng, vector vàng và bộ mô phỏng chạy trong CI; milestone virtual site v0 (F0-9) đạt: ít nhất một kịch bản tất định PV + BESS + <code>MTR_POC</code> và một ca tiêm lỗi mạng chạy trong CI.</li>
-  <li>Rà soát giấy phép broker production có văn bản (Q-E2-01, Q-E2-02); ước tính tổng chi phí 3 năm (license + vận hành) cho ít nhất hai ứng viên PoC-02 ghi vào ADR-04; quyết định broker cho pilot Phase 1 (Mosquitto 2.1 có tiêu chí thoát, hoặc ứng viên production) đã ghi (Q-E2-07).</li>
+  <li>Rà soát giấy phép broker production có văn bản (Q-16, Q-61, Q-62); ước tính tổng chi phí 3 năm (license + vận hành) cho ít nhất hai ứng viên PoC-02 ghi vào ADR-04; quyết định broker cho pilot Phase 1 (Mosquitto 2.1 một node có tiêu chí thoát theo ADR-04, hoặc ứng viên production) đã ghi (D-22, Q-59); D-24 (GPL chỉ trong công cụ test, ngôn ngữ virtual site) đã chốt.</li>
   <li>Đơn vị pen-test bên thứ ba đã chọn; phạm vi lần (a) đã chốt theo 10 NFR-SEC-030.</li>
   <li>Năng lực đội xác nhận (Q-43); kế hoạch Phase 1 ước lượng lại theo đội thật.</li>
 </ol>
 
 <h3>5.6 Rủi ro</h3>
-<p>R-05, R-08, R-09, R-11, R-18, R-41, R-42, R-48, R-49, R-50 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
+<p>R-05, R-08, R-09, R-11, R-18, R-41, R-42, R-48, R-49, R-50, R-57 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
 
 <h3>5.7 Phần cứng, lab, pilot</h3>
 <ul>
@@ -449,17 +449,17 @@ td.ids { font-family: var(--mono); font-size: 12px; }
   <li>SOE tối thiểu M1 (FR-BESS-020 / <code>M1StaticLimits</code>) ở trạng thái <code>ACTIVE_ON_EDGE</code> tại mọi site có <code>control_enabled = true</code> (T-NFR-SEC-009-01).</li>
   <li>Bốn điều kiện trước ghi đầu tiên ở trên vẫn hiệu lực ở bản phát hành G1 (pen-test (a) lặp lại nếu control plane thay đổi lớn sau lần chạy trước, theo 10 §19).</li>
   <li>Milestone virtual site v1 đạt: ma trận lỗi 15 §3.4 chạy hằng đêm xanh; T-E2-01…06 đạt; test chứng minh tenant demo không có route tới edge thật (T-E2-06).</li>
-  <li>Broker production đã chọn và có license hợp lệ theo ý kiến pháp lý (Q-E2-01/02), hoặc pilot vẫn chạy Mosquitto 2.1 trong tiêu chí thoát đã ghi ở G0.</li>
+  <li>Broker production đã chọn và có license hợp lệ theo ý kiến pháp lý (Q-16), hoặc pilot vẫn chạy Mosquitto 2.1 trong tiêu chí thoát đã ghi ở G0.</li>
 </ol>
 
 <h3>6.7 Rủi ro</h3>
-<p>R-01, R-03, R-07, R-12, R-13, R-14, R-16, R-17, R-31, R-35, R-37, R-38, R-39, R-43, R-44, R-48, R-51, R-52 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
+<p>R-01, R-03, R-07, R-12, R-13, R-14, R-16, R-17, R-31, R-35, R-37, R-38, R-39, R-43, R-44, R-48, R-51, R-52, R-55, R-58 (<a href="13-open-questions-and-risks.md#6-sổ-rủi-ro-r-nn">13 §6</a>).</p>
 
 <h3>6.8 Phần cứng, lab, pilot</h3>
 <ul>
   <li><b>Thiết bị thật bắt buộc:</b> lab L5 theo §5.7; edge phần cứng tham chiếu cho mỗi site pilot có edge (FR-INT-001). Edge thiếu TPM chỉ được dùng theo D-12.</li>
   <li><b>Bộ mô phỏng:</b> mọi ca lỗi (L4), test tải (L7), site sandbox "Mô phỏng" cho đào tạo.</li>
-  <li><b>Bên ngoài:</b> đơn vị pen-test bên thứ ba cho lần (a) (chọn ở Phase 0); license broker production nếu chọn EMQX/HiveMQ Enterprise (chi phí <span class="tag unknown">UNKNOWN</span>, Q-E2-01/02). Broker pilot theo quyết định G0: Mosquitto 2.1 một node + standby nóng chỉ trong tiêu chí thoát (<a href="15-simulators-and-messaging.md#7-lựa-chọn-broker">15 §7.2</a>).</li>
+  <li><b>Bên ngoài:</b> đơn vị pen-test bên thứ ba cho lần (a) (chọn ở Phase 0); license broker production nếu chọn EMQX/HiveMQ Enterprise (chi phí <span class="tag unknown">UNKNOWN</span>, Q-16). Broker pilot theo quyết định G0: Mosquitto 2.1 một node + standby nóng chỉ trong tiêu chí thoát (<a href="15-simulators-and-messaging.md#7-lựa-chọn-broker">15 §7.2</a>).</li>
   <li><b>Pilot:</b> (a) site PV zero-export có Huawei SmartLogger; (b) site đa hãng có công tơ PCC Modbus/SunSpec; (c) site chỉ giám sát qua Huawei Northbound; (d) cho milestone 1b: một site PV + BESS có chế độ native đã kiểm chứng (EMMA/LUNA hoặc tủ tương đương). Nếu không có (d), milestone 1b chỉ chạy trên lab và phát hành với nhãn "đang thử nghiệm" cho BESS.</li>
 </ul>
 
@@ -551,7 +551,7 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <h3>7.8 Phần cứng, lab, pilot</h3>
 <ul>
   <li><b>Thêm vào lab:</b> 1 PCS hoặc tủ BESS nhỏ của dòng được chọn; công tắc LOCAL/REMOTE phần cứng; module DI/DO cho E-stop/PCCC (chỉ đọc); proxy mạng gây lỗi; nguồn tải giả lập đủ để tạo bước tải/PV.</li>
-  <li><b>Thiết bị thật bắt buộc</b> cho mọi ca an toàn; bộ mô phỏng chỉ dùng cho CI và tiêm lỗi.</li>
+  <li><b>Thiết bị thật bắt buộc</b> cho mọi ca an toàn; bộ mô phỏng chỉ dùng cho CI và tiêm lỗi. <b>HIL lab (môi trường c của <a href="15-simulators-and-messaging.md#2-bộ-simulator-theo-môi-trường">15 §2.1</a>)</b>: edge phần cứng thật + thiết bị thật, virtual site chỉ bổ sung phần thiếu trên OT LAN, WAN 4G giả (Toxiproxy/netem), master 104 giả; là nơi cấp <code>VERIFIED_LAB</code> — kết quả mô phỏng không nâng trạng thái driver (R-48, R-55).</li>
   <li><b>Pilot:</b> 1 site PV + BESS có tủ cung cấp map theo hợp đồng, có công tắc LOCAL/REMOTE (hoặc chế độ native đọc được có biên bản, K §3.8), chủ tài sản đồng ý bằng văn bản (Q-23), đơn vị O&amp;M nhận trực ca.</li>
   <li><b>Có điều kiện:</b> master IEC 104 mô phỏng và một PC đồng ý thử bảng điểm (V12).</li>
 </ul>
@@ -819,8 +819,8 @@ td.ids { font-family: var(--mono); font-size: 12px; }
 <tr><td><a href="08-energy-optimization.md">08</a></td><td>B0 vào Phase 1 (X-08-07, D-02); tầng 3 ở Phase 3A theo trigger (CF-37).</td></tr>
 <tr><td><a href="09-ux-ui-specification.html">09</a></td><td>Dòng B0 trong R2 và UI-19 ở Phase 1 (X-09-06). UI-24 (trạng thái điều khiển) có ở Phase 1 với nội dung M1; phần M2 ở Phase 2.</td></tr>
 <tr><td><a href="10-security-and-reliability.md">10</a></td><td>Điều kiện trước ghi đầu tiên của X-10-10 (pen-test (a), kill switch, Governor đếm, C3) nằm ở §6.6; điều kiện M2 (X-10-10) nằm ở G2a; chứng nhận ở Phase 4F; D-12 (không M2 trên edge thiếu TPM) chặt hơn D-10-13.</td></tr>
-<tr><td><a href="13-open-questions-and-risks.md">13</a></td><td>Mã Q/R/D/CF dùng trong tài liệu này do 13 cấp. Cần cấp mã Q-NN cho Q-E2-01, 02, 03, 07 của 15 (giấy phép/giá broker, Mosquitto pilot) vì chúng là mục cổng G0.</td></tr>
-<tr><td><a href="15-simulators-and-messaging.md">15</a></td><td>Virtual site v0 ở F0-9 (G0), v1 ở W12 (G1); PoC-02 so ba broker theo 15 §7.2; Mosquitto 2.1 cho pilot là quyết định G0. Ngôn ngữ virtual site (Python hay Java) ghi ở 06/11 theo 15 §2 — tài liệu này chưa quyết, để PoC Phase 0.</td></tr>
+<tr><td><a href="13-open-questions-and-risks.md">13</a></td><td>Mã Q/R/D/CF dùng trong tài liệu này do 13 cấp. Đã xử lý vòng nhất quán: Q-E2-01…03 → Q-16, Q-E2-07 → Q-59; thêm D-22…D-24, R-55…R-58, Q-61, Q-62.</td></tr>
+<tr><td><a href="15-simulators-and-messaging.md">15</a></td><td>Virtual site v0 ở F0-9 (G0), v1 ở W12 (G1); PoC-02 so ba broker theo 15 §7.2; Mosquitto 2.1 một node cho pilot đã được 06 ADR-04 cho phép (CF-42). Ngôn ngữ virtual site và chính sách GPL là D-24 (chốt ở G0, F0-9). HIL lab ở Phase 2 (§7.8).</td></tr>
 </tbody></table></div>
 
 <!-- ============================================================ -->

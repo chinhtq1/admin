@@ -9,7 +9,7 @@
 | Phiên bản | 1.1 |
 | Ngày | 2026-10-10 |
 | Trạng thái | Bản nháp vòng fix. Dựng từ 03–10 (bản ngày 2026-10-10) và quyết định của Evidence Judge ([K-review-round1](notes/K-review-round1.md)). Vòng fix: thêm cột "Lộ trình (11)" lấy từ [11 §2.3, §6.3, §7.2, §8.2, §9.2](11-mvp-and-roadmap.html#s2-3); áp CF-28/CF-29/D-03 của [13](13-open-questions-and-risks.md); đồng bộ với bản 04 mới (FR-BESS-020, FR-INT-031, FR-SEC-006/007/013 ở Gate M1). Phần đối chiếu NFR mã đề xuất (§4.2, §6.4) chưa dựng lại đầy đủ theo việc 04 đã xác nhận các mã đó (§6.8). |
-| Phạm vi | 268 FR (toàn bộ FR của 04), 70 NFR chính thức của 04, 14 NFR mã đề xuất của 10, 258 tính năng của 03, 36 trang UI của 09, 94 API của 06, các thực thể của 05. |
+| Phạm vi | 268 FR (toàn bộ FR của 04), **85 NFR** của 04 (70 của bản dựng ban đầu + 15 mã 04 bản mới xác nhận, gồm 14 mã từ 10 và NFR-SEC-033), **270** tính năng của 03, 36 trang UI của 09, **111** API của 06 (thêm 13 endpoint ở vòng nhất quán 2026-10-10), các thực thể của 05. Vòng nhất quán 2026-10-10: §4.1 đủ 85 NFR, §6.6 cập nhật API cho thực thể P1 và EV, cột Test dẫn môi trường virtual site của [15](15-simulators-and-messaging.md). |
 
 ---
 
@@ -86,8 +86,8 @@ Ba FR mang `⚠` vì 11 (bản 07:15) chưa theo kịp 04 (bản 07:52):
 
 | Module | FR | P0 / P1 / P2 / CẤM | Có UI theo 09 §13.1 | Có UI sau đối chiếu của 12 | Backend, không cần UI | Chưa có trang | FR có ⚠ API | FR có ⚠ thực thể | Test U / I / S / H / E |
 |---|---|---|---|---|---|---|---|---|---|
-| M-ORG | 18 | 12 / 5 / 1 / 0 | 15 | 16 | 0 | 2 | 3 | 2 | 4 / 10 / 0 / 0 / 4 |
-| M-DASH | 13 | 8 / 4 / 1 / 0 | 11 | 13 | 0 | 0 | 1 | 1 | 3 / 2 / 0 / 0 / 8 |
+| M-ORG | 18 | 12 / 5 / 1 / 0 | 15 | 16 | 0 | 2 | 1 | 2 | 4 / 10 / 0 / 0 / 4 |
+| M-DASH | 13 | 8 / 4 / 1 / 0 | 11 | 13 | 0 | 0 | 0 | 1 | 3 / 2 / 0 / 0 / 8 |
 | M-MON | 13 | 10 / 3 / 0 / 0 | 11 | 11 | 2 | 0 | 1 | 0 | 4 / 2 / 4 / 1 / 2 |
 | M-HIST | 17 | 11 / 6 / 0 / 0 | 6 | 11 | 5 | 1 | 0 | 0 | 7 / 6 / 2 / 0 / 2 |
 | M-REP | 19 | 8 / 11 / 0 / 0 | 19 | 19 | 0 | 0 | 2 | 0 | 10 / 6 / 0 / 0 / 3 |
@@ -95,22 +95,22 @@ Ba FR mang `⚠` vì 11 (bản 07:15) chưa theo kịp 04 (bản 07:52):
 | M-BESS | 20 | 11 / 7 / 1 / 1 | 12 | 17 | 0 | 3 | 1 | 0 | 7 / 2 / 6 / 5 / 0 |
 | M-PV | 13 | 5 / 5 / 3 / 0 | 12 | 12 | 0 | 1 | 1 | 0 | 6 / 1 / 4 / 1 / 1 |
 | M-GRID | 19 | 8 / 9 / 2 / 0 | 10 | 16 | 0 | 3 | 5 | 0 | 6 / 1 / 5 / 6 / 1 |
-| M-EV | 10 | 1 / 7 / 2 / 0 | 6 | 8 | 0 | 2 | 6 | 0 | 3 / 1 / 6 / 0 / 0 |
+| M-EV | 10 | 1 / 7 / 2 / 0 | 6 | 8 | 0 | 2 | 2 | 0 | 3 / 1 / 6 / 0 / 0 |
 | M-OPT | 21 | 11 / 8 / 2 / 0 | 16 | 19 | 0 | 2 | 3 | 1 | 7 / 4 / 6 / 2 / 2 |
-| M-ALM | 22 | 11 / 11 / 0 / 0 | 20 | 22 | 0 | 0 | 4 | 3 | 6 / 8 / 3 / 1 / 4 |
-| M-INT | 31 | 21 / 7 / 3 / 0 | 19 | 25 | 3 | 3 | 1 | 3 | 1 / 11 / 12 / 5 / 2 |
-| M-SEC | 28 | 22 / 4 / 2 / 0 | 21 | 21 | 6 | 1 | 1 | 1 | 4 / 14 / 5 / 2 / 3 |
-| M-ADV | 12 | 2 / 4 / 6 / 0 | 2 | 3 | 0 | 9 | 11 | 3 | 8 / 3 / 0 / 1 / 0 |
-| **Tổng** | **268** | **148 / 95 / 24 / 1** | **192** | **225** | **16** | **27** | **41** | **16** | **85 / 74 / 53 / 24 / 32** |
+| M-ALM | 22 | 11 / 11 / 0 / 0 | 20 | 22 | 0 | 0 | 3 | 3 | 6 / 8 / 3 / 1 / 4 |
+| M-INT | 31 | 21 / 7 / 3 / 0 | 19 | 25 | 3 | 3 | 0 | 3 | 1 / 11 / 12 / 5 / 2 |
+| M-SEC | 28 | 22 / 4 / 2 / 0 | 21 | 21 | 6 | 1 | 0 | 1 | 4 / 14 / 5 / 2 / 3 |
+| M-ADV | 12 | 2 / 4 / 6 / 0 | 2 | 3 | 0 | 9 | 10 | 3 | 8 / 3 / 0 / 1 / 0 |
+| **Tổng** | **268** | **148 / 95 / 24 / 1** | **192** | **225** | **16** | **27** | **30** | **16** | **85 / 74 / 53 / 24 / 32** |
 
 Đọc bảng:
 
 - "Có UI sau đối chiếu" gồm trang do 09 ghi và trang 12 thêm (`+UI`). Cộng với "Backend" và "Chưa có trang" luôn bằng tổng FR.
 - 76 FR (28%) không có trang trong 09 §13.1. Trong đó 16 là backend hợp lệ, 33 có chỗ trên trang có sẵn nhưng 09 chưa ghi truy vết, 11 FR P1 chưa có trang, 16 FR P2 chưa có trang (§6.1).
-- 41 FR có endpoint thiếu ở 06, trong đó 2 là P0: FR-ALM-008 và FR-ADV-001 (§6.6).
+- 30 FR có endpoint thiếu ở 06 (41 ở bản trước; vòng nhất quán 2026-10-10 thêm API cho thực thể P1 và nhóm API-EV, §6.6). FR-ALM-008 và FR-ADV-001 (P0) đã có API-ALM-09/10 và API-FC-01.
 - 16 FR cần thực thể 05 chưa có, tổng cộng 15 thực thể (§6.5).
 - 1 thực thể của 05 không FR nào dùng: `AssetHealthStatus` (§6.5).
-- 7 F- của 03 không có FR. Cả 7 nằm ngoài phạm vi và có ràng buộc ở 04 §5.16, nên đây là chủ ý (§6.3).
+- 7 F- của 03 không có FR do nằm ngoài phạm vi (04 §5.16, chủ ý). Thêm 6 F- mới từ `_catalog-gaps` chưa có FR riêng (§6.3, 04 §7.1).
 - Mọi API của 06 có ít nhất một FR dùng. API-AUD-04 không có FR riêng (§6.6).
 - 21 FR điều khiển (C1–C3) thiếu NFR an toàn hoặc NFR hành vi khi lỗi riêng, không FR nào là P0. Khoảng trống P0 cũ của lệnh thử commissioning (FR-INT-016…018) đã đóng bằng FR-INT-031 và NFR-SEC-033 của 04 bản mới (§6.4).
 - 11 FR Gate M1 dựa vào NFR mà bản trước của 12 (và 11 §6.3) gắn Gate M2: NFR-SEC-008, NFR-SEC-009, NFR-SEC-013. 04 bản mới đã đưa ba NFR này về M1; 11 chưa theo (§6.4.1).
@@ -147,13 +147,13 @@ Ba FR mang `⚠` vì 11 (bản 07:15) chưa theo kịp 04 (bản 07:52):
 |---|---|---|---|---|
 | Đơn vị (U) | Hàm thuần: máy trạng thái delta, TOU, KPI, PDP, validator, định dạng | 07 L1; 06 §16 "Tái lập tính toán" | Mỗi commit | Merge |
 | Tích hợp (I) | Dịch vụ + DB + broker thật trong container; hợp đồng REST/MQTT; cross-tenant | 07 L2; 06 §16 "Hợp đồng", "Cross-tenant" | Mỗi commit/build | Merge, release |
-| Mô phỏng (S) | Edge thật + driver + thiết bị ảo (Modbus, SunSpec, OCPP, master IEC 104), tiêm lỗi | 07 L3–L4; 10 §19.2 | CI hằng ngày/hằng đêm | Release edge, release control plane |
-| HIL (H) | Edge + thiết bị thật trong lab (logger, inverter, công tơ, PCS/BMS, charger, DI LOCAL/REMOTE) | 07 L5; 10 §19.3; 06 §16 "HIL / game day" | Trước mỗi release edge; trước site Gate M2 đầu tiên | Release edge, Gate M2 |
+| Mô phỏng (S) | Edge thật + driver + thiết bị ảo (Modbus, SunSpec, OCPP, master IEC 104), tiêm lỗi. Chạy trên **virtual site** và môi trường (b) CI của [15 §2–§3](15-simulators-and-messaging.md#2-bộ-simulator-theo-môi-trường): pymodbus server nạp register map YAML, mô hình PV/tải/BESS/POC, Toxiproxy, SAP/`ocpp` charger ảo, c104 | 07 L3–L4 (07 §11.2a); 10 §19.2 | CI hằng ngày/hằng đêm (ma trận lỗi 15 §3.4) | Release edge, release control plane |
+| HIL (H) | Edge + thiết bị thật trong lab (logger, inverter, công tơ, PCS/BMS, charger, DI LOCAL/REMOTE); virtual site chỉ bổ sung phần thiếu (môi trường (c) của 15 §2.1) | 07 L5; 10 §19.3; 06 §16 "HIL / game day" | Trước mỗi release edge; trước site Gate M2 đầu tiên | Release edge, Gate M2 |
 | E2E (E) | Trình duyệt → API → DB/edge mô phỏng theo luồng người dùng; gồm snapshot UI và kiểm nhãn i18n | 09 §6; 04 WF | Hằng đêm trên staging | Release web |
 
-NFR dùng thêm các loại: Tải (07 L7, 06 §16), Game day/Diễn tập, Pen-test, Rà soát (tài liệu, cấu hình), PoC (06 §18), Đo SLI. Pilot hiện trường (07 L6) là bằng chứng `VERIFIED_FIELD` cho driver, không thay cho các tầng trên.
+NFR dùng thêm các loại: Tải (07 L7, 06 §16; edge ảo 1.000–10.000 kết nối của 15 §4.1), Game day/Diễn tập, Pen-test, Rà soát (tài liệu, cấu hình), PoC (06 §18), Đo SLI. Pilot hiện trường (07 L6) là bằng chứng `VERIFIED_FIELD` cho driver, không thay cho các tầng trên.
 
-Kết quả của bộ mô phỏng luôn mang nhãn "Mô phỏng". Kết quả đó không nâng trạng thái driver lên `VERIFIED_*` (07 D-07-13).
+Kết quả của bộ mô phỏng luôn mang nhãn "Mô phỏng". Kết quả đó không nâng trạng thái driver lên `VERIFIED_*` (07 D-07-13; 15 §4.3; 13 R-48, R-55). Ca bổ sung của 15 §4.2 (T-E2-01…06: lệnh hết hạn ở broker, Response Topic lạ, lô quá lớn, đổi broker, 10.000 edge ảo, tenant demo không chạm edge thật) gắn vào T-NFR-SEC-011, T-NFR-SEC-003, T-NFR-PERF-004, T-NFR-REL-016 và T-FR-INT-031 (sandbox) như ca con.
 
 ### 2.2 Quy ước mã
 
@@ -197,9 +197,9 @@ Ký hiệu: xem §0.1. Loại test: Đơn vị, Tích hợp, Mô phỏng, HIL, E
 | FR-ORG-009 | Chủ tài sản phải cấp được grant cho tổ chức installer/O&M: phạm vi site, loại quyền (xem/cấu … | P0 · MVP/M1 · — | Phase 1 | F-ORG-09 | M-ORG | `AccessGrant`, `AuditEvent`, `Notification` | API-ORG-09 | UI-31 | **T-FR-ORG-009** · Tích hợp · Grant "lệnh" hết hạn lúc T, lệnh C1 lúc T+1 s bị từ chối, không ký envelope (AC-ORG-04); nhắc xem lại 90 ngày (AC-ORG-05); lệnh C3 đang chờ bị hủy. |
 | FR-ORG-010 | Hệ thống phải ghi sự kiện tài sản có thời điểm: thay công tơ/CT/VT (thanh ghi cuối/đầu, tỷ số … | P0 · MVP/M1 · — | Phase 1 | F-ORG-11 | M-ORG | `AssetEvent`, `MeteringPointConfigVersion`, `IntervalEnergy`, `DirtyBucket` | API-ORG-10 | UI-29 | **T-FR-ORG-010** · Đơn vị · Thay công tơ 1.000.000 Wh → 0 Wh lúc 10:00: delta bucket 10:00–10:05 không âm, không `RESET_UNEXPLAINED` (AC-ORG-07); sinh DirtyBucket `ASSET_EVENT`. |
 | FR-ORG-011 | Mỗi site phải có gói (`MONITORING`/`CONTROL`) và cờ tính năng (ví dụ tầng 3, EV, IEC 104); … | P0 · MVP/M1 · — | Phase 1 | F-ORG-15 | M-ORG | `Site`, `SiteControlConfig` | +API-ORG-02 (thuộc tính gói/cờ — 06 chưa ghi F-ORG-15) | UI-29, UI-32 | **T-FR-ORG-011** · Tích hợp · Site gói `MONITORING`: API-CMD-01 bị PDP từ chối, UI ẩn tab điều khiển; bật cờ tầng 3 không tự bật điều khiển. |
-| FR-ORG-012 | Hệ thống nên cho lưu site làm mẫu (topology, điểm đo, quy tắc cảnh báo, chiến lược, SOE đề … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ORG-06 | M-ORG | `Site`, ⚠ `SiteTemplate` (05 thiếu) | ⚠ thiếu endpoint mẫu site | +UI-29 | **T-FR-ORG-012** · Tích hợp · Áp mẫu cho site mới có diff; SOE trong mẫu luôn về `DRAFT` và phải duyệt lại theo site. |
+| FR-ORG-012 | Hệ thống nên cho lưu site làm mẫu (topology, điểm đo, quy tắc cảnh báo, chiến lược, SOE đề … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ORG-06 | M-ORG | `Site`, ⚠ `SiteTemplate` (05 thiếu) | API-ORG-13 (vòng nhất quán) | +UI-29 | **T-FR-ORG-012** · Tích hợp · Áp mẫu cho site mới có diff; SOE trong mẫu luôn về `DRAFT` và phải duyệt lại theo site. |
 | FR-ORG-013 | Hệ thống nên cho tạo liên kết chỉ đọc có hạn (bên cho vay, kiểm toán) và liên kết kiosk công … | P1 · hạng 03: Phase 1 · — | Phase 3 (3K) | F-ORG-10 | M-ORG | `ShareLink` | API-ORG-12 | UI-35, +UI-31 | **T-FR-ORG-013** · E2E · Liên kết kiosk không lộ cảnh báo, cấu hình, lệnh, số tiền (khi tắt); token thu hồi → "Liên kết không còn hiệu lực". |
-| FR-ORG-014 | Hệ thống nên lưu tài liệu theo site/tài sản (SLD, biên bản, datasheet, bảo hành, hồ sơ đấu … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ORG-12 | M-ORG | ⚠ `SiteDocument` (05 thiếu) | ⚠ thiếu endpoint tài liệu | ⚠ chưa có trang (đề xuất tab Tài liệu ở UI-29) | **T-FR-ORG-014** · Tích hợp · Tải SLD phiên bản 2, phiên bản 1 vẫn truy xuất được; tài liệu gắn lớp D2, người ngoài phạm vi không tải được. |
+| FR-ORG-014 | Hệ thống nên lưu tài liệu theo site/tài sản (SLD, biên bản, datasheet, bảo hành, hồ sơ đấu … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ORG-12 | M-ORG | ⚠ `SiteDocument` (05 thiếu) | API-ORG-14 (vòng nhất quán) | ⚠ chưa có trang (đề xuất tab Tài liệu ở UI-29) | **T-FR-ORG-014** · Tích hợp · Tải SLD phiên bản 2, phiên bản 1 vẫn truy xuất được; tài liệu gắn lớp D2, người ngoài phạm vi không tải được. |
 | FR-ORG-015 | Hệ thống nên có wizard thay thiết bị: chọn cũ → khai báo mới → ghi sự kiện FR-ORG-010 → giữ … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ORG-13 | M-ORG | `AssetEvent`, `Asset`, `Device`, `Series` | API-ORG-11 | UI-29 | **T-FR-ORG-015** · Tích hợp · Thay inverter qua wizard: chuỗi dữ liệu liên tục theo Asset (vị trí), Device cũ `decommissioned`, sự kiện FR-ORG-010 được ghi. |
 | FR-ORG-016 | Hệ thống nên lưu điều khoản hợp đồng: bảo hành BESS (EFC, throughput, SOC trung bình, nhiệt … | P1 · hạng 03: Phase 1 · — | Phase 3 (3K) | F-ORG-16 | M-ORG | `Contract` | ⚠ thiếu endpoint hợp đồng | ⚠ chưa có trang (đề xuất tab Hợp đồng ở UI-29) | **T-FR-ORG-016** · Đơn vị · Lưu điều khoản bảo hành BESS (EFC, throughput, SOC TB, nhiệt độ) và loại trừ availability; FR-BESS-015, FR-REP-011 đọc đúng phiên bản. |
 | FR-ORG-017 | Hệ thống có thể cho white-label theo tenant (logo, màu, tên miền, người gửi e-mail). | P2 · hạng 03: Phase 2 · — | Phase 4 (4E) | F-ORG-14 | M-ORG | `Organization` | +API-ORG-01 | UI-32 | **T-FR-ORG-017** · E2E · Logo/màu/tên miền riêng theo tenant; e-mail gửi từ người gửi tenant; tenant khác không bị ảnh hưởng. |
@@ -220,7 +220,7 @@ Ký hiệu: xem §0.1. Loại test: Đơn vị, Tích hợp, Mô phỏng, HIL, E
 | FR-DASH-009 | Hệ thống nên có chế độ NOC/màn lớn (tile, sparkline P lưới 24 h có ngưỡng) và hai mật độ … | P1 · hạng 03: Phase 1 · — | Phase 3 (3K) | F-DASH-08 | M-DASH | `latest_value`, `KpiValue` | +API-TEL-09, +API-LIVE-02 | UI-01 | **T-FR-DASH-009** · E2E · Chế độ NOC: tile + sparkline P lưới 24 h có ngưỡng; tự làm mới không cần thao tác; 500 site trong NFR-PERF-001. |
 | FR-DASH-010 | Hệ thống nên có giao diện mobile: cảnh báo + ack, trạng thái site, energy flow, kế hoạch chỉ … | P1 · hạng 03: Phase 1 · — | Phase 3 (3K) | F-DASH-10 | M-DASH | `Alarm`, `latest_value` | +API-ALM-01, +API-ALM-03, +API-TEL-03 | ⚠ 09 chưa ghi FR; +UI-03, +UI-14 (responsive) | **T-FR-DASH-010** · E2E · Viewport 360 px: ack cảnh báo, xem energy flow; mobile chỉ cho C1 và engage kill switch (X-09-05). |
 | FR-DASH-011 | Hệ thống nên có màn kiosk công khai chữ lớn (energy flow, sản lượng, CO₂ ước tính có nguồn hệ … | P1 · hạng 03: Phase 1 · — | Phase 3 (3K) | F-DASH-11 | M-DASH | `ShareLink`, `KpiValue`, `EmissionFactorVersion` | API-ORG-12 | UI-35 | **T-FR-DASH-011** · E2E · Kiosk: CO₂ hiện "≈" kèm phiên bản hệ số; ẩn số tiền mặc định; mất kết nối → "Dữ liệu tạm dừng lúc HH:MM". |
-| FR-DASH-012 | Hệ thống nên cho lưu view (bộ lọc, cột, khoảng thời gian) theo người dùng và chia sẻ trong … | P1 · hạng 03: Phase 1 · — | Phase 3 (3K) | F-DASH-12 | M-DASH | ⚠ `SavedView` (05 thiếu) | ⚠ thiếu endpoint view | ⚠ 09 chưa ghi FR; +UI-13, +UI-01 | **T-FR-DASH-012** · Tích hợp · Lưu view (lọc, cột, khoảng) theo người dùng; người khác không thấy trừ khi chia sẻ; view trỏ site đã mất quyền bị lọc bỏ. |
+| FR-DASH-012 | Hệ thống nên cho lưu view (bộ lọc, cột, khoảng thời gian) theo người dùng và chia sẻ trong … | P1 · hạng 03: Phase 1 · — | Phase 3 (3K) | F-DASH-12 | M-DASH | ⚠ `SavedView` (05 thiếu) | API-ORG-15 (vòng nhất quán) | ⚠ 09 chưa ghi FR; +UI-13, +UI-01 | **T-FR-DASH-012** · Tích hợp · Lưu view (lọc, cột, khoảng) theo người dùng; người khác không thấy trừ khi chia sẻ; view trỏ site đã mất quyền bị lọc bỏ. |
 | FR-DASH-013 | Hệ thống có thể có chế độ bản đồ site theo tỉnh/KCN tô theo trạng thái. | P2 · hạng 03: Phase 2 · — | Phase 4 (4E) | F-DASH-09 | M-DASH | `Site` | +API-ORG-02 | UI-01 | **T-FR-DASH-013** · E2E · Bản đồ tô theo trạng thái; site thiếu tọa độ liệt kê riêng, không đặt sai vị trí. |
 
 ### 3.3 M-MON — Giám sát thời gian thực
@@ -376,13 +376,13 @@ Ký hiệu: xem §0.1. Loại test: Đơn vị, Tích hợp, Mô phỏng, HIL, E
 | FR (04) | Yêu cầu (tóm tắt) | Ưu tiên · Hạng phát hành (04/03) · Hạng lệnh | Lộ trình (11) | F- (03) | Module | Thực thể (05) | API (06) | UI (09) | Test |
 |---|---|---|---|---|---|---|---|---|---|
 | FR-EV-001 | Hệ thống phải hỗ trợ điểm đo `MTR_EV_i` cho từng trụ hoặc nhóm; EV tách khỏi tải nền trong cân … | P0 · MVP/M1 · — | Phase 1 | F-EV-01 | M-EV | `MeteringPoint`, `EnergyBalance` | +API-ORG-06, +API-TEL-05 | UI-11 | **T-FR-EV-001** · Đơn vị · `MTR_EV_1` 30 kWh/ngày tách khỏi tải nhà máy (AC-EV-01). |
-| FR-EV-002 | Hệ thống nên giám sát trụ qua OCPP: trạng thái connector, phiên (bắt đầu/kết thúc, kWh từ … | P1 · hạng 03: Phase 1 · — | Phase 3 (3E) | F-EV-02 | M-EV | `EvSession`, `Asset`, `Series` | ⚠ thiếu nhóm API-EV (phiên, trạng thái connector) | UI-11 | **T-FR-EV-002** · Mô phỏng · Charger OCPP 1.6J mô phỏng: StatusNotification, Start/StopTransaction lưu thành EvSession. |
-| FR-EV-003 | Edge nên làm CSMS OCPP 1.6J tối giản cho smart charging khi site không có CSMS của CPO; … | P1 · hạng 03: Phase 1/M2 · C1 | Phase 3 (3E) | F-EV-03 | M-EV | `Asset`, `EvSession`, `Integration` | ⚠ thiếu API cấu hình CSMS edge | ⚠ 09 chưa ghi; +UI-11, +UI-26 | **T-FR-EV-003** · Mô phỏng · Trụ đã có CSMS của CPO → chặn bật CSMS edge (AC-EV-04); Security Profile < 2 bị từ chối. |
-| FR-EV-004 | Hệ thống nên nhận dữ liệu phiên và gửi giới hạn công suất qua API CPO khi khách đã có CSMS; … | P1 · hạng 03: Phase 1/M2 · C1 | Phase 3 (3E) | F-EV-04 | M-EV | `Integration`, `EvSession` | ⚠ thiếu API | ⚠ 09 chưa ghi; +UI-11 | **T-FR-EV-004** · Tích hợp · API CPO mock: nhận phiên, gửi giới hạn; CPO không trả lời → không ép setpoint, cảnh báo. |
+| FR-EV-002 | Hệ thống nên giám sát trụ qua OCPP: trạng thái connector, phiên (bắt đầu/kết thúc, kWh từ … | P1 · hạng 03: Phase 1 · — | Phase 3 (3E) | F-EV-02 | M-EV | `EvSession`, `Asset`, `Series` | API-EV-01, API-EV-02 (vòng nhất quán) | UI-11 | **T-FR-EV-002** · Mô phỏng · Charger OCPP 1.6J mô phỏng: StatusNotification, Start/StopTransaction lưu thành EvSession. |
+| FR-EV-003 | Edge nên làm CSMS OCPP 1.6J tối giản cho smart charging khi site không có CSMS của CPO; … | P1 · hạng 03: Phase 1/M2 · C1 | Phase 3 (3E) | F-EV-03 | M-EV | `Asset`, `EvSession`, `Integration` | API-EV-03 (vòng nhất quán) | ⚠ 09 chưa ghi; +UI-11, +UI-26 | **T-FR-EV-003** · Mô phỏng · Trụ đã có CSMS của CPO → chặn bật CSMS edge (AC-EV-04); Security Profile < 2 bị từ chối. |
+| FR-EV-004 | Hệ thống nên nhận dữ liệu phiên từ CSMS của CPO (chỉ đọc); ghi giới hạn qua API CPO chỉ do edge gọi, có hạn, readback, fallback (CF-39); … | P1 · hạng 03: Phase 1/M2 · C1 | Phase 3 (3E) | F-EV-04 | M-EV | `Integration`, `EvSession` | API-EV-01, API-EV-02, API-EV-03, API-CMD-01 (`SET_EV_LIMIT`) | ⚠ 09 chưa ghi; +UI-11 | **T-FR-EV-004** · Tích hợp + Mô phỏng · API CPO mock: nhận phiên; giới hạn đi qua envelope ký → edge → CPO, TTL ≤ `expires_at`; readback lệch → `FAILED_NO_EFFECT`; CPO không trả lời → không gửi lại, `EV_CPO_LINK_LOST`; cờ ghi tắt → chỉ đọc (07 §8.10). |
 | FR-EV-005 | Hệ thống nên cho `SET_EV_LIMIT` (A hoặc W, số pha) qua ChargePointMaxProfile/TxProfile có … | P1 · hạng 03: Phase 1/M2 · C1 | Phase 3 (3E) | F-EV-05 | M-EV | `DispatchCommand`, `CommandExecution` | +API-CMD-01 (type `SET_EV_LIMIT` chưa ghi ở 06) | UI-11, +UI-21 | **T-FR-EV-005** · Mô phỏng · Giới hạn có `validTo`; hết hạn hoặc mất kết nối → TxDefaultProfile an toàn, `EXPIRED` (AC-EV-03, T-FR-EV-005). |
 | FR-EV-006 | Edge nên chạy DLM: phân bổ theo dư POC, `I_min`, ưu tiên, kWh cần trước giờ đi; cập nhật ≤ 1 … | P1 · hạng 03: Phase 1/M2 · C1 | Phase 3 (3E) | F-EV-06 | M-EV | `SafeOperatingEnvelope`, `EvSession` | — (edge; tham số qua API-CMD-08) | UI-11 | **T-FR-EV-006** · Mô phỏng · Dư 10 kW, 3 phiên: phiên ưu tiên cao nhận ≥ 6 A/pha (AC-EV-02); không vượt trần POC. |
 | FR-EV-007 | Hệ thống nên có chế độ sạc chỉ bằng PV dư (hoặc tối thiểu + PV dư). | P1 · hạng 03: Phase 1/M2 · C1 | Phase 3 (3E) | F-EV-07 | M-EV | `SiteControlConfig`, `EvSession` | +API-OPT-01 | UI-11 | **T-FR-EV-007** · Mô phỏng · Sạc chỉ bằng PV dư: PV giảm → giới hạn giảm theo, không nhập lưới cho EV. |
-| FR-EV-008 | Hệ thống nên gán biểu giá trạm sạc (FR-TAR-004) và báo cáo kWh/chi phí theo phiên, trụ, đội xe. | P1 · hạng 03: Phase 1 · — | Phase 3 (3E) | F-EV-08 | M-EV | `TariffAssignment`, `EvSession`, `ShadowBill` | ⚠ thiếu API báo cáo EV | UI-11 | **T-FR-EV-008** · Đơn vị · kWh và chi phí theo phiên × khung TOU; tổng khớp `MTR_EV`. |
+| FR-EV-008 | Hệ thống nên gán biểu giá trạm sạc (FR-TAR-004) và báo cáo kWh/chi phí theo phiên, trụ, đội xe. | P1 · hạng 03: Phase 1 · — | Phase 3 (3E) | F-EV-08 | M-EV | `TariffAssignment`, `EvSession`, `ShadowBill` | API-EV-02, API-EV-04 (vòng nhất quán) | UI-11 | **T-FR-EV-008** · Đơn vị · kWh và chi phí theo phiên × khung TOU; tổng khớp `MTR_EV`. |
 | FR-EV-009 | Hệ thống có thể dự báo phiên sạc (số phiên, năng lượng, giờ đến/đi). | P2 · hạng 03: Phase 2 · — | Phase 4 (4G) | F-EV-09 | M-EV | `ForecastRun`, `ForecastValue` | ⚠ thiếu API | ⚠ chưa có trang (P2) | **T-FR-EV-009** · Đơn vị · Dự báo phiên sạc có nhãn phương pháp; không gọi là AI. |
 | FR-EV-010 | Hệ thống có thể hỗ trợ OCPP 2.0.1/2.1, ISO 15118, V2X. | P2 · hạng 03: Phase 2/M2 · C1 | Phase 4 (4H) | F-EV-10 | M-EV | `Asset`, `EvSession` | ⚠ thiếu API | ⚠ chưa có trang (P2) | **T-FR-EV-010** · Mô phỏng · OCPP 2.0.1 mô phỏng; ISO 15118/V2X chỉ khi có thiết bị thử. |
 
@@ -421,7 +421,7 @@ Ký hiệu: xem §0.1. Loại test: Đơn vị, Tích hợp, Mô phỏng, HIL, E
 | FR-ALM-003 | Hệ thống phải có quy tắc L1: ngưỡng có hysteresis và thời gian tối thiểu, mẫu theo loại tài … | P0 · MVP/M1 · — | Phase 1 | F-ALM-03 | M-ALM | `AlarmRule` | API-ALM-04 | UI-14, UI-32 | **T-FR-ALM-003** · Đơn vị · G_POA 500 W/m² 14 phút + P = 0 → cảnh báo phút 15; G_POA giảm ở phút 10 → không (AC-ALM-07). |
 | FR-ALM-004 | Hệ thống phải sinh một cảnh báo kết nối cho edge/gateway/site sau `T_offline_alarm_edge` (hoặc … | P0 · MVP/M1 · — | Phase 1 | F-ALM-04 | M-ALM | `Alarm` | +API-ALM-01 | UI-14 | **T-FR-ALM-004** · Mô phỏng · Edge mất 13:40 → 13:45 đúng một cảnh báo Cao; cảnh báo thiết bị con `SUPPRESSED_BY_PARENT` (AC-ALM-01). |
 | FR-ALM-005 | Hệ thống phải có console cảnh báo theo vòng đời ở trên: tab Active/chưa ack, Active/đã ack, Đã … | P0 · MVP/M1 · — | Phase 1 | F-ALM-05 | M-ALM | `Alarm`, `AuditEvent` | API-LIVE-03, API-ALM-01, API-ALM-03 | UI-14 | **T-FR-ALM-005** · E2E · Tạm gác cảnh báo an toàn bị vô hiệu, API `SHELVE_NOT_ALLOWED_SAFETY` (AC-ALM-03); 10.000 dòng lọc p95 ≤ 2 s. |
-| FR-ALM-006 | Hệ thống phải có chi tiết cảnh báo: biểu đồ ±2 h quanh thời điểm kích hoạt, lịch sử cùng mã … | P0 · MVP/M1 · — | Phase 1 | F-ALM-06 | M-ALM | `Alarm`, `Event`, ⚠ `OnCallContact` (05 thiếu) | API-ALM-02 | UI-15 | **T-FR-ALM-006** · E2E · Chi tiết có biểu đồ ±2 h, lịch sử chuyển trạng thái, liên hệ trực ca (catalog gap GAP-08). |
+| FR-ALM-006 | Hệ thống phải có chi tiết cảnh báo: biểu đồ ±2 h quanh thời điểm kích hoạt, lịch sử cùng mã … | P0 · MVP/M1 · — | Phase 1 | F-ALM-06 | M-ALM | `Alarm`, `Event`, ⚠ `OnCallContact` (05 thiếu) | API-ALM-02, API-ALM-11 (vòng nhất quán) | UI-15 | **T-FR-ALM-006** · E2E · Chi tiết có biểu đồ ±2 h, lịch sử chuyển trạng thái, liên hệ trực ca (catalog gap GAP-08). |
 | FR-ALM-007 | Người dùng phải đăng ký nhận thông báo theo site × mức × loại, có giờ yên lặng; tenant chọn … | P0 · MVP/M1 · — | Phase 1 | F-ALM-08 | M-ALM | `NotificationSubscription` | API-ALM-05 | UI-17 | **T-FR-ALM-007** · Tích hợp · Giờ yên lặng chặn mức Trung bình; mức Khẩn cấp vẫn gửi. |
 | FR-ALM-008 | Hệ thống phải gửi thông báo in-app và e-mail có deep-link; gộp nhiều cảnh báo thành một tin … | P0 · MVP/M1 · — | Phase 1 | F-ALM-09 | M-ALM | `Notification` | ⚠ thiếu endpoint trung tâm thông báo in-app | UI-17 | **T-FR-ALM-008** · Tích hợp · p95 sự kiện → e-mail ≤ 2 phút trên 1.000 sự kiện (AC-ALM-02); gộp cảnh báo; deep-link mở đúng UI-15. |
 | FR-ALM-009 | Hệ thống phải có cảnh báo tuân thủ lưới mức mặc định Cao: sự kiện vi phạm xuất (§2), vượt trần … | P0 · MVP/M1 · — | Phase 1 | F-ALM-13 | M-ALM | `Alarm`, `Event`, `SiteGridConfigVersion` | API-ALM-04 | UI-10, UI-14 | **T-FR-ALM-009** · Mô phỏng · Xuất vượt giới hạn + tol 3 s → cảnh báo tuân thủ Cao có thời lượng, đỉnh (AC-ALM-08, AC-GRID-02). |
@@ -430,9 +430,9 @@ Ký hiệu: xem §0.1. Loại test: Đơn vị, Tích hợp, Mô phỏng, HIL, E
 | FR-ALM-012 | Hệ thống nên gom lũ cảnh báo (> N cảnh báo/10 phút tại một site → một dòng "Lũ cảnh báo" có … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ALM-07 | M-ALM | `Alarm` | +API-ALM-01 | UI-14 | **T-FR-ALM-012** · Đơn vị · > N cảnh báo/10 phút ở một site → một dòng "Lũ cảnh báo"; khử dao động bằng hysteresis. |
 | FR-ALM-013 | Hệ thống nên gửi cảnh báo qua Zalo (OA/ZNS) theo template đã duyệt, deep-link, gộp tin, tùy … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ALM-10 | M-ALM | `Notification`, `NotificationSubscription` | +API-ALM-05 | UI-17 | **T-FR-ALM-013** · Tích hợp · Gửi qua Zalo sandbox theo template; template chưa duyệt → không gửi, ghi lỗi (điều kiện Zalo UNKNOWN). |
 | FR-ALM-014 | Hệ thống nên có push di động/web push; SMS chỉ cho mức Khẩn cấp nếu khách yêu cầu. | P1 · hạng 03: Phase 1 · — | Phase 3 (3K) | F-ALM-11 | M-ALM | `Notification` | +API-ALM-05 | UI-17 | **T-FR-ALM-014** · Tích hợp · Push web/di động; SMS chỉ Khẩn cấp khi khách bật. |
-| FR-ALM-015 | Hệ thống nên leo thang khi cảnh báo Khẩn cấp/Cao không được ack trong T phút và có lịch trực … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ALM-12 | M-ALM | ⚠ `EscalationPolicy` (05 thiếu), `Notification` | ⚠ thiếu endpoint leo thang/trực ca | UI-17 | **T-FR-ALM-015** · Tích hợp · Cảnh báo Cao không ack trong T phút → leo thang mức 2; ack dừng leo thang. |
+| FR-ALM-015 | Hệ thống nên leo thang khi cảnh báo Khẩn cấp/Cao không được ack trong T phút và có lịch trực … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ALM-12 | M-ALM | ⚠ `EscalationPolicy` (05 thiếu), `Notification` | API-ALM-11, API-ALM-12 (vòng nhất quán) | UI-17 | **T-FR-ALM-015** · Tích hợp · Cảnh báo Cao không ack trong T phút → leo thang mức 2; ack dừng leo thang. |
 | FR-ALM-016 | Hệ thống nên tạo work order từ ticket: kỹ thuật viên, lịch, checklist theo loại tài sản, … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ALM-15 | M-ALM | `WorkOrder`, `Ticket` | API-ALM-07 | UI-16 | **T-FR-ALM-016** · E2E · Ticket → work order có checklist; kỹ thuật viên chỉ thấy việc được giao (vai trò TECHNICIAN). |
-| FR-ALM-017 | Hệ thống nên theo dõi SLA: thời gian phản hồi/khắc phục theo mức, MTTR, tổn thất kWh ước tính … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ALM-16 | M-ALM | `Ticket`, ⚠ `SlaPolicy` (05 thiếu) | ⚠ thiếu endpoint SLA | UI-16 | **T-FR-ALM-017** · Đơn vị · MTTR và thời gian phản hồi theo mức; loại trừ thời gian WAITING theo hợp đồng. |
+| FR-ALM-017 | Hệ thống nên theo dõi SLA: thời gian phản hồi/khắc phục theo mức, MTTR, tổn thất kWh ước tính … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ALM-16 | M-ALM | `Ticket`, ⚠ `SlaPolicy` (05 thiếu) | API-ALM-13 (vòng nhất quán) | UI-16 | **T-FR-ALM-017** · Đơn vị · MTTR và thời gian phản hồi theo mức; loại trừ thời gian WAITING theo hợp đồng. |
 | FR-ALM-018 | Hệ thống nên có kế hoạch bảo trì định kỳ (vệ sinh tấm, chụp nhiệt, kiểm tra BESS…) tự sinh … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ALM-17 | M-ALM | `MaintenanceWindow`, `WorkOrder` | API-ALM-08 | UI-16 | **T-FR-ALM-018** · Tích hợp · Kế hoạch PM sinh work order đúng chu kỳ; cảnh báo trong cửa sổ bảo trì → `OUT_OF_SERVICE`. |
 | FR-ALM-019 | Người dùng nên đánh dấu cảnh báo đúng/sai và nguyên nhân gốc; lưu làm nhãn cho mô hình có đánh … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-ALM-18 | M-ALM | `Alarm`, `Ticket` | +API-ALM-03, +API-ALM-06 | UI-15 | **T-FR-ALM-019** · Đơn vị · Nhãn đúng/sai và nguyên nhân gốc lưu theo danh mục; dùng làm nhãn cho FR-ADV-008. |
 | FR-ALM-020 | Hệ thống nên đồng bộ hai chiều ticket/work order với CMMS của khách qua API/webhook, khóa … | P1 · hạng 03: Phase 1 · — | Phase 3 (3K) | F-ALM-19 | M-ALM | `Ticket`, `WorkOrder` | +API-PUB-03, ⚠ thiếu API nhận cập nhật từ CMMS | UI-16 | **T-FR-ALM-020** · Tích hợp · Đồng bộ hai chiều với CMMS mock; xung đột cập nhật giải theo thời điểm và ghi audit. |
@@ -470,7 +470,7 @@ Ký hiệu: xem §0.1. Loại test: Đơn vị, Tích hợp, Mô phỏng, HIL, E
 | FR-INT-025 | Hệ thống nên có API REST đọc: OAuth2 client credentials, scope tối thiểu, mặc định chỉ đọc, … | P1 · hạng 03: Phase 1 · — | Phase 3 (3J) | F-INT-19 | M-INT | `ApiClient` | API-PUB-02 | — (bên thứ ba; cấu hình client ở UI-32) | **T-FR-INT-025** · Tích hợp · Client credentials scope chỉ đọc; vượt hạn mức → 429 `Retry-After`; tenant khác 404. |
 | FR-INT-026 | Hệ thống nên có webhook: cảnh báo mở/đóng, trạng thái lệnh, báo cáo sẵn sàng, ticket; ký HMAC, … | P1 · hạng 03: Phase 1 · — | Phase 3 (3J) | F-INT-20 | M-INT | ⚠ `WebhookSubscription` (05 thiếu), `AuditEvent` | API-PUB-03 | ⚠ chưa có trang cấu hình webhook; đề xuất trong UI-32 | **T-FR-INT-026** · Tích hợp · Webhook ký HMAC; retry lũy thừa; idempotency key; đích lỗi 24 h → tạm dừng và báo. |
 | FR-INT-027 | Hệ thống nên cho nhập CSV lịch sử và file load profile công tơ EVN khi có, gắn origin và … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-INT-22 | M-INT | ⚠ `ImportJob` (05 thiếu), `Series`, `IntervalEnergy` | API-INT-10 | ⚠ 09 chưa ghi; đề xuất trong UI-28 | **T-FR-INT-027** · Tích hợp · CSV lịch sử gắn origin `IMPORTED`, không ghi đè dữ liệu đo; load profile EVN dùng method `INTERVAL_NATIVE`. |
-| FR-INT-028 | Hệ thống có thể ghi qua cloud hãng (Huawei OAuth Connect control API, task async, không gọi … | P2 · hạng 03: Phase 2/M1 · C2 | Phase 4 (4D) | F-INT-14 | M-INT | `Integration`, `DispatchCommand` | ⚠ thiếu endpoint (cờ ghi qua cloud hãng) | ⚠ chưa có trang (P2) | **T-FR-INT-028** · Tích hợp · Ghi qua Huawei OAuth Connect (mock) chỉ khi cờ bật, C2+; không có readback → trạng thái "Đã gửi, chưa xác nhận". |
+| FR-INT-028 | Hệ thống có thể ghi qua cloud hãng (Huawei OAuth Connect control API) chỉ khi đủ 6 điều kiện CF-39 (edge là client, có hạn, readback, mặc định mất liên lạc, không vòng nhanh, audit); … | P2 · hạng 03: Phase 2/M1 · C2 | Phase 4 (4D) | F-INT-14 | M-INT | `Integration`, `DispatchCommand` | API-CMD-01 (type khi track 4D bật), API-INT-07 (cờ) | ⚠ chưa có trang (P2) | **T-FR-INT-028** · Tích hợp · Ghi qua Huawei OAuth Connect (mock) chỉ khi cờ bật, C2+, qua edge; không hỗ trợ hạn → từ chối; readback không khớp → `FAILED_NO_EFFECT`; site không edge → cờ không bật được (07 §8.8). |
 | FR-INT-029 | Hệ thống có thể có adapter IEC 61850 MMS client, DNP3 outstation, OpenADR 3.x VEN, IEEE 2030.5 … | P2 · hạng 03: Phase 2 · — | Phase 4 (4C; một phần 4A) | F-INT-18 | M-INT | `DeviceEndpoint`, `DriverVersion` | — (edge) | ⚠ chưa có trang (P2) | **T-FR-INT-029** · Mô phỏng · Adapter IEC 61850/DNP3/OpenADR/2030.5 với bộ thử mô phỏng; không tuyên bố tuân thủ. |
 | FR-INT-030 | Hệ thống có thể cho API lệnh cho bên thứ ba: scope ghi cho client máy (C1 trong SOE), qua PDP … | P2 · hạng 03: Phase 2/M2 · C1 | Phase 4 (4D) | F-INT-21 | M-INT | `ApiClient`, `DispatchCommand` | API-PUB-04 | — (bên thứ ba) | **T-FR-INT-030** · Tích hợp · Scope `cmd.c1` mặc định 0 lệnh; lệnh qua PDP + Governor; ngoài SOE bị từ chối. |
 | FR-INT-031 | Lệnh `COMMISSIONING_TEST` là đường ghi duy nhất cho phép thử dấu, test giới hạn xuất, test watchdog; chỉ … | P0 · MVP/M1 · C2 | Phase 1 ⚠ (FR mới của 04; 11 chưa ghi) | F-INT-26, F-INT-27, F-INT-28 (chờ 03 cấp F- riêng) | M-INT, M-SEC | `CommissioningRecord`, `DispatchCommand`, `AuditEvent` | API-INT-08 | ⚠ 09 chưa ghi FR; +UI-27 | **T-FR-INT-031** · Mô phỏng · Lệnh khi site `active` → `REJECTED_INTERLOCK:IL-10`; không nhấn nút vật lý trong 120 s → phiên không mở; công tắc ở LOCAL → không mở; \|P\| > min(10% P định mức, 50 kW) hoặc bước > 10 phút → từ chối; rút cáp/khởi động lại edge giữa bước → `REVERT_DEFAULT` + readback (ca HIL ở lab L5); mỗi bước có audit (NFR-SEC-033). |
@@ -502,7 +502,7 @@ Ký hiệu: xem §0.1. Loại test: Đơn vị, Tích hợp, Mô phỏng, HIL, E
 | FR-SEC-021 | Hệ thống phải tính **hồ sơ sẵn sàng Gate M2** theo site và chỉ cho bật M2 khi tất cả đạt: (1) … | P0 · MVP/M2 · C3 | Phase 2 | F-SEC-05, F-SEC-06, F-SEC-07, F-SEC-08, F-SEC-10, F-SEC-11, F-INT-28, F-BESS-08 | M-SEC, M-INT, M-BESS | `M2ReadinessCheck`, `SafeOperatingEnvelope`, `CommissioningRecord` | API-CMD-04, API-CMD-05, API-CMD-06, API-CMD-08, API-CMD-10, API-CMD-11, API-CMD-12, API-INT-08 | UI-24 | **T-FR-SEC-021** · Tích hợp · Thiếu test watchdog PCS P1 → hồ sơ "Chưa đạt…" và yêu cầu bật M2 bị chặn (AC-SEC-11). |
 | FR-SEC-022 | PDP phải áp giới hạn tốc độ: site ≤ 6 lệnh thủ công/phút và ≤ 12 đổi chế độ/giờ; người dùng ≤ … | P0 · MVP/M1 · — | Phase 1 | F-SEC-03, F-SEC-10 | M-SEC | `DispatchCommand` | API-AUTH-02, API-CMD-12, +API-CMD-01 | UI-21 | **T-FR-SEC-022** · Đơn vị · Lệnh tay thứ 7 trong 1 phút → `RATE_LIMITED`; đổi chế độ thứ 13 trong 1 giờ → từ chối. |
 | FR-SEC-023 | Hệ thống nên neo audit: Merkle root mỗi giờ ký KMS ghi vào object storage WORM ≥ 5 năm; xuất … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-SEC-13 | M-SEC | `AuditEvent` | API-AUD-03 | UI-33 | **T-FR-SEC-023** · Tích hợp · Merkle root mỗi giờ ký KMS ghi WORM; xuất audit kèm bằng chứng; sửa một hàng → bằng chứng không khớp. |
-| FR-SEC-024 | Hệ thống nên có hỗ trợ từ xa có kiểm soát: reverse tunnel theo yêu cầu, chủ site cho phép, ≤ 2 … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-SEC-20 | M-SEC | ⚠ `RemoteSupportSession` (05 thiếu), `AuditEvent` | ⚠ thiếu endpoint tunnel | ⚠ chưa có trang | **T-FR-SEC-024** · Tích hợp · Tunnel theo yêu cầu ≤ 2 h, chủ site duyệt, phiên ghi lại, không route sang OT. |
+| FR-SEC-024 | Hệ thống nên có hỗ trợ từ xa có kiểm soát: reverse tunnel theo yêu cầu, chủ site cho phép, ≤ 2 … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-SEC-20 | M-SEC | ⚠ `RemoteSupportSession` (05 thiếu), `AuditEvent` | API-INT-11 (vòng nhất quán) | ⚠ chưa có trang | **T-FR-SEC-024** · Tích hợp · Tunnel theo yêu cầu ≤ 2 h, chủ site duyệt, phiên ghi lại, không route sang OT. |
 | FR-SEC-025 | Hệ thống nên có OpenTelemetry xuyên cloud → edge với `trace_id`, `command_id` và SLO tách theo … | P1 · hạng 03: Phase 1 · — | Phase 2 | F-SEC-21 | M-SEC | — | — (hạ tầng) | — (hạ tầng) | **T-FR-SEC-025** · Tích hợp · Trace một lệnh có span API → PDP → Signer → broker → edge với cùng `trace_id`, `command_id`. |
 | FR-SEC-026 | Hệ thống nên quản lý client API: OAuth2 client credentials, scope, IP allow-list tùy chọn, hạn … | P1 · hạng 03: Phase 1 · — | Phase 3 (3J) | F-SEC-22 | M-SEC | `ApiClient` | API-PUB-01 | UI-32 | **T-FR-SEC-026** · Tích hợp · Client hạn ≤ 1 năm, mặc định chỉ đọc; IP allow-list; tạo client cần step-up. |
 | FR-SEC-027 | Sản phẩm có thể theo lộ trình chứng nhận ISO 27001 (vận hành cloud) → IEC 62443-4-2 (edge) → … | P2 · hạng 03: Phase 2 · — | Phase 4 (4F) | F-SEC-23 | M-SEC | — | — (quy trình) | — (quy trình) | **T-FR-SEC-027** · Đơn vị · Rà soát tài liệu tiếp thị: không có câu "tuân thủ/chứng nhận" khi chưa có chứng chỉ (kiểm bằng quét chuỗi). |
@@ -517,7 +517,7 @@ Ký hiệu: xem §0.1. Loại test: Đơn vị, Tích hợp, Mô phỏng, HIL, E
 | FR-ADV-003 | Hệ thống nên có adapter dự báo PV đa nhà cung cấp (NWP/vệ tinh, GTI) → mô hình vật lý DC/AC có … | P1 · hạng 03: Phase 1 · — | Phase 3 (3B) | F-ADV-02 | M-ADV | `ForecastModel`, `ForecastRun`, `ForecastValue` | ⚠ thiếu API | ⚠ 09 chưa ghi; +UI-19 | **T-FR-ADV-003** · Tích hợp · Nhà cung cấp lỗi → dùng nhà cung cấp phụ hoặc F0; giấy phép thương mại của nhà cung cấp là UNKNOWN. |
 | FR-ADV-004 | Hệ thống nên chạy đánh giá dự báo hằng đêm: MAE, nMAE (ghi mẫu số), nRMSE, MBE, WAPE, skill … | P1 · hạng 03: Phase 1 · — | Phase 3 (3B) | F-ADV-03 | M-ADV | `ForecastEvaluation` | ⚠ thiếu API | ⚠ chưa có trang | **T-FR-ADV-004** · Đơn vị · nMAE ghi mẫu số; không dùng MAPE cho PV; daylight_only đúng. |
 | FR-ADV-005 | Hệ thống nên có dự báo tải F2 (gradient boosting với lịch, ngày lễ VN, Tết âm lịch, ca sản … | P1 · hạng 03: Phase 1 · — | Phase 3 (3B) | F-ADV-04 | M-ADV | `ForecastModel`, `ForecastEvaluation` | ⚠ thiếu API | ⚠ chưa có trang | **T-FR-ADV-005** · Đơn vị · Nhãn `ML_EVALUATED` chỉ khi F2 thắng F1 trên tập kiểm tra; thua → không dùng. |
-| FR-ADV-006 | Hệ thống nên mô phỏng what-if định cỡ: kích thước BESS, biểu giá (TT 16 vs QĐ 963; có/không … | P1 · hạng 03: Phase 1 · — | Phase 3 (3B) | F-ADV-06 | M-ADV | ⚠ `SimulationRun` (05 thiếu), `TariffVersion` | ⚠ thiếu API | ⚠ chưa có trang | **T-FR-ADV-006** · Đơn vị · What-if BESS × biểu giá cho kết quả nhãn "Mô phỏng"; cùng tariff version cho mọi phương án. |
+| FR-ADV-006 | Hệ thống nên mô phỏng what-if định cỡ: kích thước BESS, biểu giá (TT 16 vs QĐ 963; có/không … | P1 · hạng 03: Phase 1 · — | Phase 3 (3B) | F-ADV-06 | M-ADV | ⚠ `SimulationRun` (05 thiếu), `TariffVersion` | API-OPT-10 (vòng nhất quán) | ⚠ chưa có trang | **T-FR-ADV-006** · Đơn vị · What-if BESS × biểu giá cho kết quả nhãn "Mô phỏng"; cùng tariff version cho mọi phương án. |
 | FR-ADV-007 | Hệ thống có thể nhận lịch sản xuất của khách (nhập tay ngày nghỉ/ca hoặc MES/ERP) làm đầu vào … | P2 · hạng 03: Phase 2 · — | Phase 4 (4G) | F-ADV-05 | M-ADV | ⚠ `ProductionSchedule` (05 thiếu), `ForecastModel` | ⚠ thiếu API | ⚠ chưa có trang (P2) | **T-FR-ADV-007** · Tích hợp · Lịch nghỉ ca nhập tay làm F3 đổi profile ngày đó. |
 | FR-ADV-008 | Hệ thống có thể chạy phát hiện bất thường ML L3 (thử nghiệm) chỉ khi có nhãn từ ticket, đo … | P2 · hạng 03: Phase 2 · — | Phase 4 (4G) | F-ADV-07 | M-ADV | `ForecastModel`, `Alarm` | ⚠ thiếu API | ⚠ chưa có trang (P2) | **T-FR-ADV-008** · Đơn vị · Chỉ chạy khi đủ nhãn FR-ALM-019; nhãn "thử nghiệm"; không gửi thông báo tự động. |
 | FR-ADV-009 | Hệ thống có thể ước lượng xu hướng suy giảm pin theo thời gian và cách dùng. | P2 · hạng 03: Phase 2 · — | Phase 4 (4G) | F-ADV-08 | M-ADV | `KpiValue`, `Series` | ⚠ thiếu API | ⚠ chưa có trang (P2) | **T-FR-ADV-009** · Đơn vị · Xu hướng suy giảm có khoảng tin cậy và nhãn "ước tính". |
@@ -531,15 +531,15 @@ Ký hiệu: xem §0.1. Loại test: Đơn vị, Tích hợp, Mô phỏng, HIL, E
 
 ### 4.1 NFR chính thức của 04
 
-Phủ toàn bộ 70 NFR của [04 §6](04-business-requirements.md#6-yêu-cầu-phi-chức-năng) theo bản dựng ban đầu. Trong cột "Hạng phát hành · Gate", `Phase n` là hạng 03 (CF-29), không phải phase lộ trình; NFR theo phase lộ trình ở [11 §6.3, §7.2](11-mvp-and-roadmap.html#s6). Ca chi tiết của nhóm SEC/REL ở [10 §19.3](10-security-and-reliability.md).
+Phủ toàn bộ **85 NFR** của [04 §6](04-business-requirements.md#6-yêu-cầu-phi-chức-năng): 70 của bản dựng ban đầu và 15 mã 04 bản mới xác nhận (cuối bảng, thêm ở vòng nhất quán 2026-10-10; ưu tiên/Gate theo 04). Trong cột "Hạng phát hành · Gate", `Phase n` là hạng 03 (CF-29), không phải phase lộ trình; NFR theo phase lộ trình ở [11 §6.3, §7.2](11-mvp-and-roadmap.html#s6). Ca chi tiết của nhóm SEC/REL ở [10 §19.3](10-security-and-reliability.md).
 
 | NFR (04) | Ưu tiên (04) | FR / tính năng liên quan | Module · thành phần (06) | API · UI | Test | Loại | Kịch bản / bằng chứng | Hạng phát hành · Gate |
 |---|---|---|---|---|---|---|---|---|
 | NFR-PERF-001 — Thời gian tải màn hình | P0 | FR-DASH-001, FR-DASH-002, FR-DASH-004, FR-ALM-005 | M-DASH, M-ALM · mon-app | API-TEL-09, API-LIVE-02, API-ALM-01 · UI-01, UI-03, UI-14 | **T-NFR-PERF-001** | Tải | 500 site dữ liệu giả lập: L1 p95 ≤ 3 s, L2 p95 ≤ 2 s, console 10.000 dòng p95 ≤ 2 s | MVP · PoC trước Gate MVP |
 | NFR-PERF-002 — Trend explorer | P0 | FR-HIST-010 | M-HIST · mon-app, TSDB | API-TEL-02 · UI-13 | **T-NFR-PERF-002** | Tải | 8 chuỗi: raw 7 ngày và 5 phút 93 ngày p95 ≤ 3 s | MVP · PoC |
 | NFR-PERF-003 — Độ tươi ingest | P0 | FR-MON-001, FR-INT-008 | M-MON · ingest pipeline | API-TEL-03, API-LIVE-01 · UI-03, UI-04 | **T-NFR-PERF-003** | Tải | Đo `ts_ingest − ts`: C2 p95 ≤ 60 s, C1 p95 ≤ 10 s khi xem live | MVP |
-| NFR-PERF-004 — Thông lượng ingest | P0 | FR-HIST-002, FR-INT-009 | M-HIST, M-INT · broker, ingest | MQTT · — | **T-NFR-PERF-004** | Tải | Edge ảo 1.000 site 35.000 mẫu/s + backfill 5–10×, 0 mất mẫu (07 L7) | MVP · PoC F-P25 |
-| NFR-PERF-005 — Độ trễ giao lệnh | P0 | FR-SEC-008, FR-SEC-009, FR-BESS-005 | M-SEC · ctl-app, signer, broker, edge | API-CMD-01, API-CMD-02 · UI-21 | **T-NFR-PERF-005** | Mô phỏng | 1.000 lệnh qua chuỗi tới edge mô phỏng: CREATED→RECEIVED p95 ≤ 5 s, p99 ≤ 15 s | MVP · M2 |
+| NFR-PERF-004 — Thông lượng ingest | P0 | FR-HIST-002, FR-INT-009 | M-HIST, M-INT · broker, ingest | MQTT · — | **T-NFR-PERF-004** | Tải | Edge ảo 1.000 site 35.000 mẫu/s + backfill 5–10×, 0 mất mẫu (07 L7; edge ảo + virtual site 15 §4.1, T-E2-05) | MVP · PoC F-P25 |
+| NFR-PERF-005 — Độ trễ giao lệnh | P0 | FR-SEC-008, FR-SEC-009, FR-BESS-005 | M-SEC · ctl-app, signer, broker, edge | API-CMD-01, API-CMD-02 · UI-21 | **T-NFR-PERF-005** | Mô phỏng | 1.000 lệnh qua chuỗi tới edge mô phỏng (virtual site, 15 §3): CREATED→RECEIVED p95 ≤ 5 s, p99 ≤ 15 s | MVP · M2 |
 | NFR-PERF-006 — Chu kỳ điều khiển edge | P0 | FR-OPT-004, FR-GRID-005 | M-OPT · edge runtime | — · UI-26 (`cycle_time_ms`) | **T-NFR-PERF-006** | HIL | Phần cứng tham chiếu: chu kỳ 1 s, p99 ≤ 200 ms, đếm vượt chu kỳ | MVP · M2 |
 | NFR-PERF-007 — Thông báo cảnh báo | P0 | FR-ALM-008 | M-ALM · alarm engine, notifier | API-ALM-05 · UI-17 | **T-NFR-PERF-007** | Tải | 1.000 sự kiện: p95 sự kiện → e-mail ≤ 2 phút (AC-ALM-02) | MVP |
 | NFR-PERF-008 — Job ngày và báo cáo | P0 | FR-REP-001, FR-HIST-005 | M-REP, M-HIST · job ngày | API-REP-02 · UI-30 | **T-NFR-PERF-008** | Tải | Job ngày xong ≤ 02:00 giờ site; R1 sẵn sàng 99% trước 06:00 (AC-REP-01) | MVP |
@@ -561,7 +561,7 @@ Phủ toàn bộ 70 NFR của [04 §6](04-business-requirements.md#6-yêu-cầu-
 | NFR-REL-012 — Không thi hành lệnh cũ | P0 | FR-SEC-009 | M-SEC · ctl-app, edge | API-CMD-02 · UI-23 | **T-NFR-REL-012** | Mô phỏng | Khôi phục kết nối sau 4 h: không lệnh quá hạn được gửi/thực thi; đối soát ≤ 60 s (AC-INT-09) | MVP · M1 |
 | NFR-DATA-001 — Không mất dữ liệu khi mất mạng | P0 | FR-INT-009 | M-INT · edge buffer | — · UI-26 | **T-NFR-DATA-001** | HIL | T-FR-INT-009: rút WAN 7 ngày, 0 mất; 1 s vòng tròn 7 ngày | MVP · M1 |
 | NFR-DATA-002 — Ingest idempotent, đúng thứ tự logic | P0 | FR-HIST-002 | M-HIST · ingest | MQTT | **T-NFR-DATA-002** | Tích hợp | Gửi trùng/đảo thứ tự (AC-HIST-08, AC-MON-04) | MVP |
-| NFR-DATA-003 — Quy ước dấu, đơn vị, thời gian, bucket | P0 | FR-HIST-003, FR-MON-002, FR-INT-016 | Mọi tầng | Mọi API | **T-NFR-DATA-003** | Đơn vị + Mô phỏng | Lint schema hậu tố đơn vị; phép thử dấu trên công tơ mô phỏng | MVP |
+| NFR-DATA-003 — Quy ước dấu, đơn vị, thời gian, bucket | P0 | FR-HIST-003, FR-MON-002, FR-INT-016 | Mọi tầng | Mọi API | **T-NFR-DATA-003** | Đơn vị + Mô phỏng | Lint schema hậu tố đơn vị; phép thử dấu trên công tơ POC của virtual site (CT ngược, 15 §3.4) | MVP |
 | NFR-DATA-004 — Điện năng từ thanh ghi | P0 | FR-HIST-004, FR-ORG-010 | M-HIST | — | **T-NFR-DATA-004** | Đơn vị | AC-HIST-01…03, AC-ORG-07 | MVP |
 | NFR-DATA-005 — Chất lượng bắt buộc | P0 | FR-HIST-007, FR-DASH-008 | Mọi module | Mọi API · mọi trang | **T-NFR-DATA-005** | Đơn vị + E2E | Kiểm API trả `null` không phải 0; UI hiện "—" | MVP |
 | NFR-DATA-006 — Tái lập được | P0 | FR-HIST-009, FR-TAR-006, FR-OPT-005 | M-HIST, M-TAR, M-OPT | — | **T-NFR-DATA-006** | Hồi quy | Golden snapshot ≥ 20 site-ngày so `output_hash` mỗi build (06 §16) | MVP |
@@ -589,7 +589,7 @@ Phủ toàn bộ 70 NFR của [04 §6](04-business-requirements.md#6-yêu-cầu-
 | NFR-SEC-008 — Phân hạng C0–C4; hai người duyệt C3; cửa sổ ≤ 15 phút | P0 | FR-SEC-006, FR-SEC-007 | M-SEC | API-CMD-05 · UI-22 | **T-NFR-SEC-008** | Tích hợp | AC-SEC-02/03; T-NFR-SEC-008-01 | MVP · M1 (CF-28/D-03; nâng hạng ngữ cảnh PDP-04/05: M2) |
 | NFR-SEC-009 — SOE theo site, version, ký số, đề xuất/duyệt bởi hai người | P0 | FR-BESS-020, FR-BESS-007, FR-GRID-003 | M-BESS, M-SEC | API-CMD-08 · UI-07, UI-22 | **T-NFR-SEC-009** | Mô phỏng | AC-BESS-05/06; T-FR-BESS-020 (SOE tối thiểu) | MVP · M1 (tối thiểu), M2 (đầy đủ) |
 | NFR-SEC-010 — Interlock IL-01…IL-10 tại edge | P0 | FR-SEC-010 | M-SEC · edge | API-CMD-07 · UI-24 | **T-NFR-SEC-010** | HIL | T-NFR-SEC-010-01…11 | MVP · M2 |
-| NFR-SEC-011 — Mọi lệnh có `expires_at`; từ chối lệnh không hạn hoặc đến … | P0 | FR-SEC-008, FR-SEC-009 | M-SEC | API-CMD-01 | **T-NFR-SEC-011** | Mô phỏng | T-NFR-SEC-011-01 (AC-SEC-05) | MVP · M1 |
+| NFR-SEC-011 — Mọi lệnh có `expires_at`; từ chối lệnh không hạn hoặc đến … | P0 | FR-SEC-008, FR-SEC-009 | M-SEC | API-CMD-01 | **T-NFR-SEC-011** | Mô phỏng | T-NFR-SEC-011-01 (AC-SEC-05); T-E2-01 (Message Expiry ở broker, edge offline qua hạn) | MVP · M1 |
 | NFR-SEC-012 — Fleet Dispatch Governor | P0 | FR-SEC-012 | M-SEC | API-CMD-12 · UI-22 | **T-NFR-SEC-012** | Mô phỏng | T-NFR-SEC-012-01 | MVP · M2 |
 | NFR-SEC-013 — Kill switch điều khiển từ xa (tắt C1, bật C3) | P0 | FR-SEC-013 | M-SEC | API-CMD-06 · UI-24 | **T-NFR-SEC-013** | Mô phỏng | T-NFR-SEC-013-01…04 (-04 là ca Gate M1) | MVP · M1 (04 bản mới) |
 | NFR-SEC-014 — LOCAL/REMOTE phần cứng (hoặc native đọc được có biên bản) … | P0 | FR-SEC-010 | M-SEC · edge DI | API-CMD-07 · UI-24, UI-36 | **T-NFR-SEC-014** | HIL | T-NFR-SEC-014-01 | MVP · M2 |
@@ -600,15 +600,30 @@ Phủ toàn bộ 70 NFR của [04 §6](04-business-requirements.md#6-yêu-cầu-
 | NFR-SEC-019 — Phát hiện điều khiển ngoài | P1 | FR-ALM-022 | M-ALM | API-ALM-01 · UI-14 | **T-NFR-SEC-019** | HIL | Đổi chế độ qua app hãng → `EXTERNAL_CONTROL_DETECTED` | Phase 1 |
 | NFR-SEC-020 — OTA edge ký số, A/B, anti-rollback, canary | P0 | FR-INT-012 | M-INT | API-INT-05 · UI-26 | **T-NFR-SEC-020** | HIL | T-NFR-SEC-020-01 | MVP · M1 |
 | NFR-SEC-021 — OCPP Security Profile ≥ 2, mục tiêu 3; TxDefaultProfile an … | P1 | FR-EV-003, FR-EV-005 | M-EV · edge CSMS | — · UI-11 | **T-NFR-SEC-021** | Mô phỏng | Charger SP1 bị từ chối; TxDefaultProfile an toàn | Phase 1 |
-| NFR-SEC-022 — Hỗ trợ từ xa bằng reverse tunnel theo yêu cầu ≤ 2 h; không … | P1 | FR-SEC-024 | M-SEC | ⚠ thiếu API | **T-NFR-SEC-022** | Pen-test | Tunnel ≤ 2 h, không route OT | Phase 1 |
+| NFR-SEC-022 — Hỗ trợ từ xa bằng reverse tunnel theo yêu cầu ≤ 2 h; không … | P1 | FR-SEC-024 | M-SEC | API-INT-11 | **T-NFR-SEC-022** | Pen-test | Tunnel ≤ 2 h, không route OT | Phase 1 |
 | NFR-SEC-023 — Grant installer/vendor có hạn, chủ tài sản cấp/thu hồi, xem … | P0 | FR-ORG-009 | M-ORG, M-SEC | API-ORG-09 · UI-31 | **T-NFR-SEC-023** | Tích hợp | AC-ORG-04/05; break-glass ≤ 4 h | MVP · M1 |
 | NFR-SEC-024 — Quy trình phát triển an toàn theo tinh thần IEC 62443-4-1 … | P1 | — (không có FR chức năng) | Quy trình | — | **T-NFR-SEC-024** | CI | SAST/SCA/SBOM/secret mỗi build (P0); pen-test, VDP (P1) | MVP (một phần), Phase 1 |
 | NFR-SEC-025 — Lộ trình chứng nhận; không tuyên bố trước khi có chứng chỉ | P2 | FR-SEC-027 | Quy trình | — | **T-NFR-SEC-025** | Rà soát | Không tuyên bố chứng nhận trước khi có chứng chỉ | Phase 2 |
 | NFR-SEC-026 — Phân loại dữ liệu D0–D4; hosting VN mặc định; DPIA và quy … | P0/P1 | FR-SEC-019 | M-SEC | — · UI-32 | **T-NFR-SEC-026** | Rà soát | Phân lớp D0–D4 trên mọi bảng; DPIA (P1) | MVP · M1 (DPIA Phase 1) |
+| NFR-SEC-027 — Hardening edge (secure boot, mã hóa đĩa, không mật khẩu chung, SSH tắt) | P0 · M1 (secure boot P1 nếu phần cứng MVP không hỗ trợ) | FR-INT-002, FR-SEC-018 | M-INT · edge | — · UI-26 | **T-NFR-SEC-027** | Pen-test / HIL | Pen-test phần cứng (UART/JTAG, boot, đĩa); checklist commissioning | MVP · M1 |
+| NFR-SEC-028 — Toàn vẹn thời gian edge, `UNSYNCED` → IL-06 | P0 · M2 | FR-INT-010, FR-SEC-010 | M-SEC · edge | API-TEL-10 · UI-26 | **T-NFR-SEC-028** | Mô phỏng | T-NFR-SEC-028-01: lệch đồng hồ/`ts_src` sai trên virtual site (15 §3.4) → IL-06 từ chối lệnh có hạn | MVP · M2 |
+| NFR-SEC-029 — Quy trình ứng phó sự cố INC-* | P0 · M2 | F-SEC-27 (chưa có FR), FR-SEC-014 | M-SEC | API-AUD-05 · — | **T-NFR-SEC-029** | Diễn tập | Diễn tập bàn 6 tháng/lần; khống chế ≤ 30 phút, thông báo tenant ≤ 4 h | MVP · M2 |
+| NFR-SEC-030 — Cổng kiểm thử an toàn driver ghi và release edge | P0 · M2 | FR-INT-003, FR-INT-014, FR-SEC-021 | M-INT · CI, lab | — | **T-NFR-SEC-030** | HIL + CI | Fuzz + ca HIL trước `VERIFIED_LAB`; kết quả virtual site không đủ (15 §4.3) | MVP · M2 |
+| NFR-SEC-031 — Áp hàng loạt cấu hình/driver/SOE theo đợt | P1 | FR-INT-011, FR-BESS-007 | M-INT · ctl-app | API-INT-04 · UI-26 | **T-NFR-SEC-031** | Mô phỏng | Rollout ≤ 10 site đợt đầu trên edge ảo; tự dừng khi có sự kiện an toàn | Phase 1 |
+| NFR-SEC-032 — Conduit IEC 104 | P1 có điều kiện | FR-INT-023, FR-GRID-013 | M-INT · edge | — | **T-NFR-SEC-032** | Mô phỏng + fuzz | Master 104 giả (c104/j60870, chỉ công cụ test) từ IP lạ bị từ chối; fuzz 10 §19.2 | Phase 1 (điều kiện) |
+| NFR-SEC-033 — An toàn lệnh `COMMISSIONING_TEST` | P0 · M1 | FR-INT-016, FR-INT-017, FR-INT-018, FR-INT-031 | M-INT, M-SEC · edge | API-INT-08 · UI-27 | **T-NFR-SEC-033** | HIL | AC-INT-10; T-FR-INT-016b; site sandbox trên virtual site cho đào tạo | MVP · M1 |
+| NFR-REL-013 — `run_mode` edge theo máy trạng thái, có audit | P0 · M2 | FR-MON-008, FR-DASH-004 | M-MON · edge | API-TEL-10 · UI-03 | **T-NFR-REL-013** | Mô phỏng | Chuyển trạng thái trên edge + virtual site; mỗi chuyển có audit | MVP · M2 |
+| NFR-REL-014 — Bền vững khi mất nguồn edge | P0 · M1 | FR-INT-009, FR-INT-011, FR-BESS-007 | M-INT · edge | — | **T-NFR-REL-014** | HIL | Cắt nguồn ngẫu nhiên 100 lần; không hỏng cấu hình ký, không mất `command_id`/`last_seq` | MVP · M1 |
+| NFR-REL-015 — Control plane fail-closed | P0 · M1 | FR-SEC-003, FR-SEC-007, FR-SEC-008 | M-SEC · ctl-app | API-CMD-01 · UI-21 | **T-NFR-REL-015** | Tích hợp | T-NFR-REL-015-01: IdP/PDP/Signer/ctl-db lỗi → không phát lệnh mới; monitoring chạy tiếp | MVP · M1 |
+| NFR-REL-016 — Ưu tiên và backpressure | P0 · M1 | FR-INT-008, FR-INT-009, FR-HIST-002 | M-INT · broker, ingest, edge | MQTT | **T-NFR-REL-016** | Tải | Edge ảo + Toxiproxy mất WAN/broker (15 §3.4); `event`/`cmd-ack`/`state` không bị bỏ; lô ≤ `max_batch_bytes` (T-E2-03) | MVP · M1 |
+| NFR-REL-017 — Game day và chaos | P0/P1 · M2 | FR-OPT-006, FR-BESS-009 | Mọi mặt phẳng | — | **T-NFR-REL-017** | Game day | Mất cloud 4 h trên HIL hằng quý; chaos broker/KMS/DR (P1) | MVP · M2 |
+| NFR-REL-018 — Trình tự DR | P1 | FR-SEC-013 | Hạ tầng, ctl-app | API-CMD-06 · UI-24 | **T-NFR-REL-018** | Diễn tập | Failover DR: kill switch nền tảng trước, mở lại control plane bằng C3 | Phase 1 |
+| NFR-OBS-008 — Cảnh báo nền tảng, runbook, trực ca 24/7 | P0 · M2 | FR-ALM-015 (P1), FR-ALM-005 | M-ALM · vận hành | API-ALM-11, API-ALM-12 · UI-17 | **T-NFR-OBS-008** | Rà soát + diễn tập | Rà soát runbook; diễn tập gọi trực ca trước site M2 đầu tiên | MVP · M2 |
+| NFR-OBS-009 — Forensic bundle, log edge ≥ 30 ngày, ghim 1 s | P0 (bundle, log) · M2; P1 (ghim) | F-SEC-26 (chưa có FR) | M-SEC · ctl-app, edge | API-AUD-04 · UI-33 | **T-NFR-OBS-009** | Mô phỏng | Tạo bundle cho sự cố mô phỏng trên virtual site; hash/ký kiểm được | MVP · M2 (ghim Phase 1) |
 
-### 4.2 NFR mã đề xuất của 10 (chưa được 04 xác nhận)
+### 4.2 Lịch sử: NFR mã đề xuất của 10 (nay đã là NFR chính thức của 04)
 
-10 §20 đề xuất 14 mã mới. 06 đã trích 7 trong số đó. Bản 04 mới (sau bản dựng của 12) đã xác nhận cả 14 mã với cùng số và cấp thêm NFR-SEC-033 (an toàn lệnh `COMMISSIONING_TEST`). Bảng dưới giữ nguyên dạng cũ để truy vết; cột "Ưu tiên · Gate" vẫn là của 10 §20 và cần đối chiếu lại với 04 §6 ở vòng sau (GAP-12-01).
+10 §20 đề xuất 14 mã mới. 06 đã trích 7 trong số đó. Bản 04 mới (sau bản dựng của 12) đã xác nhận cả 14 mã với cùng số và cấp thêm NFR-SEC-033 (an toàn lệnh `COMMISSIONING_TEST`). Vòng nhất quán 2026-10-10 đã đưa cả 15 mã vào §4.1 với ưu tiên/Gate theo 04 §6. Bảng dưới chỉ giữ để truy vết nguồn gốc mã (10 §20); khi lệch, §4.1 là chuẩn.
 
 | Mã đề xuất | Tóm tắt (10 §20) | Ưu tiên · Gate (10) | FR liên quan | Test | Ghi chú |
 |---|---|---|---|---|---|
@@ -820,6 +835,7 @@ Phủ toàn bộ 70 NFR của [04 §6](04-business-requirements.md#6-yêu-cầu-
 ### 6.3 Tính năng không có FR
 
 - **7 F- không có FR, đều có chủ ý.** F-PV-14, F-EV-11, F-OPT-21, F-ADV-12, F-ADV-13, F-ADV-14, F-ADV-15 nằm ngoài phạm vi; ràng buộc ở 04 §5.16. Không cần sửa. Hai tính năng bị cấm F-BESS-19 và F-BESS-20 (C4) có FR dạng "không được" là FR-BESS-011, nên không nằm trong danh sách này. 251 F- còn lại đều có ít nhất một FR.
+- **Cập nhật vòng nhất quán 2026-10-10:** 03 nay có 270 F- (thêm 12 F- từ `_catalog-gaps`). 6 F- mới chưa có FR riêng ở 04 (04 §7.1): F-INT-30, F-INT-32, F-INT-33, F-OPT-22, F-OPT-23, F-ORG-18 (phần MVP); F-SEC-26/27 chỉ có NFR (NFR-OBS-009, NFR-SEC-029). Bảng dưới là bản dựng ban đầu, giữ để truy vết.
 - **18 tính năng trong [_catalog-gaps](notes/_catalog-gaps.md) chưa có F- trong 03 (GAP-12-15).** Hai vai trò `TECHNICIAN` và `PLATFORM_ADMIN` gộp một dòng:
 
 | Tính năng (người ghi) | FR ở 04 | API ở 06 | UI ở 09 | Trạng thái |
@@ -870,7 +886,7 @@ Mọi lệnh đi qua chuỗi chung của 10 §11. Chuỗi này có NFR-SEC-004 (
 | FR-GRID-018 | C2·M2 (P2) | — | — | Không có NFR | 10 (P2) |
 | FR-GRID-019 | C2·M2 (P2) | — | — | Không có NFR | 10 (P2) |
 | FR-EV-003 | C1·M2 (P1) | NFR-SEC-021 | — | Không có NFR-REL khi charger/CSMS mất kết nối (chỉ có AC-EV-03) | 10, 04 |
-| FR-EV-004 | C1·M2 (P1) | — | — | **Đường lệnh qua API của CPO là cloud → cloud**, chưa đi qua edge và envelope ký. Có thể mâu thuẫn K §6 "edge bắt buộc ở mọi site nền tảng ghi lệnh" | 04, 10, 07; cần Evidence Judge xác nhận (GAP-12-02) |
+| FR-EV-004 | C1·M2 (P1) | — | — | **Đã xử lý vòng nhất quán:** 04 FR-EV-004 + 07 §8.10 + 10 §5.4/§9.6/§13.2 buộc edge là client, envelope ký, TTL, readback, fallback (CF-39) | Đóng phần FR-EV-004 của GAP-12-02; bật ghi còn chờ ADR + driver CPO `VERIFIED_*` |
 | FR-EV-005 | C1·M2 (P1) | NFR-SEC-021, NFR-SEC-011 | — | Như FR-EV-003 | 10, 04 |
 | FR-EV-006 | C1·M2 (P1) | NFR-SEC-009 (`ev_site_cap_w`) | NFR-REL-007 chỉ nói BESS/PV | NFR-REL-007 cần thêm EV: mất `MTR_POC` → EV về `I_min` hoặc TxDefaultProfile | 04 |
 | FR-EV-007 | C1·M2 (P1) | NFR-SEC-021 | — | Như FR-EV-006 | 04 |
@@ -895,7 +911,7 @@ Mọi lệnh đi qua chuỗi chung của 10 §11. Chuỗi này có NFR-SEC-004 (
 | FR-INT-018 | C2·M2 | NFR-SEC-033 | NFR-REL-002, NFR-SEC-033 | Như FR-INT-016 | 03 |
 | FR-INT-031 | C2·M1 | NFR-SEC-033, NFR-SEC-011 | NFR-SEC-033 | Không | — |
 | FR-INT-023 | C2·M2 (P1) | NFR-SEC-032 (đề xuất) | — | Như FR-GRID-013 | GAP-12-01, GAP-12-03 |
-| FR-INT-028 | C2·M1 (P2) | NFR-SEC-018 | — | **Ghi qua cloud hãng không đi qua edge**; không bảo đảm hạn và readback. Mâu thuẫn tiềm tàng với K §6 | 04, 10, Evidence Judge (GAP-12-02) |
+| FR-INT-028 | C2·M1 (P2) | NFR-SEC-018 | — | **Đã xử lý vòng nhất quán:** FR-INT-028 viết lại theo 6 điều kiện CF-39; 07 §8.8 | Đóng GAP-12-02 (site không edge vẫn cấm tới khi Evidence Judge chấp nhận ngoại lệ) |
 | FR-INT-030 | C1·M2 (P2) | NFR-SEC-006, NFR-SEC-012, NFR-OBS-006 | NFR-REL-015 (đề xuất) | Không | — |
 | FR-SEC-005 | C3·M1 | NFR-SEC-002, NFR-SEC-008, NFR-SEC-009 (bật `control_enabled` cần SOE tối thiểu) | NFR-REL-015 | Không (04 đã xác nhận) | — |
 | FR-SEC-006, FR-SEC-007 | C3·M1 (CF-28/D-03) | NFR-SEC-008 | NFR-REL-015 | Không ở 04. 11 §6.3 chưa có NFR-SEC-008 trong danh sách NFR Phase 1 (§6.4.1) | 11 |
@@ -960,26 +976,43 @@ Thêm từ _catalog-gaps (không có FR, cần sau khi 03/04 bổ sung): `Forens
 
 **API không có người dùng.** Không có. Mọi API trong 06 §13.2 được ít nhất một FR dùng (§5).
 
+**API mới cho thực thể P1/P0 của 05 (X-05-09, vòng nhất quán 2026-10-10).** So 05 §21.1 với 06 §13.2, các thực thể sau chưa có endpoint và nay đã được 06 cấp mã:
+
+| Thực thể (05) | API mới (06) | FR / NFR | Test |
+|---|---|---|---|
+| `OnCallContact` (P0) | API-ALM-11 | FR-ALM-006, FR-ALM-015 | T-FR-ALM-006 (CRUD + hiển thị ở chi tiết cảnh báo) |
+| `EscalationPolicy` | API-ALM-12 | FR-ALM-015 | T-FR-ALM-015 |
+| `SlaPolicy` | API-ALM-13 | FR-ALM-017 | T-FR-ALM-017 |
+| `SiteTemplate` | API-ORG-13 | FR-ORG-012 | T-FR-ORG-012 (SOE từ mẫu luôn `DRAFT`) |
+| `SiteDocument` | API-ORG-14 | FR-ORG-014 | T-FR-ORG-014 (URL ký ngắn hạn, cross-tenant) |
+| `SavedView`, `UserPreference` | API-ORG-15 | FR-DASH-012; F-ORG-18 (chưa có FR) | T-FR-DASH-012 |
+| `RemoteSupportSession` | API-INT-11 | FR-SEC-024, NFR-SEC-022 | T-FR-SEC-024, T-NFR-SEC-022 |
+| `SimulationRun` | API-OPT-10 | FR-ADV-006 | T-FR-ADV-006 (nhãn "Mô phỏng") |
+| `Incident` | API-AUD-05 | NFR-SEC-029; F-SEC-27 (chưa có FR) | T-NFR-SEC-029 |
+| `EvSession`, trụ sạc | API-EV-01…04 | FR-EV-002, 003, 004, 008 | T-FR-EV-002, T-FR-EV-004 |
+
+`PriceSeries`, `FlexibilityOffer`, `ProductionSchedule` (P2) vẫn chưa có API, chủ ý.
+
 **API không có FR riêng (GAP-12-15):**
 
-- API-AUD-04 (gói bằng chứng sự cố, MVP): ánh xạ về F-SEC-12 nhưng FR-SEC-014 (audit) không yêu cầu bundle. Tính năng chỉ có ở _catalog-gaps và NFR-OBS-009 (đề xuất). Hệ quả: một endpoint MVP không có yêu cầu và không có test nghiệm thu. Sửa: 03 cấp F-, 04 cấp FR. Nếu chưa làm thì 06 hạ API-AUD-04 xuống "chờ yêu cầu".
+- API-AUD-04 (gói bằng chứng sự cố, MVP) và API-AUD-05 (sổ sự cố): nay có F-SEC-26/F-SEC-27 ở 03 và NFR-OBS-009/NFR-SEC-029 ở 04, nhưng chưa có FR riêng. Trước đây: ánh xạ về F-SEC-12 nhưng FR-SEC-014 (audit) không yêu cầu bundle. Hệ quả: một endpoint MVP không có yêu cầu và không có test nghiệm thu. Sửa: 03 cấp F-, 04 cấp FR. Nếu chưa làm thì 06 hạ API-AUD-04 xuống "chờ yêu cầu".
 - API-CMD-11 (hồ sơ M2): có FR-SEC-021 nhưng 03 chưa có F- riêng. Chỉ cần 03 cập nhật.
 
 **API không có trang UI dùng (đúng thiết kế):** API-PUB-04 (hạng 03: Phase 2; lộ trình Phase 4, 4D; bên thứ ba), API-INT-02 (edge gọi), API-PUB-02 và API-PUB-03 (bên thứ ba; UI-32 chỉ quản lý client), API-AUTH-04 (vé SSE, hạ tầng).
 
-**FR thiếu endpoint (41 FR, GAP-12-04…06).**
+**FR thiếu endpoint (41 FR ở bản dựng ban đầu, nay còn 30; GAP-12-04…06).** Các dòng ghi "Đã có" là phần đã xử lý ở vòng nhất quán.
 
 | Nhóm | FR | Ưu tiên | Đề xuất cho 06 |
 |---|---|---|---|
 | Thông báo in-app | FR-ALM-008 | **P0** | `GET /api/v1/notifications`, `POST /api/v1/notifications/{id}/read`; luồng mới qua API-LIVE-03 hoặc luồng riêng |
 | Dự báo | FR-ADV-001 | **P0** | UI-19 cần dự báo PV/tải có nhãn phương pháp. Thêm trường `forecast` (p10/p50/p90, `method_label`) vào API-OPT-03 hoặc nhóm `API-FC` |
-| EV (chưa có nhóm API-EV) | FR-EV-002, FR-EV-003, FR-EV-004, FR-EV-008, FR-EV-009, FR-EV-010 | P1/P2 | Nhóm API-EV: phiên sạc, trạng thái connector, cấu hình CSMS edge/CPO, báo cáo EV; thêm `SET_EV_LIMIT` vào danh sách `type` của API-CMD-01 |
+| EV | FR-EV-009, FR-EV-010 | P2 | **Đã có nhóm API-EV-01…04 (vòng nhất quán)** cho FR-EV-002, 003, 004, 008; `SET_EV_LIMIT` đã ghi ở API-CMD-01. Còn: dự báo phiên (FR-EV-009), OCPP 2.x/V2X (FR-EV-010) |
 | Dự báo và mô phỏng nâng cao | FR-ADV-003…FR-ADV-012 | P1/P2 | Nhóm API-FC (dự báo, đánh giá) và API-SIM (what-if, nhãn "Mô phỏng") |
 | Lưới | FR-GRID-009, FR-GRID-010, FR-GRID-011, FR-REP-015 | P1 | Endpoint ngân sách xuất và đồng hồ demand (đọc), có thể mở rộng API-TEL-06 và API-LIVE-01 |
 | Lệnh P2 | FR-PV-013, FR-GRID-018, FR-GRID-019, FR-OPT-020, FR-OPT-021, FR-INT-028 | P2 | Thêm `type` vào API-CMD-01 khi track lộ trình Phase 4 tương ứng (4A, 4D, 4H) được bật; DR/VPP cần nhóm riêng |
-| O&M | FR-ALM-015, FR-ALM-017, FR-ALM-020 | P1 | Chính sách leo thang/trực ca; SLA; nhận cập nhật từ CMMS (inbound) |
-| Dữ liệu chủ | FR-ORG-012, FR-ORG-014, FR-ORG-016, FR-DASH-012 | P1 | Mẫu site, tài liệu, hợp đồng, view đã lưu |
-| Khác | FR-MON-013 (yêu cầu burst), FR-REP-018 (mẫu báo cáo PPA trong API-REP-01), FR-TAR-012 (chuỗi giá), FR-BESS-017 (sổ cái pin), FR-OPT-013 (shadow price trong API-OPT-03), FR-SEC-024 (tunnel hỗ trợ) | P1/P2 | Như mô tả |
+| O&M | FR-ALM-020 | P1 | **Đã có** API-ALM-11 (trực ca), API-ALM-12 (leo thang), API-ALM-13 (SLA) cho FR-ALM-006/015/017. Còn: nhận cập nhật từ CMMS (inbound) |
+| Dữ liệu chủ | FR-ORG-016 | P1 | **Đã có** API-ORG-13 (mẫu site), API-ORG-14 (tài liệu), API-ORG-15 (view đã lưu, tùy chọn) cho FR-ORG-012, FR-ORG-014, FR-DASH-012. Còn: hợp đồng (FR-ORG-016) |
+| Khác | FR-MON-013 (yêu cầu burst), FR-REP-018 (mẫu báo cáo PPA trong API-REP-01), FR-TAR-012 (chuỗi giá), FR-BESS-017 (sổ cái pin), FR-OPT-013 (shadow price trong API-OPT-03), FR-SEC-024 (tunnel hỗ trợ — **đã có API-INT-11**) | P1/P2 | Như mô tả; what-if FR-ADV-006 đã có API-OPT-10 |
 
 **Cột "Tính năng" của 06 chưa đủ (GAP-12-07).** 88 FR dùng một API mà cột "Tính năng" của API đó không ghi F- của FR (ký hiệu `+API` trong §3). Phần lớn là API đọc dùng chung (API-TEL-02/03/05/06, API-ALM-01) và không cần liệt kê hết. Những chỗ cần sửa vì ảnh hưởng đến hợp đồng lệnh:
 
@@ -1001,15 +1034,15 @@ Thêm từ _catalog-gaps (không có FR, cần sau khi 03/04 bổ sung): `Forens
 
 | Vấn đề | Chi tiết | Sửa (chủ) |
 |---|---|---|
-| NFR mã đề xuất được trích như mã chính thức | 06 §20 và §16 trích NFR-REL-015/016/017/018, NFR-SEC-027/030, NFR-OBS-008/009 của 10 trước khi 04 xác nhận | 04 xác nhận hoặc đánh số lại; 06 cập nhật (GAP-12-01) |
+| NFR mã đề xuất được trích như mã chính thức | 06 §20 và §16 trích NFR-REL-015/016/017/018, NFR-SEC-027/030, NFR-OBS-008/009 của 10 trước khi 04 xác nhận. 04 bản mới đã xác nhận cùng số → không còn xung đột | Đã đóng |
 | Mã test của 08 | `T1-01…T1-07` không theo `T-<FR id>` | 08 đổi theo ánh xạ §2.2 (GAP-12-17) |
-| Đường lệnh không qua edge | FR-EV-004 (API CPO), FR-INT-028 (cloud hãng) | GAP-12-02 |
+| Đường lệnh không qua edge | FR-EV-004 (API CPO), FR-INT-028 (cloud hãng) — đã buộc đi qua edge theo CF-39 (vòng nhất quán) | GAP-12-02 đóng |
 | Trang ghi FR bị cấm | UI-07 ghi FR-BESS-011. Hợp lệ vì nghĩa là "trang không có nút". 09 nên ghi chú để người đọc không hiểu là trang cung cấp chức năng | 09 (nhỏ) |
 | Phát hành API trước yêu cầu | API-AUD-04 là MVP nhưng không có FR | GAP-12-15 |
-| Tài liệu tham chiếu chưa có | 11, 13, 14 đã có. `00-executive-summary.html`, `index.html` và `README.md` đã được viết ở vòng hợp nhất (2026-10-10); liên kết điều hướng không còn hỏng. Còn: §4.1 đếm 70 NFR trong khi 04 có 85 (GAP-12-01) | Đã đóng phần tài liệu; 12 cập nhật số NFR |
+| Tài liệu tham chiếu chưa có | 11, 13, 14, 15 đã có. `00-executive-summary.html`, `index.html` và `README.md` đã được viết ở vòng hợp nhất (2026-10-10); liên kết điều hướng không còn hỏng. §4.1 nay đủ 85 NFR (vòng nhất quán) | Đã đóng |
 | Số FR P0 lớn | 148 FR P0 cho MVP. 11 §6.2 đã chia Phase 1 thành milestone 1a/1b/1c; 12 chưa gắn milestone theo FR vì 11 chỉ liệt kê theo nhóm | 11 nếu cần cột milestone (GAP-12-18) |
 | 11 lệch với 04 bản mới | 11 (bản 07:15) chưa có FR-BESS-020, FR-INT-031; xếp FR-SEC-013 ở Phase 2; danh sách NFR Phase 1 (§6.3) thiếu NFR-SEC-008, 009 (tối thiểu), 013, NFR-REL-010. 12 xếp theo 04 và đánh dấu `⚠` (§0.3, §6.4.1) | 11 (GAP-12-18) |
-| 12 chưa đối chiếu hết 04 bản mới | 04 đã xác nhận 14 NFR mã đề xuất và thêm NFR-SEC-033; §4.1 vẫn đếm 70 NFR, §4.2 vẫn là bảng "mã đề xuất" | 12 vòng sau (GAP-12-01) |
+| 12 chưa đối chiếu hết 04 bản mới | **Đã xử lý vòng nhất quán:** 15 NFR 04 xác nhận đã vào §4.1 với ưu tiên/Gate của 04; §4.2 chỉ còn ghi chú lịch sử | GAP-12-01 đóng phần 12 |
 
 ---
 
@@ -1081,8 +1114,8 @@ Mã `GAP-12-NN` là mã cục bộ của tài liệu này. 13 cấp mã `R-NN`/`
 
 Tài liệu này chỉ dùng tài liệu nội bộ của dự án. Không trích URL ngoài; bằng chứng ngoài của từng yêu cầu nằm ở tài liệu gốc.
 
-- [03 Danh mục chức năng](03-functional-catalog.html): 258 F-, _catalog-gaps.
-- [04 Yêu cầu nghiệp vụ](04-business-requirements.md): 268 FR (bản mới, gồm FR-BESS-020, FR-INT-031), 70 NFR của bản dựng ban đầu (bản mới thêm 15 mã, §6.8), 107 AC, §5.16, §7.
+- [03 Danh mục chức năng](03-functional-catalog.html): 270 F- (đã gồm 12 F- từ _catalog-gaps).
+- [04 Yêu cầu nghiệp vụ](04-business-requirements.md): 268 FR (bản mới, gồm FR-BESS-020, FR-INT-031), 85 NFR (70 của bản dựng ban đầu + 15 mã bản mới), 107 AC, §5.16, §7.
 - [11 MVP và lộ trình](11-mvp-and-roadmap.html): ánh xạ hạng → phase §2.3, phạm vi phase §6.3, §7.2, §8.2, §9.2, cổng G1/G2 §6.6, §7.6.
 - [13 Câu hỏi mở và rủi ro](13-open-questions-and-risks.md): CF-28, CF-29, D-03.
 - [05 Domain](05-domain-model.html): thực thể §4–§14, ánh xạ §21.

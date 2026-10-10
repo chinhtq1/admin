@@ -352,6 +352,7 @@ Quy tắc [PROPOSAL]:
 |---|---|---|---|
 | MQTT 5 + schema riêng (Protobuf + nén, envelope có `seq`) | Kiểm soát ack lệnh, hạn, seq, backfill. Message Expiry khớp hạn của lệnh | Phải tự định nghĩa | **Chọn** [PROPOSAL] |
 | Sparkplug B 3.0 | Chuẩn birth/death, trạng thái online, hệ sinh thái SCADA | Chỉ có NCMD/DCMD, không có ngữ nghĩa ack/hạn/idempotency; QoS 0 cho dữ liệu; đã thấy một gateway thương mại đặt cứng Will QoS 0 làm NDEATH có thể mất | Đầu ra tùy chọn cho SCADA khách, P2 |
+| MQTT 3.1.1 | Hỗ trợ rộng nhất | Không có Message Expiry, Correlation Data, Reason Code → phải nhồi vào payload | Không ([15 §5](15-simulators-and-messaging.md#5-quyết-định-messaging-edgecloud)) |
 | OPC UA | Mô hình thông tin mạnh | Không có companion spec PV/BESS (§5.5); nặng cho 4G | Chỉ khi gặp PLC/BMS có OPC UA server hoặc khách yêu cầu |
 
 Bằng chứng:
@@ -420,7 +421,7 @@ Nguồn: https://openchargealliance.org/ocpp-2-1-is-now-available/ ; https://ope
 | Trường hợp | Giải pháp | Tính năng |
 |---|---|---|
 | Site không có CSMS của CPO | Edge chạy **CSMS OCPP 1.6J tối giản**, chỉ cho giám sát và smart charging; không làm thanh toán/roaming (F-EV-11 ngoài phạm vi) | F-EV-02, F-EV-03 |
-| Site có CSMS của CPO | Tích hợp API của CPO (đọc phiên, gửi giới hạn); **không** chạy CSMS thứ hai trên cùng trụ | F-EV-04 |
+| Site có CSMS của CPO | Tích hợp API của CPO: đọc phiên (mặc định); gửi giới hạn **chỉ** qua edge theo §8.10 (FR-EV-004); **không** chạy CSMS thứ hai trên cùng trụ | F-EV-04 |
 | Đo năng lượng EV | Công tơ `MTR_EV_i` (P0) độc lập với OCPP | F-EV-01 |
 
 Quy tắc driver OCPP [PROPOSAL]:
@@ -835,13 +836,19 @@ Theo K R-12 (thay mẫu có tenant/site trong ghi chú E §3.5). Ánh xạ edge 
 | `ems/v1/{edge_id}/up/telemetry/{stream}` | edge → cloud | 1 | Không | — | Lô điểm; `stream ∈ {c1, c2, c3, c4}` |
 | `ems/v1/{edge_id}/up/event` | edge → cloud | 1 | Không | — | Alarm/SOE, đổi chế độ, interlock, `CAPABILITY_DISCOVERED`, `ARBITER_REASON`, `DATA_LOSS` |
 | `ems/v1/{edge_id}/up/backfill` | edge → cloud | 1 | Không | — | Dữ liệu tồn đọng sau mất kết nối; cùng định dạng với telemetry |
-| `ems/v1/{edge_id}/up/cmd-ack` | edge → cloud | 1 | Không | — | Chuyển trạng thái lệnh, ký bằng khóa edge |
-| `ems/v1/{edge_id}/down/cmd` | cloud → edge | 1 | **Không** (tránh lệnh cũ chạy lại khi reconnect) | `expires_at − now` | Envelope lệnh có chữ ký (§8) |
+| `ems/v1/{edge_id}/up/cmd-ack` | edge → cloud | 1 | Không | — | Chuyển trạng thái lệnh, ký bằng khóa edge; echo Correlation Data = `command_id` |
+| `ems/v1/{edge_id}/down/cmd` | cloud → edge | 1 | **Không** (tránh lệnh cũ chạy lại khi reconnect) | `expires_at − sent_at` (làm tròn xuống, giây) | Envelope lệnh có chữ ký (§8); Correlation Data = `command_id`; Response Topic cố định `ems/v1/{edge_id}/up/cmd-ack` (§8.2a) |
 | `ems/v1/{edge_id}/down/config` | cloud → edge | 1 | Có (bản desired mới nhất) | — | Config ký số; yêu cầu gửi lại (`RESEND_REQUEST`); ack lô telemetry |
 
 Ack lô telemetry: cloud gửi `{"type":"TELEMETRY_ACK","stream":"c2","ack_seq":184467}` trên `down/config` (không retained) hoặc gộp trong session; edge xóa mọi `seq ≤ ack_seq` của stream đó. [PROPOSAL] — người viết 06 có thể chọn kênh ack riêng `down/ack` nếu muốn tách; khi đó phải sửa R-12 qua ADR.
 
-MQTT 5 user properties bắt buộc: `schema` (ví dụ `ems.telemetry.v1`), `content-type` (`application/x-protobuf+zstd` hoặc `application/json` khi debug), `edge_seq`.
+**Thuộc tính MQTT 5** (sửa vòng nhất quán theo [15 §6](15-simulators-and-messaging.md#6-topic-qos-payload-và-ví-dụ-json), X-E2-03) [PROPOSAL]:
+
+- Hợp đồng dùng **MQTT 5**, không dùng 3.1.1 (cần Message Expiry, Correlation Data, Response Topic, Content Type, Reason Codes).
+- Loại payload dùng **thuộc tính chuẩn Content Type** của MQTT 5: `application/x-protobuf+zstd` (trên dây) hoặc `application/json` (debug/test hợp đồng); kèm **Payload Format Indicator** = 0 (nhị phân) hoặc 1 (UTF-8). **Không** dùng User Property `content-type` (bản trước), vì trùng nghĩa với thuộc tính chuẩn.
+- User Property chỉ còn: `schema` (ví dụ `ems.telemetry.v1`, `ems.command.v1`, `ems.cmd-ack.v1`) và `edge_seq`.
+- Lô telemetry ≤ `max_batch_bytes` (đề xuất 256 KB sau nén; cấu hình edge). Lý do: broker từ chối gói lớn hơn giới hạn packet — Mosquitto 2.1 mặc định 2 MB [FACT, High, qua kết quả tìm kiếm] — https://mosquitto.org/blog/2026/01/version-2-1-0-released/ ; edge tự chia lô (15 T-E2-03).
+- Hợp đồng không phụ thuộc broker: không dùng tính năng riêng của broker cho logic nghiệp vụ ([06 ADR-04](06-system-architecture.html#adr-04)).
 
 ### 7.2 Mã điểm, đơn vị, dấu
 
@@ -1069,6 +1076,21 @@ Envelope = trường của ghi chú E §3.19 + trường của I (X-I-02), theo 
 | `dry_run` | Không | Chỉ kiểm tra, không ghi; trả `ACCEPTED` hoặc `REJECTED_*` rồi `COMPLETED` |
 | `kid`, `signature` | Có | JWS (ES256 hoặc EdDSA) của Command Signer trên envelope chuẩn hóa. Phương pháp chuẩn hóa JSON đề xuất JCS (RFC 8785) [PROPOSAL; người viết 10 chốt] |
 
+### 8.2a Truyền lệnh trên MQTT 5 [PROPOSAL]
+
+Bổ sung vòng nhất quán theo [15 §5.3, §6.3](15-simulators-and-messaging.md#53-theo-loại-tin) (X-E2-04).
+
+| Thuộc tính | Giá trị | Ghi chú |
+|---|---|---|
+| QoS / Retained | QoS 1, **không retained** | Lệnh cũ không được giao lại khi edge kết nối lại |
+| Message Expiry Interval | `expires_at − sent_at` (giây, làm tròn xuống) | Broker loại tin quá hạn với edge offline; lớp bảo vệ **thứ nhất** — edge vẫn tự kiểm `expires_at`, `max_latency_ms`, `seq`, chữ ký (§8.7) vì broker có thể bị chiếm (K R-11) |
+| Correlation Data | `command_id` (UUID v7, dạng byte của chuỗi) | Mọi tin ack của lệnh echo cùng Correlation Data; cloud ghép ack theo đó, đồng thời đối chiếu `command_id` trong payload đã ký |
+| Response Topic | Cố định `ems/v1/{edge_id}/up/cmd-ack` | Edge **bỏ qua** Response Topic khác (vẫn ack đúng topic cố định) và phát cảnh báo bảo mật — chống lạm dụng ACL (15 T-E2-02) |
+| Content Type | `application/x-protobuf+zstd` hoặc `application/json` | Như §7.1 |
+| User Property | `schema = ems.command.v1` | — |
+
+Phiên MQTT: edge dùng Session Expiry hữu hạn (1–24 h) để lệnh **còn hạn** vẫn tới sau rớt mạng ngắn; keepalive 30–60 s (đo ở pilot, 13 Q-45); Will = `up/state` offline, retained, Will Delay vài giây. State machine và idempotency vẫn ở tầng ứng dụng (§8.4).
+
 ### 8.3 Ví dụ JSON
 
 **Setpoint BESS thủ công**
@@ -1256,15 +1278,40 @@ Các mẫu watchdog theo hãng là [UNKNOWN] tới khi kiểm chứng (I §3.8 g
 
 Vector kiểm thử vàng cho phần A và B nằm ở §11.3 (T-NFR-SEC-004b…004e, T-FR-INT-018c/d).
 
-### 8.8 Lệnh ghi qua cloud hãng (P2)
+### 8.8 Lệnh ghi qua cloud hãng (P2) — theo CF-39
 
-Với API hãng dạng async (Huawei OAuth Connect), connector ở cloud control plane tuần tự hóa theo nhà máy và ánh xạ trạng thái task → `DISPATCHED`/`APPLIED`/`FAILED_*`. Không có edge arbiter trên đường này, nên chỉ cho phép: lịch chậm (theo giờ), hạng ≥ C2, site không có edge điều khiển cùng chức năng (tránh hai chủ vòng). Mặc định tắt (FR-INT-028).
+Với API hãng dạng async (Huawei OAuth Connect), connector tuần tự hóa theo nhà máy và ánh xạ trạng thái task → `DISPATCHED`/`APPLIED`/`FAILED_*`. Đường này không có edge arbiter ở giữa thiết bị và cloud hãng, nên theo phán quyết **CF-39** ([13 §4.2](13-open-questions-and-risks.md#42-xung-đột-mới-do-131112-phát-hiện)) và FR-INT-028 bản sửa ([04](04-business-requirements.md)) chỉ được bật khi đủ **mọi** điều kiện [PROPOSAL]:
+
+1. Lệnh đi qua PDP, hạng ≥ C2, Fleet Governor và envelope ký như lệnh edge; ở site có edge, **edge là client gọi API cloud hãng** và arbiter của edge vẫn giữ trần nhập/giới hạn xuất bằng tài nguyên khác.
+2. Có hạn: thời hạn phía hãng ≤ `expires_at` của envelope; API hãng không hỗ trợ hạn/thời lượng → **cấm ghi**.
+3. Readback qua API đọc của hãng (hoặc Modbus cục bộ nếu có edge); chỉ báo `APPLIED` khi khớp, không khớp trong timeout → `FAILED_NO_EFFECT`.
+4. Hành vi mặc định khi mất liên lạc (chế độ native của hãng) được kiểm và ghi biên bản khi commissioning.
+5. Chỉ lịch chậm (theo giờ); không dùng cho vòng nhanh hay mức 1–6 của arbiter; site không có edge điều khiển cùng chức năng.
+6. Cờ riêng theo site, mặc định tắt; site chỉ giám sát (không edge) **không** được bật cho tới khi Evidence Judge chấp nhận ngoại lệ có lý do.
+
+Không thỏa → tích hợp chỉ đọc (NFR-SEC-018).
 
 ### 8.9 Lệnh điều độ (IEC 104, P1)
 
 Edge nhận lệnh từ master 104 → tạo envelope nội bộ `source = GRID_OPERATOR` (không ký JWS cloud; xác thực theo conduit 104 và cấu hình đã ký), arbiter mức 4 → ghi xuống native/thiết bị → readback → mới trả ACT_CON/ACT_TERM. Lệnh và kết quả gửi lên cloud qua `up/event` để audit thống nhất (F-GRID-12). Lệnh điều độ được giữ khi mất cloud.
 
 ---
+
+### 8.10 Lệnh EV qua API của CPO/CSMS bên ngoài (P1, FR-EV-004) [PROPOSAL]
+
+Bổ sung vòng nhất quán (CF-39, X-04 §8). Áp cho site đã có CSMS của nhà vận hành trạm sạc (CPO); không chạy CSMS thứ hai trên cùng trụ (§5.9).
+
+| Khía cạnh | Quy tắc |
+|---|---|
+| Tách đọc / ghi | **Đọc** (phiên, trạng thái connector, MeterValues) qua connector API CPO ở monitoring plane, credential chỉ đọc nếu CPO hỗ trợ, quality `UNCERTAIN_VENDOR_CLOUD` khi dữ liệu trễ. **Ghi** (giới hạn công suất) là đường riêng ở control plane, credential riêng, cờ `cpo_write_enabled` theo site **mặc định tắt** (API-EV-03, bật = C3) |
+| Ai gọi API ghi | **Edge của site** là client của API CPO; cloud chỉ gửi ý định `SET_EV_LIMIT` (§8.1) trong envelope ký qua PDP và Fleet Governor. **Không có đường cloud → cloud** ghi tới CPO |
+| Hạng lệnh | `SET_EV_LIMIT` = C1 · Gate M2 ([10 §5.4](10-security-and-reliability.md)); bật cờ ghi CPO = C3 |
+| Xác thực | Credential CPO (OAuth2 client credentials hoặc API key theo CPO) lưu trong vault của edge/cloud theo 10 §8, mã hóa theo tenant, không đọc lại qua API; TLS bắt buộc; thu hồi khi gỡ tích hợp |
+| Giới hạn | TTL gửi sang CPO ≤ `expires_at` của envelope (mặc định 15 phút, tối đa 1 h); API CPO phải hỗ trợ trường hạn/thời lượng (tương đương `validTo`), nếu không → chỉ đọc. Giá trị ≥ `I_min` hoặc 0; ≤ 1 lần cập nhật/30 s mỗi trụ và theo hạn mức gọi của CPO; không dùng cho vòng nhanh (trần nhập do BESS/PV gánh theo arbiter) |
+| Readback | Edge đọc lại profile/giới hạn hiệu lực hoặc công suất phiên từ API CPO; chỉ `APPLIED` khi khớp (dung sai như §8.5 dòng `SET_EV_LIMIT`), không khớp → `FAILED_NO_EFFECT` |
+| Fallback | Mất cloud, mất edge↔CPO hoặc API CPO lỗi: edge **không gửi lại** giới hạn cũ; giới hạn đã gửi hết hạn phía CPO → profile mặc định an toàn do CPO cấu hình (tương đương TxDefaultProfile), giá trị này ghi nhận ở commissioning; edge giữ trần nhập bằng tài nguyên khác; cảnh báo Cao `EV_CPO_LINK_LOST` ([04 FR-EV-004](04-business-requirements.md)) |
+| Audit | Mọi bước (ý định, lời gọi CPO, readback, hết hạn) vào audit (FR-SEC-014) và `up/event` |
+| Điều kiện bật | ADR riêng + driver CPO `VERIFIED_*` + test T-FR-EV-004 trên mock CPO và một CPO thật ở lab/pilot |
 
 ## 9. Onboarding và commissioning thiết bị
 
@@ -1492,13 +1539,22 @@ Theo FR-INT-006 (thứ tự có thể đổi sau đánh giá thị phần):
 
 | Bộ mô phỏng | Cách xây [PROPOSAL] | Ghi chú bằng chứng |
 |---|---|---|
-| Modbus server thiết bị | Dựng trên thư viện Modbus mã nguồn mở (ví dụ pymodbus cho Python, hoặc thư viện Java như j2mod/digitalpetri — hai thư viện Java được nghiên cứu FusionSolar trước nhắc tới); nạp **cùng register map YAML** của driver để sinh thanh ghi; mô hình vật lý đơn giản (PV theo profile bức xạ, BESS tích phân SOC, công tơ cân bằng) | Tên thư viện là kiến thức nền; khả năng cụ thể [UNKNOWN] tới khi đánh giá; chọn theo giấy phép |
+| Modbus server thiết bị | Dựng trên thư viện Modbus mã nguồn mở (ví dụ pymodbus cho Python, hoặc thư viện Java như j2mod/digitalpetri — hai thư viện Java được nghiên cứu FusionSolar trước nhắc tới); nạp **cùng register map YAML** của driver để sinh thanh ghi; mô hình vật lý đơn giản (PV theo profile bức xạ, BESS tích phân SOC, công tơ cân bằng) | Đề xuất: pymodbus (BSD-3, dùng server API, khóa phiên bản) hoặc phương án Java digitalpetri/j2mod; nguồn và giấy phép ở [15 §2.2](15-simulators-and-messaging.md#22-so-sánh-công-cụ-rút-gọn) [FACT qua kết quả tìm kiếm] |
 | SunSpec chain | Sinh chuỗi "SunS" + model 1/103/701/704/713/802 từ định nghĩa model của SunSpec (SMDX/JSON công bố trên GitHub SunSpec — Q-E-07) | Không thay thế test thiết bị thật vì có lỗi tương tác ở thiết bị đã chứng nhận (§5.2) |
 | Công tơ có dấu cấu hình được | Tham số `sign_convention`, `register_wrap`, `ct_ratio`, lỗi lắp ngược CT | Phục vụ test phép thử dấu |
 | PCS/BMS | CCL/DCL thay đổi theo SOC/nhiệt độ; chế độ có/không watchdog; chế độ "ghi chấp nhận nhưng không tác dụng" | Phục vụ `APPLIED_CLAMPED`, `FAILED_NO_EFFECT`, `requires_native_fallback` |
-| Charger OCPP 1.6J | Charge point mô phỏng (thư viện OCPP mã nguồn mở, cần đánh giá) có profile quirk (ví dụ hành vi Easee) và chế độ mất kết nối | Thư viện cụ thể [UNKNOWN] |
-| Master IEC 104 (P1) | Master mô phỏng gửi interrogation, setpoint, clock sync | Chỉ khi làm F-INT-16 |
+| Charger OCPP 1.6J | Charge point mô phỏng (thư viện OCPP mã nguồn mở, cần đánh giá) có profile quirk (ví dụ hành vi Easee) và chế độ mất kết nối | SAP e-mobility-charging-stations-simulator (Apache-2.0, scale) và thư viện `ocpp` (MIT) cho quirk; hỗ trợ 2.0.1 của SAP chưa xác minh (15 §2.2) |
+| Master IEC 104 (P1) | Master mô phỏng gửi interrogation, setpoint, clock sync | Chỉ khi làm F-INT-16; c104/j60870 là GPLv3 → **chỉ trong công cụ test**, không vào image edge (13 R-50) |
 | Edge ảo hàng loạt | N edge gửi telemetry theo hợp đồng §7 với `seq`, mất kết nối, backfill | L7 |
+
+### 11.2a Virtual site và môi trường mô phỏng (theo 15)
+
+Thiết kế chi tiết ở [15 §2–§4](15-simulators-and-messaging.md#2-bộ-simulator-theo-môi-trường) [PROPOSAL]:
+
+- **Virtual site**: container sinh thanh ghi từ **cùng register map YAML** của driver; mô hình PV (pvlib/PVGIS), tải, BESS (SOC có hiệu suất, CCL/DCL, watchdog), công tơ POC cân bằng `P_grid = P_load − P_pv − P_bess`; REST tiêm lỗi (ma trận 15 §3.4); Toxiproxy cho lỗi mạng TCP. Lệnh của edge làm đổi hành vi; có chế độ "ghi chấp nhận nhưng không tác dụng" và "map lệch cố ý".
+- **Bốn môi trường**: (a) laptop dev (`docker compose`, Mosquitto 2.x); (b) CI (Testcontainers, kịch bản tất định, đêm chạy ma trận lỗi, tuần chạy edge ảo 1.000–10.000 kết nối); (c) HIL lab (thiết bị thật §11.4 + virtual site cho phần thiếu); (d) tenant demo "Mô phỏng" không có route tới edge thật (13 R-52).
+- **Ánh xạ tầng**: L2 kiểm thuộc tính MQTT 5 (Content Type, Correlation Data, Message Expiry); L3/L4 dùng virtual site; L5 HIL dùng thiết bị thật, virtual site chỉ bổ sung; L7 dùng edge ảo (15 §4.1). Ca bổ sung T-E2-01…06 (15 §4.2).
+- **Giới hạn bắt buộc**: virtual site sinh từ cùng map nên lỗi map có thể "xanh giả" (13 R-48). **Kết quả mô phỏng không bao giờ nâng driver lên `VERIFIED_LAB`/`VERIFIED_FIELD`**; cần vector vàng từ thiết bị thật, HIL và pilot (D-07-13, 15 §4.3). Mô phỏng không chứng minh thời gian đáp ứng thật, quirk firmware, bảo vệ BMS/PCS, 4G thật.
 
 ### 11.3 Danh mục ca kiểm thử chính
 
@@ -1637,6 +1693,9 @@ Mã `Q-E-xx` là mã tạm; người viết [13](13-open-questions-and-risks.md)
 | IEC 104 | P0 cho V1 C&I trung áp | P1 có điều kiện | K R-10 |
 | Buffer | ≥ 7 ngày | Cứng 7 ngày, mục tiêu 30 ngày, 1 s vòng 7 ngày | K R-13 |
 | OpenEMS | "EPL-2.0" | Giấy phép UNKNOWN, chặn ADR | K R-21 |
+| Thuộc tính MQTT 5 (vòng nhất quán) | User Property `content-type` | Thuộc tính chuẩn Content Type + Payload Format Indicator; Correlation Data = `command_id`; Response Topic cố định; `max_batch_bytes` | 15 §6, X-E2-03/04/06 |
+| Ghi qua cloud hãng / API CPO (vòng nhất quán) | §8.8 chỉ nêu lịch chậm, C2; EV qua CPO chưa có đường ghi | §8.8 theo CF-39; §8.10 đường EV qua API CPO do edge gọi | CF-39, FR-EV-004, FR-INT-028 bản sửa |
+| Bộ mô phỏng (vòng nhất quán) | Thư viện [UNKNOWN] | Virtual site và công cụ cụ thể theo 15 (§11.2a) | 15 §2–§4 |
 | Huawei cổng/unit ID | Báo cáo FS: 6607 là cổng chính, unit 1 | Thử cả 6607/502 và unit 0/1 khi khám phá; nguồn cộng đồng, FACT Med | Ghi chú FS `source_code_clients.md` đính chính mặc định hiện tại của huawei_solar là 502/unit 0 |
 | Huawei 47086 | Báo cáo FS liệt kê cùng 32080/37113/37760 | FACT Low, cấm cho driver `VERIFIED_*` | Cách dùng điều khiển chỉ có từ cộng đồng (EL-063) |
 | QĐ 1570 "≥ 64 kbps, ≤ 125 ms" | Nêu như tham số mạng | Chỉ là tóm tắt vendor, không dùng làm NFR | K §4 |

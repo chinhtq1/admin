@@ -282,7 +282,7 @@ td.res.no { color: var(--bad); }
 <tr><td>Arbiter (cố định mức 1–6)</td><td>1 bảo vệ native · 2 interlock tại chỗ · 3 giám sát an toàn edge · 4 tuân thủ lưới · 5 trần nhập vật lý · 6 dự phòng backup · 7 lệnh tay · 8 DR/VPP · 9 peak shaving demand · 10 cam kết EV · 11 lịch kinh tế · 12 chiến lược mặc định</td><td>Quyết định K</td><td>05 §11.1; 08; 10</td></tr>
 <tr><td>Hạng lệnh</td><td>C0–C4. C3 cần hai người duyệt (cấu hình lưới, <code>control_owner</code>, OTA, gỡ kill switch, bật <code>control_enabled</code>). C4 bị cấm. Org Admin mặc định không có quyền lệnh</td><td>Quyết định K</td><td>04 §2; 10 §5</td></tr>
 <tr><td>Hợp đồng dữ liệu</td><td>Raw: W, Wh, var, VA (bộ đếm Wh int64); API: kW/kWh; tên trường có hậu tố đơn vị. Lưu UTC, mỗi site có múi giờ IANA. <code>ts</code>/<code>ts_src</code>/<code>ts_ingest</code>; bucket nửa mở theo <code>bucket_start</code>. Quality ba tầng; không hiện 0 thay cho thiếu dữ liệu</td><td>Quyết định K</td><td>05 §17; 07 §7</td></tr>
-<tr><td>Messaging</td><td>MQTT 5 + mTLS, outbound-only, lô nén nhị phân, <code>seq</code> + ack, ingest idempotent. Broker production chọn sau PoC-02 và rà soát giấy phép (EMQX ≥ 5.9 là BSL 1.1). Pilot dùng Mosquitto 2.1 có tiêu chí thoát</td><td><span class="tag proposal">PROPOSAL</span></td><td>06 ADR-04; <a href="15-simulators-and-messaging.md">15 §7</a></td></tr>
+<tr><td>Messaging</td><td>MQTT 5 + mTLS, outbound-only, lô nén nhị phân, <code>seq</code> + ack, ingest idempotent. Hợp đồng không phụ thuộc broker. Broker production chọn sau PoC-02 và rà soát giấy phép: ứng viên mở Apache BifroMQ, RabbitMQ 4.x (fork EMQX LibreMQ/OpenQTT chỉ khi chứng minh được duy trì), baseline trả phí EMQX/HiveMQ Enterprise (EMQX ≥ 5.9 là BSL 1.1, cluster cần license; HiveMQ CE không cluster; VerneMQ loại). Dev/CI Mosquitto 2.x; pilot Mosquitto 2.1 một node có tiêu chí thoát (không cluster/HA). Không Kafka ở MVP; SSE cho frontend. Dự trù license broker (R-49)</td><td><span class="tag proposal">PROPOSAL</span></td><td>06 ADR-04; <a href="15-simulators-and-messaging.md">15 §7</a></td></tr>
 <tr><td>Lưu trữ và retention</td><td>TimescaleDB + Parquet, có điều kiện. Raw 13 tháng; 5 phút 5 năm; giờ trở lên suốt đời dự án. Audit lệnh online ≥ 13 tháng, WORM ≥ 5 năm</td><td>Quyết định K, chặn bởi Q-14</td><td>06 ADR-06; 05</td></tr>
 <tr><td>Tenant</td><td>Shared schema + RLS FORCE + lớp lọc ứng dụng + test cross-tenant chặn build</td><td>Quyết định K</td><td>06 ADR-08</td></tr>
 <tr><td>Tối ưu</td><td>Tầng 1 (luật edge) và tầng 2 (lịch luật TOU, Java) ở MVP. Tầng 3 MILP/MPC 48 h, slot 15 phút là P1 và chỉ bật khi backtest thắng luật. Tầng 4 VPP/DR là P2</td><td>Quyết định K</td><td>08; 06 ADR-11</td></tr>
@@ -392,7 +392,7 @@ td.res.no { color: var(--bad); }
 <tr><td>QG-11</td><td>Arbiter 12 mức cùng một thứ tự ở mọi tài liệu</td><td class="res ok">Đạt</td><td>Đối chiếu 04, 05 §11.1, 07, 08, 10: mức 8 DR/VPP, 9 peak shaving demand; mức 1–6 không cấu hình được</td><td>—</td></tr>
 <tr><td>QG-12</td><td>MVP hai cổng; PV-only hạng nhất; điều khiển tắt mặc định</td><td class="res ok">Đạt</td><td>11 §6–§7; 04 FR-SEC-005; 03 hành trình §8</td><td>—</td></tr>
 <tr><td>QG-13</td><td>Lệnh ký, có hạn, readback; kill switch nhất quán</td><td class="res ok">Đạt</td><td>04 §1.3 #3 + AC-SEC-08 (đã thêm ca reconnect); 07 §8.7 (đường safe-ify); 10 §14.4; 06 ADR-14; 03 F-SEC-11 (đã đổi sang <code>REMOTE_CONTROL_SUSPEND</code>, Gate M1)</td><td>—</td></tr>
-<tr><td>QG-14</td><td>Số đếm và truy vết F → FR → UI → API → T khớp nhau</td><td class="res part">Đạt một phần</td><td>03: 270/140; 04: 268 FR/148 P0; 11: 139 FR Phase 1 (đã cập nhật); 12: 268 FR, có cột lộ trình</td><td>04 §7.1 cột "Số F- trong 03" vẫn là 258 (trước khi bổ sung _catalog-gaps); 12 §4.1 còn đếm 70 NFR (04 có 85); GAP-12-06 (endpoint P1/P2) và GAP-12-19 còn mở</td></tr>
+<tr><td>QG-14</td><td>Số đếm và truy vết F → FR → UI → API → T khớp nhau</td><td class="res part">Đạt một phần</td><td>03: 270/140; 04: 268 FR/148 P0; 11: 139 FR Phase 1 (đã cập nhật); 12: 268 FR, có cột lộ trình</td><td><b>Đã sửa vòng nhất quán:</b> 04 §7.1 nay 270 F-; 12 §4.1 đủ 85 NFR; 13 endpoint mới cho thực thể P1/EV (06: 111 API). Còn: 6 F- mới chưa có FR riêng (04 §7.1); GAP-12-06 còn 30 FR thiếu endpoint (chủ yếu P1/P2 ADV, GRID); GAP-12-19</td></tr>
 <tr><td>QG-15</td><td>Không quảng cáo % tiết kiệm; không tuyên bố tuân thủ khi chưa có chứng chỉ</td><td class="res ok">Đạt</td><td>Grep "tiết kiệm N%": 0 kết quả; tiêu chuẩn ghi edition <code>UNKNOWN</code></td><td>—</td></tr>
 <tr><td>QG-16</td><td>Không có câu "tương thích mọi inverter/BESS"; không dùng thanh ghi diễn đàn cho driver verified</td><td class="res ok">Đạt</td><td>Grep: chỉ xuất hiện trong câu cấm (02, 03, 04, 05, 07, 09); 07 tách Huawei 47086 thành [FACT, Low] bị cấm cho VERIFIED</td><td>—</td></tr>
 <tr><td>QG-17</td><td>Số liệu Huawei ≤ 2 s/≤ 5 s ghi là tự công bố, kèm "SmartLogger5000B/SmartMGC5000B"</td><td class="res ok">Đạt</td><td>04 §5, 07 §2 (EL-025)</td><td>Model của PDF hash vẫn chưa chắc (K R-19)</td></tr>
@@ -400,12 +400,12 @@ td.res.no { color: var(--bad); }
 <tr><td>QG-19</td><td>Kiểm chứng với khách hàng thật</td><td class="res no">Chưa đạt</td><td>0 phỏng vấn, 0 hóa đơn EVN thật (01 RQ-14)</td><td>F0-2 ở Phase 0; cổng G0</td></tr>
 <tr><td>QG-20</td><td>Rủi ro và câu hỏi có owner, phase và cổng</td><td class="res ok">Đạt</td><td>13 §6, §8: mỗi R có owner/phase; bảng cổng G0–G4</td><td>—</td></tr>
 <tr><td>QG-21</td><td>Nhãn mức cảnh báo Khẩn cấp/Cao/Trung bình/Thông tin; enum <code>CRITICAL</code> duy nhất</td><td class="res ok">Đạt</td><td>09 (19 lần), 05 <code>AlarmDefinition.default_severity</code>; "Nghiêm trọng" chỉ trong bảng so sánh với FS</td><td>—</td></tr>
-<tr><td>QG-22</td><td>Mục "gửi agent khác" trong log sửa đã được xử lý</td><td class="res part">Đạt phần lớn</td><td>§10 liệt kê 20 sửa chéo đã làm ở vòng hợp nhất</td><td>Còn: endpoint cho thực thể P1 mới (X-05-09); FR cho ForensicBundle/Incident (X-05-11); FR-INT-028 theo CF-39 (04); 07 §3/§8 và 10 §5.4 cho đường EV qua API CPO; tên lệnh C0 "pin 1 s" (X-05-10)</td></tr>
+<tr><td>QG-22</td><td>Mục "gửi agent khác" trong log sửa đã được xử lý</td><td class="res part">Đạt phần lớn</td><td>§10 liệt kê 20 sửa chéo đã làm ở vòng hợp nhất</td><td><b>Đã xử lý ở vòng nhất quán:</b> endpoint cho thực thể P1 mới (X-05-09 → API-ALM-11…13, API-ORG-13…15, API-INT-11, API-OPT-10, API-AUD-05, API-EV-01…04); FR-INT-028 theo CF-39; đường EV qua API CPO ở 07 §8.10 và 10 §5.4/§9.6/§13.2. Còn: FR cho ForensicBundle/Incident (X-05-11); tên lệnh C0 "pin 1 s" (X-05-10)</td></tr>
 </tbody></table></div>
 <p><b>Ký duyệt của Evidence Judge (K).</b> Bộ tài liệu đủ để dùng nội bộ làm cơ sở cho Phase 0. Nó <b>chưa đủ</b> để phát hành ra ngoài hay làm căn cứ tuân thủ pháp lý, vì QG-18, QG-19 và V-14 còn mở. Không phát hiện claim nào bị bác ở vòng 1 còn được dùng như FACT trong 00.</p>
 
 <!-- ============================================================ -->
-<h2 id="s10">10. Sửa chéo ở vòng hợp nhất</h2>
+<h2 id="s10">10. Sửa chéo ở vòng hợp nhất và vòng nhất quán</h2>
 <p>Agent J + K là người ghi duy nhất ở vòng này và đã áp các mục nhỏ, an toàn trong log sửa:</p>
 <div class="table-wrap"><table>
 <thead><tr><th>File</th><th>Sửa</th><th>Nguồn yêu cầu</th></tr></thead>
@@ -421,6 +421,15 @@ td.res.no { color: var(--bad); }
 <tr><td>12</td><td>Đóng GAP-12-04, 08, 09, 10, 11, 13, 17; đóng một phần GAP-12-15; thêm T-FR-BESS-003-01…03</td><td>Log 06, 05, 08, 09</td></tr>
 <tr><td>13</td><td>Thêm R-53 (V-14, chưa spot-check URL) và R-54 (lịch native lặp vô hạn ở M1, từ R-08-10) vào sổ và bảng cổng; 148 FR P0</td><td>Log 14, 08</td></tr>
 <tr><td>01</td><td>§6.2 ghi vòng rà soát cuối cũng không có WebSearch, liên kết V-14 và R-53</td><td>Log 14</td></tr>
+<tr><td colspan="3"><b>Vòng nhất quán 2026-10-10 (tích hợp <a href="15-simulators-and-messaging.md">15</a> và sửa tồn đọng)</b> — các mục dưới đây đã <b>giải quyết</b></td></tr>
+<tr><td>06</td><td>ADR-04 viết lại: EMQX ≥ 5.9 BSL (cluster cần license), HiveMQ CE không cluster, VerneMQ loại; PoC-02 shortlist BifroMQ / RabbitMQ 4.x / LibreMQ-OpenQTT (nếu được duy trì) / EMQX-HiveMQ Enterprise; Mosquitto dev/CI và pilot một node (trade-off không HA); chi phí license vào hệ quả. ADR-05 hợp nhất ngưỡng Kafka (CF-41). ADR-06 thêm nguồn TSL mâu thuẫn và dự phòng <code>pg_partman</code>. ADR-07 ghi OpenEMS EPL-2.0. 13 endpoint mới (X-05-09, nhóm API-EV)</td><td>15 §7, §8; X-E2-01/02; điều phối viên</td></tr>
+<tr><td>07</td><td>§7.1 Content Type chuẩn MQTT 5 thay User Property; §8.2a lệnh không retained, Message Expiry, Correlation Data = <code>command_id</code>; §8.8 theo CF-39; §8.10 đường EV qua API CPO; §11.2a virtual site</td><td>X-E2-03…06; CF-39</td></tr>
+<tr><td>04</td><td>FR-INT-028 viết lại theo 6 điều kiện CF-39; §7.1 đếm 270 F-</td><td>CF-39; QG-14</td></tr>
+<tr><td>10</td><td>§5.4, §8.2, §9.6, §13.2: đường ghi EV qua API CPO (edge là client, PDP + Governor, credential đọc/ghi tách, fallback)</td><td>04 §8</td></tr>
+<tr><td>12</td><td>§4.1 đủ 85 NFR; §6.6 API mới; cột test dẫn virtual site; GAP-12-01, GAP-12-02 đóng</td><td>QG-14</td></tr>
+<tr><td>13</td><td>CF-41, CF-42; D-22…D-24; R-55…R-58; Q-60…Q-62; mở rộng Q-14, Q-16</td><td>15 §10; điều phối viên</td></tr>
+<tr><td>14</td><td>S-404…S-548 (145 nguồn của 15, E2 và broker mở/TSL); V-15</td><td>X-E2-11</td></tr>
+<tr><td>05, 11, nav</td><td>05 dẫn API mới; 11 F0-1/F0-4/F0-9, G0, HIL Phase 2 theo 15 và ADR-04; mọi nav (trừ 09) có "15 Mô phỏng"</td><td>X-E2-08, X-E2-12</td></tr>
 </tbody></table></div>
 
 <!-- ============================================================ -->
