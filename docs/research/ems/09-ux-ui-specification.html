@@ -32,6 +32,9 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 .wf .big { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .wf .num { font-variant-numeric: tabular-nums; text-align: right; }
 .uxp td:first-child { white-space: nowrap; font-weight: 600; }
+.wf-link { font-size: 13px; margin: 2px 0 8px; }
+img.wfthumb { display: block; width: 200px; max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); }
+img.wfthumb.m { width: 78px; }
 </style>
 </head>
 <body>
@@ -52,12 +55,13 @@ table.spec td ul { margin: 0; padding-left: 18px; }
   <a href="12-traceability-matrix.md">12 Truy vết</a>
   <a href="13-open-questions-and-risks.md">13 Rủi ro</a>
   <a href="14-source-register.md">14 Nguồn</a>
+  <a href="15-simulators-and-messaging.md">15 Mô phỏng</a>
 </div></nav>
 <main>
 <header class="doc-header">
   <div class="kicker">Tài liệu 09 · UX/UI</div>
   <h1>Đặc tả UX/UI cho EMS C&amp;I đa site, đa hãng</h1>
-  <div class="meta">Phiên bản 1.0 · Ngày 2026-10-10 · Tác giả: Agent H (UX/UI Researcher) · Trạng thái: bản thảo cho rà soát nội bộ, chưa kiểm thử với người dùng thật · Mã trang <code>UI-NN</code> do tài liệu này cấp (K §6 #38)</div>
+  <div class="meta">Phiên bản 1.0 · Ngày 2026-10-10 · Tác giả: Agent H (UX/UI Researcher) · Trạng thái: bản thảo cho rà soát nội bộ, chưa kiểm thử với người dùng thật · Mã trang <code>UI-NN</code> do tài liệu này cấp (K §6 #38) · Bổ sung 2026-10-10: <a href="#s16">wireframe chi tiết 24 màn và ảnh chụp</a></div>
 </header>
 
 <div class="layout-toc">
@@ -89,6 +93,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
   <li><a href="#s13">Ma trận truy vết</a></li>
   <li><a href="#s14">Câu hỏi mở, rủi ro, vấn đề gửi agent khác</a></li>
   <li><a href="#s15">Nguồn</a></li>
+  <li><a href="#s16">Wireframe chi tiết và ảnh chụp</a></li>
 </ol>
 </nav>
 <article>
@@ -101,6 +106,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
   <li><b>Phân cấp màn hình L1–L4</b> (danh mục → site → tài sản → chẩn đoán), nền trung tính, màu bão hòa chỉ cho bất thường, mọi trạng thái mã hóa bằng ít nhất hai kênh. Thiết kế <b>theo tinh thần</b> ISA-101 và ISA-18.2; <b>không tuyên bố tuân thủ</b> vì chưa đối chiếu văn bản tiêu chuẩn (K §6 #34). <span class="tag inference">INFERENCE</span></li>
   <li><b>Không bao giờ hiện 0 thay cho "không biết"</b>; số không dấu kèm chữ hướng (Nhập/Xuất/Sạc/Xả/Chờ); trạng thái sạc/xả lấy từ PCS/BMS; độ tươi <code>freshness ∈ {LIVE, DELAYED, OLD, OFFLINE, NO_DATA}</code> tách khỏi cờ chất lượng <code>FROZEN</code> và <code>UNCERTAIN_STALE</code> (K §6 #4, #9). <span class="tag proposal">PROPOSAL</span></li>
   <li><b>Lệnh theo hạng C0–C4</b> (K §6 #28): C1 hộp xác nhận hai bước; C2 thêm step-up MFA và lý do; C3 gửi yêu cầu sang hàng đợi duyệt hai người (UI-22); C4 không có nút, không có API. Không có nút "E-stop từ xa". Không cập nhật lạc quan: chỉ hiện "Đã áp dụng" sau readback (UI-21, UI-23). <span class="tag proposal">PROPOSAL</span></li>
+  <li><b>Wireframe chi tiết</b> (mid-fi, HTML tĩnh) cho 24 trang ưu tiên, có khung app, dữ liệu mẫu nhất quán, trạng thái không bình thường và ảnh chụp desktop/mobile: xem <a href="#s16">§16</a>, <a href="wireframes/index.html">thư viện wireframe</a> và <a href="wireframes/Wireframe-EMS.pdf">bản PDF</a>. <span class="tag proposal">PROPOSAL</span></li>
   <li><b>Giới hạn bằng chứng:</b> bằng chứng giao diện thật duy nhất là 9 ảnh chụp demo FusionSolar của nghiên cứu trước. Không có ảnh giao diện của đối thủ nào khác; mọi bố cục là đề xuất chưa kiểm thử với người dùng. Cần phỏng vấn 5–8 đơn vị O&amp;M và kiểm thử khả dụng trước khi chốt (§14). <span class="tag unknown">UNKNOWN</span></li>
 </ul>
 <div class="callout warn"><b>Quy tắc đọc.</b> Mọi nội dung đặc tả trang, component, token và quy tắc trong tài liệu là <span class="tag proposal">PROPOSAL</span> cho sản phẩm của ta, trừ khi gắn nhãn khác. Nhãn <span class="tag fact">FACT</span> chỉ dùng cho quan sát có nguồn (ảnh thật, tài liệu hãng qua kết quả tìm kiếm). Dữ liệu trong wireframe là <span class="sample" style="color:var(--warn);font-size:12px">Dữ liệu mẫu</span>, không phải số đo thật.</div>
@@ -326,39 +332,39 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <div class="table-wrap"><table>
 <thead><tr><th>Mã</th><th>Trang</th><th>Mức</th><th>Module</th><th>Ưu tiên</th><th>Persona chính</th><th>Wireframe</th></tr></thead>
 <tbody>
-<tr><td><a href="#ui-01">UI-01</a></td><td>Tổng quan danh mục</td><td>L1</td><td>M-DASH</td><td><span class="prio p0">P0</span></td><td>P3</td><td>✓</td></tr>
+<tr><td><a href="#ui-01">UI-01</a></td><td>Tổng quan danh mục</td><td>L1</td><td>M-DASH</td><td><span class="prio p0">P0</span></td><td>P3</td><td>✓ · <a href="wireframes/UI-01-portfolio-overview.html">chi tiết</a></td></tr>
 <tr><td><a href="#ui-02">UI-02</a></td><td>Bộ chọn tổ chức/site, khung toàn cục</td><td>—</td><td>M-DASH, M-ORG</td><td><span class="prio p0">P0</span></td><td>P3, P4</td><td>trong UI-01</td></tr>
-<tr><td><a href="#ui-03">UI-03</a></td><td>Dashboard năng lượng site</td><td>L2</td><td>M-DASH, M-MON, M-GRID</td><td><span class="prio p0">P0</span></td><td>P3, P2, P1</td><td>✓ (+ mobile)</td></tr>
-<tr><td><a href="#ui-04">UI-04</a></td><td>Giám sát tài sản trực tiếp</td><td>L3</td><td>M-MON</td><td><span class="prio p0">P0</span></td><td>P3, P4</td><td>—</td></tr>
-<tr><td><a href="#ui-05">UI-05</a></td><td>Sơ đồ dòng năng lượng</td><td>L2</td><td>M-MON, M-HIST</td><td><span class="prio p0">P0</span></td><td>P1, P3</td><td>✓</td></tr>
-<tr><td><a href="#ui-06">UI-06</a></td><td>Sơ đồ một sợi (SLD)</td><td>L3</td><td>M-MON, M-GRID</td><td><span class="prio p1">P1</span></td><td>P4, P3</td><td>—</td></tr>
-<tr><td><a href="#ui-07">UI-07</a></td><td>Chi tiết BESS</td><td>L3</td><td>M-BESS</td><td><span class="prio p0">P0</span></td><td>P3, P5</td><td>✓</td></tr>
+<tr><td><a href="#ui-03">UI-03</a></td><td>Dashboard năng lượng site</td><td>L2</td><td>M-DASH, M-MON, M-GRID</td><td><span class="prio p0">P0</span></td><td>P3, P2, P1</td><td>✓ (+ mobile) · <a href="wireframes/UI-03-site-dashboard.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-04">UI-04</a></td><td>Giám sát tài sản trực tiếp</td><td>L3</td><td>M-MON</td><td><span class="prio p0">P0</span></td><td>P3, P4</td><td><a href="wireframes/UI-04-asset-monitoring.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-05">UI-05</a></td><td>Sơ đồ dòng năng lượng</td><td>L2</td><td>M-MON, M-HIST</td><td><span class="prio p0">P0</span></td><td>P1, P3</td><td>✓ · <a href="wireframes/UI-05-energy-flow.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-06">UI-06</a></td><td>Sơ đồ một sợi (SLD)</td><td>L3</td><td>M-MON, M-GRID</td><td><span class="prio p1">P1</span></td><td>P4, P3</td><td><a href="wireframes/UI-06-single-line-diagram.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-07">UI-07</a></td><td>Chi tiết BESS</td><td>L3</td><td>M-BESS</td><td><span class="prio p0">P0</span></td><td>P3, P5</td><td>✓ · <a href="wireframes/UI-07-bess-detail.html">chi tiết</a></td></tr>
 <tr><td><a href="#ui-08">UI-08</a></td><td>Rack/module/cell BESS</td><td>L4</td><td>M-BESS</td><td><span class="prio p1">P1</span></td><td>P5</td><td>—</td></tr>
-<tr><td><a href="#ui-09">UI-09</a></td><td>Chi tiết PV/inverter</td><td>L3</td><td>M-PV</td><td><span class="prio p0">P0</span></td><td>P3, P4</td><td>✓</td></tr>
-<tr><td><a href="#ui-10">UI-10</a></td><td>Lưới, POC và công tơ</td><td>L3</td><td>M-GRID</td><td><span class="prio p0">P0</span> (đồng hồ demand P1)</td><td>P3, P2, P4</td><td>✓</td></tr>
-<tr><td><a href="#ui-11">UI-11</a></td><td>Sạc EV</td><td>L3</td><td>M-EV</td><td><span class="prio p0">P0</span> công tơ · <span class="prio p1">P1</span> OCPP</td><td>P2, P3</td><td>—</td></tr>
+<tr><td><a href="#ui-09">UI-09</a></td><td>Chi tiết PV/inverter</td><td>L3</td><td>M-PV</td><td><span class="prio p0">P0</span></td><td>P3, P4</td><td>✓ · <a href="wireframes/UI-09-pv-inverter-detail.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-10">UI-10</a></td><td>Lưới, POC và công tơ</td><td>L3</td><td>M-GRID</td><td><span class="prio p0">P0</span> (đồng hồ demand P1)</td><td>P3, P2, P4</td><td>✓ · <a href="wireframes/UI-10-grid-poc-meter.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-11">UI-11</a></td><td>Sạc EV</td><td>L3</td><td>M-EV</td><td><span class="prio p0">P0</span> công tơ · <span class="prio p1">P1</span> OCPP</td><td>P2, P3</td><td><a href="wireframes/UI-11-ev-charging.html">chi tiết</a></td></tr>
 <tr><td><a href="#ui-12">UI-12</a></td><td>Chẩn đoán L4: điểm thô, thanh ghi</td><td>L4</td><td>M-MON</td><td><span class="prio p0">P0</span></td><td>P4, P5</td><td>—</td></tr>
-<tr><td><a href="#ui-13">UI-13</a></td><td>Phân tích lịch sử (trend explorer)</td><td>L3–L4</td><td>M-HIST</td><td><span class="prio p0">P0</span></td><td>P3, P4, P2</td><td>✓</td></tr>
-<tr><td><a href="#ui-14">UI-14</a></td><td>Console cảnh báo</td><td>L1–L2</td><td>M-ALM</td><td><span class="prio p0">P0</span></td><td>P3</td><td>✓</td></tr>
+<tr><td><a href="#ui-13">UI-13</a></td><td>Phân tích lịch sử (trend explorer)</td><td>L3–L4</td><td>M-HIST</td><td><span class="prio p0">P0</span></td><td>P3, P4, P2</td><td>✓ · <a href="wireframes/UI-13-trend-explorer.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-14">UI-14</a></td><td>Console cảnh báo</td><td>L1–L2</td><td>M-ALM</td><td><span class="prio p0">P0</span></td><td>P3</td><td>✓ · <a href="wireframes/UI-14-alarm-console.html">chi tiết</a></td></tr>
 <tr><td><a href="#ui-15">UI-15</a></td><td>Chi tiết cảnh báo</td><td>L3</td><td>M-ALM</td><td><span class="prio p0">P0</span></td><td>P3, P3t</td><td>—</td></tr>
-<tr><td><a href="#ui-16">UI-16</a></td><td>Ticket (work order P1)</td><td>—</td><td>M-ALM</td><td><span class="prio p0">P0</span></td><td>P3, P3t</td><td>✓</td></tr>
+<tr><td><a href="#ui-16">UI-16</a></td><td>Ticket (work order P1)</td><td>—</td><td>M-ALM</td><td><span class="prio p0">P0</span></td><td>P3, P3t</td><td>✓ · <a href="wireframes/UI-16-tickets.html">chi tiết</a></td></tr>
 <tr><td><a href="#ui-17">UI-17</a></td><td>Thông báo: trung tâm và đăng ký</td><td>—</td><td>M-ALM</td><td><span class="prio p0">P0</span></td><td>Mọi vai trò</td><td>—</td></tr>
-<tr><td><a href="#ui-18">UI-18</a></td><td>Chiến lược tối ưu và cấu hình điều khiển</td><td>L2</td><td>M-OPT, M-BESS</td><td><span class="prio p0">P0</span></td><td>P3, P4, PS</td><td>—</td></tr>
-<tr><td><a href="#ui-19">UI-19</a></td><td>Kế hoạch điều độ 48 h</td><td>L2</td><td>M-OPT, M-TAR</td><td><span class="prio p0">P0</span> xem · <span class="prio p1">P1</span> soạn</td><td>P3, P2</td><td>✓</td></tr>
-<tr><td><a href="#ui-20">UI-20</a></td><td>Lịch sử thực thi, thực tế so với kế hoạch</td><td>L3</td><td>M-OPT</td><td><span class="prio p0">P0</span></td><td>P3, P2</td><td>—</td></tr>
-<tr><td><a href="#ui-21">UI-21</a></td><td>Hộp lệnh và luồng xác nhận</td><td>lớp phủ</td><td>M-SEC, M-BESS, M-GRID, M-PV</td><td><span class="prio p0">P0</span></td><td>P3, P4</td><td>✓</td></tr>
-<tr><td><a href="#ui-22">UI-22</a></td><td>Hàng đợi phê duyệt C3</td><td>—</td><td>M-SEC</td><td><span class="prio p0">P0</span></td><td>PS</td><td>✓</td></tr>
+<tr><td><a href="#ui-18">UI-18</a></td><td>Chiến lược tối ưu và cấu hình điều khiển</td><td>L2</td><td>M-OPT, M-BESS</td><td><span class="prio p0">P0</span></td><td>P3, P4, PS</td><td><a href="wireframes/UI-18-strategies.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-19">UI-19</a></td><td>Kế hoạch điều độ 48 h</td><td>L2</td><td>M-OPT, M-TAR</td><td><span class="prio p0">P0</span> xem · <span class="prio p1">P1</span> soạn</td><td>P3, P2</td><td>✓ · <a href="wireframes/UI-19-dispatch-plan-48h.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-20">UI-20</a></td><td>Lịch sử thực thi, thực tế so với kế hoạch</td><td>L3</td><td>M-OPT</td><td><span class="prio p0">P0</span></td><td>P3, P2</td><td><a href="wireframes/UI-20-actual-vs-plan.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-21">UI-21</a></td><td>Hộp lệnh và luồng xác nhận</td><td>lớp phủ</td><td>M-SEC, M-BESS, M-GRID, M-PV</td><td><span class="prio p0">P0</span></td><td>P3, P4</td><td>✓ · <a href="wireframes/UI-21-command-dialog.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-22">UI-22</a></td><td>Hàng đợi phê duyệt C3</td><td>—</td><td>M-SEC</td><td><span class="prio p0">P0</span></td><td>PS</td><td>✓ · <a href="wireframes/UI-22-approval-queue.html">chi tiết</a></td></tr>
 <tr><td><a href="#ui-23">UI-23</a></td><td>Nhật ký lệnh</td><td>L4</td><td>M-SEC</td><td><span class="prio p0">P0</span></td><td>P3, PS, P1</td><td>—</td></tr>
-<tr><td><a href="#ui-24">UI-24</a></td><td>Trạng thái điều khiển site, kill switch, hồ sơ Gate M2</td><td>L2</td><td>M-SEC, M-OPT</td><td><span class="prio p0">P0</span></td><td>P3, P4, PS</td><td>✓</td></tr>
-<tr><td><a href="#ui-25">UI-25</a></td><td>Biểu giá và lịch TOU</td><td>—</td><td>M-TAR</td><td><span class="prio p0">P0</span></td><td>P2, P4, PO</td><td>—</td></tr>
-<tr><td><a href="#ui-26">UI-26</a></td><td>Edge và gateway</td><td>L3</td><td>M-INT, M-MON</td><td><span class="prio p0">P0</span></td><td>P4, PO</td><td>—</td></tr>
-<tr><td><a href="#ui-27">UI-27</a></td><td>Commissioning checklist</td><td>—</td><td>M-INT</td><td><span class="prio p0">P0</span></td><td>P4, PS</td><td>✓</td></tr>
+<tr><td><a href="#ui-24">UI-24</a></td><td>Trạng thái điều khiển site, kill switch, hồ sơ Gate M2</td><td>L2</td><td>M-SEC, M-OPT</td><td><span class="prio p0">P0</span></td><td>P3, P4, PS</td><td>✓ · <a href="wireframes/UI-24-control-state-kill-switch.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-25">UI-25</a></td><td>Biểu giá và lịch TOU</td><td>—</td><td>M-TAR</td><td><span class="prio p0">P0</span></td><td>P2, P4, PO</td><td><a href="wireframes/UI-25-tariff-tou.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-26">UI-26</a></td><td>Edge và gateway</td><td>L3</td><td>M-INT, M-MON</td><td><span class="prio p0">P0</span></td><td>P4, PO</td><td><a href="wireframes/UI-26-edge-gateways.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-27">UI-27</a></td><td>Commissioning checklist</td><td>—</td><td>M-INT</td><td><span class="prio p0">P0</span></td><td>P4, PS</td><td>✓ · <a href="wireframes/UI-27-commissioning.html">chi tiết</a></td></tr>
 <tr><td><a href="#ui-28">UI-28</a></td><td>Driver, map điểm, thiết bị được hỗ trợ</td><td>L4</td><td>M-INT</td><td><span class="prio p0">P0</span></td><td>P4, P5, PO</td><td>—</td></tr>
 <tr><td><a href="#ui-29">UI-29</a></td><td>Site, tài sản và onboarding</td><td>—</td><td>M-ORG, M-GRID</td><td><span class="prio p0">P0</span></td><td>P4, PA</td><td>—</td></tr>
-<tr><td><a href="#ui-30">UI-30</a></td><td>Báo cáo và xuất dữ liệu</td><td>—</td><td>M-REP</td><td><span class="prio p0">P0</span></td><td>P1, P2, P6</td><td>—</td></tr>
-<tr><td><a href="#ui-31">UI-31</a></td><td>Người dùng, vai trò, grant</td><td>—</td><td>M-ORG, M-SEC</td><td><span class="prio p0">P0</span></td><td>PA, P1</td><td>—</td></tr>
+<tr><td><a href="#ui-30">UI-30</a></td><td>Báo cáo và xuất dữ liệu</td><td>—</td><td>M-REP</td><td><span class="prio p0">P0</span></td><td>P1, P2, P6</td><td><a href="wireframes/UI-30-reports-export.html">chi tiết</a></td></tr>
+<tr><td><a href="#ui-31">UI-31</a></td><td>Người dùng, vai trò, grant</td><td>—</td><td>M-ORG, M-SEC</td><td><span class="prio p0">P0</span></td><td>PA, P1</td><td><a href="wireframes/UI-31-users-roles-grants.html">chi tiết</a></td></tr>
 <tr><td><a href="#ui-32">UI-32</a></td><td>Cài đặt hệ thống</td><td>—</td><td>M-ORG, M-ALM</td><td><span class="prio p0">P0</span></td><td>PA, P4</td><td>—</td></tr>
-<tr><td><a href="#ui-33">UI-33</a></td><td>Lịch sử audit</td><td>L4</td><td>M-SEC</td><td><span class="prio p0">P0</span></td><td>PA, PS, P6</td><td>—</td></tr>
+<tr><td><a href="#ui-33">UI-33</a></td><td>Lịch sử audit</td><td>L4</td><td>M-SEC</td><td><span class="prio p0">P0</span></td><td>PA, PS, P6</td><td><a href="wireframes/UI-33-audit-log.html">chi tiết</a></td></tr>
 <tr><td><a href="#ui-34">UI-34</a></td><td>Đăng nhập, MFA, step-up</td><td>—</td><td>M-SEC</td><td><span class="prio p0">P0</span></td><td>Mọi vai trò</td><td>—</td></tr>
 <tr><td><a href="#ui-35">UI-35</a></td><td>Kiosk công khai</td><td>—</td><td>M-DASH</td><td><span class="prio p1">P1</span></td><td>PK, P1</td><td>—</td></tr>
 <tr><td><a href="#ui-36">UI-36</a></td><td>HMI cục bộ trên edge</td><td>L2</td><td>M-MON</td><td><span class="prio p1">P1</span></td><td>P4</td><td>—</td></tr>
@@ -445,6 +451,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-01">
 <h4>UI-01 · Tổng quan danh mục (L1) <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/overview</code> · Persona P3 (chính), P6, P2 · Module M-DASH · Câu hỏi: "Site nào cần chú ý ngay, vì sao?"</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-01-portfolio-overview.html">UI-01-portfolio-overview.html</a> · ảnh <a href="wireframes/screenshots/UI-01-portfolio-overview-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-01-portfolio-overview-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Operator phát hiện site có vấn đề trong ≤ 10 s và mở đúng site/cảnh báo; chủ danh mục thấy tổng năng lượng và chi phí hôm nay.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -522,6 +529,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-03">
 <h4>UI-03 · Dashboard năng lượng site (L2) <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/dashboard</code> · Persona P3, P2, P1 · Module M-DASH, M-MON, M-GRID, M-OPT · Câu hỏi: "Site đang làm gì, có đúng kế hoạch và an toàn không?"</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-03-site-dashboard.html">UI-03-site-dashboard.html</a> · ảnh <a href="wireframes/screenshots/UI-03-site-dashboard-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-03-site-dashboard-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Trong một màn: biết chế độ và nguồn lệnh đang chạy, dòng năng lượng hiện tại, giới hạn lưới, thực tế so với kế hoạch hôm nay và các cảnh báo đang mở.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -584,6 +592,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-04">
 <h4>UI-04 · Giám sát tài sản trực tiếp (danh sách và chi tiết L3 chung) <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/assets[/{asset}]</code> · Persona P3, P4, P3t · Module M-MON</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-04-asset-monitoring.html">UI-04-asset-monitoring.html</a> · ảnh <a href="wireframes/screenshots/UI-04-asset-monitoring-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-04-asset-monitoring-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Thấy mọi thiết bị của site theo loại, thiết bị nào lỗi/mất kết nối/bị giới hạn, và mở trang chi tiết đúng loại.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -608,6 +617,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-05">
 <h4>UI-05 · Sơ đồ dòng năng lượng (L2) <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/flow</code> · Persona P1, P3, P4 · Module M-MON, M-HIST</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-05-energy-flow.html">UI-05-energy-flow.html</a> · ảnh <a href="wireframes/screenshots/UI-05-energy-flow-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-05-energy-flow-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Hiểu ngay site đang mua hay bán điện, pin sạc hay xả, PV đi đâu; phát hiện lỗi đo (lệch cân bằng, sai dấu) khi commissioning.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -649,6 +659,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-06">
 <h4>UI-06 · Sơ đồ một sợi (SLD) chỉ đọc <span class="prio p1">P1</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/sld</code> · Persona P4, P3 · Module M-MON, M-GRID</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-06-single-line-diagram.html">UI-06-single-line-diagram.html</a> · ảnh <a href="wireframes/screenshots/UI-06-single-line-diagram-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-06-single-line-diagram-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Thấy điện đi qua thiết bị nào, máy cắt nào đóng/mở, công tơ đặt ở đâu và đo theo hướng nào; công cụ commissioning và chẩn đoán.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -670,6 +681,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-07">
 <h4>UI-07 · Chi tiết BESS (L3) <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/assets/{bess}</code> · Persona P3, P5, P4, P1 (xem) · Module M-BESS</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-07-bess-detail.html">UI-07-bess-detail.html</a> · ảnh <a href="wireframes/screenshots/UI-07-bess-detail-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-07-bess-detail-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Biết pin đang làm gì, theo lệnh của ai, bị giới hạn bởi gì, còn bao nhiêu năng lượng khả dụng, có dấu hiệu bất thường an toàn không; phát lệnh supervisory trong SOE khi có quyền.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -739,6 +751,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-09">
 <h4>UI-09 · Chi tiết PV và inverter (L3) <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/assets/{pvplant|inverter}</code> · Persona P3, P4, P6 · Module M-PV</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-09-pv-inverter-detail.html">UI-09-pv-inverter-detail.html</a> · ảnh <a href="wireframes/screenshots/UI-09-pv-inverter-detail-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-09-pv-inverter-detail-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Biết nhà máy PV và từng inverter đang phát bao nhiêu so với kỳ vọng tương đối, có bị giới hạn không (do ai), string nào yếu.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -782,6 +795,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-10">
 <h4>UI-10 · Lưới, POC và công tơ (L3) <span class="prio p0">P0</span> · đồng hồ demand <span class="prio p1">P1</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/assets/{meter}</code> và <code>…/grid</code> · Persona P3, P2, P4 · Module M-GRID, M-TAR</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-10-grid-poc-meter.html">UI-10-grid-poc-meter.html</a> · ảnh <a href="wireframes/screenshots/UI-10-grid-poc-meter-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-10-grid-poc-meter-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Biết site đang nhập/xuất bao nhiêu so với trần nhập và giới hạn xuất, có vi phạm không, điện năng và chi phí theo khung TOU hôm nay; xác minh công tơ (dấu, CT/VT).</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -833,6 +847,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-11">
 <h4>UI-11 · Sạc EV (L3) <span class="prio p0">P0</span> công tơ · <span class="prio p1">P1</span> OCPP và điều khiển</h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/assets/{evse|ev-group}</code> · Persona P2, P3 · Module M-EV</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-11-ev-charging.html">UI-11-ev-charging.html</a> · ảnh <a href="wireframes/screenshots/UI-11-ev-charging-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-11-ev-charging-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>MVP: thấy điện năng và công suất sạc EV tách khỏi tải nền. P1: thấy trạng thái từng trụ, phiên sạc, giới hạn do EMS áp và lý do.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -875,6 +890,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-13">
 <h4>UI-13 · Phân tích lịch sử (Trend explorer) <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/history?view={id}&amp;from=…&amp;to=…</code> · Persona P3, P4, P2 · Module M-HIST</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-13-trend-explorer.html">UI-13-trend-explorer.html</a> · ảnh <a href="wireframes/screenshots/UI-13-trend-explorer-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-13-trend-explorer-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Điều tra sự kiện và xu hướng: so sánh nhiều chuỗi, nhiều khoảng, thực tế với kế hoạch; xuất dữ liệu có đơn vị và múi giờ.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -917,6 +933,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-14">
 <h4>UI-14 · Console cảnh báo <span class="prio p0">P0</span> · gom lũ <span class="prio p1">P1</span></h4>
 <p class="muted">Route <code>/o/{org}/alarms</code> (toàn danh mục) và <code>/o/{org}/s/{site}/alarms</code> (lọc sẵn) · Persona P3 (chính), P3t, P4 · Module M-ALM</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-14-alarm-console.html">UI-14-alarm-console.html</a> · ảnh <a href="wireframes/screenshots/UI-14-alarm-console-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-14-alarm-console-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Thấy cảnh báo cần xử lý theo mức và thời gian, xác nhận, tạm gác có lý do, tạo ticket; không bị ngập khi một thiết bị cha mất kết nối.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -982,6 +999,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-16">
 <h4>UI-16 · Ticket (danh sách và chi tiết) <span class="prio p0">P0</span> · work order, SLA <span class="prio p1">P1</span></h4>
 <p class="muted">Route <code>/o/{org}/tickets[/{ticket_id}]</code> · Persona P3, P3t · Module M-ALM</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-16-tickets.html">UI-16-tickets.html</a> · ảnh <a href="wireframes/screenshots/UI-16-tickets-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-16-tickets-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Giao việc xử lý sự cố với đủ ngữ cảnh; kỹ thuật viên nhận, cập nhật, đóng với nguyên nhân gốc; operator theo dõi việc mở.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -1039,6 +1057,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-18">
 <h4>UI-18 · Chiến lược tối ưu và cấu hình điều khiển <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/strategy</code> · Persona P3, P4, PS · Module M-OPT, M-BESS</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-18-strategies.html">UI-18-strategies.html</a> · ảnh <a href="wireframes/screenshots/UI-18-strategies-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-18-strategies-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Biết site đang theo chiến lược nào, do tầng nào tạo lịch, ai làm chủ vòng nhanh; đổi chiến lược trong khả năng thiết bị; quản lý phiên bản tham số chiến lược.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -1067,6 +1086,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-19">
 <h4>UI-19 · Kế hoạch điều độ 48 h <span class="prio p0">P0</span> xem · soạn kéo thả <span class="prio p1">P1</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/plan?from=…</code> · Persona P3, P2, P1 · Module M-OPT, M-TAR, M-ADV</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-19-dispatch-plan-48h.html">UI-19-dispatch-plan-48h.html</a> · ảnh <a href="wireframes/screenshots/UI-19-dispatch-plan-48h-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-19-dispatch-plan-48h-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Thấy pin sẽ làm gì trong 48 h tới, vì sao, kế hoạch nào đang chạy tại edge và có đồng bộ không; (P1) sửa kế hoạch an toàn.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -1108,6 +1128,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-20">
 <h4>UI-20 · Lịch sử thực thi và thực tế so với kế hoạch <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/execution</code> · Persona P3, P2, P5 · Module M-OPT</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-20-actual-vs-plan.html">UI-20-actual-vs-plan.html</a> · ảnh <a href="wireframes/screenshots/UI-20-actual-vs-plan-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-20-actual-vs-plan-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Biết các slot đã chạy đúng kế hoạch đến đâu, lệch vì sao (dự báo, ghi đè ưu tiên cao hơn, kẹp thiết bị, mất liên lạc) để quyết định cải thiện dự báo hay tích hợp.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td>Bảng theo slot (PlanSlotResult): giờ, chế độ kế hoạch/thực tế, kWh BESS kế hoạch/thực tế (từ delta thanh ghi), SOC cuối slot kế hoạch/thực tế, nhập/xuất kế hoạch/thực tế, chi phí kế hoạch/thực tế (≈), <code>slot_status</code> (APPLIED/APPLIED_CLAMPED/OVERRIDDEN), <code>deviation_cause</code> (COMM_LOSS, HIGHER_PRIORITY_OVERRIDE(mức), MANUAL, NATIVE_MODE, DEVICE_CLAMP, FORECAST_LOAD/PV), mã lý do. KPI điều độ: % slot APPLIED, MAE SOC cuối slot, số vi phạm xuất (= 0), kWh PV bị cắt. Danh sách phiên bản kế hoạch theo ngày với trạng thái cuối (FR-OPT-007, 010).</td></tr>
@@ -1124,6 +1145,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-21">
 <h4>UI-21 · Hộp lệnh và luồng xác nhận <span class="prio p0">P0</span></h4>
 <p class="muted">Lớp phủ mở từ UI-07, UI-09, UI-10, UI-11, UI-18, UI-19, UI-24, UI-27 · Persona P3, P4, PS · Module M-SEC (cùng module của tài sản)</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-21-command-dialog.html">UI-21-command-dialog.html</a> · ảnh <a href="wireframes/screenshots/UI-21-command-dialog-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-21-command-dialog-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Phát một lệnh đúng, hiểu trước tác động và giới hạn sẽ áp, với ma sát tỉ lệ hạng lệnh; theo dõi tới khi thiết bị thực sự áp dụng.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -1212,6 +1234,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-22">
 <h4>UI-22 · Hàng đợi phê duyệt C3 <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/approvals[/{approval_id}]</code> · Persona PS (duyệt), P3/P4 (theo dõi yêu cầu của mình), PO (OTA, kill switch nền tảng) · Module M-SEC</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-22-approval-queue.html">UI-22-approval-queue.html</a> · ảnh <a href="wireframes/screenshots/UI-22-approval-queue-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-22-approval-queue-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Người duyệt quyết định nhanh và đúng một lệnh nguy hiểm trong cửa sổ 15 phút; người yêu cầu biết yêu cầu của mình đang ở đâu.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td>Mỗi yêu cầu (CommandApproval): loại lệnh và nhãn ("Đổi cấu hình lưới", "Bật Gate M2", "Đổi SOE", "Dừng vận hành từ xa" P1, "Bật lại điều khiển từ xa", "Cập nhật firmware edge"), site(s), <b>diff trước/sau</b>, <b>tác động MW</b> (site, tenant, % ngân sách Fleet Governor), hạn duyệt còn lại, người yêu cầu và vai trò dùng để yêu cầu, lý do, kết quả <code>dry_run</code> tại edge nếu có, lý do nâng hạng (FR-SEC-007, 10 §5.5).</td></tr>
@@ -1262,6 +1285,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-24">
 <h4>UI-24 · Trạng thái điều khiển site, kill switch và hồ sơ Gate M2 <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/control</code> · Persona P3, P4, PS, PA, P1 (đồng ý) · Module M-SEC, M-OPT</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-24-control-state-kill-switch.html">UI-24-control-state-kill-switch.html</a> · ảnh <a href="wireframes/screenshots/UI-24-control-state-kill-switch-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-24-control-state-kill-switch-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Một chỗ trả lời "site có đang nhận lệnh từ xa không, vì sao không, ai/cái gì đang điều khiển, còn thiếu gì để bật Gate M2"; tắt điều khiển từ xa nhanh khi cần.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -1307,6 +1331,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-25">
 <h4>UI-25 · Biểu giá và lịch TOU <span class="prio p0">P0</span> · thành phần công suất, giá bán dư <span class="prio p1">P1</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/tariff</code>; thư viện <code>/platform/tariffs</code> · Persona P2, P4, PO · Module M-TAR</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-25-tariff-tou.html">UI-25-tariff-tou.html</a> · ảnh <a href="wireframes/screenshots/UI-25-tariff-tou-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-25-tariff-tou-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Gán đúng biểu giá và lịch TOU có hiệu lực theo ngày cho từng điểm đo thanh toán; thấy trước tác động lên hóa đơn bóng và lịch điều độ; nền tảng duy trì thư viện biểu giá EVN có phiên bản.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -1330,6 +1355,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-26">
 <h4>UI-26 · Edge và gateway <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/edge</code>; đội edge <code>/platform/edges</code> · Persona P4, PO, P3 · Module M-INT, M-MON</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-26-edge-gateways.html">UI-26-edge-gateways.html</a> · ảnh <a href="wireframes/screenshots/UI-26-edge-gateways-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-26-edge-gateways-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Biết edge có khỏe không (kết nối, đồng hồ, buffer, chu kỳ điều khiển, chứng chỉ), cấu hình và firmware phiên bản nào; claim edge mới; đẩy cấu hình; (PO) OTA theo đợt.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td>EdgeNode: online/offline và lần heartbeat cuối, <code>uplink_state</code>, <code>clock_state</code> + <code>clock_offset_ms</code>, <code>buffer_fill_pct</code> và số ngày còn chứa được, dữ liệu 1 s còn giữ tới ngày nào, firmware, config version (desired/reported), <code>run_mode</code>, kế hoạch đang chạy hoặc fallback, <code>cycle_time_ms</code> p50/p99, số lần vượt chu kỳ, chứng chỉ X.509 hạn, NIC WAN/OT, danh sách bus và thiết bị (FR-MON-008, FR-INT-002, 008…012, NFR-OBS-002).</td></tr>
@@ -1353,6 +1379,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-27">
 <h4>UI-27 · Commissioning checklist <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/s/{site}/commissioning</code> · Persona P4, P5 (làm), PS / đại diện chủ tài sản (nghiệm thu) · Module M-INT</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-27-commissioning.html">UI-27-commissioning.html</a> · ảnh <a href="wireframes/screenshots/UI-27-commissioning-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-27-commissioning-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Đưa site từ <code>commissioning</code> sang <code>active</code> bằng một checklist có bằng chứng, chạy các phép thử an toàn (dấu, giới hạn xuất, watchdog), sinh biên bản và (nếu cần) chuẩn bị bật điều khiển.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td>16 bước theo <a href="07-device-integration.md">07 §9.2</a>: hồ sơ · claim edge · mạng và đồng hồ · khám phá thiết bị · gán driver · ngân sách polling · xác minh map điểm · phép thử dấu · khai báo chủ vòng · tín hiệu an toàn · cấu hình native + readback · test giới hạn xuất · test watchdog/fail-safe (M2) · SOE (M2) · biên bản · bật control. Mỗi bước: trạng thái (Chưa làm/Đang làm/Đạt/Không đạt/Không áp dụng + lý do), tiêu chí đạt, bằng chứng (ảnh, bảng, biểu đồ 1 s), người làm, thời điểm, Gate liên quan (FR-INT-015…020).</td></tr>
@@ -1440,6 +1467,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-30">
 <h4>UI-30 · Báo cáo và xuất dữ liệu <span class="prio p0">P0</span> · R4–R7, lịch gửi <span class="prio p1">P1</span></h4>
 <p class="muted">Route <code>/o/{org}/reports[/{snapshot_id}]</code> · Persona P1, P2, P6, P3, P4 · Module M-REP</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-30-reports-export.html">UI-30-reports-export.html</a> · ảnh <a href="wireframes/screenshots/UI-30-reports-export-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-30-reports-export-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Tạo, xem, phát hành báo cáo có phiên bản; xuất dữ liệu đúng đơn vị và múi giờ; xuất bằng chứng tuân thủ giới hạn xuất.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td><ul>
@@ -1461,6 +1489,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-31">
 <h4>UI-31 · Người dùng, vai trò và grant <span class="prio p0">P0</span></h4>
 <p class="muted">Route <code>/o/{org}/admin/users</code>, <code>/o/{org}/admin/grants</code> · Persona PA, P1/P6 (chủ tài sản cấp grant) · Module M-ORG, M-SEC</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-31-users-roles-grants.html">UI-31-users-roles-grants.html</a> · ảnh <a href="wireframes/screenshots/UI-31-users-roles-grants-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-31-users-roles-grants-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Mời và quản lý người dùng, gán vai trò theo phạm vi, cấp/thu hồi quyền có hạn cho tổ chức installer/O&amp;M; biết ai có quyền lệnh trên site nào.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td>Người dùng (trạng thái, ngôn ngữ, MFA đã đăng ký chưa, lần đăng nhập cuối); role binding (principal, vai trò, nút phạm vi Org/Portfolio/Site/Asset group/Device) với kế thừa hiển thị; grant (tổ chức nhận, phạm vi site, loại quyền xem/cấu hình/lệnh, hạn, ngày xem lại 90 ngày, người cấp); ma trận "ai có quyền lệnh trên site X" (FR-ORG-007…009).</td></tr>
@@ -1503,6 +1532,7 @@ table.spec td ul { margin: 0; padding-left: 18px; }
 <section id="ui-33">
 <h4>UI-33 · Lịch sử audit <span class="prio p0">P0</span> · xuất có bằng chứng hash <span class="prio p1">P1</span></h4>
 <p class="muted">Route <code>/o/{org}/admin/audit</code> · Persona PA, PS, P6 · Module M-SEC</p>
+<p class="wf-link">Wireframe: <a href="wireframes/UI-33-audit-log.html">UI-33-audit-log.html</a> · ảnh <a href="wireframes/screenshots/UI-33-audit-log-desktop.jpg">desktop 1440</a> · <a href="wireframes/screenshots/UI-33-audit-log-mobile.jpg">mobile 390</a></p>
 <div class="table-wrap"><table class="spec"><tbody>
 <tr><th>Mục tiêu chính</th><td>Truy vết không sửa được mọi hành động có rủi ro: đăng nhập/MFA, quyền, grant, SOE/cấu hình/driver map, lệnh và kế hoạch, phê duyệt, kill switch, xuất dữ liệu, break-glass, OTA, lệnh điều độ.</td></tr>
 <tr><th>Thông tin chính (nguồn · FR)</th><td>Bản ghi audit: thời điểm (giờ site và UTC), chủ thể (người/dịch vụ, vai trò dùng), hành động, đối tượng, trước/sau (diff), kết quả, IP/thiết bị, <code>trace_id</code>, <code>command_id</code>; trạng thái hash chain theo tenant (kiểm hằng ngày) (FR-SEC-014; neo WORM và xuất có bằng chứng là P1, FR-SEC-023).</td></tr>
@@ -1986,6 +2016,55 @@ table.spec td ul { margin: 0; padding-left: 18px; }
   <li>GridBeyond ViewPoint Lens — https://secure.businesswire.com/news/home/20250930978130/en/GridBeyond-Launches-ViewPoint-Lens-to-Empower-Energy-Customers-With-Greater-Visibility-and-Control ; Stem PowerTrack EMS — https://www.businesswire.com/news/home/20250902991311/en (qua kết quả tìm kiếm).</li>
   <li>Thí điểm giá hai thành phần, chu kỳ 30 phút — https://daibieunhandan.vn/trien-khai-thu-nghiem-gia-ban-le-dien-hai-thanh-phan-tu-thang-10-2025-10390577.html ; khung giờ cao điểm tối 2026 — https://tuoitre.vn/bo-cong-thuong-chinh-thuc-thay-doi-khung-gio-tinh-gia-dien-buoi-toi-la-gio-cao-diem-2026042410430101.htm (qua kết quả tìm kiếm).</li>
   <li>Tài liệu nội bộ: <a href="notes/H-ux-research.md">ghi chú H</a>, <a href="notes/K-review-round1.md">K round 1</a>, <a href="03-functional-catalog.html">03</a>, <a href="04-business-requirements.md">04</a>, <a href="05-domain-model.html">05</a>, <a href="07-device-integration.md">07</a>, <a href="08-energy-optimization.md">08</a>, <a href="10-security-and-reliability.md">10</a>.</li>
+</ul>
+</section>
+
+<section id="s16">
+<h2>16. Wireframe chi tiết và ảnh chụp</h2>
+<p>Phụ lục này bổ sung wireframe mid-fi cho 24 trang ưu tiên, bổ sung cho phác thảo low-fi trong §7 khi cần xem bố cục đầy đủ. Mỗi wireframe là một file HTML tĩnh trong <code>wireframes/</code> (không JS, không CDN, không font ngoài) dùng <code>assets/ems-docs.css</code> và <code>wireframes/assets/wf-app.css</code>, có: khung app UI-02 (bộ chọn Org ▸ Site, bộ đếm cảnh báo theo mức, điều hướng), khối đầu trang (mã trang, mục tiêu, route, persona, quyền, FR, component), nhãn <b>Observed</b> (thấy trong ảnh FusionSolar) / <b>From docs</b> / <b>Proposed</b> cho từng component, ít nhất ba trạng thái không bình thường theo §6.1, và chú thích thiết kế. <span class="tag proposal">PROPOSAL</span></p>
+<ul>
+  <li><b>Thư viện</b>: <a href="wireframes/index.html">wireframes/index.html</a> — sitemap có đánh dấu trang đã vẽ, ảnh thu nhỏ, danh sách truy vết, component catalog, design tokens, chú giải nhãn, dữ liệu mẫu.</li>
+  <li><b>Bản in</b>: <a href="wireframes/Wireframe-EMS.pdf">wireframes/Wireframe-EMS.pdf</a> (A4 ngang, bìa + sitemap + 24 màn kèm trạng thái), sinh từ <a href="wireframes/print-all.html">wireframes/print-all.html</a>.</li>
+  <li><b>Ảnh chụp</b>: Chromium headless, desktop 1440 px và mobile 390 px, toàn trang, JPEG (<code>wireframes/screenshots/</code>); không trang nào cuộn ngang ở 390 px (bảng và biểu đồ cuộn trong vùng riêng). Chế độ tối: <a href="wireframes/screenshots/UI-03-site-dashboard-desktop-dark.jpg">UI-03</a>, <a href="wireframes/screenshots/UI-19-dispatch-plan-48h-desktop-dark.jpg">UI-19</a>.</li>
+  <li><b>Dữ liệu mẫu</b>: cùng site BD-02 như §7, nhưng số được sinh bằng một mô hình nhất quán (cân bằng năng lượng và tiền khớp giữa các màn), nên vài số khác phác thảo low-fi ở §7 (ví dụ nhập lưới hôm nay 1.377,5 kWh thay cho 1.284,6 kWh; công suất tức thời và SOC 46% giữ nguyên). Khi hai nguồn khác nhau, dùng số trong wireframe. <span class="sample" style="color:var(--warn)">Dữ liệu mẫu</span></li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>Trang</th><th>Wireframe</th><th>Desktop 1440 px</th><th>Mobile 390 px</th></tr></thead>
+<tbody>
+<tr><td><a href="#ui-01">UI-01</a></td><td><a href="wireframes/UI-01-portfolio-overview.html">Tổng quan danh mục</a><br><span class="muted">L1 · P0</span></td><td><a href="wireframes/screenshots/UI-01-portfolio-overview-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-01-portfolio-overview.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-01 Tổng quan danh mục" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-01-portfolio-overview-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-01-portfolio-overview-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-01" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-03">UI-03</a></td><td><a href="wireframes/UI-03-site-dashboard.html">Dashboard site</a><br><span class="muted">L2 · P0</span></td><td><a href="wireframes/screenshots/UI-03-site-dashboard-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-03-site-dashboard.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-03 Dashboard site" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-03-site-dashboard-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-03-site-dashboard-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-03" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-04">UI-04</a></td><td><a href="wireframes/UI-04-asset-monitoring.html">Giám sát tài sản</a><br><span class="muted">L3 · P0</span></td><td><a href="wireframes/screenshots/UI-04-asset-monitoring-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-04-asset-monitoring.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-04 Giám sát tài sản" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-04-asset-monitoring-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-04-asset-monitoring-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-04" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-05">UI-05</a></td><td><a href="wireframes/UI-05-energy-flow.html">Dòng năng lượng</a><br><span class="muted">L2 · P0</span></td><td><a href="wireframes/screenshots/UI-05-energy-flow-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-05-energy-flow.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-05 Dòng năng lượng" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-05-energy-flow-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-05-energy-flow-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-05" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-06">UI-06</a></td><td><a href="wireframes/UI-06-single-line-diagram.html">Sơ đồ một sợi</a><br><span class="muted">L3 · P1</span></td><td><a href="wireframes/screenshots/UI-06-single-line-diagram-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-06-single-line-diagram.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-06 Sơ đồ một sợi" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-06-single-line-diagram-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-06-single-line-diagram-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-06" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-07">UI-07</a></td><td><a href="wireframes/UI-07-bess-detail.html">Chi tiết BESS</a><br><span class="muted">L3 · P0</span></td><td><a href="wireframes/screenshots/UI-07-bess-detail-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-07-bess-detail.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-07 Chi tiết BESS" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-07-bess-detail-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-07-bess-detail-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-07" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-09">UI-09</a></td><td><a href="wireframes/UI-09-pv-inverter-detail.html">PV và inverter</a><br><span class="muted">L3 · P0</span></td><td><a href="wireframes/screenshots/UI-09-pv-inverter-detail-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-09-pv-inverter-detail.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-09 PV và inverter" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-09-pv-inverter-detail-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-09-pv-inverter-detail-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-09" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-10">UI-10</a></td><td><a href="wireframes/UI-10-grid-poc-meter.html">Lưới, POC, công tơ</a><br><span class="muted">L3 · P0 (demand P1)</span></td><td><a href="wireframes/screenshots/UI-10-grid-poc-meter-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-10-grid-poc-meter.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-10 Lưới, POC, công tơ" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-10-grid-poc-meter-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-10-grid-poc-meter-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-10" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-11">UI-11</a></td><td><a href="wireframes/UI-11-ev-charging.html">Sạc EV</a><br><span class="muted">L3 · P0 công tơ · P1 OCPP</span></td><td><a href="wireframes/screenshots/UI-11-ev-charging-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-11-ev-charging.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-11 Sạc EV" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-11-ev-charging-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-11-ev-charging-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-11" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-13">UI-13</a></td><td><a href="wireframes/UI-13-trend-explorer.html">Trend explorer</a><br><span class="muted">L3–L4 · P0</span></td><td><a href="wireframes/screenshots/UI-13-trend-explorer-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-13-trend-explorer.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-13 Trend explorer" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-13-trend-explorer-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-13-trend-explorer-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-13" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-14">UI-14</a></td><td><a href="wireframes/UI-14-alarm-console.html">Console cảnh báo</a><br><span class="muted">L1–L2 · P0 (gom lũ P1)</span></td><td><a href="wireframes/screenshots/UI-14-alarm-console-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-14-alarm-console.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-14 Console cảnh báo" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-14-alarm-console-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-14-alarm-console-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-14" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-16">UI-16</a></td><td><a href="wireframes/UI-16-tickets.html">Ticket</a><br><span class="muted">— · P0 (work order, SLA P1)</span></td><td><a href="wireframes/screenshots/UI-16-tickets-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-16-tickets.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-16 Ticket" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-16-tickets-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-16-tickets-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-16" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-18">UI-18</a></td><td><a href="wireframes/UI-18-strategies.html">Chiến lược tối ưu</a><br><span class="muted">L2 · P0</span></td><td><a href="wireframes/screenshots/UI-18-strategies-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-18-strategies.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-18 Chiến lược tối ưu" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-18-strategies-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-18-strategies-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-18" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-19">UI-19</a></td><td><a href="wireframes/UI-19-dispatch-plan-48h.html">Kế hoạch 48 h</a><br><span class="muted">L2 · P0 xem · P1 soạn</span></td><td><a href="wireframes/screenshots/UI-19-dispatch-plan-48h-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-19-dispatch-plan-48h.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-19 Kế hoạch 48 h" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-19-dispatch-plan-48h-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-19-dispatch-plan-48h-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-19" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-20">UI-20</a></td><td><a href="wireframes/UI-20-actual-vs-plan.html">Thực tế so với kế hoạch</a><br><span class="muted">L3 · P0</span></td><td><a href="wireframes/screenshots/UI-20-actual-vs-plan-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-20-actual-vs-plan.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-20 Thực tế so với kế hoạch" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-20-actual-vs-plan-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-20-actual-vs-plan-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-20" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-21">UI-21</a></td><td><a href="wireframes/UI-21-command-dialog.html">Hộp lệnh và xác nhận</a><br><span class="muted">lớp phủ · P0</span></td><td><a href="wireframes/screenshots/UI-21-command-dialog-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-21-command-dialog.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-21 Hộp lệnh và xác nhận" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-21-command-dialog-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-21-command-dialog-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-21" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-22">UI-22</a></td><td><a href="wireframes/UI-22-approval-queue.html">Hàng đợi duyệt C3</a><br><span class="muted">— · P0</span></td><td><a href="wireframes/screenshots/UI-22-approval-queue-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-22-approval-queue.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-22 Hàng đợi duyệt C3" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-22-approval-queue-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-22-approval-queue-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-22" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-24">UI-24</a></td><td><a href="wireframes/UI-24-control-state-kill-switch.html">Trạng thái điều khiển</a><br><span class="muted">L2 · P0</span></td><td><a href="wireframes/screenshots/UI-24-control-state-kill-switch-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-24-control-state-kill-switch.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-24 Trạng thái điều khiển" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-24-control-state-kill-switch-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-24-control-state-kill-switch-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-24" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-25">UI-25</a></td><td><a href="wireframes/UI-25-tariff-tou.html">Biểu giá và TOU</a><br><span class="muted">— · P0 (thành phần công suất P1)</span></td><td><a href="wireframes/screenshots/UI-25-tariff-tou-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-25-tariff-tou.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-25 Biểu giá và TOU" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-25-tariff-tou-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-25-tariff-tou-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-25" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-26">UI-26</a></td><td><a href="wireframes/UI-26-edge-gateways.html">Edge và gateway</a><br><span class="muted">L3 · P0</span></td><td><a href="wireframes/screenshots/UI-26-edge-gateways-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-26-edge-gateways.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-26 Edge và gateway" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-26-edge-gateways-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-26-edge-gateways-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-26" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-27">UI-27</a></td><td><a href="wireframes/UI-27-commissioning.html">Commissioning</a><br><span class="muted">— · P0</span></td><td><a href="wireframes/screenshots/UI-27-commissioning-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-27-commissioning.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-27 Commissioning" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-27-commissioning-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-27-commissioning-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-27" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-30">UI-30</a></td><td><a href="wireframes/UI-30-reports-export.html">Báo cáo và xuất</a><br><span class="muted">— · P0 (R4–R7, lịch gửi P1)</span></td><td><a href="wireframes/screenshots/UI-30-reports-export-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-30-reports-export.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-30 Báo cáo và xuất" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-30-reports-export-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-30-reports-export-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-30" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-31">UI-31</a></td><td><a href="wireframes/UI-31-users-roles-grants.html">Người dùng và grant</a><br><span class="muted">— · P0</span></td><td><a href="wireframes/screenshots/UI-31-users-roles-grants-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-31-users-roles-grants.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-31 Người dùng và grant" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-31-users-roles-grants-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-31-users-roles-grants-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-31" width="78" height="140"></a></td></tr>
+<tr><td><a href="#ui-33">UI-33</a></td><td><a href="wireframes/UI-33-audit-log.html">Lịch sử audit</a><br><span class="muted">L4 · P0 (xuất có bằng chứng hash P1)</span></td><td><a href="wireframes/screenshots/UI-33-audit-log-desktop.jpg"><img class="wfthumb" src="wireframes/screenshots/thumbs/UI-33-audit-log.jpg" loading="lazy" alt="Ảnh desktop 1440 px của wireframe UI-33 Lịch sử audit" width="200" height="125"></a></td><td><a href="wireframes/screenshots/UI-33-audit-log-mobile.jpg"><img class="wfthumb m" src="wireframes/screenshots/thumbs/UI-33-audit-log-m.jpg" loading="lazy" alt="Ảnh mobile 390 px của wireframe UI-33" width="78" height="140"></a></td></tr>
+</tbody></table></div>
+<h3 id="s16-1">16.1 Khoảng trống và mâu thuẫn phát hiện khi vẽ</h3>
+<ul>
+  <li>Số mẫu §7 không cân: UI-10 "264,3 kWh ≈ 476.000 ₫" trong khi 264,3 × 1.833 = 484.462 ₫; tải đêm 410 kW (UI-19) không khớp nhập thấp điểm 1.020,3 kWh (UI-10); SOC đầu ngày 10% trái với xả về dự phòng 20% hôm trước; popover "Xả 180 kW" không khớp 360 kWh khả dụng chia cho 5 giờ cao điểm; UI-22 "6 site × 150 kW = 1,2 MW". <span class="tag inference">INFERENCE</span></li>
+  <li>UI-03 phác thảo có 1 cảnh báo mở ở BD-02 nhưng UI-09/UI-14 phác thảo có INV-06 của BD-02 mất kết nối (mức Cao). Wireframe chuyển cảnh báo này sang BD-05.</li>
+  <li>"Trục trái kW, trục phải SOC %" (UI-03, UI-07) và C-05 "tối đa 2 đơn vị/panel" dẫn tới trục kép khó đọc; wireframe dùng panel kW và panel SOC riêng, đồng bộ trục thời gian. Đề xuất sửa C-05 thành một đơn vị mỗi panel. <span class="tag proposal">PROPOSAL</span></li>
+  <li>Token §9.1: cặp <code>--energy-load</code> #1f6fa8 và <code>--energy-ev</code> #0f8a8a không đạt kiểm tách màu (ΔE ≈ 10, dưới sàn 15 với thị lực thường); bảng màu tối nằm ngoài dải độ sáng khuyến nghị. Wireframe dùng EV #c2557e (tối #d46d94) và bộ màu tối đã kiểm; cần cập nhật §9.1. <span class="tag proposal">PROPOSAL</span></li>
+  <li>Ở site zero-export, BESS 500 kWh đầy lúc ≈ 12:20 nên kế hoạch có PV bị cắt dự kiến (≈ 198 kWh T7, lớn hơn vào CN); §7 chưa đặc tả cách hiển thị "PV bị cắt dự kiến" trong UI-19.</li>
+  <li>Thiếu định nghĩa: "tự cấp" và "tự tiêu thụ" cho KPI UI-03; enum lý do từ chối PDP (X-09-02); tập trạng thái OCPP (X-09-07); ngày lễ/SpecialDay cho lưới TOU (UI-25).</li>
+  <li>Chưa có wireframe chi tiết: UI-02 (đã nằm trong khung mọi màn), UI-08, UI-12, UI-15 (khung phải trong UI-14), UI-17, UI-23, UI-28, UI-29, UI-32, UI-34 (hộp step-up trong UI-21), UI-35, UI-36, UI-37.</li>
 </ul>
 </section>
 

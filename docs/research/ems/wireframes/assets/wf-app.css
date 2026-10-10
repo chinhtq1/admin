@@ -323,10 +323,12 @@ ol.ann li { margin-bottom: 4px; }
   .field { grid-template-columns: 1fr; }
   .flow-steps { grid-template-columns: 1fr; }
   .chart-wrap svg.chart { min-width: 680px; }
+  .chart-wrap svg.dg.wide { min-width: 820px; }
   .tw table.t:not(.fit) { min-width: 640px; }
   .states { grid-template-columns: 1fr; }
   .overlay { padding: 8px 4px; }
   .ctx .t { font-size: 15px; }
+  .chip { white-space: normal; max-width: 100%; }
 }
 
 /* ---------- print ---------- */
@@ -338,3 +340,7 @@ ol.ann li { margin-bottom: 4px; }
   .pg { break-before: page; }
   a { color: inherit; }
 }
+
+/* gallery page: let grid children shrink so inner tables scroll */
+.layout-toc > * { min-width: 0; }
+nav.toc ol { padding-left: 24px; }
