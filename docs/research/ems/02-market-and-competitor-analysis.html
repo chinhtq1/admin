@@ -1,0 +1,1345 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thị trường và đối thủ EMS</title>
+<link rel="stylesheet" href="assets/ems-docs.css">
+<style>
+  table.matrix tr.grp td { text-align: left; background: var(--surface-2); font-weight: 600; }
+  table.matrix td a.src { font-size: 11px; margin-left: 2px; }
+  table.matrix td { white-space: nowrap; }
+  table.matrix td:first-child { white-space: normal; min-width: 210px; }
+  .profile th[scope="row"] { width: 190px; background: var(--surface); position: static; }
+  .kv { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<nav class="docnav"><div class="inner">
+  <a class="brand" href="index.html">EMS Research</a>
+  <a href="00-executive-summary.html">00 Tóm tắt</a>
+  <a href="01-research-methodology.md">01 Phương pháp</a>
+  <a href="02-market-and-competitor-analysis.html" aria-current="page">02 Thị trường</a>
+  <a href="03-functional-catalog.html">03 Chức năng</a>
+  <a href="04-business-requirements.md">04 Yêu cầu</a>
+  <a href="05-domain-model.html">05 Domain</a>
+  <a href="06-system-architecture.html">06 Kiến trúc</a>
+  <a href="07-device-integration.md">07 Tích hợp</a>
+  <a href="08-energy-optimization.md">08 Tối ưu</a>
+  <a href="09-ux-ui-specification.html">09 UX/UI</a>
+  <a href="10-security-and-reliability.md">10 An toàn</a>
+  <a href="11-mvp-and-roadmap.html">11 Lộ trình</a>
+  <a href="12-traceability-matrix.md">12 Truy vết</a>
+  <a href="13-open-questions-and-risks.md">13 Rủi ro</a>
+  <a href="14-source-register.md">14 Nguồn</a>
+</div></nav>
+
+<main>
+<header class="doc-header">
+  <div class="kicker">Tài liệu 02 · Thị trường, ranh giới sản phẩm và đối thủ</div>
+  <h1>Phân tích thị trường và đối thủ cho EMS C&amp;I đa site, đa hãng</h1>
+  <div class="meta">Phiên bản 1.0 · Ngày 2026-10-10 · Trạng thái: bản phát hành nội bộ, <strong>chờ lượt kiểm chứng pháp lý G-13</strong> trước khi dùng bên ngoài · Người viết: Agent B (Competitor Product Analyst) · Đầu vào: <a href="notes/A-market-boundary.md">ghi chú A</a>, <a href="notes/B-competitors.md">ghi chú B</a>, <a href="notes/K-review-round1.md">phán quyết K vòng 1</a>, nghiên cứu FusionSolar trước (<code>docs/research/fusionsolar/</code>)</div>
+</header>
+
+<div class="layout-toc">
+<nav class="toc" aria-label="Mục lục">
+  <ol>
+    <li><a href="#tom-tat">Tóm tắt</a></li>
+    <li><a href="#pham-vi">Phạm vi và giới hạn bằng chứng</a></li>
+    <li><a href="#thi-truong">Thị trường và phân khúc</a>
+      <ol>
+        <li><a href="#nhom">Bảy nhóm sản phẩm</a></li>
+        <li><a href="#persona">Phân khúc và persona</a></li>
+        <li><a href="#vn">Bối cảnh Việt Nam</a></li>
+        <li><a href="#toan-cau">Bối cảnh toàn cầu</a></li>
+        <li><a href="#dong-luc">Động lực và rào cản</a></li>
+      </ol>
+    </li>
+    <li><a href="#ranh-gioi">Ranh giới sản phẩm</a>
+      <ol>
+        <li><a href="#chong-lan">Bảng chồng lấn</a></li>
+        <li><a href="#cham-diem">Chấm điểm và lựa chọn</a></li>
+        <li><a href="#nhom-chinh">Nhóm chính được chọn</a></li>
+        <li><a href="#khac-huong-cu">Khác hướng cũ</a></li>
+      </ol>
+    </li>
+    <li><a href="#chon-doi-thu">Chọn đối thủ</a></li>
+    <li><a href="#ho-so">Hồ sơ sản phẩm</a>
+      <ol>
+        <li><a href="#p1">P1 Ampowr Cosmos</a></li>
+        <li><a href="#p2">P2 HT Infinite Power</a></li>
+        <li><a href="#p3">P3 Schneider EMA</a></li>
+        <li><a href="#p4">P4 Siemens SICAM MGC</a></li>
+        <li><a href="#p5">P5 ABB OPTIMAX</a></li>
+        <li><a href="#p6">P6 SolarEdge ONE C&amp;I</a></li>
+        <li><a href="#p7">P7 Huawei FusionSolar C&amp;I</a></li>
+        <li><a href="#p8">P8 Sungrow PowerStack</a></li>
+        <li><a href="#p9">P9 OpenEMS</a></li>
+        <li><a href="#p10">P10 Stem PowerTrack</a></li>
+        <li><a href="#p11">P11 GridBeyond Point</a></li>
+        <li><a href="#lop-nen">Tham chiếu lớp nền giám sát</a></li>
+      </ol>
+    </li>
+    <li><a href="#ma-tran">Ma trận tính năng</a></li>
+    <li><a href="#phan-tang">Bốn tầng bằng chứng</a></li>
+    <li><a href="#mau-hinh">Mẫu hình kỹ thuật</a></li>
+    <li><a href="#thuong-mai">Mô hình thương mại</a></li>
+    <li><a href="#khac-biet">Cơ hội khác biệt</a></li>
+    <li><a href="#rui-ro">Rủi ro và câu hỏi mở</a></li>
+    <li><a href="#bang-chung">Ghi chú bằng chứng</a>
+      <ol>
+        <li><a href="#ha-cap">Hạ cấp đã áp dụng</a></li>
+        <li><a href="#ledger">Sổ bằng chứng</a></li>
+        <li><a href="#truy-vet">Truy vết đề xuất PR-B</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+
+<article>
+
+<!-- ============================================================ -->
+<h2 id="tom-tat">1. Tóm tắt</h2>
+
+<div class="callout">
+<p><strong>Kết luận định vị.</strong> Nhóm sản phẩm chính là <strong>nền tảng quản lý năng lượng C&amp;I behind-the-meter (sau công tơ), đa site, đa hãng</strong>, xây trên lớp giám sát/O&amp;M. Người mua chính là tổ chức vận hành: installer/EPC, nhà thầu O&amp;M, ESCO. Chủ C&amp;I là người xem báo cáo. <span class="tag proposal">PROPOSAL</span> theo quyết định thống nhất số 1 của <a href="notes/K-review-round1.md">K §6</a>.</p>
+<p>Trong 12–18 tháng đầu, sản phẩm không làm nền tảng ESG/carbon, SCADA/EMS lưới, chuyển chế độ microgrid/black start hay giao dịch thị trường điện.</p>
+</div>
+
+<ol>
+  <li><strong>Thị trường Việt Nam ưu tiên tuân thủ trước tối ưu.</strong> Cuối 07/2026 có 28.254 hệ điện mặt trời mái nhà tự sản xuất, tự tiêu thụ (TSXTTT) theo NĐ 58/243, nhưng chỉ khoảng 287 hệ đăng ký bán điện dư <span class="tag fact">FACT</span> (<a href="https://vietnamnet.vn/en/rooftop-solar-saves-billions-of-dong-but-one-bottleneck-remains-2552186.html">vietnamnet</a>, qua kết quả tìm kiếm). Từ đó suy ra thứ tự giá trị: (1) tuân thủ giới hạn xuất và trần nhập, (2) minh bạch tiết kiệm theo TOU, (3) O&amp;M đa hãng, (4) tối ưu BESS <span class="tag inference">INFERENCE</span>.</li>
+  <li><strong>Cao điểm mới rơi vào buổi tối, nên BESS có giá trị hơn.</strong> Theo QĐ 963/QĐ-BCT, cao điểm là 17h30–22h30 từ Thứ Hai đến Thứ Bảy <span class="tag fact">FACT</span>. Ngày khung giờ này thực sự áp vào hóa đơn vẫn chưa rõ <span class="tag unknown">UNKNOWN</span>. PV gần như bằng 0 vào giờ cao điểm mới, nên chỉ BESS mới dịch được năng lượng PV vào khung này <span class="tag inference">INFERENCE</span>.</li>
+  <li><strong>Đa số C&amp;I Việt Nam có lẽ chưa trả phí công suất (demand charge)</strong> <span class="tag inference">INFERENCE</span>. Khách tham gia thí điểm giá hai thành phần có thể đã trả từ 07/2026. Cơ sở tính (công suất đăng ký hay Pmax đo) là <span class="tag unknown">UNKNOWN</span>. Vì vậy peak shaving theo demand là <span class="prio p1">P1</span>, còn trần nhập vật lý (<code>import_cap_w</code>) là <span class="prio p0">P0</span>.</li>
+  <li><strong>Peak shaving và giới hạn mua lưới là năng lực cơ bản (table stakes).</strong> 8/11 sản phẩm được xét có tài liệu (Verified) cho chức năng này <span class="tag inference">INFERENCE</span> (đếm từ <a href="#ma-tran">ma trận</a>). Không thể dùng nó làm điểm khác biệt.</li>
+  <li><strong>Các sản phẩm có tài liệu đều giữ vòng nhanh tại site.</strong> Schneider, Ampowr, Huawei, OpenEMS và Stem đều chạy vòng điều khiển nhanh tại site; cloud chỉ lập kế hoạch <span class="tag inference">INFERENCE</span> (từ <a href="#L04">L04</a>, <a href="#L15">L15</a>, <a href="#L37">L37</a>, <a href="#L43">L43</a>, <a href="#L46">L46</a>). Điều này củng cố hướng edge-first của nghiên cứu FusionSolar trước; không cần đổi hướng.</li>
+  <li><strong>Hãng thiết bị dùng phần mềm để bán phần cứng.</strong> SolarEdge cho miễn phí lõi ONE for C&amp;I với người mua phần cứng <span class="tag fact">FACT</span> (<a href="#L31">L31</a>). Sản phẩm đa hãng vì vậy phải bán giá trị <em>đa hãng + O&amp;M + biểu giá Việt Nam + bằng chứng tuân thủ</em>, không cạnh tranh với dashboard miễn phí của OEM <span class="tag inference">INFERENCE</span>.</li>
+  <li><strong>Khoảng trống chiếm được</strong> <span class="tag inference">INFERENCE</span>: chưa sản phẩm nào trong mẫu công bố đồng thời bốn điều sau:
+    <ul>
+      <li>cấu hình và kiểm chứng (readback) chế độ native của nhiều hãng trên cùng một site;</li>
+      <li>biểu giá Việt Nam có phiên bản (QĐ 963/1279, hai lịch song song);</li>
+      <li>nhật ký bằng chứng tuân thủ giới hạn xuất;</li>
+      <li>quy trình O&amp;M đa hãng cho installer.</li>
+    </ul>
+    Chi tiết ở <a href="#khac-biet">§11</a>.</li>
+  <li><strong>Phần lớn chưa xác minh được.</strong> Mọi bằng chứng mới chỉ lấy qua kết quả tìm kiếm. Ô "Verified" nghĩa là <em>hãng tuyên bố trong tài liệu</em>, không phải đã kiểm thử độc lập. Các hãng có thể phổ biến ở Việt Nam (Deye/Solarman, Growatt, Solis C&amp;I, Victron) <strong>chưa được đánh giá</strong> (K G-08). Hạn mức tìm kiếm của lượt này đã hết, xem <a href="#pham-vi">§2</a>.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2 id="pham-vi">2. Phạm vi, phương pháp và giới hạn bằng chứng</h2>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Mục</th><th>Nội dung</th></tr></thead>
+<tbody>
+<tr><td>Câu hỏi</td><td>
+  <ol>
+    <li>Các EMS thương mại cho C&amp;I đa site (PV + BESS + lưới + tải + EV tùy chọn) làm được gì theo tài liệu công khai, ở 13 nhóm chức năng A–M?</li>
+    <li>Kiến trúc triển khai và hành vi khi mất kết nối ra sao?</li>
+    <li>Giao thức và mức mở API thế nào?</li>
+    <li>Hãng tuyên bố gì về bảo mật?</li>
+    <li>Sản phẩm của ta chiếm được khoảng trống nào?</li>
+  </ol>
+</td></tr>
+<tr><td>Nguồn</td><td>
+  <ul>
+    <li>Ghi chú <a href="notes/A-market-boundary.md">A</a> (thị trường, ranh giới) và <a href="notes/B-competitors.md">B</a> (đối thủ, sổ bằng chứng L01–L49).</li>
+    <li>Nghiên cứu FusionSolar trước, trong <code>docs/research/fusionsolar/04_ghi_chu_nghien_cuu/</code>: <code>competitors_rebuild.md</code>, <code>demo_observations.md</code>, <code>features_editions.md</code>. Các mục này mang mã FS-xx trong <a href="#ledger">sổ bằng chứng</a>.</li>
+    <li>Phán quyết <a href="notes/K-review-round1.md">K vòng 1</a> là ràng buộc. Khi ghi chú mâu thuẫn với K §6 thì K thắng.</li>
+  </ul>
+</td></tr>
+<tr><td>Giới hạn</td><td>
+  <ul>
+    <li>Môi trường chặn tải trang trực tiếp. Mọi FACT mới đều "<strong>qua kết quả tìm kiếm</strong>": chỉ là snippet hoặc tóm tắt của công cụ tìm kiếm, không phải đọc toàn văn.</li>
+    <li>Hạn mức 200 truy vấn tìm kiếm của lượt chạy đã hết trước khi viết tài liệu này. Truy vấn bổ sung về Deye/Solarman bị từ chối. Tài liệu này <strong>không thêm bằng chứng mới</strong> ngoài các ghi chú.</li>
+    <li>Không URL nào được mở trực tiếp. Không có datasheet nào được đọc toàn văn.</li>
+  </ul>
+</td></tr>
+<tr><td>Ý nghĩa trạng thái ma trận</td><td>
+  <ul>
+    <li><span class="st verified">Verified</span>: tài liệu của hãng nói rõ, có URL trong sổ bằng chứng.</li>
+    <li><span class="st verified">Verified*</span>: chỉ là tuyên bố của hãng (chứng chỉ, "AI"), chưa kiểm tra chứng chỉ hay mô tả kỹ thuật.</li>
+    <li><span class="st partial">Partial</span>: có nói nhưng thiếu chi tiết, chỉ có ở sản phẩm anh em, hoặc chỉ qua nhà phân phối hay cộng đồng.</li>
+    <li><span class="st unknown">Unknown</span>: không tìm thấy tài liệu. <strong>Không có nghĩa là không hỗ trợ.</strong></li>
+    <li><span class="st na">N/A</span>: không áp dụng cho loại sản phẩm đó.</li>
+  </ul>
+</td></tr>
+<tr><td>Ánh xạ A–M</td><td>Dùng các module trong <code>_conventions.md</code>:
+  <ul>
+    <li>A M-ORG · B M-DASH · C M-MON · D M-HIST · E M-BESS</li>
+    <li>F M-PV · G M-GRID · H M-EV · I M-OPT · J M-ALM</li>
+    <li>K M-INT · L M-SEC · M M-ADV</li>
+    <li>Ba hàng phụ: X1 vận hành khi mất mạng, X2 máy phát, X3 mô hình triển khai.</li>
+  </ul>
+  Người viết <a href="03-functional-catalog.html">03</a> sẽ xác nhận tên nhóm cuối cùng.</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="thi-truong">3. Thị trường và phân khúc</h2>
+
+<h3 id="nhom">3.1 Bảy nhóm sản phẩm mang tên "EMS"</h3>
+<p>Thị trường dùng chữ "EMS" cho bảy loại sản phẩm khác nhau về người mua, nhịp điều khiển và trách nhiệm an toàn. Định nghĩa dưới đây là định nghĩa làm việc <span class="tag inference">INFERENCE</span>, tổng hợp từ <a href="notes/A-market-boundary.md">A §3.1</a>. Các ví dụ sản phẩm đều có nguồn.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Nhóm</th><th>Định nghĩa làm việc</th><th>Người mua điển hình</th><th>Chức năng điển hình</th><th>Ví dụ (có nguồn)</th><th>Nhịp điều khiển / dữ liệu</th></tr></thead>
+<tbody>
+<tr><td><strong>1. Site monitoring &amp; analytics</strong></td><td>Thu thập, lưu, hiển thị và phân tích dữ liệu thiết bị và công tơ. Không điều khiển, hoặc chỉ điều khiển thủ công</td><td>Installer/EPC, O&amp;M, chủ đầu tư nhỏ</td><td>Dashboard, lịch sử, kWh/PR, cảnh báo, ticket, phân quyền công ty → site → chủ</td><td>FusionSolar, iSolarCloud (<a href="#L42">L42</a>); meteocontrol VCOM (<a href="#FS-05">FS-05</a>)</td><td>Dữ liệu 1–5 phút (FusionSolar: 5 phút, <a href="#L39">L39</a>); không có vòng điều khiển</td></tr>
+<tr><td><strong>2. C&amp;I energy management (BTM)</strong></td><td>Cloud + edge quản lý dòng năng lượng sau công tơ của cơ sở: PV, BESS, lưới, tải, EV. Mục tiêu: hóa đơn, giới hạn đấu nối, độ tin cậy</td><td>Chủ C&amp;I, energy manager, ESCO/PPA mái nhà</td><td>TOU, tự tiêu thụ, peak shaving, giới hạn xuất, lập lịch BESS, tải linh hoạt, báo cáo tiết kiệm</td><td>Schneider EMA (<a href="#L14">L14</a>), Stem Athena (<a href="#L47">L47</a>), SolarEdge ONE C&amp;I (<a href="#L30">L30</a>)</td><td>Lịch theo slot cỡ 15 phút; vòng giới hạn chạy theo giây ở edge/logger</td></tr>
+<tr><td><strong>3. Solar/renewable APM</strong></td><td>Quản lý hiệu suất tài sản tái tạo cấp danh mục: KPI kỹ thuật/thương mại, O&amp;M, CMMS</td><td>IPP, asset manager, O&amp;M lớn</td><td>PR, availability, tổn thất, hợp đồng, field service</td><td>Power Factors Unity (<a href="#FS-06">FS-06</a>)</td><td>SCADA 1–15 phút; ít điều khiển</td></tr>
+<tr><td><strong>4. BESS management &amp; optimization</strong></td><td>EMS của hệ lưu trữ: điều phối BMS + PCS, chế độ vận hành, lịch sạc/xả, bảo vệ SOC/SOH</td><td>Nhà tích hợp BESS, chủ BESS, EPC</td><td>Peak shaving, arbitrage, tự tiêu thụ, backup, dịch vụ phụ trợ, giám sát cell/rack</td><td>Ampowr Cosmos (<a href="#L01">L01</a>), HT Infinite Power (<a href="#L11">L11</a>), Sungrow EMS300CP (<a href="#L41">L41</a>), OpenEMS (<a href="#L43">L43</a>)</td><td>Lệnh P/Q từ 100 ms đến giây; lịch 5–15 phút</td></tr>
+<tr><td><strong>5. Microgrid / DER coordination</strong></td><td>Controller microgrid (dispatch + transition nối lưới ↔ tách đảo) và nền tảng phối hợp DER (DERMS của utility; VPP của aggregator)</td><td>KCN, campus, đảo; utility; aggregator</td><td>Tách đảo, black start, sa thải tải; DERMS: ràng buộc lưới phân phối; VPP: đấu thầu linh hoạt</td><td>Siemens SICAM MGC (<a href="#L21">L21</a>), Schneider EMO (<a href="#L19">L19</a>), GridBeyond (<a href="#L49">L49</a>)</td><td>Transition: ms đến chu kỳ, chỉ controller cục bộ làm được; VPP: giây đến phút</td></tr>
+<tr><td><strong>6. Utility/TSO SCADA/EMS</strong></td><td>Điều hành lưới truyền tải: SCADA + ứng dụng mạng</td><td>TSO/NSMO, utility lớn</td><td>State estimation, N-1, OPF, AGC, CIM/CGMES</td><td>Hitachi Energy Network Manager EMS (<a href="https://www.hitachienergy.com/jp/ja/products-and-solutions1/grid-and-generation-management-network-manager/network-manager-energy-management-system-ems">Hitachi Energy</a>, qua kết quả tìm kiếm)</td><td>SCADA 2–4 s; AGC theo giây</td></tr>
+<tr><td><strong>7. ISO 50001 enterprise energy management</strong></td><td>Hệ <em>quản lý</em> theo PDCA (chính sách, EnPI, EnB, SEU), không phải hệ điều khiển</td><td>Energy manager, EHS/ESG</td><td>Đo phụ mọi dạng năng lượng, chuẩn hóa theo sản lượng, M&amp;V, bằng chứng đánh giá</td><td>ABB Ability EnergyManager (<a href="https://library.e.abb.com/public/97259bfd72d54220a2762fe2a9f75537/ABBAbility_EnergyManager_ISO_50001rev1.pdf">ABB</a>, qua kết quả tìm kiếm)</td><td>Ngày/tháng; không điều khiển</td></tr>
+</tbody></table></div>
+<p>Các mốc chuẩn tham chiếu:</p>
+<ul>
+  <li>Bộ điều khiển microgrid theo IEEE 2030.7-2017 có hai chức năng lõi là dispatch và transition. IEEE 2030.8 quy định thử nghiệm <span class="tag fact">FACT</span> (<a href="https://www.redalyc.org/journal/2913/291374362027/291374362027.pdf">redalyc</a>, qua kết quả tìm kiếm; chưa đọc toàn văn chuẩn).</li>
+  <li>ISO 50001:2018 là hệ thống quản lý PDCA <span class="tag fact">FACT</span> (<a href="https://www.iso.org/standard/69426.html">iso.org</a>, qua kết quả tìm kiếm).</li>
+</ul>
+<p>Hệ quả: sản phẩm của ta không được tuyên bố "tuân thủ" hai chuẩn này (quyết định K §6 số 34).</p>
+
+<h3 id="persona">3.2 Phân khúc khách hàng, persona và JTBD</h3>
+<p>Bối cảnh Việt Nam có các hợp đồng EPC–ESCO lớn ở khu công nghiệp:</p>
+<ul>
+  <li>SolarBK + Banpu NEXT + Amata: 227 MWp mái nhà. SolarBK có dự án 2,2 MWp + 2,3 MWh BESS <span class="tag fact">FACT</span> (<a href="https://solarbk.vn/en/article/general-news/solarbk-banpu-next-amata-sign-227-mwp-rooftop-deal-bess-becomes-core-infrastructure-as-green-industrial-parks-accelerate-in-november.html">solarbk.vn</a>, nguồn tự công bố, qua kết quả tìm kiếm).</li>
+  <li>Amata Biên Hòa: 18 MWp trên 14 nhà máy, chịu áp lực CBAM/CSRD <span class="tag fact">FACT</span> (<a href="https://vietnamenergy.vn/rooftop-solar-and-energy-storage-development-in-industrial-parks-field-insights-from-dong-nai-and-bac-ninh-35553.html">vietnamenergy.vn</a>, qua kết quả tìm kiếm).</li>
+</ul>
+<p>Câu "phần lớn site C&amp;I do bên thứ ba vận hành" là <span class="tag inference">INFERENCE</span> không có số liệu. Không được viết thành FACT.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Persona</th><th>JTBD ("Khi…, tôi muốn…, để…")</th><th>Chỉ số quan tâm</th><th>Ưu tiên</th><th>Đối thủ đang phục vụ (có tài liệu)</th></tr></thead>
+<tbody>
+<tr><td><strong>P1 · Chủ C&amp;I / CFO</strong></td><td>Khi nhận hóa đơn EVN, tôi muốn thấy PV/BESS đã tiết kiệm bao nhiêu theo khung giờ, để quyết định mở rộng và kiểm tra ESCO</td><td>VNĐ tiết kiệm, % tự tiêu thụ, kWh cao điểm tránh được</td><td><span class="prio p0">P0</span> người xem</td><td>GridBeyond ViewPoint Lens (<a href="#L49">L49</a>), Stem Athena (<a href="#L47">L47</a>)</td></tr>
+<tr><td><strong>P2 · Energy manager</strong></td><td>Khi lập báo cáo năng lượng, tôi muốn số đo phụ theo tải và khung giờ, để chứng minh hiệu quả</td><td>kWh/đơn vị sản phẩm, tải nền, cao điểm</td><td><span class="prio p1">P1</span> (chỉ xuất dữ liệu)</td><td>Schneider PME (<a href="#L20">L20</a>), ABB EAM (<a href="#L29">L29</a>)</td></tr>
+<tr><td><strong>P3 · Nhà thầu O&amp;M</strong></td><td>Khi có báo động hoặc PR giảm ở bất kỳ site nào, tôi muốn thấy sớm và giao việc, để giữ SLA</td><td>Availability, MTTR, số ticket, kWh tổn thất</td><td><span class="prio p0">P0</span> người dùng hằng ngày</td><td>AmpiHealth NOC (<a href="#L05">L05</a>), AlsoEnergy PowerTrack (<a href="#L48">L48</a>), Power Factors (<a href="#FS-06">FS-06</a>)</td></tr>
+<tr><td><strong>P4 · EPC / installer</strong></td><td>Khi nghiệm thu, tôi muốn cấu hình nhanh giới hạn xuất và kiểm chứng nó chạy, để đạt yêu cầu đấu nối</td><td>Thời gian commissioning, % site đạt export-limit test</td><td><span class="prio p0">P0</span></td><td>Huawei SmartPVMS installer (<a href="#FS-07">FS-07</a>), Stem pre-configuration (<a href="#L46">L46</a>)</td></tr>
+<tr><td><strong>P5 · Nhà tích hợp BESS</strong></td><td>Khi gắn BESS vào site có PV và nhiều tải, tôi muốn lớp supervisory đa hãng tôn trọng BMS, để không mất bảo hành</td><td>Chu kỳ, SOH, số giờ vận hành ngoài giới hạn = 0</td><td><span class="prio p0">P0</span>/<span class="prio p1">P1</span></td><td>EMS đóng gói trong tủ (<a href="#L11">L11</a>, <a href="#L41">L41</a>)</td></tr>
+<tr><td><strong>P6 · IPP / ESCO (PPA mái nhà)</strong></td><td>Khi lập hóa đơn PPA, tôi muốn số liệu sản lượng tin cậy theo site và khung giờ, để thu tiền và báo cáo bên cho vay</td><td>kWh bán, kWh bị cắt do giới hạn xuất, availability</td><td><span class="prio p0">P0</span> báo cáo · <span class="prio p1">P1</span> DPPA</td><td>Báo cáo tài chính PowerTrack (<a href="#L48">L48</a>)</td></tr>
+<tr><td><strong>P7 · Aggregator / VPP</strong></td><td>Khi lưới cần linh hoạt, tôi muốn điều phối nhiều BESS cùng lúc, để bán dịch vụ</td><td>MW khả dụng, tỷ lệ đáp ứng</td><td><span class="prio p2">P2</span>; Việt Nam chưa thấy cơ chế DR cho C&amp;I <span class="tag unknown">UNKNOWN</span></td><td>Ampowr (<a href="#L03">L03</a>), GridBeyond (<a href="#L49">L49</a>), Stem (<a href="#L46">L46</a>)</td></tr>
+</tbody></table></div>
+
+<h3 id="vn">3.3 Bối cảnh Việt Nam</h3>
+<div class="callout warn"><strong>Chưa kiểm chứng pháp lý.</strong> Mọi văn bản dưới đây chỉ được đọc qua kết quả tìm kiếm hoặc tóm tắt báo chí và luật sư. Theo K G-13, phải có một lượt kiểm chứng riêng trước khi tài liệu này dùng ra ngoài. Các điểm cần kiểm chứng: NĐ 58 + 243 (VBHN 52), TT 29/2026, ngày QĐ 963 áp vào hóa đơn, thí điểm giá hai thành phần, QĐ 1570. Mọi chi tiết thực thi đang là <span class="tag unknown">UNKNOWN</span> và được theo dõi ở <a href="13-open-questions-and-risks.md">13</a>.</div>
+
+<h4>Khung pháp lý điện mặt trời mái nhà TSXTTT</h4>
+<div class="table-wrap"><table>
+<thead><tr><th>Văn bản</th><th>Nội dung liên quan sản phẩm</th><th>Nhãn và nguồn</th></tr></thead>
+<tbody>
+<tr><td>NĐ 135/2024</td><td>Đã bị thay. Nghiên cứu FusionSolar trước (<code>market_users_vietnam.md</code> §5) dùng mức 20% của văn bản này, nay đã lỗi thời</td><td><span class="tag fact">FACT</span> <a href="https://theinvestor.vn/insight-into-vietnams-decree-58-on-renewable-and-new-energy-d14912.html">theinvestor.vn</a></td></tr>
+<tr><td>NĐ 58/2025 (03/03/2025)</td><td>
+  <ul>
+    <li>Thay NĐ 135.</li>
+    <li>Phải thông báo cho các cơ quan liên quan kể cả khi không bán dư.</li>
+    <li>Định nghĩa thiết bị chống phát ngược "có thể bật/tắt".</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> <a href="https://blogs.duanemorris.com/vietnam/2025/08/27/vietnam-decree-58-on-development-of-renewable-energy-power-mechanisms-and-policies-for-self-production-and-self-consumption-rooftop-solar-power-systems/">duanemorris</a> (qua kết quả tìm kiếm)</td></tr>
+<tr><td>NĐ 243/2026 (26/06/2026)</td><td>
+  <ul>
+    <li>Bán dư tối đa 50% <strong>sản lượng thực phát</strong>.</li>
+    <li>Được vượt mức này đến 31/12/2030 nếu lưới tiếp nhận được.</li>
+    <li>Điện xả từ BESS gắn với hệ mái nhà được tính vào điện dư.</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> <a href="https://luatvietnam.vn/tin-van-ban-moi/tu-26-6-2026-dien-mat-troi-mai-nha-duoc-ban-toi-da-50-san-luong-dien-du-186-109883-article.html">luatvietnam</a>; <a href="https://www.reccessary.com/en/news/vietnam-solar-grid-export-dppa">reccessary</a> (qua kết quả tìm kiếm). Kỳ tính 50%: <span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><td>VBHN 52 (NĐ 58 + 243), Điều 10(5)</td><td>
+  <ul>
+    <li>Hệ trung áp trở lên <strong>có bán dư</strong>: phải kết nối với hệ thống giám sát và điều khiển của cấp điều độ.</li>
+    <li>Hệ trung áp <strong>không bán dư</strong>: phải có thiết bị bật/tắt phát ngược.</li>
+    <li>Hệ hạ áp: không cần cả hai.</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span>, mức Med, theo nghiên cứu FusionSolar trước (<code>competitors_rebuild.md</code> Q6). Đây là tóm tắt PDF VBHN; K chưa kiểm chứng lại. Yêu cầu thiết bị cho hệ hạ áp: <span class="tag unknown">UNKNOWN</span> (Q-A09)</td></tr>
+<tr><td>QĐ 1570/QĐ-EVN</td><td>Modbus TCP và IEC 60870-5-104 cho giám sát/điều khiển; IEC 62056 cho công tơ</td><td><span class="tag fact">FACT</span> Low. Đây là tóm tắt của Advantech, một vendor có lợi ích (<a href="#FS-13">FS-13</a>). Các con số "≥ 64 kbps, ≤ 125 ms" <strong>không</strong> được dùng làm NFR</td></tr>
+<tr><td>NĐ 133/2026</td><td>Xử phạt vi phạm hành chính về điện mặt trời mái nhà, tới 100 triệu đồng</td><td><span class="tag fact">FACT</span> (luatvietnam, qua kết quả tìm kiếm, theo <a href="notes/A-market-boundary.md">A §3.4.1</a>)</td></tr>
+</tbody></table></div>
+
+<h4>Biểu giá</h4>
+<ul>
+  <li><strong>TOU theo QĐ 963/QĐ-BCT (22/04/2026)</strong> <span class="tag fact">FACT</span> (<a href="https://thuvienphapluat.vn/van-ban/Tai-nguyen-Moi-truong/Quyet-dinh-963-QD-BCT-2026-khung-gio-cao-diem-thap-diem-cua-he-thong-dien-quoc-gia-703327.aspx">thuvienphapluat</a>; <a href="https://tuoitre.vn/bo-cong-thuong-chinh-thuc-thay-doi-khung-gio-tinh-gia-dien-buoi-toi-la-gio-cao-diem-2026042410430101.htm">tuoitre</a>, qua kết quả tìm kiếm):
+    <ul>
+      <li>Cao điểm 17h30–22h30, Thứ Hai đến Thứ Bảy.</li>
+      <li>Thấp điểm 0h–6h mọi ngày.</li>
+      <li>Chủ nhật không có cao điểm.</li>
+    </ul>
+    Khung cũ theo TT 16/2014 có cao điểm 9h30–11h30 và 17h–20h. Ngày khung mới áp vào hóa đơn: <span class="tag unknown">UNKNOWN</span>, vì các nguồn mâu thuẫn nhau (Q-A01).</li>
+  <li><strong>Giá theo QĐ 1279/QĐ-BCT</strong> <span class="tag fact">FACT</span> (<a href="https://thuvienphapluat.vn/phap-luat-nha-dat/toan-van-quyet-dinh-1279-qd-bct-2025-quy-dinh-ve-gia-ban-dien-3357.html">thuvienphapluat</a>, qua kết quả tìm kiếm):
+    <ul>
+      <li>Ví dụ sản xuất cấp 22–110 kV: bình thường 1.833, thấp điểm 1.190, cao điểm 3.398 đ/kWh.</li>
+      <li>Giá cao điểm gấp khoảng 2,8 lần giá thấp điểm ở mọi cấp điện áp.</li>
+    </ul></li>
+  <li><strong>Ví dụ arbitrage minh họa</strong> <span class="tag inference">INFERENCE</span>, số giả định, K đã tính lại:
+    <ul>
+      <li>Chênh lệch ròng: 3.398 − 1.190/0,9 ≈ 2.076 đ/kWh xả.</li>
+      <li>Với 1 MWh × 312 ngày, tiết kiệm ≈ 648 triệu đ/năm, chưa trừ suy hao và O&amp;M.</li>
+      <li>Đây không phải cam kết. CAPEX BESS ở Việt Nam là <span class="tag unknown">UNKNOWN</span>.</li>
+    </ul>
+    Sản phẩm không được quảng cáo % tiết kiệm. Tiết kiệm luôn là hóa đơn bóng so với baseline phản thực (quyết định K số 34).</li>
+  <li><strong>Giá hai thành phần.</strong>
+    <ul>
+      <li>Thí điểm cho khách sản xuất ≥ 200.000 kWh/tháng theo dự thảo: hóa đơn song song 01–06/2026, thanh toán thật 07/2026–07/2027 <span class="tag fact">FACT</span> (<a href="https://tapchicongthuong.vn/thi-diem-ap-dung-gia-dien-hai-thanh-phan-tu-1-1-2026-218800.htm">tapchicongthuong</a>, qua kết quả tìm kiếm).</li>
+      <li>Chu kỳ tích phân 30 phút <span class="tag fact">FACT</span> Med (theo <a href="notes/C-energy-domain.md">C</a>).</li>
+      <li><strong>Cơ sở tính</strong> (công suất đăng ký hay Pmax đo): <span class="tag unknown">UNKNOWN</span> (K R-16).</li>
+      <li>Câu "C&amp;I Việt Nam chưa trả phí công suất" bị hạ xuống <span class="tag inference">INFERENCE</span> "đại đa số" (K R-17).</li>
+    </ul></li>
+  <li><strong>Sạc EV có biểu giá riêng</strong>, và trạm sạc kinh doanh phải có công tơ riêng <span class="tag fact">FACT</span> (<a href="https://vneconomy.vn/automotive/quy-dinh-moi-ve-gia-ban-dien-cho-tram-sac-xe-dien.htm">vneconomy</a>, qua kết quả tìm kiếm). Vì vậy một site cần hỗ trợ nhiều điểm đo và nhiều biểu giá <span class="tag inference">INFERENCE</span>.</li>
+</ul>
+
+<h4>Quy mô và động lực khác</h4>
+<ul>
+  <li><strong>Quy mô.</strong>
+    <ul>
+      <li>Cả nước có 130.811 hệ điện mặt trời mái nhà, hơn 11.200 MWp.</li>
+      <li>28.254 hệ TSXTTT theo NĐ 58/243, khoảng 1.614 MWp; chỉ khoảng 287 hệ (khoảng 16,4 MW) đăng ký bán dư <span class="tag fact">FACT</span> (<a href="https://vietnamnet.vn/en/rooftop-solar-saves-billions-of-dong-but-one-bottleneck-remains-2552186.html">vietnamnet</a>).</li>
+      <li>Đến 08/2026 chưa có giao dịch bán dư nào theo NĐ 243 <span class="tag fact">FACT</span> (<a href="https://www.pv-magazine.com/2026/09/22/vietnam-pushes-provinces-to-accelerate-rooftop-solar-rollout/">pv-magazine 22/09/2026</a>).</li>
+    </ul>
+    Hệ quả: zero-export và giới hạn xuất là chế độ phổ biến nhất <span class="tag inference">INFERENCE</span>.</li>
+  <li><strong>BESS cấp lưới</strong> (<a href="https://en.vneconomy.vn/government-approves-revised-power-development-plan-8.htm">vneconomy</a>; <a href="https://www.energy-storage.news/hanoi-power-corporation-inaugurates-the-first-100mwh-battery-storage-portfolio-in-vietnamese-capital/">energy-storage.news</a>, qua kết quả tìm kiếm):
+    <ul>
+      <li>QHĐ8 điều chỉnh đặt mục tiêu 10.000–16.300 MW đến 2030 <span class="tag fact">FACT</span>.</li>
+      <li>EVNHANOI đã vận hành 50 MW/100 MWh (07/2026) <span class="tag fact">FACT</span>.</li>
+    </ul>
+    Đây là thị trường utility/FTM, nằm ngoài mục tiêu của ta. Nó vẫn có ích vì tạo chuỗi cung ứng và kỹ năng BESS <span class="tag inference">INFERENCE</span>.</li>
+  <li><strong>DPPA mở rộng theo NĐ 57/2025 và NĐ 243</strong>: thêm bên mua là trung tâm dữ liệu và doanh nghiệp sạc EV; bỏ trần giá DPPA vật lý <span class="tag fact">FACT</span> (<a href="https://www.reccessary.com/en/news/vietnam-solar-grid-export-dppa">reccessary</a>). Với ta, DPPA tạo nhu cầu về dữ liệu đo đếm và đối soát, đặt ở <span class="prio p2">P2</span> <span class="tag inference">INFERENCE</span>.</li>
+  <li><strong>Ai đang hiện diện ở Việt Nam</strong> (theo nghiên cứu FusionSolar trước):
+    <ul>
+      <li>meteocontrol blue'Log XC làm "Monitoring and PPC (Zero-Feed-In)" cho MP Pack, Đà Nẵng (<a href="#FS-02">FS-02</a>).</li>
+      <li>Gantner cung cấp cho năm dự án mái nhà lớn (<a href="#FS-03">FS-03</a>).</li>
+      <li>Sungrow tự công bố chiếm 45% phân khúc mái nhà năm 2020 (<a href="#FS-11">FS-11</a>).</li>
+    </ul>
+    Không có số liệu thị phần nền tảng giám sát ở Việt Nam giai đoạn 2024–2026 <span class="tag unknown">UNKNOWN</span>.</li>
+</ul>
+
+<h3 id="toan-cau">3.4 Bối cảnh toàn cầu (so sánh, không phải thị trường mục tiêu)</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Vùng</th><th>Động lực</th><th>Ý nghĩa cho ta</th><th>Nhãn</th></tr></thead>
+<tbody>
+<tr><td>EU</td><td>EED 2023/1791 Điều 11:
+  <ul>
+    <li>Doanh nghiệp trên 85 TJ/năm phải có EnMS chứng nhận (hạn 11/10/2027).</li>
+    <li>Doanh nghiệp trên 10 TJ/năm phải kiểm toán năng lượng.</li>
+  </ul>
+  Nguồn: <a href="https://www.dnv.com/assurance/Management-Systems/eu-directive-2023-1791-energy-efficiency-iso-50001/">DNV</a></td><td>Nhóm 7 có động lực pháp lý ở EU. Ta chỉ xuất dữ liệu cho nhóm này</td><td><span class="tag fact">FACT</span></td></tr>
+<tr><td>Hà Lan</td><td>Ampowr bid đồng thời Day-Ahead + imbalance + aFRR cho site C&amp;I (<a href="#L03">L03</a>); peak shaving theo giới hạn đấu nối (<a href="#L04">L04</a>)</td><td>Bài toán "giới hạn công suất đấu nối" giống Việt Nam (giới hạn MBA, trần nhập). Phần giao dịch thị trường không áp dụng được ở Việt Nam</td><td><span class="tag fact">FACT</span> / <span class="tag inference">INFERENCE</span></td></tr>
+<tr><td>Mỹ</td><td>Demand charge chiếm 30–70% hóa đơn C&amp;I (nguồn vendor, <a href="https://energytoolbase.com/blog/energy-storage/mastering-demand-charge-management">energytoolbase</a>), tính theo đỉnh 15 phút</td><td>Bộ tối ưu C&amp;I của Mỹ (Stem, GEMS) xây quanh demand charge, <strong>không áp trực tiếp</strong> cho Việt Nam</td><td><span class="tag fact">FACT</span> Low–Med; <span class="tag inference">INFERENCE</span></td></tr>
+<tr><td>Úc</td><td>Pin được trợ giá phải "VPP-capable", nhưng không bắt buộc tham gia VPP (<a href="https://cer.gov.au/batteries">cer.gov.au</a>)</td><td>Mẫu "VPP-capable": thiết kế sẵn khả năng điều phối nhưng chưa bật. Đây là hướng cho tầng 4 (<span class="prio p2">P2</span>)</td><td><span class="tag fact">FACT</span></td></tr>
+</tbody></table></div>
+
+<h3 id="dong-luc">3.5 Động lực và rào cản cho sản phẩm của ta</h3>
+<div class="cards">
+  <div class="card"><h4>Động lực</h4>
+    <ul>
+      <li>Giới hạn xuất là yêu cầu vận hành phổ biến. Thay đổi cấu hình cần bằng chứng, vì NĐ 133 có chế tài <span class="tag inference">INFERENCE</span>.</li>
+      <li>Cao điểm buổi tối theo QĐ 963 cộng chênh lệch giá khoảng 2,8× làm BESS có giá trị <span class="tag inference">INFERENCE</span>.</li>
+      <li>NĐ 243 tính điện xả BESS vào điện dư, nên cần đo và quy kết nguồn gốc năng lượng xuất <span class="tag inference">INFERENCE</span>.</li>
+      <li>Giá hai thành phần sắp tới tạo nhu cầu trần nhập và peak shaving từ 2027 <span class="tag inference">INFERENCE</span>.</li>
+      <li>Áp lực CBAM/CSRD ở KCN làm tăng nhu cầu dữ liệu năng lượng theo giờ <span class="tag inference">INFERENCE</span>.</li>
+    </ul>
+  </div>
+  <div class="card"><h4>Rào cản</h4>
+    <ul>
+      <li>OEM cho dashboard miễn phí (<a href="#L31">L31</a>, FusionSolar).</li>
+      <li>EMS trong tủ BESS là hệ đóng, giao thức không công bố (<a href="#L08">L08</a>–<a href="#L13">L13</a>).</li>
+      <li>Đường ghi lệnh khó hơn đường đọc. Có báo cáo "ghi không tác dụng" (<a href="#L42">L42</a>).</li>
+      <li>Quy định thay đổi nhanh: 135 → 58 → 133 → 243, cộng QĐ 963, trong 18 tháng.</li>
+      <li>Tỷ lệ site có BESS và CAPEX BESS là <span class="tag unknown">UNKNOWN</span> (Q-A05).</li>
+    </ul>
+  </div>
+  <div class="card"><h4>Rủi ro cho định vị</h4>
+    <ul>
+      <li>Huawei SmartEMO đã hỗ trợ demand charge theo TOU, thiết lập giá điện và phân tích doanh thu cho C&amp;I (release note 31/03/2026, <a href="#FS-15">FS-15</a>). OEM đang lấn sang nhóm 2 trong hệ sinh thái của chính họ.</li>
+      <li>Chưa có phỏng vấn khách thật nào (K G-07).</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="ranh-gioi">4. Ranh giới sản phẩm</h2>
+
+<h3 id="chong-lan">4.1 Bảng chồng lấn chức năng × nhóm</h3>
+<p>Ký hiệu: ● cốt lõi · ◐ thường có hoặc có một phần · ○ hiếm hoặc không phải trọng tâm. Bảng là <span class="tag inference">INFERENCE</span> tổng hợp từ nguồn ở §3.1, không phải khảo sát định lượng.</p>
+<div class="table-wrap"><table class="matrix">
+<thead><tr><th>Chức năng</th><th>1 Monitor</th><th>2 C&amp;I EM</th><th>3 RE APM</th><th>4 BESS EMS</th><th>5 µGrid/DER</th><th>6 TSO EMS</th><th>7 ISO 50001</th></tr></thead>
+<tbody>
+<tr><td>Thu thập đa hãng (Modbus/API)</td><td>●</td><td>●</td><td>●</td><td>◐</td><td>●</td><td>● (IEC 104/61850)</td><td>◐</td></tr>
+<tr><td>Đa site / danh mục</td><td>●</td><td>◐</td><td>●</td><td>◐</td><td>◐ (VPP ●)</td><td>○</td><td>◐</td></tr>
+<tr><td>Biểu giá và hóa đơn bóng</td><td>◐</td><td>●</td><td>◐</td><td>●</td><td>◐</td><td>○</td><td>◐</td></tr>
+<tr><td>Giới hạn xuất / trần nhập</td><td>○</td><td>●</td><td>○</td><td>●</td><td>●</td><td>○</td><td>○</td></tr>
+<tr><td>Lập lịch BESS</td><td>○</td><td>●</td><td>○</td><td>●</td><td>●</td><td>○</td><td>○</td></tr>
+<tr><td>Bảo vệ cấp cell/rack</td><td>○</td><td>○ (chỉ đọc)</td><td>○</td><td>◐ (đọc; BMS bảo vệ)</td><td>○</td><td>○</td><td>○</td></tr>
+<tr><td>Tách đảo / transition</td><td>○</td><td>◐</td><td>○</td><td>◐</td><td>●</td><td>○</td><td>○</td></tr>
+<tr><td>Mô hình mạng + ràng buộc lưới</td><td>○</td><td>○</td><td>○</td><td>○</td><td>◐ (DERMS ●)</td><td>●</td><td>○</td></tr>
+<tr><td>Thị trường / dịch vụ phụ trợ</td><td>○</td><td>◐ (DR)</td><td>◐</td><td>◐</td><td>● (VPP)</td><td>● (AGC)</td><td>○</td></tr>
+<tr><td>O&amp;M: cảnh báo, ticket, KPI</td><td>●</td><td>◐</td><td>●</td><td>◐</td><td>◐</td><td>◐</td><td>○</td></tr>
+<tr><td>EnPI/EnB, M&amp;V, kiểm toán</td><td>○</td><td>◐</td><td>○</td><td>○</td><td>○</td><td>○</td><td>●</td></tr>
+<tr><td>Carbon / báo cáo ESG</td><td>○</td><td>◐</td><td>○</td><td>○</td><td>○</td><td>○</td><td>◐</td></tr>
+</tbody></table></div>
+<p>Ba điểm khác biệt quan trọng cho thiết kế:</p>
+<ul>
+  <li><strong>Trách nhiệm an toàn tăng dần từ nhóm 1 đến nhóm 6</strong> <span class="tag inference">INFERENCE</span>.
+    <ul>
+      <li>Nhóm 1 và 7 không điều khiển.</li>
+      <li>Nhóm 2 và 4 điều khiển tài sản của khách.</li>
+      <li>Nhóm 5 phải chuyển chế độ trong vài ms đến vài chu kỳ, nên chỉ controller cục bộ làm được.</li>
+      <li>Nhóm 6 điều khiển hệ thống điện quốc gia.</li>
+    </ul></li>
+  <li><strong>Nhóm 2 chứa phần supervisory của nhóm 4, nhưng không thay EMS của nhà tích hợp BESS.</strong> Schneider tuyên bố EMA gửi lệnh "qua hệ quản lý sẵn có" (cụm sạc EV, BMS tòa nhà) thay vì thay thế chúng <span class="tag fact">FACT</span> (<a href="#L17">L17</a>).</li>
+  <li><strong>Nhóm 7 khác về bản chất.</strong> Đó là quy trình quản lý của con người và tài liệu. Nhóm 2 chỉ xuất dữ liệu cho nhóm 7 <span class="tag inference">INFERENCE</span>.</li>
+</ul>
+
+<figure>
+<div class="diagram">
+<svg viewBox="0 0 1000 450" role="img" aria-labelledby="bd-title bd-desc">
+  <title id="bd-title">Ranh giới sản phẩm EMS của ta so với bảy nhóm</title>
+  <desc id="bd-desc">Phạm vi của ta gồm nhóm 1 làm nền, nhóm 2 ở trên, và edge của ta. Nhóm 5, 6 và giao dịch thị trường nằm ngoài phạm vi. Nhóm 3, 4, 7 là liền kề. Controller native và bảo vệ native nằm dưới edge, cloud không bao giờ chạm tới.</desc>
+  <rect class="box ext" x="20" y="18" width="300" height="52" rx="4"/>
+  <text x="34" y="40" class="title">Nhóm 6 · SCADA/EMS lưới (TSO)</text>
+  <text x="34" y="58" class="small">Ngoài phạm vi · khách hàng là EVN/NSMO</text>
+  <rect class="box ext" x="340" y="18" width="300" height="52" rx="4"/>
+  <text x="354" y="40" class="title">Nhóm 5 · Microgrid transition, DERMS</text>
+  <text x="354" y="58" class="small">Ngoài phạm vi 12–18 tháng · chỉ giám sát (P2)</text>
+  <rect class="box ext" x="660" y="18" width="320" height="52" rx="4"/>
+  <text x="674" y="40" class="title">Thị trường điện / DR / VPP</text>
+  <text x="674" y="58" class="small">P2 · chỉ ở dạng "VPP-capable"</text>
+
+  <rect class="zone" x="10" y="88" width="760" height="208" rx="6"/>
+  <text x="22" y="104" class="small">Phạm vi sản phẩm của ta (PROPOSAL, K §6 số 1)</text>
+  <rect class="box alt" x="30" y="112" width="720" height="52" rx="4"/>
+  <text x="44" y="134" class="title">Nhóm 2 · C&amp;I BTM EMS đa site, đa hãng</text>
+  <text x="44" y="152" class="small">Biểu giá TOU có phiên bản · export_mode / import_cap_w · lịch luật TOU (tầng 2, MVP) · MILP/MPC (tầng 3, P1)</text>
+  <rect class="box" x="30" y="172" width="720" height="52" rx="4"/>
+  <text x="44" y="194" class="title">Nhóm 1 · Giám sát và O&amp;M đa hãng (lớp nền)</text>
+  <text x="44" y="212" class="small">Thu thập · cảnh báo · ticket · báo cáo tiết kiệm · KPI · site chỉ có PV là công dân hạng nhất</text>
+  <rect class="box alt" x="30" y="232" width="720" height="52" rx="4"/>
+  <text x="44" y="254" class="title">Edge của ta (bắt buộc ở site nhận lệnh)</text>
+  <text x="44" y="272" class="small">Lấy mẫu 1 s · arbiter 12 mức · limit chain · lịch ≥ 48 h · store-and-forward ≥ 7 ngày</text>
+
+  <rect class="box ext" x="790" y="112" width="190" height="52" rx="4"/>
+  <text x="802" y="134" class="title">Nhóm 7 · ISO 50001/ESG</text>
+  <text x="802" y="152" class="small">Liền kề · chỉ xuất dữ liệu</text>
+  <rect class="box ext" x="790" y="172" width="190" height="52" rx="4"/>
+  <text x="802" y="194" class="title">Nhóm 3 · RE APM</text>
+  <text x="802" y="212" class="small">Chồng lấn KPI/O&amp;M</text>
+  <rect class="box ext" x="790" y="232" width="190" height="52" rx="4"/>
+  <text x="802" y="254" class="title">Nhóm 4 · BESS EMS</text>
+  <text x="802" y="272" class="small">Supervisory, không thay thế</text>
+
+  <rect class="box ot" x="30" y="322" width="720" height="48" rx="4"/>
+  <text x="44" y="342" class="title">Controller native (control_owner = NATIVE được ưu tiên)</text>
+  <text x="44" y="360" class="small">SmartLogger/SmartMGC, EMS trong tủ BESS, EMS300CP, logger PPC (blue'Log, Solar-Log)</text>
+  <rect class="box ot" x="30" y="388" width="720" height="48" rx="4"/>
+  <text x="44" y="408" class="title">Bảo vệ native: BMS, PCS, rơ-le, E-stop cứng</text>
+  <text x="44" y="426" class="small">Ngoài mọi lớp phần mềm · không có API sửa thông số bảo vệ (C4)</text>
+
+  <line class="edge ctl" x1="390" y1="284" x2="390" y2="322"/>
+  <text x="398" y="308" class="small">tham số / setpoint có hạn, có readback</text>
+  <line class="edge dash" x1="770" y1="138" x2="790" y2="138"/>
+  <line class="edge dash" x1="770" y1="198" x2="790" y2="198"/>
+  <line class="edge dash" x1="770" y1="258" x2="790" y2="258"/>
+  <line class="edge dash" x1="490" y1="70" x2="490" y2="88"/>
+  <line class="edge dash" x1="820" y1="70" x2="820" y2="88"/>
+</svg>
+</div>
+<figcaption>Hình 1. Ranh giới sản phẩm. Cloud gửi ý định có hạn; edge quyết định setpoint. Không lớp phần mềm nào nằm trong vòng bảo vệ (K §6 số 14). <span class="tag proposal">PROPOSAL</span></figcaption>
+</figure>
+
+<h3 id="cham-diem">4.2 Chấm điểm và lựa chọn</h3>
+<p>K yêu cầu sửa bảng chấm điểm của A (§3.1 trong <a href="notes/K-review-round1.md">K</a>). Bảng gốc cộng điểm không trọng số, và "kế thừa 1" là điểm cộng tùy ý. Bảng dưới đây làm hai việc:</p>
+<ul>
+  <li>Tính tổng có trọng số. Giá trị cho khách (V) nhân 2, vì sản phẩm phải có lý do để được trả tiền khi OEM cho giám sát miễn phí.</li>
+  <li>Thêm phương án "1 + 2 kết hợp".</li>
+</ul>
+<p>Điểm thành phần giữ nguyên của A <span class="tag inference">INFERENCE</span>. Thang 1–5. Với C và R, 5 nghĩa là đơn giản hoặc rủi ro thấp.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Phương án</th><th class="num">S nguồn</th><th class="num">C đơn giản</th><th class="num">V giá trị</th><th class="num">T khớp đội</th><th class="num">R rủi ro thấp</th><th class="num">Tổng không trọng số</th><th class="num">Tổng có trọng số (V×2)</th><th>Ghi chú</th></tr></thead>
+<tbody>
+<tr><td>1 Monitoring đứng riêng</td><td class="num">5</td><td class="num">5</td><td class="num">3</td><td class="num">5</td><td class="num">5</td><td class="num">23</td><td class="num">26</td><td>Dễ nhất, nhưng khác biệt thấp vì OEM cho miễn phí (<a href="#L31">L31</a>)</td></tr>
+<tr><td><strong>1 + 2 kết hợp (nhóm 2 trên nền nhóm 1)</strong></td><td class="num">4</td><td class="num">3</td><td class="num">5</td><td class="num">4</td><td class="num">4</td><td class="num">20</td><td class="num"><strong>25</strong></td><td>R = 4 vì có cổng Gate M1/M2: control mặc định tắt, chỉ bật theo site khi đủ bộ an toàn P0. Giá trị cao nhất; đi theo pha nên rủi ro được kiểm soát</td></tr>
+<tr><td>2 C&amp;I EM đứng riêng</td><td class="num">4</td><td class="num">3</td><td class="num">5</td><td class="num">4</td><td class="num">3</td><td class="num">19</td><td class="num">24</td><td>Không có lớp nền O&amp;M cho P3, người dùng hằng ngày</td></tr>
+<tr><td>3 RE APM</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">4</td><td class="num">5</td><td class="num">17</td><td class="num">19</td><td>Khách IPP lớn ít</td></tr>
+<tr><td>7 ISO 50001 / ESG</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">3</td><td class="num">5</td><td class="num">16</td><td class="num">18</td><td>Người mua khác, cần đa dạng năng lượng</td></tr>
+<tr><td>4 BESS EMS độc lập</td><td class="num">3</td><td class="num">2</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">13</td><td class="num">16</td><td>Cạnh tranh trực tiếp với EMS của nhà tích hợp; rủi ro mất bảo hành</td></tr>
+<tr><td>5 Microgrid/DER</td><td class="num">2</td><td class="num">1</td><td class="num">2</td><td class="num">2</td><td class="num">1</td><td class="num">8</td><td class="num">10</td><td>Transition tính bằng ms; cần chứng nhận IEEE 2030.7/2030.8</td></tr>
+<tr><td>6 TSO EMS</td><td class="num">2</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">6</td><td class="num">7</td><td>Khách duy nhất là NSMO/EVN</td></tr>
+</tbody></table></div>
+<p>Cách đọc kết quả <span class="tag inference">INFERENCE</span>:</p>
+<ul>
+  <li>Không trọng số thì "1 đứng riêng" thắng. Có trọng số V×2 thì "1 đứng riêng" (26) và "1 + 2" (25) gần như ngang nhau.</li>
+  <li>Quyết định chọn "1 + 2" <strong>không đến từ điểm số</strong>. Nó đến từ hai lập luận:
+    <ol>
+      <li>Giám sát đơn thuần phải cạnh tranh với dashboard miễn phí của OEM.</li>
+      <li>Phương án "1 + 2" bao trọn phương án "1": Gate M1 chính là sản phẩm giám sát cộng cấu hình native. Rủi ro tăng thêm chỉ phát sinh khi một site bật Gate M2.</li>
+    </ol></li>
+  <li>Kết luận giữ nguyên như K yêu cầu: nhóm 2 trên nền nhóm 1.</li>
+</ul>
+
+<h3 id="nhom-chinh">4.3 Nhóm chính được chọn</h3>
+<div class="callout ok">
+<p><strong>Nền tảng quản lý năng lượng C&amp;I behind-the-meter, đa site, đa hãng, trên lớp giám sát/O&amp;M</strong> <span class="tag proposal">PROPOSAL</span> (K §6 số 1–3).</p>
+<ul>
+  <li><strong>Người mua:</strong> installer/EPC, O&amp;M, ESCO. <strong>Người xem:</strong> chủ C&amp;I.</li>
+  <li><strong>Site chỉ có PV là công dân hạng nhất.</strong> BESS và EV là tùy chọn. Điều khiển EV là <span class="prio p1">P1</span>.</li>
+  <li><strong>Thứ tự giá trị ở Việt Nam:</strong> (1) tuân thủ giới hạn xuất và trần nhập, (2) minh bạch tiết kiệm TOU, (3) O&amp;M đa hãng, (4) tối ưu BESS. Peak shaving theo demand là <span class="prio p1">P1</span>.</li>
+  <li><strong>MVP có hai cổng:</strong>
+    <ul>
+      <li>Gate M1: giám sát cộng cấu hình chế độ native có readback.</li>
+      <li>Gate M2: edge của ta làm chủ vòng và gửi setpoint. Chỉ bật theo từng site khi đủ bộ an toàn P0.</li>
+    </ul>
+    Chi tiết ở <a href="11-mvp-and-roadmap.html">11</a> và <a href="10-security-and-reliability.md">10</a>.</li>
+</ul>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Không làm (12–18 tháng đầu)</th><th>Lý do</th><th>Thay vào đó</th></tr></thead>
+<tbody>
+<tr><td>Nền tảng ESG/carbon</td><td>Người mua khác (CSO, tài chính). Cần dữ liệu Scope 1–3 phi điện. Ta không có tư liệu nguồn <span class="tag inference">INFERENCE</span></td><td>Xuất dữ liệu kWh theo nguồn × giờ qua CSV/API (<span class="prio p1">P1</span>)</td></tr>
+<tr><td>SCADA/EMS lưới</td><td>Cần mô hình mạng truyền tải và vận hành 24/7. Khách duy nhất là EVN/NSMO <span class="tag inference">INFERENCE</span></td><td>Tôn trọng lệnh <code>GRID_OPERATOR</code> ở mức 4 của arbiter. IEC 104 slave là <span class="prio p1">P1</span> có điều kiện</td></tr>
+<tr><td>Microgrid transition / black start</td><td>Thời gian ms đến chu kỳ; thuộc controller native (Siemens MGC <a href="#L21">L21</a>, Sungrow VSG <a href="#L41">L41</a>)</td><td>Chỉ giám sát trạng thái on/off-grid (<span class="prio p2">P2</span>)</td></tr>
+<tr><td>Giao dịch thị trường điện</td><td>Chưa thấy cơ chế cho C&amp;I ở Việt Nam <span class="tag unknown">UNKNOWN</span></td><td>"VPP-capable" (tầng 4, <span class="prio p2">P2</span>)</td></tr>
+<tr><td>Thay EMS trong tủ BESS</td><td>Rủi ro bảo hành; ta không có chứng nhận</td><td>Supervisory, ưu tiên <code>control_owner = NATIVE</code></td></tr>
+</tbody></table></div>
+
+<h3 id="khac-huong-cu">4.4 Khác hướng FusionSolar cũ và lý do</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Điểm</th><th>Hướng cũ</th><th>Hướng mới</th><th>Lý do</th></tr></thead>
+<tbody>
+<tr><td>Phạm vi</td><td>Giám sát/O&amp;M PV đa hãng</td><td>Thêm supervisory BESS, giới hạn xuất/nhập, TOU, tải, EV tùy chọn</td><td>NĐ 243 tính BESS vào điện dư; cao điểm chuyển sang tối; giá hai thành phần đang đến</td></tr>
+<tr><td>Pháp lý</td><td>NĐ 135/2024, 20%</td><td>NĐ 58/2025 + 243/2026, 50% sản lượng thực phát</td><td>Văn bản cũ đã bị thay</td></tr>
+<tr><td>Điều khiển</td><td>Gần như chỉ đọc</td><td>Gate M1: cấu hình native có readback. Gate M2: setpoint qua edge</td><td>Giá trị BESS cần điều khiển; an toàn đi theo cổng</td></tr>
+<tr><td>Tần suất dữ liệu</td><td>Raw 1–5 phút</td><td>Edge lấy mẫu 1 s; cloud nhận tổng hợp 5 s / 60 s / 300 s</td><td>Vòng giới hạn chạy theo giây (K §6 số 19)</td></tr>
+<tr><td>Quy ước dấu</td><td>Lưới + = xuất</td><td>Lưới + = nhập, BESS + = xả</td><td>K R-01</td></tr>
+<tr><td>Kiến trúc</td><td>Edge-first, MQTT, TimescaleDB</td><td><strong>Giữ nguyên</strong></td><td>Được củng cố bởi các đối thủ có tài liệu (§9)</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="chon-doi-thu">5. Chọn đối thủ và lý do</h2>
+<p>Tiêu chí chọn:</p>
+<ol>
+  <li>Bắt buộc theo yêu cầu người dùng: hai nguồn hạt giống Ampowr và InfinitePower.</li>
+  <li>Đại diện cho từng mẫu hình kiến trúc: cloud + edge, on-prem microgrid, OEM, mã nguồn mở, đa hãng.</li>
+  <li>Có mặt hoặc có khả năng gặp ở Việt Nam.</li>
+  <li>Có tài liệu công khai đủ để so sánh.</li>
+</ol>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>Sản phẩm</th><th>Mẫu hình</th><th>Lý do chọn</th><th>Mã cột</th></tr></thead>
+<tbody>
+<tr><td>P1</td><td>Ampowr Cosmos + AmpiHealth</td><td>BESS EMS cloud + edge, full-service</td><td>Nguồn hạt giống; EMS gắn BESS C&amp;I ở châu Âu</td><td>AMP</td></tr>
+<tr><td>P2</td><td>HT Infinite Power (Shenzhen Infinite Power Technology)</td><td>EMS tích hợp trong tủ/container BESS</td><td>Nguồn hạt giống; đại diện nhà tích hợp BESS Trung Quốc, loại thiết bị nhiều khả năng gặp ở Việt Nam</td><td>HTI</td></tr>
+<tr><td>P3</td><td>Schneider EcoStruxure Microgrid Advisor (+ EMO, PME)</td><td>Cloud MPC + edge controller</td><td>Kiến trúc gần nhất với hướng của ta</td><td>SE</td></tr>
+<tr><td>P4</td><td>Siemens SICAM Microgrid Control (+ MGMS, Electrification X)</td><td>Microgrid controller on-prem</td><td>Chuẩn tham chiếu cho nhóm M</td><td>SIE</td></tr>
+<tr><td>P5</td><td>ABB Ability OPTIMAX (+ e-mesh, nay xuất hiện dưới tên Hitachi Energy; Energy and Asset Manager)</td><td>Tối ưu/dispatch DER công nghiệp</td><td>Đại diện tối ưu hóa công nghiệp; đã kiểm tra tên sản phẩm</td><td>ABB</td></tr>
+<tr><td>P6</td><td>SolarEdge ONE for C&amp;I + ONE Controller (CLC1)</td><td>OEM: cloud + controller</td><td>Nền tảng OEM C&amp;I PV + BESS + EV, tài liệu kỹ thuật công khai tốt</td><td>SED</td></tr>
+<tr><td>P7</td><td>Huawei FusionSolar SmartPVMS C&amp;I + SmartLogger5000B/SmartMGC5000B + EMMA (SmartAssistant)</td><td>OEM: cloud + logger</td><td>Đã nghiên cứu sâu; phổ biến ở Việt Nam</td><td>HUA</td></tr>
+<tr><td>P8</td><td>Sungrow PowerStack 255CS + EMS300CP + iSolarCloud</td><td>OEM: tủ BESS có EMS + cloud</td><td>OEM PV/BESS C&amp;I phổ biến ở Việt Nam/APAC; hãng chính thức hỗ trợ EMS bên thứ ba</td><td>SUN</td></tr>
+<tr><td>P9</td><td>OpenEMS (OpenEMS Association, FENECON)</td><td>Mã nguồn mở Edge + Backend + UI</td><td>Hướng edge cũ được mô tả là "kiểu OpenEMS"; tham chiếu kiến trúc</td><td>OEMS</td></tr>
+<tr><td>P10</td><td>Stem PowerTrack EMS / Athena (+ AlsoEnergy PowerTrack)</td><td>Đa hãng, đa site, edge-to-cloud</td><td>Gần nhất với mô hình kinh doanh của ta</td><td>STM</td></tr>
+<tr><td>P11</td><td>GridBeyond Point</td><td>Aggregator / flexibility C&amp;I</td><td>Đại diện mô hình DR/thị trường (tham chiếu cho P2)</td><td>GB</td></tr>
+</tbody></table></div>
+<p><strong>Loại trừ có lý do:</strong></p>
+<ul>
+  <li><strong>Siemens Gridscale X</strong>: SaaS cho vận hành lưới của utility <span class="tag fact">FACT</span> (<a href="https://www.siemens.com/en-us/products/gridscale-x/">siemens.com</a>, qua kết quả tìm kiếm).</li>
+  <li><strong>Wärtsilä GEMS</strong>: bằng chứng chỉ ở quy mô utility và nhà máy đảo (<a href="https://www.wartsila.com/media/news/31-08-2020-wartsila-s-gems-to-centrally-manage-multi-state-energy-storage-projects-for-duke-energy-2771911">wartsila.com</a>). Giữ làm tham chiếu IEC 62443 cho PPC.</li>
+  <li><strong>Fluence Mosaic/Nispera, Tesla Autobidder/Powerhub</strong>: hướng đấu thầu thị trường bán buôn. Chưa tìm bằng chứng nên không suy ra gì.</li>
+  <li><strong>Enphase, Victron VRM</strong>: chủ yếu dân dụng hoặc off-grid nhỏ. Có thể liên quan đến site nhỏ ở Việt Nam nhưng chưa đánh giá.</li>
+  <li><strong>Envision EnOS, PowerSecure</strong>: không đủ bằng chứng.</li>
+  <li><strong>rfp.wiki</strong>: hồ sơ vendor do AI sinh, tự ghi độ tin cậy khoảng 30% (<a href="#L07">L07</a>). <strong>Không dùng làm bằng chứng.</strong></li>
+</ul>
+<div class="callout bad"><strong>Thiếu sót đã biết (K G-08).</strong> Deye/Solarman, Growatt và Solis C&amp;I có thể phổ biến ở thị trường hộ gia đình và SME Việt Nam (suy đoán, không có số liệu thị phần), nhưng <strong>chưa được đánh giá</strong> ở cấp EMS. Bằng chứng hiện có chỉ nói về cloud API của họ (theo <a href="notes/E-device-integration.md">E</a> F-26, F-27):
+<ul>
+  <li>Solis: ký HMAC.</li>
+  <li>Growatt: token V1.</li>
+  <li>Deye: developer API, chỉ thấy endpoint đọc cấu hình pin.</li>
+</ul>
+Lượt nghiên cứu sau phải bổ sung, ít nhất cho Deye/Solarman. Thứ tự driver <span class="prio p0">P0</span> ở <a href="07-device-integration.md">07</a> có thể phải đổi theo kết quả đó.</div>
+
+<!-- ============================================================ -->
+<h2 id="ho-so">6. Hồ sơ sản phẩm (13 khía cạnh)</h2>
+<p>Mỗi hồ sơ dùng cùng 13 khía cạnh:</p>
+<ol>
+  <li>Nhà cung cấp và định vị</li>
+  <li>Thị trường và khách hàng</li>
+  <li>Tài sản hỗ trợ</li>
+  <li>Giám sát và hiển thị</li>
+  <li>Chiến lược tối ưu</li>
+  <li>Điều khiển và dispatch</li>
+  <li>Dự báo và phân tích</li>
+  <li>Cảnh báo và bảo trì</li>
+  <li>Tích hợp, giao thức, API</li>
+  <li>Người dùng, vai trò, fleet</li>
+  <li>Kiến trúc, edge, hành vi mất mạng</li>
+  <li>Bảo mật và tuân thủ</li>
+  <li>Hạn chế, điều chưa xác minh, bài học cho ta</li>
+</ol>
+<p>Ô "—" nghĩa là không tìm thấy tài liệu, tương đương <span class="tag unknown">UNKNOWN</span>. Mã Lxx và FS-xx dẫn tới <a href="#ledger">sổ bằng chứng</a>. Mọi bằng chứng đều lấy qua kết quả tìm kiếm, trừ những mục ghi là nghiên cứu trước.</p>
+
+<!-- P1 -->
+<h3 id="p1">6.1 P1 — Ampowr Cosmos (+ AmpiHealth)</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>Ampowr B.V., Utrecht (Hà Lan), thành lập 2021; văn phòng NL và UK. Mô hình "full-service": bán BESS + EMS + dịch vụ</td><td><span class="tag fact">FACT</span> <a href="#L01">L01</a></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>BESS C&amp;I, công nghiệp, nông nghiệp, khách sạn (case Hoge Duin, van Pinxteren), utility-scale</td><td><span class="tag fact">FACT</span> <a href="#L03">L03</a> <a href="#L04">L04</a></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>Pin, PV/tái tạo, tải, lưới, sạc EV, máy phát gas/diesel, backup</td><td><span class="tag fact">FACT</span> <a href="#L01">L01</a> <a href="#L06">L06</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>Theo dõi pin, tái tạo, dùng lưới, tải. AmpiHealth tuyên bố hơn 3.000 datapoint. Chu kỳ dữ liệu: —</td><td><span class="tag fact">FACT</span> <a href="#L05">L05</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>Peak shaving (chuyển sang pin khi chạm giới hạn lưới, ví dụ trần 95 kW ở Hoge Duin), "Net-zero" (tự tiêu thụ), curtailment, energy trading, imbalance, aFRR, backup, generator steering</td><td><span class="tag fact">FACT</span> <a href="#L04">L04</a> <a href="#L06">L06</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>Bid đồng thời Day-Ahead + imbalance + aFRR; quyết định từng thời điểm giữ bao nhiêu công suất cho aFRR</td><td><span class="tag fact">FACT</span> <a href="#L03">L03</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>Không có tài liệu về phương pháp. Việc bid thị trường ngụ ý phải dự báo giá</td><td><span class="tag unknown">UNKNOWN</span> / <span class="tag inference">INFERENCE</span></td></tr>
+<tr><th scope="row">8. Cảnh báo, bảo trì</th><td>AmpiHealth phát hiện bất thường và tự động gửi cảnh báo <strong>tới đội hỗ trợ của Ampowr</strong>; xử lý từ xa hoặc cử đội hiện trường; gắn với gói dịch vụ</td><td><span class="tag fact">FACT</span> <a href="#L05">L05</a></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>Có "Third-party Integration" và "Cosmos Partner API". Không có tài liệu giao thức hay endpoint</td><td><span class="tag fact">FACT</span> (tên) <a href="#L01">L01</a> <a href="#L04">L04</a>; chi tiết <span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>Cloud + "local backup feature": khi mất kết nối, EMS vẫn chạy chiến lược và thu dữ liệu tại chỗ</td><td><span class="tag fact">FACT</span> <a href="#L04">L04</a></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>Tự tuyên bố ISO 27001, NIS2 compliant, thiết kế/phát triển/host ở EU, pen-test độc lập. Không tìm thấy registry chứng chỉ</td><td><span class="tag fact">FACT</span> (là tuyên bố của hãng) <a href="#L02">L02</a></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Chưa xác minh: giao thức, độ phân giải dữ liệu, phân quyền, OCPP.</li>
+    <li>Một sản phẩm "Cosmos" khác của Circontrol (quản lý sạc EV) không liên quan.</li>
+    <li><strong>Bài học:</strong> mô hình NOC trung tâm nhận cảnh báo hộ khách là doanh thu dịch vụ cho installer ở Việt Nam. Chế độ chạy tiếp tại chỗ khi mất mạng là kỳ vọng cơ bản.</li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P2 -->
+<h3 id="p2">6.2 P2 — HT Infinite Power (Shenzhen Infinite Power Technology)</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>Nhà sản xuất BESS Trung Quốc; bán qua website và Alibaba. EMS là một phần của tủ/container</td><td><span class="tag fact">FACT</span> <a href="#L08">L08</a> <a href="#L11">L11</a></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>Tủ C&amp;I 50 kW/100 kWh, 125 kW/261 kWh làm mát lỏng; container 500 kW/1.000 kWh, 2.000 kWh, 5.000 kWh</td><td><span class="tag fact">FACT</span> <a href="#L09">L09</a> <a href="#L11">L11</a> <a href="#L13">L13</a></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>Pin LFP + PCS hai chiều + EMS/BMS tích hợp; bản hybrid có PV. Giao tiếp được với BEMS, nền tảng giám sát, microgrid controller</td><td><span class="tag fact">FACT</span> <a href="#L08">L08</a> <a href="#L10">L10</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>Màn hình tại chỗ + cloud + EMS cấp trạm; app/web xem phát, tiêu thụ, sạc/xả thời gian thực. Tên nền tảng cloud không được công bố</td><td><span class="tag fact">FACT</span> <a href="#L09">L09</a> <a href="#L10">L10</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>"Custom logic" cho peak shaving, time-shifting, backup; lập lịch tự động; theo dõi SOC. Đây là <strong>luật hoặc lịch cố định</strong>, không phải AI</td><td><span class="tag fact">FACT</span> <a href="#L11">L11</a> <a href="#L13">L13</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>"Remote access via standard interfaces". Không rõ cụ thể là gì</td><td><span class="tag fact">FACT</span> mơ hồ <a href="#L08">L08</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>Trang "AI-Powered EMS" chỉ là marketing chung (ví dụ minh họa giảm 10–12% phí đỉnh). Không có bằng chứng sản phẩm có AI</td><td><span class="tag fact">FACT</span> (là tuyên bố) <a href="#L12">L12</a>; <span class="tag inference">INFERENCE</span></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>Đẩy cảnh báo lỗi, cảnh báo thời gian thực, "autonomous anomaly detection" (container); OTA firmware</td><td><span class="tag fact">FACT</span> <a href="#L10">L10</a> <a href="#L13">L13</a></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>CAN, RS-485, Ethernet, Wi-Fi. <strong>Không tìm thấy</strong> bảng thanh ghi Modbus, API hay tên cloud</td><td><span class="tag fact">FACT</span> <a href="#L08">L08</a>; thanh ghi <span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>EMS cục bộ trong tủ + cloud; màn hình tại chỗ. Container ghi "integrated power station data communication collection and operation control"</td><td><span class="tag fact">FACT</span> <a href="#L09">L09</a></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Thông số 125/261 có dải DC khác nhau giữa hai trang (728–936 V và 715–923 Vdc).</li>
+    <li>Các tủ "giống hệt" của hãng khác (Symtech, XIHO, GSL) ghi Modbus RTU/TCP, nhưng <strong>không được suy</strong> giao thức đó sang HT.</li>
+    <li>Trang hạt giống <code>what-is-energy-management-system-ems-and-its-functions.html</code> chỉ dùng cho định nghĩa chung "EMS điều phối BMS và PCS" (FACT Low, theo K R-18). Không gán tính năng nào của HT cho trang này.</li>
+    <li><strong>Bài học:</strong> đây là hình mẫu thiết bị nhiều khả năng gặp ở Việt Nam: EMS đóng, giao thức chưa công bố. Driver phải dùng template thanh ghi cấu hình được. Edge chỉ đặt tham số khi có tài liệu hãng hoặc thử lab.</li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P3 -->
+<h3 id="p3">6.3 P3 — Schneider Electric EcoStruxure Microgrid Advisor (EMA) + Microgrid Operation (EMO) + Power Monitoring Expert (PME)</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>Schneider Electric. EMA là EMS cloud cho DER phía tải; EMO là PMS on-site tùy chọn; PME là giám sát điện năng và chất lượng điện</td><td><span class="tag fact">FACT</span> <a href="#L14">L14</a> <a href="#L19">L19</a> <a href="#L20">L20</a></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>Tòa nhà thương mại, campus, công nghiệp, utility (microgrid)</td><td><span class="tag fact">FACT</span> <a href="#L17">L17</a></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>PV, tải tòa nhà, sạc EV, HVAC, pin, CHP, máy phát gas dự phòng; "smart loads" (IT, BMS, heat pump, máy móc)</td><td><span class="tag fact">FACT</span> <a href="#L17">L17</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>Trending dữ liệu gần thời gian thực cùng dự báo, lịch giá, nhiệt độ; theo dõi CO2</td><td><span class="tag fact">FACT</span> <a href="#L14">L14</a> <a href="#L17">L17</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>Model Predictive Control (MPC) dùng tín hiệu giá, lịch sử, dự báo thời tiết, lịch vận hành. Quyết định khi nào tiêu thụ, phát, lưu hay bán. Biểu giá theo mùa, day-ahead, hour-ahead; peak shaving</td><td><span class="tag fact">FACT</span> Med–High <a href="#L14">L14</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>Lệnh tới pin trực tiếp hoặc <strong>qua hệ quản lý sẵn có</strong> (cụm sạc EV, BMS tòa nhà). EMA không thay các hệ này. Có tham gia DR qua utility hoặc aggregator</td><td><span class="tag fact">FACT</span> <a href="#L17">L17</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>Dự báo thời tiết là đầu vào của MPC. Phương pháp dự báo tải: —</td><td><span class="tag fact">FACT</span> <a href="#L14">L14</a></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>EMA: —. PME: phân tích chất lượng điện, transient capture, "process impact alarms", hỗ trợ ISO 50001</td><td><span class="tag fact">FACT</span> (PME) <a href="#L20">L20</a></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>Không tìm thấy danh sách giao thức DER của EMA. PME kết nối relay qua Modbus TCP (theo một luận văn). OpenADR được nhắc trong handout (theo <a href="notes/A-market-boundary.md">A</a> ledger #21)</td><td><span class="tag unknown">UNKNOWN</span> / <span class="st partial">Partial</span></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>
+  <ul>
+    <li>Cloud MPC + edge controller giao tiếp DER.</li>
+    <li>Có <strong>lịch mặc định trước 48 h</strong> khi mất server (<a href="#L15">L15</a>). Một tài liệu khác ghi 72 h.</li>
+    <li>"Plan cập nhật từ cloud mỗi 15 phút" chỉ thấy ở <strong>một</strong> kết quả tìm kiếm. Tài liệu ECC nói edge ra quyết định ≥ 1 lần/giây.</li>
+    <li>EMO chạy trình tự islanding: mất lưới → tách đảo → phối hợp genset + PV → về lưới.</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> Low–Med, một nguồn, tài liệu khoảng 2017, 48/72 h mâu thuẫn (K R-23) <a href="#L15">L15</a> <a href="#L16">L16</a> <a href="#L19">L19</a></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>Chương trình IEC 62443 cho EcoStruxure Power: một số sản phẩm theo 4-2/4-1; kiến trúc được bên thứ ba chứng nhận theo 3-3. <strong>Phạm vi áp cho EMA cloud chưa rõ</strong></td><td><span class="tag fact">FACT</span>, phạm vi <span class="tag unknown">UNKNOWN</span> <a href="#L18">L18</a></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Tài liệu chính từ 2017–2019; tên thương mại hiện hành chưa rõ (Q-B4).</li>
+    <li><strong>Bài học:</strong> mẫu "cloud lập kế hoạch, edge thực thi, lịch dự phòng dài". Cách tích hợp "qua hệ quản lý con" khớp nguyên tắc <code>control_owner = NATIVE</code> của ta.</li>
+    <li>Lựa chọn slot 15 phút, horizon 48 h, lịch dự phòng ≥ 48 h của ta là <span class="tag proposal">PROPOSAL</span> độc lập, không phụ thuộc vào con số của Schneider.</li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P4 -->
+<h3 id="p4">6.4 P4 — Siemens SICAM Microgrid Control (+ Spectrum Power MGMS, Electrification X)</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>Siemens. MGC là microgrid controller on-prem một site; MGMS là hệ quản lý microgrid; Electrification X Load Management là cloud quản lý sạc EV</td><td><span class="tag fact">FACT</span> <a href="#L21">L21</a> <a href="#L24">L24</a> <a href="#L25">L25</a></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>Microgrid công nghiệp, campus, utility; tới khoảng 2 GW phát. Tham chiếu: campus Siemens Wendell, NC</td><td><span class="tag fact">FACT</span> <a href="#L21">L21</a> <a href="#L22">L22</a></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>Tái tạo, pin, máy phát diesel (chủ yếu dự phòng), tải</td><td><span class="tag fact">FACT</span> <a href="#L21">L21</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>HMI SICAM SCC trên nền WinCC, có server dự phòng</td><td><span class="st partial">Partial</span> <a href="#L40">L40</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>Peak shaving, giảm demand charge, tối ưu OPEX; quản lý SOC (lưu thừa tái tạo, giữ năng lượng tối thiểu, lịch sạc/xả); 5 thuật toán quản lý tải; DR và dynamic load control</td><td><span class="tag fact">FACT</span> <a href="#L21">L21</a> <a href="#L22">L22</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>Phát hiện mất điện (blackout detection), black start, giám sát dự phòng (reserve monitoring), tự động chuyển chế độ lưới, load shedding, advanced dispatch</td><td><span class="tag fact">FACT</span> <a href="#L21">L21</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>Dự báo tải và tái tạo theo lịch sử + thời tiết; cho nhập dự báo thủ công; thuật toán "đáp ứng IEC 62898-2" (edition <span class="tag unknown">UNKNOWN</span>). MGMS dự báo tới 7 ngày (tài liệu 2022)</td><td><span class="tag fact">FACT</span> <a href="#L21">L21</a> <a href="#L24">L24</a></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>IEC 61850, IEC 60870-5, Modbus. GOOSE khoảng 70 ms cho load shedding (là số của ứng dụng SICAM, không phải của MGC)</td><td><span class="tag fact">FACT</span> <a href="#L21">L21</a> <a href="#L23">L23</a></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>MGC là controller một site. Không thấy tài liệu quản lý fleet C&amp;I đa site</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>On-prem; tùy chọn "redundant live controller"</td><td><span class="st partial">Partial</span> <a href="#L21">L21</a></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>Trang sản phẩm tuyên bố chứng nhận IEC 62443, IPSec, chip mã hóa. Chứng chỉ IEC 62443-4-1/4-2 công khai của WinCC OA (nền HMI) ghi hiệu lực đến 2026-02-06; chưa thấy gia hạn</td><td><span class="st verified">Verified*</span> <a href="#L22">L22</a> <a href="#L40">L40</a></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Quá mức cần thiết cho site C&amp;I Việt Nam thông thường.</li>
+    <li>Danh sách chức năng là checklist tốt cho nhóm M (giám sát microgrid, <span class="prio p2">P2</span>).</li>
+    <li><strong>Bài học:</strong> tuyên bố "certified" phải kèm số chứng chỉ, phạm vi và ngày hết hạn. Điều này áp dụng cho cả ta.</li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P5 -->
+<h3 id="p5">6.5 P5 — ABB Ability OPTIMAX (+ e-mesh / Hitachi Energy, Energy and Asset Manager)</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>
+  <ul>
+    <li>Tên đúng: "ABB Ability™ OPTIMAX®".</li>
+    <li>"ABB Ability e-mesh" ra mắt năm 2019; năm 2021 xuất hiện trong thông cáo của Hitachi Energy. ABB đã bán mảng Power Grids cho Hitachi (hoàn tất 2020). Chưa có nguồn nói thẳng e-mesh đã chuyển giao.</li>
+    <li>Không tìm thấy sản phẩm nào tên "ABB Ability Microgrid".</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> <a href="#L26">L26</a> <a href="#L28">L28</a>; chủ sở hữu e-mesh <span class="tag inference">INFERENCE</span></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>Phát điện, công nghiệp, thương mại, nhà máy hybrid; hydrogen xanh, district heating/cooling</td><td><span class="tag fact">FACT</span> <a href="#L26">L26</a></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>DER (gió, mặt trời), pin, máy phát, tải. e-mesh có thêm EV fleet</td><td><span class="tag fact">FACT</span> <a href="#L26">L26</a> <a href="#L28">L28</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>Energy and Asset Manager (SaaS): widget Energy Monitoring, Power Factor, Power Quality, Group Peak Monitoring; báo cáo email. e-mesh Monitor là cloud</td><td><span class="tag fact">FACT</span> <a href="#L28">L28</a> <a href="#L29">L29</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>Lập lịch và dispatch DER; quyết định lượng và thời điểm feed-in, khi nào mua lưới; so sánh chi phí nguồn</td><td><span class="tag fact">FACT</span> <a href="#L26">L26</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>Dispatch DER; nomination day-ahead và intra-day</td><td><span class="tag fact">FACT</span> <a href="#L27">L27</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>Bản 6.4 (6/2024) thêm module "AI" dự báo tải, phát, giá để giảm sai số nomination; có AutoML</td><td><span class="st verified">Verified*</span>, là tuyên bố của hãng qua báo ngành (K §4) <a href="#L27">L27</a></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>EAM: cảnh báo 24/7</td><td><span class="st partial">Partial</span> <a href="#L29">L29</a></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>OPTIMAX: —. e-mesh: MicroSCADA/RTU</td><td><span class="tag unknown">UNKNOWN</span> / <span class="st partial">Partial</span> <a href="#L28">L28</a></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>e-mesh "applicable for premises or for fleets"</td><td><span class="st partial">Partial</span> <a href="#L28">L28</a></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>On-prem, data center, cloud hoặc hybrid; các module triển khai riêng lẻ</td><td><span class="tag fact">FACT</span> <a href="#L26">L26</a> <a href="#L27">L27</a></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Peak shaving không có tài liệu riêng (ô G1 = Unknown).</li>
+    <li><strong>Bài học:</strong> nên tách dự báo thành module có thể nâng cấp độc lập. Mục tiêu đo bằng sai số nomination, tức là một KPI cụ thể chứ không phải nhãn "AI".</li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P6 -->
+<h3 id="p6">6.6 P6 — SolarEdge ONE for C&amp;I + ONE Controller (CLC1)</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>SolarEdge (OEM). ONE for C&amp;I ra mắt 6/2024, toàn cầu từ 12/2024</td><td><span class="tag fact">FACT</span> High <a href="#L30">L30</a></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>EPC, O&amp;M, developer, doanh nghiệp C&amp;I</td><td><span class="tag fact">FACT</span> <a href="#L30">L30</a></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>PV (inverter + optimizer), lưu trữ SolarEdge, sạc EV (đội xe), tài sản tòa nhà (HVAC, chiếu sáng), công tơ và cảm biến thời tiết bên thứ ba</td><td><span class="tag fact">FACT</span> <a href="#L30">L30</a> <a href="#L31">L31</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>Phân tích hiệu suất toàn fleet tới cấp module; digital twin 3D (từ SolarEdge Designer + dữ liệu sống); phát hiện module kém; sơ đồ cáp theo inverter/string. Chu kỳ dữ liệu: —</td><td><span class="tag fact">FACT</span> <a href="#L30">L30</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>Dùng biểu giá + dự báo thời tiết + lịch sử phát/tiêu thụ; dynamic load management, Advanced Peak Shaving, tối ưu biểu giá, tham gia thị trường/lưới</td><td><span class="tag fact">FACT</span> <a href="#L30">L30</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>Cấu hình và xử lý sự cố từ xa; lệnh PPC. Export limitation yêu cầu công tơ import/export <strong>tại điểm đấu nối</strong>; "Consumption meters are not supported" (app note v3.0, 8/2026; phạm vi inverter/gateway, chưa rõ với ONE Controller)</td><td><span class="tag fact">FACT</span> <a href="#L30">L30</a> <a href="#L35">L35</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>Dự báo thời tiết là đầu vào tối ưu. Wevo có quản lý tải dự báo cho EV</td><td><span class="tag fact">FACT</span> <a href="#L30">L30</a> <a href="#L33">L33</a></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>Live alerts. Sự kiện shutdown từ ONE Controller sinh cảnh báo nêu nguồn. Mỗi user có thể bật/tắt nhận cảnh báo ("Expose to alerts notifications")</td><td><span class="tag fact">FACT</span> <a href="#L32">L32</a></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>
+  <ul>
+    <li>Cổng của CLC1: 2× RS485 (Modbus RTU), 1× CAN, 2× RJ45 (Modbus TCP, WAN/LAN), Wi-Fi 6, BLE 5.3, 4 DI / 4 DO.</li>
+    <li>Modbus TCP chạy ở <strong>cổng 1502</strong>, có register map.</li>
+    <li>Hỗ trợ công tơ RS485 Modbus theo danh sách.</li>
+    <li>Có API cho phần mềm khác truy cập.</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> High <a href="#L34">L34</a></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>Site Admin quản lý: User Role, Monitoring Access, quyền bên thứ ba, Public Access, Kiosk View, API Access, quyền xem biểu đồ PR. Quản lý toàn fleet</td><td><span class="tag fact">FACT</span> High <a href="#L32">L32</a></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>Controller tại site + cloud. Một nhà bán lẻ nói cần Internet cho lệnh PPC (độ tin cậy thấp). Hành vi khi mất mạng: —</td><td><span class="st partial">Partial</span>; <span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li><strong>Thương mại:</strong> lõi miễn phí cho người mua phần cứng SolarEdge; gói trả phí đưa ra dần (<a href="#L31">L31</a>).</li>
+    <li><strong>Chưa xác minh:</strong> điều khiển pin bên thứ ba, LTE, giới hạn API V2.</li>
+    <li><strong>Bài học:</strong>
+      <ol>
+        <li>CLC1 là "bill of interfaces" tham chiếu cho gateway edge của ta.</li>
+        <li><code>MTR_POC</code> là bắt buộc cho chức năng giới hạn xuất.</li>
+        <li>Phân quyền chia sẻ (Kiosk, Public, API, cảnh báo theo user) đáng học.</li>
+      </ol></li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P7 -->
+<h3 id="p7">6.7 P7 — Huawei FusionSolar SmartPVMS (C&amp;I) + SmartLogger5000B/SmartMGC5000B + EMMA/SmartAssistant</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>Huawei Digital Power (OEM). Đã được phân tích sâu ở <code>docs/research/fusionsolar/</code>; hồ sơ này chỉ thêm phần EMS/BESS</td><td><span class="tag fact">FACT</span> (nghiên cứu trước)</td></tr>
+<tr><th scope="row">2. Thị trường</th><td>Installer/O&amp;M, chủ đầu tư từ dân dụng đến utility; phổ biến ở Việt Nam</td><td><span class="tag fact">FACT</span> (nghiên cứu trước)</td></tr>
+<tr><th scope="row">3. Tài sản</th><td>PV, LUNA2000 C&amp;I ESS, SCharger, máy phát (từ 12/2025, máy phát sạc được ESS), tải qua EMMA</td><td><span class="tag fact">FACT</span> <a href="#L36">L36</a> <a href="#FS-15">FS-15</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>SOC, SOH, điện áp, nhiệt độ ở cấp cell; dữ liệu cloud 5 phút; trang tổng quan polling khoảng 5 s; lưu dữ liệu thiết bị 15 tháng (EU)</td><td><span class="tag fact">FACT</span> <a href="#L36">L36</a> <a href="#L39">L39</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>
+  <ul>
+    <li>SmartEMO tự chỉnh peak shaving theo lịch sử; tối đa tự tiêu thụ, TOU, peak staggering; "active power limit".</li>
+    <li>Release note 31/03/2026 (C&amp;I): cấu hình mẫu, thiết lập giá điện, phân tích doanh thu, demand charge theo khung TOU.</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> <a href="#L36">L36</a> <a href="#L37">L37</a> <a href="#FS-15">FS-15</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>
+  <ul>
+    <li>Huawei tự công bố vòng kín zero feed-in ≤ 2 s và peak shaving/giới hạn công suất ≤ 5 s cho "bộ điều khiển site C&amp;I (SmartLogger5000B/SmartMGC5000B)". Đây là số của hãng, không phải số đo độc lập (K R-19).</li>
+    <li>Một SmartLogger3000 (manual microgrid) điều khiển tối đa 20 ESS + 30 inverter song song.</li>
+    <li>Ràng buộc "peak shaving chỉ trong kịch bản on/off-grid (PQ/VSG)" <strong>chỉ đúng với manual LUNA2000-(107-215) C&amp;I-Microgrid-SmartLogger3000</strong>; không áp cho SmartLogger5000B on-grid hay SmartEMO (K R-20).</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> Med <a href="#L37">L37</a> <a href="#L37b">L37b</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>EMMA-A02 (đổi tên thành SmartAssistant từ 09/2025) dự báo PV dư và giữ "SOC space reserve"; nhắm hộ gia đình và thương mại nhỏ</td><td><span class="tag fact">FACT</span> High <a href="#L38">L38</a> <a href="#FS-15">FS-15</a></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>Alarm center; nút "New Ticket" tạo ticket kèm người xử lý và gợi ý (UI 7.0). Thao tác ack/clear trên bản 25.x: —</td><td><span class="tag fact">FACT</span> Med <a href="#FS-09">FS-09</a></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>
+  <ul>
+    <li>Northbound API chỉ cho pull, có quota theo phút/ngày.</li>
+    <li>Control API chạy theo <strong>async task</strong> (gửi task rồi hỏi <code>task-info</code>), chỉ có ở OAuth Connect, và cấm gửi chồng lệnh cho cùng plant.</li>
+    <li>Modbus cục bộ chỉ cho một client tại một thời điểm.</li>
+    <li>Hệ thống quản lý cho utility có IEC 104.</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> High <a href="#L39">L39</a> <a href="#FS-14">FS-14</a></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>Company Admin / Installer / Owner (chức năng của owner bị hạn chế); installer mời owner ngay khi tạo plant (09/2025)</td><td><span class="tag fact">FACT</span> <a href="#L39">L39</a> <a href="#FS-15">FS-15</a></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>Cloud + logger/controller tại site, vòng nhanh nằm ở logger</td><td><span class="tag fact">FACT</span> <a href="#L37">L37</a></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>Nghiên cứu trước không tìm thấy chứng chỉ ISO 27001/IEC 62443 cho cloud</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Điểm yếu đã biết (nghiên cứu trước): API bị giới hạn chặt, không có webhook, không có xuất CSV trong app, lưu dữ liệu 15 tháng, chỉ một client Modbus.</li>
+    <li><strong>Bài học:</strong>
+      <ol>
+        <li>Đối thủ trực tiếp ở Việt Nam đã có tính năng biểu giá và demand charge, nhưng chỉ trong hệ Huawei.</li>
+        <li>Mô hình lệnh async có task id là mẫu tốt cho API lệnh của ta.</li>
+        <li>Driver phải mô hình hóa ma trận chế độ hợp lệ theo topology và theo đúng tài liệu.</li>
+      </ol></li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P8 -->
+<h3 id="p8">6.8 P8 — Sungrow PowerStack 255CS + EMS300CP + iSolarCloud</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>Sungrow (OEM). PowerStack tích hợp EMS + PCS + BMS</td><td><span class="tag fact">FACT</span> <a href="#L41">L41</a></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>C&amp;I; 125 kW/257 kWh mỗi tủ, ghép từ 257 kWh đến 6,4 MWh. Tại Việt Nam: Sungrow tự công bố 45% thị phần mái nhà năm 2020</td><td><span class="tag fact">FACT</span> <a href="#L41">L41</a> <a href="#FS-11">FS-11</a></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>PV, BESS, sạc EV, trạm thời tiết, công tơ, biến áp, CB (theo danh sách thiết bị của iSolarCloud); bản On&amp;Off-Grid 2026 có khởi động và đồng bộ diesel</td><td><span class="tag fact">FACT</span> <a href="#L41">L41</a> <a href="#L42">L42</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>iSolarCloud: cảnh báo thời gian thực, phát hiện lỗi, chu kỳ 5 phút; I-V scan tuyên bố độ chính xác trên 90% (2023)</td><td><span class="tag fact">FACT</span> <a href="#L42">L42</a> <a href="#FS-08">FS-08</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>Chế độ VPP, demand control, backup; chiến lược đồng bộ on-site/cloud cho peak shaving</td><td><span class="tag fact">FACT</span> <a href="#L41">L41</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>Thuật toán dispatch trong EMS; VSG, chuyển mạch liền mạch (dưới 20 ms, chỉ theo nhà phân phối), black start; ghép tối đa 25 tủ on-grid hoặc 10 tủ off-grid</td><td><span class="tag fact">FACT</span> Med <a href="#L41">L41</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>"Bảo trì dự đoán" là tuyên bố của hãng; không có mô tả phương pháp</td><td><span class="st partial">Partial</span> <a href="#L41">L41</a></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>Cảnh báo thời gian thực, OTA</td><td><span class="tag fact">FACT</span> <a href="#L41">L41</a></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>
+  <ul>
+    <li><strong>Modbus TCP qua Ethernet với EMS300CP hoặc EMS bên thứ ba</strong>; hãng chính thức hỗ trợ cách này.</li>
+    <li>Open API dùng API key + access key + RSA key.</li>
+    <li>Cộng đồng có dùng Open API để ghi lệnh sạc/xả (độ tin cậy thấp).</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> <a href="#L41">L41</a> <a href="#L42">L42</a></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>Phân quyền phân cấp (blog Sungrow, nghiên cứu trước)</td><td><span class="st partial">Partial</span> <a href="#L42">L42</a></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>EMS tại tủ + cloud</td><td><span class="st partial">Partial</span> <a href="#L41">L41</a></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>"Financial grade security" (mơ hồ). Forescout SUN:DOWN (3/2025) công bố 46 lỗ hổng ở Sungrow, Growatt, SMA, đã được vá (theo <a href="notes/I-security-reliability.md">I</a> #7)</td><td><span class="tag unknown">UNKNOWN</span> cho chứng chỉ</td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Theo tài liệu của Eniris, một số firmware Sungrow cũ không tôn trọng giới hạn công suất tác dụng (<a href="#L42">L42</a>).</li>
+    <li><strong>Bài học:</strong> driver profile phải khai báo các lỗi riêng của firmware (quirk). Mọi lệnh phải có readback; khi không có tác dụng thì báo <code>FAILED_NO_EFFECT</code>.</li>
+    <li>Sungrow Modbus TCP là ứng viên driver <span class="prio p0">P0</span> (xem <a href="07-device-integration.md">07</a>).</li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P9 -->
+<h3 id="p9">6.9 P9 — OpenEMS (mã nguồn mở)</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>OpenEMS Association e.V.; FENECON là nhà sản xuất chính (FEMS)</td><td><span class="tag fact">FACT</span> <a href="#L43">L43</a> <a href="#L45">L45</a></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>Nền tảng mở cho nhà sản xuất và nhà tích hợp; chủ yếu Đức/EU</td><td><span class="tag inference">INFERENCE</span></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>ESS, PV, công tơ, sạc EV (module EVCS theo hãng, OCPP server)</td><td><span class="tag fact">FACT</span> (tên module) <a href="#L44">L44</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>UI trên trình duyệt/di động; Timedata ở Backend</td><td><span class="tag fact">FACT</span> <a href="#L43">L43</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>
+  <ul>
+    <li><code>Controller.Ess.PeakShaving</code>: cắt đỉnh tại PCC.</li>
+    <li><code>Controller.Ess.Balancing</code>: cân bằng PCC về <code>targetGridSetpoint</code>, mặc định 0 W.</li>
+    <li>GridOptimizedCharge (release 2026.4.0).</li>
+    <li>ToU optimizer; module Tibber chuyển sang giá 15 phút (2025.11.0).</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> <a href="#L43">L43</a> <a href="#L44">L44</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>Mọi điều khiển ESS phải đi qua Controller tham gia "Power Solver". Ghi kênh qua API Modbus/TCP <strong>không</strong> phải đường điều khiển thủ công (theo forum)</td><td><span class="tag fact">FACT</span> Med (forum) <a href="#L43">L43</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>Có ToU optimizer theo slot; phương pháp dự báo: —</td><td><span class="st partial">Partial</span> <a href="#L44">L44</a></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>
+  <ul>
+    <li>Edge ↔ Backend: JSON-RPC qua WebSocket, xác thực <code>apikey</code> qua Metadata (File hoặc Odoo); Backend bọc request tới một Edge bằng <code>edgeRpc</code>.</li>
+    <li>API ngoài: <code>Controller.Api.ModbusTcp.ReadWrite</code>, REST/JSON, WebSocket.</li>
+    <li>Có triển khai tham chiếu §14a EnWG cùng Fraunhofer ISE (6/2026).</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> <a href="#L43">L43</a> <a href="#L45">L45</a></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>Backend gom nhiều Edge; quyền qua Metadata/Odoo</td><td><span class="st partial">Partial</span> <a href="#L43">L43</a></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>Edge (on-site; OSGi/Java), Backend (cloud), UI (Angular theo cấu trúc repo; đây là INFERENCE). Edge chạy độc lập khi mất Backend</td><td><span class="tag fact">FACT</span> <a href="#L43">L43</a></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>Tự host, nên trách nhiệm thuộc bên triển khai</td><td><span class="st na">N/A</span></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Giấy phép: repo có cả file EPL-2.0 và AGPL-3.0. Cách áp cho từng module là <span class="tag unknown">UNKNOWN</span> và <strong>chặn ADR edge runtime</strong> (K R-21). Không tái dùng UI OpenEMS khi chưa có ý kiến pháp lý.</li>
+    <li>Tài liệu giao thức Edge–Backend mỏng.</li>
+    <li><strong>Bài học:</strong> "một bộ phân xử công suất duy nhất ở edge" là mẫu đúng. Arbiter 12 mức của ta (K R-07) đi theo mẫu này.</li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P10 -->
+<h3 id="p10">6.10 P10 — Stem PowerTrack EMS / Athena (+ AlsoEnergy PowerTrack)</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>Stem Inc. (sở hữu AlsoEnergy). PowerTrack EMS ra mắt 02/09/2025</td><td><span class="tag fact">FACT</span> <a href="#L46">L46</a></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>Developer, EPC, integrator; C&amp;I và utility. Thư cổ đông FY2025 cho thấy định vị chính đã chuyển sang utility</td><td><span class="tag fact">FACT</span> <a href="#L46">L46</a></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>PV, BESS, sạc EV (Athena)</td><td><span class="tag fact">FACT</span> <a href="#L46">L46</a> <a href="#L47">L47</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>AlsoEnergy PowerTrack: hơn 200.000 site, hơn 25 GW; báo cáo mẫu (tài chính, nghiệm thu site, capacity test); fault detection</td><td><span class="tag fact">FACT</span> <a href="#L48">L48</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>Sạc/xả pin, grid services, value stacking; Athena tối ưu hóa đơn bằng "thuật toán dự đoán"</td><td><span class="tag fact">FACT</span> <a href="#L46">L46</a> <a href="#L47">L47</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>Power Plant Controller + SCADA + edge UI + unit controller <strong>không phụ thuộc phần cứng</strong></td><td><span class="tag fact">FACT</span> <a href="#L46">L46</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>"Predictively maximize savings"; tinh chỉnh "có AI hỗ trợ" (thư cổ đông). Không có mô tả kỹ thuật</td><td><span class="st partial">Partial</span> <a href="#L46">L46</a> <a href="#L47">L47</a></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>Fault detection (PowerTrack); remote troubleshooting</td><td><span class="st partial">Partial</span> <a href="#L48">L48</a></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>Hơn 8.000 driver và point map; Modbus TCP/RTU; datalogger riêng (PowerTrack Logger, PowerManager 2200 có export control)</td><td><span class="tag fact">FACT</span> <a href="#L48">L48</a></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>Quản lý danh mục tập trung; chi tiết vai trò: —</td><td><span class="tag fact">FACT</span> (fleet) <a href="#L46">L46</a>; vai trò <span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>Portfolio software (cloud) + PPC/edge tại site</td><td><span class="tag fact">FACT</span> <a href="#L46">L46</a></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Hai con số "−32% giờ kỹ sư" và "99,99% độ tin cậy controller" là tự tuyên bố trong thư cổ đông, độ tin cậy thấp.</li>
+    <li><strong>Bài học:</strong> lợi thế bền (moat) của nền tảng đa hãng xếp theo thứ tự: thư viện driver, rồi template cấu hình site ("pre-configuration"), rồi mới đến thuật toán. Thuật toán peak shaving/TOU là phổ thông.</li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<!-- P11 -->
+<h3 id="p11">6.11 P11 — GridBeyond Point</h3>
+<div class="table-wrap"><table class="profile">
+<tbody>
+<tr><th scope="row">1. Nhà cung cấp</th><td>GridBeyond (Ireland); mô hình aggregator/flexibility</td><td><span class="tag fact">FACT</span> <a href="#L49">L49</a></td></tr>
+<tr><th scope="row">2. Thị trường</th><td>Hơn 400 site C&amp;I ở UK, IE, US, JP, AU; khách không phải bỏ CAPEX</td><td><span class="tag fact">FACT</span> <a href="#L49">L49</a></td></tr>
+<tr><th scope="row">3. Tài sản</th><td>Tải sản xuất, phát phân tán, pin, inverter, máy phát, sạc EV</td><td><span class="tag fact">FACT</span> <a href="#L49">L49</a></td></tr>
+<tr><th scope="row">4. Giám sát</th><td>ViewPoint Lens (9/2025): hồ sơ tải, phản ứng trong sự kiện DR, tổng hợp doanh thu</td><td><span class="tag fact">FACT</span> <a href="#L49">L49</a></td></tr>
+<tr><th scope="row">5. Tối ưu</th><td>Arbitrage, frequency response, capacity market; tôn trọng ràng buộc tài sản và <strong>mô hình suy giảm pin</strong></td><td><span class="tag fact">FACT</span> (hồ sơ do hãng cung cấp) <a href="#L49">L49</a></td></tr>
+<tr><th scope="row">6. Điều khiển</th><td>Dispatch tự động</td><td><span class="tag fact">FACT</span> <a href="#L49">L49</a></td></tr>
+<tr><th scope="row">7. Dự báo</th><td>"AI dự báo, tối ưu" là tuyên bố của hãng; không có mô tả kỹ thuật</td><td><span class="st partial">Partial</span> <a href="#L49">L49</a></td></tr>
+<tr><th scope="row">8. Cảnh báo</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">9. Tích hợp</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">10. Vai trò, fleet</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">11. Kiến trúc</th><td>Cloud; gateway tại site: —</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">12. Bảo mật</th><td>—</td><td><span class="tag unknown">UNKNOWN</span></td></tr>
+<tr><th scope="row">13. Hạn chế, bài học</th><td>
+  <ul>
+    <li>Mô hình doanh thu dựa vào thị trường linh hoạt, mà Việt Nam chưa có.</li>
+    <li><strong>Bài học:</strong> báo cáo "giá trị đã tạo" phải là trung tâm. Hàm mục tiêu của tầng 3 nên có chi phí suy giảm pin (xem <a href="08-energy-optimization.md">08</a>).</li>
+  </ul>
+</td><td><span class="tag inference">INFERENCE</span></td></tr>
+</tbody></table></div>
+
+<h3 id="lop-nen">6.12 Tham chiếu lớp nền giám sát đa hãng (từ nghiên cứu FusionSolar trước)</h3>
+<p>Các nền tảng dưới đây không phải EMS đầy đủ. Ta dùng chúng làm chuẩn so sánh cho lớp nền nhóm 1, vì sản phẩm của ta xây trên lớp này. Không lập hồ sơ 13 khía cạnh cho chúng.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Nền tảng</th><th>Điểm đáng chú ý</th><th>Nguồn</th></tr></thead>
+<tbody>
+<tr><td>meteocontrol VCOM + blue'Log XC</td><td>
+  <ul>
+    <li>Monitoring + PPC zero-feed-in tại Việt Nam (MP Pack, Đà Nẵng, 2022).</li>
+    <li>Nhập dữ liệu từ API Huawei: đo 5 phút, kéo về 15 phút, mỗi đêm hỏi lại 7 ngày gần nhất.</li>
+    <li>Nhận setpoint P/Q qua license "Modbus Power Control".</li>
+  </ul>
+</td><td><span class="tag fact">FACT</span> <a href="#FS-02">FS-02</a> <a href="#FS-05">FS-05</a>; license theo <a href="notes/E-device-integration.md">E</a> F-29</td></tr>
+<tr><td>Gantner Q.reader + PPC</td><td>Năm dự án mái nhà lớn ở Việt Nam (khoảng 2019, không ghi ngày)</td><td><span class="tag fact">FACT</span> <a href="#FS-03">FS-03</a></td></tr>
+<tr><td>Solar-Log Base</td><td>Feed-in reduction; nhận lệnh P/Q từ thiết bị ngoài qua license Modbus TCP PM</td><td><span class="tag fact">FACT</span> <a href="#FS-12">FS-12</a></td></tr>
+<tr><td>Power Factors Unity</td><td>APM + CMMS + field service; SCADA/PPC/EMS cho utility</td><td><span class="tag fact">FACT</span> <a href="#FS-06">FS-06</a></td></tr>
+<tr><td>AMMP</td><td>Hơn 30 hãng thiết bị; cảnh báo tùy biến; báo cáo PPA; ticket O&amp;M; giám sát pin/máy phát</td><td><span class="tag fact">FACT</span> <a href="#FS-07a">FS-07a</a></td></tr>
+<tr><td>Solytic</td><td>Có giá công khai: €100/năm + €0,20/kWp/năm; ticketing; chỉ là phần mềm</td><td><span class="tag fact">FACT</span> (trang marketing, không ghi ngày) <a href="#FS-04">FS-04</a></td></tr>
+</tbody></table></div>
+<p><span class="tag inference">INFERENCE</span> Nền tảng có datalogger riêng (meteocontrol, AlsoEnergy, Solar-Log, Gantner) làm được PPC và zero-export. Nền tảng chỉ nhập API thì không. Điều này củng cố quyết định "edge của ta bắt buộc ở site nhận lệnh" (K §6 số 13).</p>
+
+<!-- ============================================================ -->
+<h2 id="ma-tran">7. Ma trận tính năng</h2>
+<div class="legend">
+  <span><span class="st verified">Verified</span> hãng nói rõ, có nguồn</span>
+  <span><span class="st verified">Verified*</span> chỉ là tuyên bố của hãng (chứng chỉ, "AI")</span>
+  <span><span class="st partial">Partial</span> thiếu chi tiết, sản phẩm anh em, nhà phân phối hoặc cộng đồng</span>
+  <span><span class="st unknown">Unknown</span> không tìm thấy tài liệu, ≠ không hỗ trợ</span>
+  <span><span class="st na">N/A</span> không áp dụng</span>
+  <span>Cột "Ta": ưu tiên <span class="tag proposal">PROPOSAL</span> theo K §6 số 40</span>
+</div>
+<p class="kv">Cột: AMP = Ampowr Cosmos · HTI = HT Infinite Power · SE = Schneider EMA (+EMO/PME) · SIE = Siemens SICAM MGC (+MGMS/ElecX) · ABB = OPTIMAX (+e-mesh/EAM) · SED = SolarEdge ONE C&amp;I · HUA = Huawei SmartPVMS C&amp;I · SUN = Sungrow PowerStack + iSolarCloud · OEMS = OpenEMS · STM = Stem PowerTrack EMS/Athena · GB = GridBeyond. Mỗi ô Verified/Partial dẫn tới mục trong <a href="#ledger">sổ bằng chứng</a>.</p>
+<div class="table-wrap"><table class="matrix">
+<thead><tr><th>Năng lực</th><th>AMP</th><th>HTI</th><th>SE</th><th>SIE</th><th>ABB</th><th>SED</th><th>HUA</th><th>SUN</th><th>OEMS</th><th>STM</th><th>GB</th><th>Ta</th></tr></thead>
+<tbody>
+<tr class="grp"><td colspan="13">A · M-ORG — Tổ chức, đa site, vai trò</td></tr>
+<tr><td>A1 Quản lý đa site / fleet</td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L28">L28</a></td><td><span class="st verified">Verified</span><a class="src" href="#L30">L30</a></td><td><span class="st verified">Verified</span><a class="src" href="#L39">L39</a></td><td><span class="st partial">Partial</span><a class="src" href="#L42">L42</a></td><td><span class="st partial">Partial</span><a class="src" href="#L43">L43</a></td><td><span class="st verified">Verified</span><a class="src" href="#L46">L46</a></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>A2 Vai trò và phân quyền chi tiết, chia sẻ cho bên thứ ba</td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L32">L32</a></td><td><span class="st verified">Verified</span><a class="src" href="#L39">L39</a></td><td><span class="st partial">Partial</span><a class="src" href="#L42">L42</a></td><td><span class="st partial">Partial</span><a class="src" href="#L43">L43</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p0">P0</span></td></tr>
+
+<tr class="grp"><td colspan="13">B · M-DASH — Dashboard và KPI</td></tr>
+<tr><td>B1 Dashboard danh mục/site, KPI</td><td><span class="st partial">Partial</span><a class="src" href="#L05">L05</a></td><td><span class="st verified">Verified</span><a class="src" href="#L10">L10</a></td><td><span class="st verified">Verified</span><a class="src" href="#L14">L14</a></td><td><span class="st partial">Partial</span><a class="src" href="#L40">L40</a></td><td><span class="st partial">Partial</span><a class="src" href="#L29">L29</a></td><td><span class="st verified">Verified</span><a class="src" href="#L30">L30</a></td><td><span class="st verified">Verified</span><a class="src" href="#L39">L39</a></td><td><span class="st verified">Verified</span><a class="src" href="#L42">L42</a></td><td><span class="st partial">Partial</span><a class="src" href="#L43">L43</a></td><td><span class="st partial">Partial</span><a class="src" href="#L48">L48</a></td><td><span class="st partial">Partial</span><a class="src" href="#L49">L49</a></td><td><span class="prio p0">P0</span></td></tr>
+
+<tr class="grp"><td colspan="13">C · M-MON — Giám sát thời gian thực</td></tr>
+<tr><td>C1 Độ phân giải dữ liệu được công bố</td><td><span class="st partial">Partial</span><a class="src" href="#L05">L05</a></td><td><span class="st partial">Partial</span><a class="src" href="#L10">L10</a></td><td><span class="st partial">Partial</span><a class="src" href="#L16">L16</a></td><td><span class="st partial">Partial</span><a class="src" href="#L21">L21</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L30">L30</a></td><td><span class="st verified">Verified</span><a class="src" href="#L39">L39</a> 5′</td><td><span class="st verified">Verified</span><a class="src" href="#L42">L42</a> 5′</td><td><span class="st verified">Verified</span><a class="src" href="#L43">L43</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p0">P0</span> 1 s edge</td></tr>
+
+<tr class="grp"><td colspan="13">D · M-HIST — Lịch sử, phân tích, báo cáo</td></tr>
+<tr><td>D1 Lịch sử và báo cáo</td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L17">L17</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L29">L29</a></td><td><span class="st partial">Partial</span><a class="src" href="#L32">L32</a></td><td><span class="st verified">Verified</span><a class="src" href="#L39">L39</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L43">L43</a></td><td><span class="st verified">Verified</span><a class="src" href="#L48">L48</a></td><td><span class="st partial">Partial</span><a class="src" href="#L49">L49</a></td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>D2 Báo cáo giá trị/tiết kiệm đã tạo</td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#FS-15">FS-15</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L47">L47</a></td><td><span class="st verified">Verified</span><a class="src" href="#L49">L49</a></td><td><span class="prio p0">P0</span> hóa đơn bóng</td></tr>
+
+<tr class="grp"><td colspan="13">E · M-BESS — Quản lý BESS</td></tr>
+<tr><td>E1 Giám sát BESS (SOC/SOH, cell)</td><td><span class="st verified">Verified</span><a class="src" href="#L05">L05</a></td><td><span class="st verified">Verified</span><a class="src" href="#L13">L13</a></td><td><span class="st partial">Partial</span><a class="src" href="#L17">L17</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st partial">Partial</span><a class="src" href="#L26">L26</a></td><td><span class="st verified">Verified</span><a class="src" href="#L30">L30</a></td><td><span class="st verified">Verified</span><a class="src" href="#L36">L36</a></td><td><span class="st verified">Verified</span><a class="src" href="#L41">L41</a></td><td><span class="st verified">Verified</span><a class="src" href="#L43">L43</a></td><td><span class="st verified">Verified</span><a class="src" href="#L46">L46</a></td><td><span class="st verified">Verified</span><a class="src" href="#L49">L49</a></td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>E2 Chế độ BESS (lịch, TOU, backup)</td><td><span class="st verified">Verified</span><a class="src" href="#L06">L06</a></td><td><span class="st verified">Verified</span><a class="src" href="#L11">L11</a></td><td><span class="st verified">Verified</span><a class="src" href="#L14">L14</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st partial">Partial</span><a class="src" href="#L26">L26</a></td><td><span class="st verified">Verified</span><a class="src" href="#L30">L30</a></td><td><span class="st verified">Verified</span><a class="src" href="#L37">L37</a></td><td><span class="st verified">Verified</span><a class="src" href="#L41">L41</a></td><td><span class="st verified">Verified</span><a class="src" href="#L44">L44</a></td><td><span class="st verified">Verified</span><a class="src" href="#L46">L46</a></td><td><span class="st partial">Partial</span><a class="src" href="#L49">L49</a></td><td><span class="prio p0">P0</span> M1/M2</td></tr>
+
+<tr class="grp"><td colspan="13">F · M-PV — PV</td></tr>
+<tr><td>F1 Chẩn đoán PV (string/module, I-V)</td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L30">L30</a></td><td><span class="st verified">Verified</span><a class="src" href="#L36">L36</a></td><td><span class="st partial">Partial</span><a class="src" href="#FS-08">FS-08</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L48">L48</a></td><td><span class="st na">N/A</span></td><td><span class="prio p1">P1</span></td></tr>
+<tr><td>F2 Giới hạn phát / zero-export</td><td><span class="st partial">Partial</span><a class="src" href="#L06">L06</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L23">L23</a></td><td><span class="st partial">Partial</span><a class="src" href="#L26">L26</a></td><td><span class="st verified">Verified</span><a class="src" href="#L35">L35</a></td><td><span class="st verified">Verified</span><a class="src" href="#L37">L37</a></td><td><span class="st partial">Partial</span><a class="src" href="#L42">L42</a></td><td><span class="st verified">Verified</span><a class="src" href="#L43">L43</a></td><td><span class="st verified">Verified</span><a class="src" href="#L46">L46</a></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p0">P0</span> native trước</td></tr>
+
+<tr class="grp"><td colspan="13">G · M-GRID — Điểm đấu nối, trần nhập, biểu giá</td></tr>
+<tr><td>G1 Peak shaving / giới hạn mua lưới</td><td><span class="st verified">Verified</span><a class="src" href="#L04">L04</a></td><td><span class="st verified">Verified</span><a class="src" href="#L13">L13</a></td><td><span class="st verified">Verified</span><a class="src" href="#L14">L14</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L30">L30</a></td><td><span class="st verified">Verified</span><a class="src" href="#L37">L37</a></td><td><span class="st verified">Verified</span><a class="src" href="#L41">L41</a></td><td><span class="st verified">Verified</span><a class="src" href="#L43">L43</a></td><td><span class="st partial">Partial</span><a class="src" href="#L47">L47</a></td><td><span class="st partial">Partial</span><a class="src" href="#L49">L49</a></td><td><span class="prio p0">P0</span> import cap · <span class="prio p1">P1</span> demand</td></tr>
+<tr><td>G2 Tối ưu theo biểu giá (TOU/dynamic)</td><td><span class="st partial">Partial</span><a class="src" href="#L06">L06</a></td><td><span class="st verified">Verified</span><a class="src" href="#L11">L11</a></td><td><span class="st verified">Verified</span><a class="src" href="#L14">L14</a></td><td><span class="st partial">Partial</span><a class="src" href="#L21">L21</a></td><td><span class="st verified">Verified</span><a class="src" href="#L26">L26</a></td><td><span class="st verified">Verified</span><a class="src" href="#L30">L30</a></td><td><span class="st verified">Verified</span><a class="src" href="#L36">L36</a></td><td><span class="st partial">Partial</span><a class="src" href="#L41">L41</a></td><td><span class="st verified">Verified</span><a class="src" href="#L44">L44</a></td><td><span class="st verified">Verified</span><a class="src" href="#L47">L47</a></td><td><span class="st verified">Verified</span><a class="src" href="#L49">L49</a></td><td><span class="prio p0">P0</span> luật TOU</td></tr>
+<tr><td>G3 Demand charge theo khung giờ</td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#FS-15">FS-15</a></td><td><span class="st partial">Partial</span><a class="src" href="#L41">L41</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p1">P1</span></td></tr>
+
+<tr class="grp"><td colspan="13">H · M-EV — Sạc EV</td></tr>
+<tr><td>H1 Quản lý sạc EV / tải động</td><td><span class="st partial">Partial</span><a class="src" href="#L06">L06</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L17">L17</a></td><td><span class="st verified">Verified</span><a class="src" href="#L25">L25</a></td><td><span class="st partial">Partial</span><a class="src" href="#L28">L28</a></td><td><span class="st verified">Verified</span><a class="src" href="#L33">L33</a></td><td><span class="st partial">Partial</span><a class="src" href="#FS-10">FS-10</a></td><td><span class="st partial">Partial</span><a class="src" href="#L42">L42</a></td><td><span class="st partial">Partial</span><a class="src" href="#L44">L44</a></td><td><span class="st partial">Partial</span><a class="src" href="#L47">L47</a></td><td><span class="st partial">Partial</span><a class="src" href="#L49">L49</a></td><td><span class="prio p1">P1</span> OCPP 1.6J</td></tr>
+
+<tr class="grp"><td colspan="13">I · M-OPT — Tối ưu, lập lịch, thị trường</td></tr>
+<tr><td>I1 Lập lịch dựa trên dự báo / MPC</td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L14">L14</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st verified">Verified</span><a class="src" href="#L27">L27</a></td><td><span class="st verified">Verified</span><a class="src" href="#L30">L30</a></td><td><span class="st partial">Partial</span><a class="src" href="#L36">L36</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L44">L44</a></td><td><span class="st partial">Partial</span><a class="src" href="#L47">L47</a></td><td><span class="st verified">Verified</span><a class="src" href="#L49">L49</a></td><td><span class="prio p1">P1</span> tầng 3</td></tr>
+<tr><td>I2 Thị trường / DR / value stacking</td><td><span class="st verified">Verified</span><a class="src" href="#L03">L03</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L17">L17</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st verified">Verified</span><a class="src" href="#L27">L27</a></td><td><span class="st partial">Partial</span><a class="src" href="#L30">L30</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L41">L41</a></td><td><span class="st partial">Partial</span><a class="src" href="#L45">L45</a></td><td><span class="st verified">Verified</span><a class="src" href="#L46">L46</a></td><td><span class="st verified">Verified</span><a class="src" href="#L49">L49</a></td><td><span class="prio p2">P2</span> VPP-capable</td></tr>
+
+<tr class="grp"><td colspan="13">J · M-ALM — Cảnh báo và bảo trì</td></tr>
+<tr><td>J1 Cảnh báo và thông báo</td><td><span class="st verified">Verified</span><a class="src" href="#L05">L05</a></td><td><span class="st verified">Verified</span><a class="src" href="#L10">L10</a></td><td><span class="st partial">Partial</span><a class="src" href="#L20">L20</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L29">L29</a></td><td><span class="st verified">Verified</span><a class="src" href="#L32">L32</a></td><td><span class="st verified">Verified</span><a class="src" href="#L39">L39</a></td><td><span class="st verified">Verified</span><a class="src" href="#L41">L41</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L48">L48</a></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>J2 Quy trình bảo trì / dịch vụ / ticket</td><td><span class="st verified">Verified</span><a class="src" href="#L05">L05</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L29">L29</a></td><td><span class="st partial">Partial</span><a class="src" href="#L30">L30</a></td><td><span class="st partial">Partial</span><a class="src" href="#FS-09">FS-09</a></td><td><span class="st partial">Partial</span><a class="src" href="#L41">L41</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L48">L48</a></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p0">P0</span> cơ bản*</td></tr>
+
+<tr class="grp"><td colspan="13">K · M-INT — Giao thức, tích hợp, API</td></tr>
+<tr><td>K1 Giao thức thiết bị được công bố</td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L08">L08</a></td><td><span class="st partial">Partial</span><a class="src" href="#L20">L20</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L34">L34</a></td><td><span class="st verified">Verified</span><a class="src" href="#L39">L39</a></td><td><span class="st verified">Verified</span><a class="src" href="#L41">L41</a></td><td><span class="st verified">Verified</span><a class="src" href="#L43">L43</a></td><td><span class="st verified">Verified</span><a class="src" href="#L48">L48</a></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>K2 API cho bên thứ ba</td><td><span class="st partial">Partial</span><a class="src" href="#L04">L04</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L32">L32</a></td><td><span class="st verified">Verified</span><a class="src" href="#L39">L39</a></td><td><span class="st verified">Verified</span><a class="src" href="#L42">L42</a></td><td><span class="st verified">Verified</span><a class="src" href="#L43">L43</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p1">P1</span></td></tr>
+<tr><td>K3 Thiết bị đa hãng</td><td><span class="st verified">Verified</span><a class="src" href="#L01">L01</a></td><td><span class="st partial">Partial</span><a class="src" href="#L08">L08</a></td><td><span class="st verified">Verified</span><a class="src" href="#L17">L17</a></td><td><span class="st partial">Partial</span><a class="src" href="#L21">L21</a></td><td><span class="st partial">Partial</span><a class="src" href="#L26">L26</a></td><td><span class="st partial">Partial</span><a class="src" href="#L31">L31</a></td><td><span class="st partial">Partial</span><a class="src" href="#L38">L38</a></td><td><span class="st verified">Verified</span><a class="src" href="#L41">L41</a></td><td><span class="st verified">Verified</span><a class="src" href="#L43">L43</a></td><td><span class="st verified">Verified</span><a class="src" href="#L46">L46</a></td><td><span class="st verified">Verified</span><a class="src" href="#L49">L49</a></td><td><span class="prio p0">P0</span></td></tr>
+
+<tr class="grp"><td colspan="13">L · M-SEC — Bảo mật và tuân thủ</td></tr>
+<tr><td>L1 Chứng nhận bảo mật được công bố</td><td><span class="st verified">Verified*</span><a class="src" href="#L02">L02</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L18">L18</a></td><td><span class="st verified">Verified*</span><a class="src" href="#L22">L22</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st na">N/A</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td>Không tuyên bố; thiết kế theo tinh thần</td></tr>
+<tr><td>L2 Lưu trữ/hosting theo vùng</td><td><span class="st verified">Verified*</span><a class="src" href="#L02">L02</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st na">N/A</span></td><td><span class="st verified">Verified</span><a class="src" href="#L27">L27</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L39">L39</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L43">L43</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p0">P0</span> VN mặc định†</td></tr>
+
+<tr class="grp"><td colspan="13">M · M-ADV — Nâng cao</td></tr>
+<tr><td>M1 Dự báo tải/PV/giá</td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L14">L14</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st verified">Verified</span><a class="src" href="#L27">L27</a></td><td><span class="st verified">Verified</span><a class="src" href="#L30">L30</a></td><td><span class="st verified">Verified</span><a class="src" href="#L38">L38</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L44">L44</a></td><td><span class="st partial">Partial</span><a class="src" href="#L47">L47</a></td><td><span class="st verified">Verified</span><a class="src" href="#L49">L49</a></td><td><span class="prio p1">P1</span> đa nguồn‡</td></tr>
+<tr><td>M2 Microgrid / islanding / black start</td><td><span class="st partial">Partial</span><a class="src" href="#L06">L06</a></td><td><span class="st partial">Partial</span><a class="src" href="#L11">L11</a></td><td><span class="st verified">Verified</span><a class="src" href="#L19">L19</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st partial">Partial</span><a class="src" href="#L28">L28</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L37b">L37b</a></td><td><span class="st verified">Verified</span><a class="src" href="#L41">L41</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st na">N/A</span></td><td><span class="prio p2">P2</span> chỉ giám sát</td></tr>
+<tr><td>M3 "AI" có mô tả cụ thể</td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L14">L14</a></td><td><span class="st na">N/A</span></td><td><span class="st verified">Verified*</span><a class="src" href="#L27">L27</a></td><td><span class="st partial">Partial</span><a class="src" href="#L33">L33</a></td><td><span class="st partial">Partial</span><a class="src" href="#L38">L38</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st na">N/A</span></td><td><span class="st partial">Partial</span><a class="src" href="#L46">L46</a></td><td><span class="st partial">Partial</span><a class="src" href="#L49">L49</a></td><td><span class="prio p2">P2</span> chỉ ML đã đánh giá</td></tr>
+
+<tr class="grp"><td colspan="13">X · Hàng phụ — Vận hành và triển khai</td></tr>
+<tr><td>X1 Edge chạy tiếp khi mất mạng</td><td><span class="st verified">Verified</span><a class="src" href="#L04">L04</a></td><td><span class="st verified">Verified</span><a class="src" href="#L09">L09</a></td><td><span class="st verified">Verified</span><a class="src" href="#L15">L15</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st verified">Verified</span><a class="src" href="#L27">L27</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L37">L37</a></td><td><span class="st partial">Partial</span><a class="src" href="#L41">L41</a></td><td><span class="st verified">Verified</span><a class="src" href="#L43">L43</a></td><td><span class="st verified">Verified</span><a class="src" href="#L46">L46</a></td><td><span class="st unknown">Unknown</span></td><td><span class="prio p0">P0</span> lịch ≥ 48 h</td></tr>
+<tr><td>X2 Điều khiển máy phát (genset/CHP)</td><td><span class="st verified">Verified</span><a class="src" href="#L06">L06</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L17">L17</a></td><td><span class="st verified">Verified</span><a class="src" href="#L21">L21</a></td><td><span class="st partial">Partial</span><a class="src" href="#L26">L26</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st verified">Verified</span><a class="src" href="#L38">L38</a></td><td><span class="st partial">Partial</span><a class="src" href="#L41">L41</a></td><td><span class="st unknown">Unknown</span></td><td><span class="st unknown">Unknown</span></td><td><span class="st partial">Partial</span><a class="src" href="#L49">L49</a></td><td>Giám sát <code>MTR_GEN</code>; điều khiển ngoài MVP</td></tr>
+<tr><td>X3 Mô hình triển khai</td><td>Cloud + edge</td><td>Thiết bị + cloud</td><td>Cloud + edge (+ EMO on-prem)</td><td>On-prem</td><td>On-prem/cloud/hybrid</td><td>Cloud + controller</td><td>Cloud + logger</td><td>Cloud + EMS tại tủ</td><td>Tự host Edge + Backend</td><td>Cloud + PPC/edge</td><td>Cloud (gateway: Unknown)</td><td>Cloud + edge bắt buộc khi có lệnh</td></tr>
+</tbody></table></div>
+<p class="kv">Ghi chú cột "Ta":</p>
+<ul class="kv">
+  <li>* Luồng cảnh báo → ticket cơ bản là đề xuất P0, vì P3 là người dùng hằng ngày. Quy trình O&amp;M đầy đủ (SLA, PM, field service) chưa được nghiên cứu (K G-01); người viết <a href="04-business-requirements.md">04</a> chốt ưu tiên.</li>
+  <li>† Hosting tại Việt Nam là INFERENCE, chờ kiểm chứng pháp lý.</li>
+  <li>‡ Dự báo đơn giản để tính SOC đích cho luật TOU là P0. Dự báo đa nguồn là P1.</li>
+</ul>
+<p>Đếm từ ma trận <span class="tag inference">INFERENCE</span>:</p>
+<ul>
+  <li>G1 có 8/11 sản phẩm Verified, là table stakes.</li>
+  <li>E1 có 9/11 Verified, cũng là table stakes.</li>
+  <li>D2 (báo cáo giá trị) chỉ có 2 Verified (Huawei, GridBeyond).</li>
+  <li>F1 (chẩn đoán PV) chỉ có 3 Verified (SolarEdge, Huawei, Stem).</li>
+  <li>L1 không có ô Verified nào mà không kèm dấu *.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="phan-tang">8. Bốn tầng bằng chứng: có tài liệu, suy luận, chuẩn ngành chưa kiểm chứng, đề xuất cho ta</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Tầng</th><th>Năng lực / nhận định</th><th>Cơ sở</th></tr></thead>
+<tbody>
+<tr><td><span class="tag fact">FACT</span><br><strong>Có tài liệu của hãng</strong></td><td>
+  <ul>
+    <li>Peak shaving / giới hạn mua lưới: 8/11 sản phẩm.</li>
+    <li>TOU / biểu giá.</li>
+    <li>Giám sát SOC/SOH.</li>
+    <li>Edge chạy khi mất mạng: Ampowr, Schneider (lịch 48 h), Siemens, Huawei, OpenEMS, Stem.</li>
+    <li>Chẩn đoán PV cấp module: SolarEdge, Huawei.</li>
+    <li>EV qua quản lý tải: SolarEdge/Wevo, Siemens ElecX, Schneider qua cụm EV.</li>
+    <li>DA/imbalance/aFRR: Ampowr.</li>
+    <li>Modbus TCP/RTU tại edge: SolarEdge (cổng 1502), Sungrow (EMS bên thứ ba), OpenEMS, Stem.</li>
+    <li>Lệnh async có task: Huawei.</li>
+    <li>Công tơ export-limit đặt tại điểm đấu nối: SolarEdge.</li>
+    <li>Demand charge theo TOU: Huawei (03/2026).</li>
+  </ul>
+</td><td>Ma trận §7; sổ bằng chứng §13.2</td></tr>
+<tr><td><span class="tag inference">INFERENCE</span><br><strong>Suy luận</strong></td><td>
+  <ul>
+    <li>Ampowr phải dự báo giá để bid, nhưng không có tài liệu.</li>
+    <li>SolarEdge ONE cần Internet cho lệnh PPC (chỉ có nguồn bán lẻ).</li>
+    <li>e-mesh nay thuộc Hitachi Energy.</li>
+    <li>Tủ BESS Trung Quốc thường dùng Modbus RTU/TCP, nhưng không được áp cho hãng cụ thể.</li>
+    <li>Các sản phẩm có tài liệu đều đặt vòng nhanh tại site.</li>
+    <li>Peak shaving là table stakes.</li>
+    <li>Điểm khác biệt thật nằm ở: (a) thị trường/DR, (b) chẩn đoán PV sâu, (c) EV quy mô lớn, (d) microgrid. Đây là câu tổng hợp nên chỉ là INFERENCE (K §4).</li>
+  </ul>
+</td><td>Ghép nhiều nguồn; <a href="notes/K-review-round1.md">K §4</a></td></tr>
+<tr><td><span class="tag unknown">UNKNOWN</span><br><strong>Chuẩn ngành nhưng chưa kiểm chứng cho từng hãng</strong></td><td>
+  <ul>
+    <li>OCPP 1.6J/2.0.1 cho sạc EV.</li>
+    <li>SunSpec Modbus cho inverter.</li>
+    <li>IEC 60870-5-104 / DNP3 cho SCADA; IEC 61850 cho trạm.</li>
+    <li>SOC min/max reserve, giới hạn C-rate, ramp rate.</li>
+    <li>TLS, RBAC, audit log.</li>
+    <li>Store-and-forward tại edge.</li>
+    <li>Watchdog/timeout setpoint.</li>
+  </ul>
+  Ta <strong>không</strong> được ghi các mục này vào ô ma trận của bất kỳ hãng nào.</td><td>Kiến thức nền; không có tài liệu theo hãng</td></tr>
+<tr><td><span class="tag proposal">PROPOSAL</span><br><strong>Đề xuất cho ta</strong></td><td>Xem <a href="#khac-biet">§11</a> và cột "Ta" của ma trận</td><td>K §6</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="mau-hinh">9. Mẫu hình kỹ thuật rút ra từ đối thủ</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Mẫu hình</th><th>Bằng chứng</th><th>Áp dụng cho ta</th><th>Tài liệu đích</th></tr></thead>
+<tbody>
+<tr><td>Cloud lập kế hoạch, edge thực thi</td><td>Schneider <a href="#L14">L14</a>/<a href="#L16">L16</a>; Ampowr <a href="#L04">L04</a>; OpenEMS <a href="#L43">L43</a>; Stem <a href="#L46">L46</a> <span class="tag inference">INFERENCE</span></td><td>Cloud gửi ý định có hạn, edge quyết định setpoint. <code>control_owner ∈ {NATIVE, EDGE}</code>, ưu tiên NATIVE; không bao giờ chạy hai vòng trên cùng một biến <span class="tag proposal">PROPOSAL</span></td><td><a href="06-system-architecture.html">06</a></td></tr>
+<tr><td>Lịch dự phòng dài</td><td>Schneider 48 h (một nguồn nói 72 h) <a href="#L15">L15</a></td><td>Edge giữ lịch ≥ 48 h. Hết lịch thì chạy chiến lược mặc định an toàn. Mất <code>MTR_POC</code> hoặc dữ liệu BMS cũ thì ESS về P = 0 hoặc chế độ native <span class="tag proposal">PROPOSAL</span></td><td><a href="10-security-and-reliability.md">10</a></td></tr>
+<tr><td>Vòng nhanh tại site có số liệu</td><td>Huawei tự công bố ≤ 2 s zero feed-in và ≤ 5 s peak shaving (SmartLogger5000B/SmartMGC5000B) <a href="#L37">L37</a> <a href="#L37b">L37b</a></td><td>Chỉ là mục tiêu tham chiếu. Chưa có sản phẩm nào công bố độ trễ end-to-end từ cloud tới thiết bị (Q-B10)</td><td><a href="08-energy-optimization.md">08</a></td></tr>
+<tr><td>Một bộ phân xử công suất duy nhất</td><td>OpenEMS Power Solver <a href="#L43">L43</a> (forum)</td><td>Arbiter 12 mức của K R-07; mức 1–6 cố định: bảo vệ native → interlock → giám sát an toàn edge → tuân thủ lưới → trần nhập → backup</td><td><a href="06-system-architecture.html">06</a>, <a href="08-energy-optimization.md">08</a></td></tr>
+<tr><td>Lệnh async có trạng thái</td><td>Huawei control API: task id, cấm gửi chồng <a href="#L39">L39</a></td><td>Envelope lệnh có <code>expires_at</code> bắt buộc, chữ ký, <code>seq</code>, readback trước khi báo <code>APPLIED</code>; có <code>APPLIED_CLAMPED</code>, <code>FAILED_NO_EFFECT</code>; không gửi lại sau hạn</td><td><a href="06-system-architecture.html">06</a>, <a href="07-device-integration.md">07</a></td></tr>
+<tr><td>Công tơ tại điểm đấu nối bắt buộc</td><td>SolarEdge app note <a href="#L35">L35</a>; OpenEMS <code>targetGridSetpoint</code> <a href="#L43">L43</a></td><td><code>MTR_POC</code> bắt buộc cho mọi chức năng điều khiển lưới; commissioning có phép thử dấu</td><td><a href="05-domain-model.html">05</a>, <a href="07-device-integration.md">07</a></td></tr>
+<tr><td>Ma trận chế độ theo topology</td><td>Huawei manual microgrid (phạm vi hẹp, K R-20) <a href="#L37b">L37b</a>; Sungrow 25/10 tủ <a href="#L41">L41</a></td><td>Driver profile khai báo chế độ hợp lệ theo kịch bản, đúng phạm vi tài liệu</td><td><a href="07-device-integration.md">07</a></td></tr>
+<tr><td>Quirk firmware</td><td>Sungrow firmware cũ bỏ qua giới hạn P <a href="#L42">L42</a></td><td>Driver ghi quirk; mọi lệnh có readback; thanh ghi lấy từ diễn đàn không được vào driver <code>VERIFIED_*</code></td><td><a href="07-device-integration.md">07</a></td></tr>
+<tr><td>Bill of interfaces cho gateway</td><td>SolarEdge CLC1 <a href="#L34">L34</a></td><td>Tham chiếu cho edge: ≥ 2 RS485, CAN, WAN/LAN tách riêng, DI/DO (lệnh cắt giảm, trạng thái E-stop), BLE/Wi-Fi để commissioning. Lựa chọn phần cứng cụ thể là K G-06</td><td><a href="06-system-architecture.html">06</a></td></tr>
+<tr><td>Chia sẻ quyền và cảnh báo theo user</td><td>SolarEdge <a href="#L32">L32</a>; Ampowr NOC <a href="#L05">L05</a></td><td>RBAC Org → Site → Device; Org Admin mặc định không có quyền lệnh; grant installer có hạn do chủ tài sản cấp; Kiosk/Public view; hai chế độ "tự giám sát" và "O&amp;M giám sát hộ"</td><td><a href="09-ux-ui-specification.html">09</a>, <a href="10-security-and-reliability.md">10</a></td></tr>
+<tr><td>Nhập API OEM có backfill</td><td>meteocontrol hỏi lại 7 ngày mỗi đêm <a href="#FS-05">FS-05</a></td><td>Connector cloud của hãng chỉ đọc, quality <code>UNCERTAIN_VENDOR_CLOUD</code>, dùng cho site chỉ giám sát</td><td><a href="07-device-integration.md">07</a></td></tr>
+</tbody></table></div>
+<p><strong>So sánh UX:</strong> theo K §3.7, chỉ có bằng chứng giao diện thật của FusionSolar. Không gán pattern UI nào cho hãng khác. Benchmark UX nằm ở <a href="09-ux-ui-specification.html">09</a>.</p>
+
+<!-- ============================================================ -->
+<h2 id="thuong-mai">10. Mô hình thương mại quan sát được</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Mẫu</th><th>Ví dụ</th><th>Nhãn</th></tr></thead>
+<tbody>
+<tr><td>Phần mềm miễn phí kèm phần cứng, gói trả phí đưa dần</td><td>SolarEdge ONE for C&amp;I <a href="#L31">L31</a>; FusionSolar, iSolarCloud (nghiên cứu trước)</td><td><span class="tag fact">FACT</span></td></tr>
+<tr><td>Full-service: BESS + EMS + dịch vụ</td><td>Ampowr <a href="#L05">L05</a></td><td><span class="tag fact">FACT</span></td></tr>
+<tr><td>Không CAPEX, chia doanh thu linh hoạt</td><td>GridBeyond <a href="#L49">L49</a></td><td><span class="tag fact">FACT</span></td></tr>
+<tr><td>Phần cứng DAS + thuê bao giám sát 1–5 năm</td><td>AlsoEnergy <a href="#L48">L48</a></td><td><span class="tag fact">FACT</span></td></tr>
+<tr><td>Theo kWp/năm + phí nền</td><td>Solytic €100/năm + €0,20/kWp (trang marketing không ghi ngày) <a href="#FS-04">FS-04</a></td><td><span class="tag fact">FACT</span> Low</td></tr>
+<tr><td>License tính năng điều khiển trên logger</td><td>Solar-Log Modbus TCP PM, meteocontrol Modbus Power Control (theo <a href="notes/E-device-integration.md">E</a> F-29)</td><td><span class="tag fact">FACT</span></td></tr>
+</tbody></table></div>
+<p>Không hãng EMS nào trong mẫu công bố giá EMS (Q-B11) <span class="tag unknown">UNKNOWN</span>. Mô hình giá cho ta là chủ đề còn thiếu (K G-04). Đề xuất tạm <span class="tag proposal">PROPOSAL</span>:</p>
+<ul>
+  <li>Hai gói tách theo mặt phẳng: <em>Monitoring</em> (Gate M1, tính theo site/kWp) và <em>Control</em> (Gate M2, tính theo site có BESS hoặc theo MWh BESS).</li>
+  <li>Cộng dịch vụ "O&amp;M giám sát hộ" cho installer bán lại.</li>
+  <li>Giá cụ thể phải qua phỏng vấn khách (K G-07) trước khi đưa vào <a href="11-mvp-and-roadmap.html">11</a>.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="khac-biet">11. Cơ hội khác biệt cho sản phẩm của ta</h2>
+<p>Mọi mục dưới đây là <span class="tag proposal">PROPOSAL</span>. Mức ưu tiên theo K §6. Mã D-B là mã tạm; người viết <a href="04-business-requirements.md">04</a> cấp mã FR/NFR chính thức và giữ truy vết.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Mã tạm</th><th>Cơ hội</th><th>Khoảng trống quan sát được</th><th>Cụ thể hóa</th><th>Ưu tiên</th></tr></thead>
+<tbody>
+<tr><td>D-B01</td><td><strong>Cấu hình native đa hãng có readback</strong> (Gate M1)</td><td>OEM chỉ cấu hình được thiết bị của mình (<a href="#L37">L37</a>, <a href="#L30">L30</a>). Nền tảng đa hãng thường chỉ đọc API (<a href="#FS-05">FS-05</a>)</td><td>
+  <ul>
+    <li>Một UI để đặt <code>export_mode</code> / <code>export_limit_w</code> / <code>import_cap_w</code> và lịch TOU native cho SmartLogger, Sungrow EMS, tủ BESS có driver đã kiểm chứng.</li>
+    <li>Đọc lại để xác nhận; báo lệch cấu hình (drift).</li>
+  </ul>
+</td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>D-B02</td><td><strong>Bằng chứng tuân thủ giới hạn xuất</strong></td><td>Không đối thủ nào công bố báo cáo tuân thủ. NĐ 58 quan tâm trạng thái bật/tắt; NĐ 133 có chế tài</td><td>
+  <ul>
+    <li>Audit append-only cho mọi thay đổi chế độ hoặc giới hạn.</li>
+    <li>Báo cáo kWh xuất theo kỳ so với giới hạn, quy kết theo nguồn PV/BESS (thuật toán <code>attribution_version</code>).</li>
+    <li>Biên bản phép thử export-limit khi commissioning.</li>
+  </ul>
+</td><td><span class="prio p0">P0</span> · ngân sách xuất 50%: <span class="prio p1">P1</span></td></tr>
+<tr><td>D-B03</td><td><strong>Biểu giá Việt Nam là dữ liệu có phiên bản</strong></td><td>Huawei có thiết lập giá điện và demand theo TOU, nhưng chỉ trong hệ Huawei (<a href="#FS-15">FS-15</a>). OpenEMS dựa vào giá động kiểu châu Âu (<a href="#L44">L44</a>)</td><td>
+  <ul>
+    <li>Biểu giá QĐ 963/QĐ 1279 và lịch sử TT 16/2014.</li>
+    <li>Hai lịch song song (pháp lý / hóa đơn).</li>
+    <li>Nhiều biểu giá trong một site (EV).</li>
+    <li><code>demand_basis</code> mặc định tắt.</li>
+  </ul>
+</td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>D-B04</td><td><strong>Tiết kiệm minh bạch, kiểm toán được</strong></td><td>Chỉ GridBeyond và Huawei có tài liệu báo cáo giá trị; Stem dùng số "% tiết kiệm" của vendor (<a href="notes/A-market-boundary.md">A</a> #39)</td><td>
+  <ul>
+    <li>Hóa đơn bóng so với baseline phản thực, cùng phiên bản biểu giá.</li>
+    <li>Phương pháp công khai trong báo cáo.</li>
+    <li>Không quảng cáo %.</li>
+    <li>Tách kWh bị cắt do giới hạn xuất.</li>
+  </ul>
+</td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>D-B05</td><td><strong>O&amp;M đa hãng cho installer</strong>: cảnh báo → ticket → giao việc</td><td>Đã có ở AmpiHealth (dịch vụ của chính hãng), FusionSolar (chỉ Huawei), AMMP/Power Factors (không có điều khiển)</td><td>
+  <ul>
+    <li>Ticket gắn cảnh báo; chế độ "O&amp;M giám sát hộ" theo hàng đợi NOC.</li>
+    <li>Mức cảnh báo: Khẩn cấp / Cao / Trung bình / Thông tin.</li>
+    <li>Quy trình đầy đủ chờ K G-01.</li>
+  </ul>
+</td><td><span class="prio p0">P0</span> cơ bản · <span class="prio p1">P1</span> SLA/NOC</td></tr>
+<tr><td>D-B06</td><td><strong>Độ tươi dữ liệu trung thực</strong></td><td>FusionSolar không hiển thị tuổi dữ liệu trên số realtime (<a href="notes/H-ux-research.md">H</a> #8)</td><td>
+  <ul>
+    <li><code>freshness ∈ {LIVE, DELAYED, OLD, OFFLINE, NO_DATA}</code>.</li>
+    <li>Không bao giờ hiện 0 thay cho "không có dữ liệu".</li>
+    <li>Hiển thị "đang chạy lịch dự phòng".</li>
+  </ul>
+</td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>D-B07</td><td><strong>Danh sách tương thích đã kiểm chứng</strong></td><td>AlsoEnergy dùng con số "8.000+ driver" (<a href="#L48">L48</a>) nhưng không công bố trạng thái kiểm chứng</td><td>
+  <ul>
+    <li>Công bố model + firmware + trạng thái kiểm chứng (đọc / ghi / lab).</li>
+    <li>Không bao giờ ghi "tương thích mọi inverter/BESS".</li>
+  </ul>
+</td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>D-B08</td><td><strong>Quyền sở hữu dữ liệu</strong></td><td>FusionSolar: lưu 15 tháng, không xuất CSV trong app, API giới hạn chặt (nghiên cứu trước)</td><td>
+  <ul>
+    <li>Lưu raw 13 tháng, tổng hợp 5 phút trong 5 năm.</li>
+    <li>Xuất CSV/Parquet.</li>
+    <li>API công khai có quota công bố.</li>
+  </ul>
+</td><td><span class="prio p0">P0</span> xuất CSV · <span class="prio p1">P1</span> API/Parquet</td></tr>
+<tr><td>D-B09</td><td><strong>An toàn điều khiển có thể chứng minh</strong></td><td>Không đối thủ nào công bố cơ chế hết hạn lệnh, ký lệnh hay phê duyệt hai người</td><td>
+  <ul>
+    <li>Lệnh có hạn, có chữ ký.</li>
+    <li>Phân hạng C0–C4; C3 cần hai người duyệt.</li>
+    <li>Kill switch và Fleet Dispatch Governor.</li>
+    <li>Control mặc định tắt theo site.</li>
+  </ul>
+  Đây là điểm bán hàng cho nhà tích hợp BESS (P5) lo về bảo hành.</td><td><span class="prio p0">P0</span> cho Gate M2</td></tr>
+<tr><td>D-B10</td><td><strong>Site chỉ có PV là công dân hạng nhất</strong></td><td>Ampowr, HT, GridBeyond lấy BESS làm trung tâm</td><td>Mọi màn hình và báo cáo chạy khi không có BESS. Có lộ trình nâng cấp lên BESS</td><td><span class="prio p0">P0</span></td></tr>
+<tr><td>D-B11</td><td>Tối ưu dựa trên dự báo (tầng 3)</td><td>Có ở Schneider, SolarEdge, ABB, GridBeyond (<a href="#L14">L14</a>, <a href="#L30">L30</a>, <a href="#L27">L27</a>, <a href="#L49">L49</a>). Không phải khác biệt</td><td>
+  <ul>
+    <li>MILP/MPC 48 h, slot 15 phút; có chi phí suy giảm pin.</li>
+    <li>Chỉ bật cho site sau khi backtest thắng luật.</li>
+    <li>Gọi là "tối ưu dựa trên dự báo", không gọi là AI.</li>
+  </ul>
+</td><td><span class="prio p1">P1</span></td></tr>
+<tr><td>D-B12</td><td>EV quản lý tải động</td><td>SolarEdge/Wevo, Siemens ElecX có. Không phải khác biệt ở Việt Nam hiện nay</td><td>OCPP 1.6J (Security Profile ≥ 2), giới hạn theo dư công suất tại POC; không xây CSMS thanh toán</td><td><span class="prio p1">P1</span></td></tr>
+<tr><td>D-B13</td><td>"VPP-capable", không giao dịch</td><td>Ampowr, GridBeyond, Stem có giao dịch; Việt Nam chưa có thị trường</td><td>Mức 8 của arbiter (DR/VPP); hook DI/API sự kiện; IEEE 2030.5/OpenADR ở <span class="prio p2">P2</span></td><td><span class="prio p2">P2</span></td></tr>
+</tbody></table></div>
+
+<div class="callout"><strong>Không cạnh tranh ở:</strong>
+<ul>
+  <li>Vòng zero-export nhanh hơn controller native.</li>
+  <li>Chẩn đoán I-V: đây là chức năng firmware inverter. Ta chỉ kích hoạt và nhận kết quả khi hãng cho phép.</li>
+  <li>Microgrid transition.</li>
+  <li>Giao dịch thị trường.</li>
+  <li>Giá dashboard so với OEM miễn phí.</li>
+</ul>
+<span class="tag inference">INFERENCE</span> từ §6–§7.</div>
+
+<!-- ============================================================ -->
+<h2 id="rui-ro">12. Rủi ro cạnh tranh và câu hỏi mở</h2>
+<p>Người viết <a href="13-open-questions-and-risks.md">13</a> sẽ cấp mã R-NN/Q-NN chính thức. Dưới đây là mã tạm.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Mã tạm</th><th>Nội dung</th><th>Nhãn</th><th>Cách giải</th></tr></thead>
+<tbody>
+<tr><td>RB-1</td><td>OEM (Huawei SmartEMO, SolarEdge ONE) mở rộng sang biểu giá, demand charge và hỗ trợ thiết bị bên thứ ba, làm hẹp khoảng trống đa hãng</td><td><span class="tag inference">INFERENCE</span> (<a href="#FS-15">FS-15</a>, <a href="#L31">L31</a>)</td><td>Tập trung vào D-B01, D-B02, D-B05: những thứ OEM khó làm vì phải đa hãng</td></tr>
+<tr><td>RB-2</td><td>OEM siết API: Huawei đòi owner consent, SolarEdge chuyển sang OAuth V2, Growatt chuyển sang token</td><td><span class="tag inference">INFERENCE</span> (nghiên cứu trước)</td><td>Ưu tiên edge Modbus cục bộ; connector cloud chỉ là phương án phụ</td></tr>
+<tr><td>RB-3</td><td>EMS trong tủ BESS Trung Quốc không công bố thanh ghi, nên không điều khiển được</td><td><span class="tag inference">INFERENCE</span> (<a href="#L08">L08</a>–<a href="#L13">L13</a>)</td><td>Làm việc trực tiếp với nhà cung cấp; thử lab; đặt ở chế độ chỉ đọc cho tới khi có driver kiểm chứng</td></tr>
+<tr><td>RB-4</td><td>Thứ tự driver P0 có thể sai nếu Deye/Solarman, Growatt, Solis chiếm thị phần lớn ở C&amp;I Việt Nam</td><td><span class="tag unknown">UNKNOWN</span> (K G-08)</td><td>Lượt nghiên cứu bổ sung + phỏng vấn installer</td></tr>
+<tr><td>Q-B1</td><td>Nội dung trang hạt giống InfinitePower về chức năng EMS</td><td><span class="tag unknown">UNKNOWN</span> (K R-18)</td><td>Người dùng dán nội dung, hoặc mở mạng</td></tr>
+<tr><td>Q-B2</td><td>Ampowr: giao thức, Partner API, phân quyền, phương pháp dự báo</td><td><span class="tag unknown">UNKNOWN</span></td><td>Hỏi hãng / demo</td></tr>
+<tr><td>Q-B3</td><td>HT Infinite Power: bảng thanh ghi, tên cloud, API, chứng chỉ</td><td><span class="tag unknown">UNKNOWN</span></td><td>Hỏi trực tiếp nếu là nhà cung cấp ở Việt Nam</td></tr>
+<tr><td>Q-B4</td><td>Schneider EMA: chu kỳ kế hoạch thực tế, giao thức DER, phạm vi IEC 62443 cho cloud, tên thương mại hiện hành</td><td><span class="tag unknown">UNKNOWN</span></td><td>Tài liệu hiện hành</td></tr>
+<tr><td>Q-B5</td><td>Siemens MGC: số chứng chỉ IEC 62443 và hạn; edition IEC 62898-2</td><td><span class="tag unknown">UNKNOWN</span></td><td>Registry chứng chỉ</td></tr>
+<tr><td>Q-B7</td><td>SolarEdge ONE Controller: điều khiển pin bên thứ ba, hành vi khi mất Internet, LTE, chứng chỉ</td><td><span class="tag unknown">UNKNOWN</span></td><td>User guide bản mới</td></tr>
+<tr><td>Q-B8</td><td>Sungrow: tài liệu chính thức về chiến lược EMS và endpoint điều khiển của Open API</td><td><span class="tag unknown">UNKNOWN</span></td><td>Tài liệu developer</td></tr>
+<tr><td>Q-B9</td><td>Giấy phép OpenEMS theo từng module (EPL-2.0 hay AGPL-3.0)</td><td><span class="tag unknown">UNKNOWN</span>, chặn ADR (K R-21)</td><td>Đọc file LICENSE từng module + ý kiến pháp lý</td></tr>
+<tr><td>Q-B10</td><td>Độ trễ end-to-end từ cloud tới thiết bị: không hãng nào công bố</td><td><span class="tag unknown">UNKNOWN</span></td><td>Tự đo trong PoC</td></tr>
+<tr><td>Q-B11</td><td>Giá EMS của đối thủ</td><td><span class="tag unknown">UNKNOWN</span> (K G-04)</td><td>Báo giá thực tế, phỏng vấn</td></tr>
+<tr><td>Q-B12</td><td>Victron VRM, Deye/Solarman C&amp;I EMS, Growatt C&amp;I</td><td><span class="tag unknown">UNKNOWN</span></td><td>Lượt nghiên cứu sau</td></tr>
+</tbody></table></div>
+
+<!-- ============================================================ -->
+<h2 id="bang-chung">13. Ghi chú bằng chứng</h2>
+
+<h3 id="ha-cap">13.1 Hạ cấp và sửa đổi đã áp dụng theo K vòng 1</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Claim gốc (ghi chú B/A)</th><th>Xử lý trong tài liệu này</th><th>Căn cứ</th></tr></thead>
+<tbody>
+<tr><td>"Peak shaving là chức năng của <em>mọi</em> sản phẩm" (FACT)</td><td>"8/11 có tài liệu"; kết luận table stakes là INFERENCE</td><td>K §4</td></tr>
+<tr><td>"Điểm khác biệt thật nằm ở (a)–(d)" (FACT)</td><td>INFERENCE; URL giữ làm bằng chứng cho từng ý</td><td>K §4</td></tr>
+<tr><td>"<em>Mọi</em> EMS nghiêm túc giữ vòng nhanh ở edge"</td><td>"Các sản phẩm có tài liệu (Schneider, Ampowr, Huawei, OpenEMS, Stem)…"</td><td>K §3.2</td></tr>
+<tr><td>Huawei peak shaving "chỉ" ở on/off-grid, và đó là mẫu phổ biến</td><td>Chỉ đúng trong phạm vi manual LUNA2000-(107-215) C&amp;I-Microgrid-SmartLogger3000; bỏ phần tổng quát</td><td>K R-20</td></tr>
+<tr><td>≤ 2 s / ≤ 5 s "của SmartLogger5000B"</td><td>"SmartLogger5000B/SmartMGC5000B", số hãng tự công bố, kèm cả hai URL</td><td>K R-19</td></tr>
+<tr><td>ABB OPTIMAX M3 "AI có mô tả" = Verified</td><td>Verified* (tuyên bố của hãng qua báo ngành)</td><td>K §4</td></tr>
+<tr><td>Schneider "15 phút", 48/72 h</td><td>FACT Low–Med, một nguồn, khoảng 2017; con số của ta là PROPOSAL độc lập</td><td>K R-23</td></tr>
+<tr><td>OpenEMS giấy phép</td><td>UNKNOWN, chặn ADR</td><td>K R-21</td></tr>
+<tr><td>Trang hạt giống InfinitePower</td><td>Chỉ dùng cho định nghĩa chung, FACT Low; không gán tính năng</td><td>K R-18</td></tr>
+<tr><td>"C&amp;I Việt Nam chưa trả demand charge" (A, FACT)</td><td>INFERENCE "đại đa số"; khách thí điểm UNKNOWN</td><td>K R-17</td></tr>
+<tr><td>Thành phần công suất tính theo "công suất đăng ký" (A)</td><td>Cơ sở tính UNKNOWN; giữ FACT Med cho chu kỳ 30 phút</td><td>K R-16</td></tr>
+<tr><td>"Phần lớn site C&amp;I do bên thứ ba vận hành"</td><td>INFERENCE, không viết thành FACT</td><td>K §4</td></tr>
+<tr><td>QĐ 1570 "≥ 64 kbps, ≤ 125 ms"</td><td>FACT Low (vendor có lợi ích), không dùng làm NFR</td><td>K §4</td></tr>
+<tr><td>rfp.wiki làm nguồn tính năng Ampowr</td><td>Không dùng làm bằng chứng</td><td>K §4</td></tr>
+<tr><td>PR-B05 "peak shaving P0"</td><td>Trần nhập vật lý là P0; peak shaving theo demand là P1</td><td>K §6 số 3, 40</td></tr>
+<tr><td>Bảng chấm điểm A không trọng số</td><td>Có thêm cột trọng số và phương án "1 + 2"; kết luận giữ nguyên</td><td>K §3.1</td></tr>
+</tbody></table></div>
+
+<h3 id="ledger">13.2 Sổ bằng chứng</h3>
+<p>Mã L01–L49 lấy theo <a href="notes/B-competitors.md">ghi chú B §5</a>. FS-xx là nguồn từ nghiên cứu FusionSolar trước. Tất cả là mã tạm; <a href="14-source-register.md">14</a> sẽ cấp S-xxx. Ngày truy cập: 2026-10-10. "Qua kết quả tìm kiếm" áp cho mọi dòng L, trừ khi ghi "nghiên cứu trước". Độ tin cậy là mức của nguồn, không phải của nhận định tổng hợp.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Mã</th><th>Nhận định</th><th>URL</th><th>Loại nguồn</th><th>Tin cậy</th></tr></thead>
+<tbody>
+<tr id="L01"><td>L01</td><td>Cosmos điều khiển tài sản phát/lưu/tiêu thụ; có "Third-party Integration"</td><td><a href="https://ampowr.com/energy-management-system-ems/">ampowr.com/energy-management-system-ems/</a>; <a href="https://ampowr.com/">ampowr.com</a></td><td>Trang sản phẩm hãng</td><td>Med</td></tr>
+<tr id="L02"><td>L02</td><td>Cosmos tự tuyên bố ISO 27001, NIS2, host EU, pen-test</td><td><a href="https://ampowr.com/nis2-compliance/">ampowr.com/nis2-compliance/</a>; <a href="https://ampowr.com/energy-management-system-ems/backup-power/">…/backup-power/</a></td><td>Trang hãng</td><td>Med (tự tuyên bố)</td></tr>
+<tr id="L03"><td>L03</td><td>Bid đồng thời DA + imbalance + aFRR</td><td><a href="https://ampowr.com/case-study-gebroeders-van-pinxteren/">case van Pinxteren</a>; <a href="https://ampowr.com/battery-energy-storage-systems-imbalance-trading/">imbalance trading</a></td><td>Case study hãng</td><td>Med</td></tr>
+<tr id="L04"><td>L04</td><td>Peak shaving trần 95 kW; Partner API; local backup khi mất mạng</td><td><a href="https://ampowr.com/hoge-duin-hotel-enhances-energy-efficiency-with-ampifarm-peak-shaving/">case Hoge Duin</a></td><td>Case study hãng</td><td>Med</td></tr>
+<tr id="L05"><td>L05</td><td>AmpiHealth: hơn 3.000 điểm; cảnh báo tới đội hỗ trợ Ampowr</td><td><a href="https://ampowr.com/ampihealth/">ampowr.com/ampihealth/</a></td><td>Trang hãng</td><td>Med</td></tr>
+<tr id="L06"><td>L06</td><td>Net-zero, curtailment, peak shaving theo giới hạn lưới, generator steering, EV/backup</td><td><a href="https://ampowr.com/energy-management-system-ems/peak-shaving/">peak-shaving</a>; <a href="https://ampowr.com/battery-energy-storage-systems/battery-energy-storage-system-generator-steering/">generator-steering</a></td><td>Trang hãng</td><td>Med</td></tr>
+<tr id="L07"><td>L07</td><td>Hồ sơ rfp.wiki do AI sinh, độ tin cậy khoảng 30%: không dùng làm bằng chứng</td><td><a href="https://www.rfp.wiki/vendors/ampowr">rfp.wiki/vendors/ampowr</a></td><td>Trang tổng hợp AI</td><td>Low</td></tr>
+<tr id="L08"><td>L08</td><td>HT EMS: lập lịch, giám sát, truy cập từ xa; CAN/RS-485/Ethernet/Wi-Fi</td><td><a href="https://www.infinitepowerht.com/50kwh-battery-storage-system.html">50kwh</a>; <a href="https://www.infinitepowerht.com/commercial-energy-storage-solutions.html">commercial solutions</a></td><td>Trang sản phẩm (snippet không rõ trang nào)</td><td>Low–Med</td></tr>
+<tr id="L09"><td>L09</td><td>Container 1.000 kWh: EMS thu thập dữ liệu, điều khiển, màn hình tại chỗ</td><td><a href="https://www.infinitepowerht.com/1000-kwh-battery-outdoor-container-ess.html">1000-kwh container</a></td><td>Trang sản phẩm</td><td>Med</td></tr>
+<tr id="L10"><td>L10</td><td>Hybrid: panel + cloud + EMS trạm; app/web; firmware từ xa; đẩy cảnh báo</td><td><a href="https://www.infinitepowerht.com/261kwh-522kwh-hybrid-energy-storage-system.html">261/522 kWh hybrid</a></td><td>Trang sản phẩm</td><td>Med</td></tr>
+<tr id="L11"><td>L11</td><td>125/261: custom logic peak/time-shift/backup; thông số mâu thuẫn giữa các trang</td><td><a href="https://www.infinitepowerht.com/125kw-261kwh-commercial-energy-storage-system.html">125kW/261kWh</a></td><td>Trang sản phẩm</td><td>Med</td></tr>
+<tr id="L12"><td>L12</td><td>Trang "AI-Powered EMS" chỉ là marketing</td><td><a href="https://www.infinitepowerht.com/ai-powered-ems-industrial-energy-storage.html">ai-powered-ems</a></td><td>Blog hãng</td><td>Low</td></tr>
+<tr id="L13"><td>L13</td><td>Container 2.000 kWh: lập lịch, peak shaving, SOC, cảnh báo</td><td><a href="https://www.infinitepowerht.com/2000kwh-battery-outdoor-container-ess.html/">2000kwh container</a></td><td>Trang sản phẩm</td><td>Med</td></tr>
+<tr id="L14"><td>L14</td><td>EMA: MPC dùng giá, lịch sử, thời tiết, lịch vận hành; biểu giá mùa/DA/HA</td><td><a href="https://www.se.com/us/en/product-range/65896/">se.com 65896</a>; <a href="https://download.schneider-electric.com/doc/998-20080341_US/EcoStruxure%20Microgrid%20Advisor%20Handout.pdf">EMA Handout</a></td><td>Trang + handout (khoảng 2017)</td><td>Med–High</td></tr>
+<tr id="L15"><td>L15</td><td>EMA: lịch mặc định trước 48 h</td><td><a href="https://marketplace.microsoft.com/en-us/product/saas/869296.microgrid_advisor?tab=overview">Microsoft Marketplace</a></td><td>Listing</td><td>Med</td></tr>
+<tr id="L16"><td>L16</td><td>Edge thực thi plan; "cập nhật mỗi 15 phút" (một kết quả); edge ≥ 1 quyết định/s</td><td><a href="https://www.productinfo.schneider-electric.com/esxp_digital_apps_iec/mg/English/ESXP2GE020EN-05_Microgrid.pdf">ESXP Microgrid PDF</a>; <a href="https://clients.sketchfab.com/schneider/ecc/index.html">ECC demo</a></td><td>Tài liệu hãng</td><td>Low–Med</td></tr>
+<tr id="L17"><td>L17</td><td>EMA: tài sản, lệnh qua hệ quản lý sẵn có, DR qua utility/aggregator</td><td><a href="https://download.schneider-electric.com/doc/NRJED116726EN/Microgrid_control_solutions_for_commercial_buildings_and%20campuses_998-20112200_GMA-US.pdf">brochure microgrid</a></td><td>Brochure hãng</td><td>Med–High</td></tr>
+<tr id="L18"><td>L18</td><td>IEC 62443 cho EcoStruxure Power; kiến trúc 3-3 chứng nhận bên thứ ba</td><td><a href="https://www.productinfo.schneider-electric.com/esxp_digital_apps_iec/transverse/English/BM_ESXP_DG_Transverse_Section_IEC_0001148082.xml/$/ESXP_DG_SYSD_Cyber_ISA_IEC_0001157270">ESXP cyber</a></td><td>Tài liệu thiết kế hãng</td><td>Med</td></tr>
+<tr id="L19"><td>L19</td><td>EMO: PMS on-site; trình tự islanding</td><td><a href="https://www.se.com/ca/en/product-range/65897">se.com 65897</a>; <a href="https://pv-magazine-usa.com/?p=16812">pv-magazine-usa</a></td><td>Trang hãng + báo</td><td>Med</td></tr>
+<tr id="L20"><td>L20</td><td>PME: chất lượng điện, transient, process impact alarm, ISO 50001</td><td><a href="https://www.se.com/sg/en/product-range/65404-ecostruxure-power-monitoring-expert/">PME</a>; <a href="https://product-help.schneider-electric.com/EcoStruxure/Power-Monitoring-Expert-2024/content/8_reference/glossary.htm">PME help</a></td><td>Trang + help hãng</td><td>Med</td></tr>
+<tr id="L21"><td>L21</td><td>SICAM MGC: blackout detection, black start, SOC, dự báo, IEC 62898-2, IEC 60870-5/Modbus</td><td><a href="https://assets.new.siemens.com/siemens/assets/api/uuid:4b32eeee-ee7c-423e-94f1-ae6a4257a689/MicrogridControlBrochure.pdf">Brochure MGC</a>; <a href="https://assets.new.siemens.com/siemens/assets/api/uuid:159d6566-81b2-4055-974b-7acb5ec05fc7/SICAM-MGC-Brochure.pdf">SICAM-MGC brochure</a></td><td>Brochure hãng</td><td>Med–High</td></tr>
+<tr id="L22"><td>L22</td><td>MGC tới khoảng 2 GW; tuyên bố IEC 62443, IPSec, crypto chip</td><td><a href="https://www.siemens.com/en-us/products/microgrids/sicam-microgrid-control/">siemens.com MGC</a></td><td>Trang hãng</td><td>Med</td></tr>
+<tr id="L23"><td>L23</td><td>Ứng dụng SICAM: GOOSE khoảng 70 ms cho load shedding (không phải số của MGC)</td><td><a href="https://assets.new.siemens.com/siemens/assets/api/uuid:9c3aa6dc-3efa-4c27-9c59-ab2664a2b45c/04-var2022-hoermann-sicam-applications-mgc-ppc-dlm-pub.pdf">slide 2022</a></td><td>Slide partner day</td><td>Med</td></tr>
+<tr id="L24"><td>L24</td><td>MGMS dự báo tới 7 ngày, unit commitment</td><td><a href="https://img.microgridknowledge.com/files/base/ebm/microgridknowledge/document/2022/09/1663609280032-siemens_utility_microgrid_whitepaper.pdf?dl=1663609280032-siemens_utility_microgrid_whitepaper.pdf">whitepaper 2022</a></td><td>Whitepaper</td><td>Med</td></tr>
+<tr id="L25"><td>L25</td><td>Electrification X Load Management cho sạc EV</td><td><a href="https://www.arcweb.com/blog/siemens-launches-electrification-x-strengthening-siemens-xcelerator-portfolio-across-buildings">arcweb</a></td><td>Analyst 2024</td><td>Med</td></tr>
+<tr id="L26"><td>L26</td><td>OPTIMAX: lập lịch/dispatch DER cho phát điện, công nghiệp, thương mại</td><td><a href="https://new.abb.com/news/detail/10576/abb-launches-optimaxr-solutions-for-power-generation-industrial-and-commercial-companies">ABB news</a>; <a href="https://new.abb.com/power-generation/energy-management">ABB energy management</a></td><td>Tin + trang hãng</td><td>Med</td></tr>
+<tr id="L27"><td>L27</td><td>OPTIMAX 6.4: "AI" dự báo tải/phát/giá; on-prem/cloud/hybrid</td><td><a href="https://www.motionandmechatronics.ca/product-news/ai-upgrade-to-abb-energy-man/">motionandmechatronics</a>; <a href="https://www.abb.com/global/en/company/innovation/news/optimax-energy-management">abb.com</a></td><td>Báo ngành 6/2024 + trang hãng</td><td>Med</td></tr>
+<tr id="L28"><td>L28</td><td>e-mesh: site/fleet; Hitachi Energy 2021; ABB bán Power Grids cho Hitachi 2020</td><td><a href="https://new.abb.com/news/detail/15680/abb-launches-unified-software-to-provide-single-view-of-microgrids-and-battery-energy-storage">ABB 2019</a>; <a href="https://www.hitachienergy.com/news/press-releases/2021/11/hitachi-energy-releases-global-updates-to-grid-edge-solutions-port-folio-including-new-services">Hitachi 2021</a>; <a href="https://new.abb.com/news/detail/64657/abb-completes-divestment-of-power-grids-to-hitachi">ABB divestment</a></td><td>Tin hãng</td><td>Med</td></tr>
+<tr id="L29"><td>L29</td><td>ABB Energy and Asset Manager: widget, Group Peak, báo cáo email, cảnh báo</td><td><a href="https://new.abb.com/about/our-businesses/electrification/abb-ability/energy-and-asset-manager/abb-ability-energy-and-asset-manager-for-manufacturing">ABB EAM</a></td><td>Trang hãng (khoảng 2020)</td><td>Med</td></tr>
+<tr id="L30"><td>L30</td><td>ONE for C&amp;I: PV + BESS + EV + tòa nhà; biểu giá + thời tiết; module-level; digital twin; peak shaving; thị trường; live alerts</td><td><a href="https://www.solaredge.com/us/solaredge-one-for-commercial-and-industrial-energy-optimization-platform">solaredge.com</a>; <a href="https://www.businesswire.com/news/home/20241203224482/en">businesswire 12/2024</a></td><td>Trang hãng + PR</td><td>High</td></tr>
+<tr id="L31"><td>L31</td><td>Lõi miễn phí cho người mua phần cứng; gói trả phí đưa dần; công tơ/cảm biến bên thứ ba</td><td><a href="https://knowledge-center.solaredge.com/sites/kc/files/se-one-for-c&amp;i-overview.pdf">ONE C&amp;I overview</a></td><td>Tài liệu hãng</td><td>Med–High</td></tr>
+<tr id="L32"><td>L32</td><td>Site Admin: vai trò, Kiosk, Public, API Access, cảnh báo theo user; shutdown alerts</td><td><a href="https://knowledge-center.solaredge.com/sites/kc/files/se-site-admin-in-solaredge-one-for-c&amp;i-user-guide.pdf">Site Admin guide</a></td><td>User guide v1.1</td><td>High</td></tr>
+<tr id="L33"><td>L33</td><td>Wevo: EV đa hãng, billing, ưu tiên, quản lý tải dự báo</td><td><a href="https://www.pv-magazine.com/2024/04/05/solaredge-acquires-ev-charging-optimization-and-management-startup/">pv-magazine 4/2024</a></td><td>Báo</td><td>Med–High</td></tr>
+<tr id="L34"><td>L34</td><td>CLC1: cổng giao tiếp; Modbus TCP cổng 1502; register map</td><td><a href="https://knowledge-center.solaredge.com/sites/kc/files/se-one-controller-commercial-and-industrial-datasheet-eng.pdf">CLC1 datasheet</a>; <a href="https://knowledge-center.solaredge.com/sites/kc/files/se-one-controller-for-cni-user-guide-im.pdf">user guide</a></td><td>Datasheet + user guide (v1.6, 6/2026)</td><td>High</td></tr>
+<tr id="L35"><td>L35</td><td>Export limitation cần công tơ tại điểm đấu nối; không hỗ trợ công tơ tiêu thụ</td><td><a href="https://knowledge-center.solaredge.com/sites/kc/files/feed-in_limitation_application_note.pdf">feed-in limitation app note</a></td><td>App note v3.0, 8/2026</td><td>High</td></tr>
+<tr id="L36"><td>L36</td><td>Huawei C&amp;I SmartPVMS: SmartEMO, SOC/SOH cell, I-V, module-level 60 MW</td><td><a href="https://solar.huawei.com/fr/products/ci-smart-pv-management-system/">solar.huawei.com C&amp;I</a></td><td>Trang hãng (nghiên cứu trước)</td><td>Med–High</td></tr>
+<tr id="L37"><td>L37</td><td>Zero feed-in ≤ 2 s, peak shaving ≤ 5 s (hãng tự công bố, SmartLogger5000B/SmartMGC5000B)</td><td><a href="https://www.photomate.eu/smartlogger5000b">photomate (SmartLogger5000B)</a>; <a href="https://solar.huawei.com/admin/asset/v1/pro/view/bb9458d9373d4502912378db3cbc7f2d.pdf">datasheet SmartMGC5000B (theo E F-28)</a></td><td>Nhà phân phối + datasheet hãng</td><td>Med</td></tr>
+<tr id="L37b"><td>L37b</td><td>Manual LUNA2000-(107-215) C&amp;I-Microgrid-SmartLogger3000: peak shaving trong kịch bản on/off-grid PQ/VSG; tối đa 20 ESS + 30 inverter</td><td><a href="https://ske-solar.com/fileadmin/user_upload/UserManual_LUNA2000-_107-215__C_I-Microgrid-SmartLogger3000_V07_2025-11-30_EN.pdf">manual (bản sao nhà phân phối)</a></td><td>Manual hãng, bản sao</td><td>Med</td></tr>
+<tr id="L38"><td>L38</td><td>EMMA-A02: peak shaving, giới hạn feed-in, diesel, dự báo PV dư, giữ SOC space reserve</td><td><a href="https://solar.huawei.com/en/products/EMMA">solar.huawei.com EMMA</a></td><td>Trang hãng</td><td>High</td></tr>
+<tr id="L39"><td>L39</td><td>Northbound API: control async, chỉ OAuth Connect; quota; vai trò; dữ liệu 5 phút; lưu 15 tháng EU</td><td><a href="https://support.huawei.com/enterprise/en/doc/EDOC1100379184/7a471100/control-apis">Huawei control APIs</a>; <a href="https://solytic.com/knowledge/set-up-api-access-huawei-fusionsolar-api/">Solytic</a></td><td>Tài liệu hãng (nghiên cứu trước)</td><td>High</td></tr>
+<tr id="L40"><td>L40</td><td>SICAM SCC trên WinCC; chứng chỉ WinCC OA IEC 62443 hiệu lực đến 2026-02-06</td><td><a href="https://assets.new.siemens.com/siemens/assets/api/uuid:4eec54f8-04a2-48cf-9d0d-266a8dcd97e7/SICAM-SCC.pdf">SICAM SCC</a>; <a href="https://www.winccoa.com/documentation/WinCCOA/3.20/en_US/iec_62443/topics/iec_62443_certification.html">WinCC OA cert</a></td><td>Brochure + trang chứng chỉ</td><td>Med</td></tr>
+<tr id="L41"><td>L41</td><td>PowerStack 255CS: EMS/PCS/BMS; VPP, demand control, VSG, black start; Modbus TCP cho EMS bên thứ ba; 25/10 tủ</td><td><a href="https://www.ess-news.com/2025/04/15/sungrow-launches-fully-integrated-ci-battery/">ess-news 4/2025</a>; <a href="https://www.vpsolar.com/en/sungrow-powerstack-bess-solutions-for-ci-solar-installations/">vpsolar</a>; <a href="https://www.sungrowpower.com/mal/en/products/c-i-energy-storage-system/st255cs-2h">sungrowpower.com</a></td><td>Báo + nhà phân phối + trang hãng</td><td>Med</td></tr>
+<tr id="L42"><td>L42</td><td>iSolarCloud: 5 phút, nhiều loại thiết bị, Open API; firmware cũ bỏ qua giới hạn P</td><td><a href="https://info-support.sungrowpower.com/application/pdf/2024/04/18/DS_20240417_iSolarCloud_Datasheet_V3_EN.pdf">iSolarCloud datasheet</a>; <a href="https://docs.eniris.com/nl/Controller/Devices/Cloud/ISolarCloud">Eniris docs</a></td><td>Datasheet 4/2024 + tài liệu bên thứ ba</td><td>Med</td></tr>
+<tr id="L43"><td>L43</td><td>OpenEMS Edge/Backend/UI; PeakShaving, Balancing; JSON-RPC/WebSocket; Power Solver</td><td><a href="https://openems.github.io/openems.io/openems/latest/edge/architecture.html">OpenEMS docs</a>; <a href="https://github.com/OpenEMS/openems/tree/develop/io.openems.edge.controller.ess.balancing">repo balancing</a>; <a href="https://community.openems.io/t/ess-that-can-talk-with-openems-using-modbus-tcp/1029">forum</a></td><td>Docs + repo + forum</td><td>High (docs) / Med (forum)</td></tr>
+<tr id="L44"><td>L44</td><td>ToU Tibber 15 phút; GridOptimizedCharge; module OCPP; file EPL-2.0 + AGPL-3.0</td><td><a href="https://zenodo.org/records/17481747">zenodo 2025.11</a>; <a href="https://zenodo.org/records/19374309">zenodo 2026.4</a>; <a href="https://github.com/OpenEMS/openems">github</a></td><td>Release notes + repo</td><td>Med–High</td></tr>
+<tr id="L45"><td>L45</td><td>OpenEMS §14a EnWG cùng Fraunhofer ISE + FENECON</td><td><a href="https://www.bayern-innovativ.de/en/emagazine/detail/open-source-software-is-intended-to-simplify-network-management/">bayern-innovativ</a></td><td>Bài báo 6/2026</td><td>Med</td></tr>
+<tr id="L46"><td>L46</td><td>Stem PowerTrack EMS: portfolio + PPC + SCADA + unit controller không phụ thuộc phần cứng</td><td><a href="https://www.businesswire.com/news/home/20250902991311/en">businesswire 9/2025</a>; <a href="https://s27.q4cdn.com/138752898/files/doc_news/Stem-Inc--Letter-to-Shareholders--Reflecting-on-our-journey-of-strategic-realignment-2025.pdf">thư cổ đông</a></td><td>PR + thư cổ đông</td><td>Med–High (số liệu: Low)</td></tr>
+<tr id="L47"><td>L47</td><td>Athena: tối ưu hóa đơn, thuật toán dự đoán, EV</td><td><a href="https://www.stem.com/?p=25654">stem.com</a></td><td>Trang hãng</td><td>Med</td></tr>
+<tr id="L48"><td>L48</td><td>AlsoEnergy PowerTrack: hơn 8.000 driver, Modbus TCP/RTU, báo cáo mẫu, fault detection</td><td><a href="https://www.stem.com/?p=29316">stem.com DAS</a>; <a href="https://home.alsoenergy.com/resources/flier-alsoenergy-powertrack">AlsoEnergy flier</a></td><td>Trang hãng (nghiên cứu trước)</td><td>Med–High</td></tr>
+<tr id="L49"><td>L49</td><td>GridBeyond: hơn 400 site C&amp;I; dự báo/tối ưu/dispatch; mô hình suy giảm; ViewPoint Lens</td><td><a href="https://secure.businesswire.com/news/home/20250930978130/en/GridBeyond-Launches-ViewPoint-Lens-to-Empower-Energy-Customers-With-Greater-Visibility-and-Control">businesswire 9/2025</a>; <a href="https://solarimpulse.com/companies/gridbeyond">solarimpulse</a></td><td>PR + hồ sơ do hãng cung cấp</td><td>Med</td></tr>
+<tr id="FS-02"><td>FS-02</td><td>meteocontrol blue'Log XC: Monitoring + PPC zero-feed-in, MP Pack Đà Nẵng (2022); FS-01 cùng nguồn: Đông Nam Việt Packaging</td><td><a href="https://www.meteocontrol.com/en/company/references/zero-feed-in-and-monitoring-for-the-pv-plant-mp-pack">MP Pack</a>; <a href="https://meteocontrol.com/en/company/references/pv-monitoring-for-dong-nam-viet-packaging">Đông Nam Việt</a></td><td>Reference hãng (nghiên cứu trước)</td><td>Med</td></tr>
+<tr id="FS-03"><td>FS-03</td><td>Gantner: năm dự án mái nhà lớn ở Việt Nam</td><td><a href="https://www.gantner-environment.com/en/news/news-detail/gantner-supplies-to-five-large-rooftop-solar-power-plants-in-vietnam">gantner-environment</a></td><td>Tin hãng, không ghi ngày (nghiên cứu trước)</td><td>Med</td></tr>
+<tr id="FS-04"><td>FS-04</td><td>Solytic: €100/năm + €0,20/kWp</td><td><a href="https://solytic.com/vcom-by-meteocontrol-vs-solytic/">solytic</a></td><td>Trang marketing (nghiên cứu trước)</td><td>Low–Med</td></tr>
+<tr id="FS-05"><td>FS-05</td><td>VCOM nhập API Huawei: đo 5 phút, kéo 15 phút, hỏi lại 7 ngày mỗi đêm</td><td><a href="https://help-center.meteocontrol.com/en/vcom-cloud/latest/huawei-fusionsolar-api-1">meteocontrol help</a></td><td>Help center (nghiên cứu trước)</td><td>High</td></tr>
+<tr id="FS-06"><td>FS-06</td><td>Power Factors Unity: APM + CMMS + SCADA/PPC/EMS</td><td><a href="https://powerfactors.com/?p=5335">powerfactors.com</a></td><td>Trang hãng (nghiên cứu trước)</td><td>Med</td></tr>
+<tr id="FS-07"><td>FS-07</td><td>Huawei SmartPVMS installer: quét QR thêm thiết bị, SmartDesign, nâng cấp hàng loạt</td><td><a href="https://solar.huawei.com/en/products/smart-pv-management-system-installer">solar.huawei.com installer</a></td><td>Trang hãng (nghiên cứu trước)</td><td>Med–High</td></tr>
+<tr id="FS-07a"><td>FS-07a</td><td>AMMP: hơn 30 hãng, cảnh báo, PPA, ticket</td><td><a href="https://ammp.io/compare/growatt">ammp.io</a></td><td>Trang hãng (nghiên cứu trước)</td><td>Med</td></tr>
+<tr id="FS-08"><td>FS-08</td><td>Sungrow iSolarCloud I-V, độ chính xác trên 90% (2023)</td><td><a href="https://pv-magazine-usa.com/press-releases/sungrow-launches-new-version-of-its-management-and-monitoring-system-isolarcloud/">pv-magazine-usa</a></td><td>Thông cáo (nghiên cứu trước)</td><td>Med</td></tr>
+<tr id="FS-09"><td>FS-09</td><td>FusionSolar 7.0: nút "New Ticket" trong alarm center</td><td><a href="https://solisdepot.com/wp-content/uploads/2023/03/FusionSolar-Smart-PV-Management-System-7.0-After-sales-Technical-Training-Slides.pptx.pdf">training slides 7.0</a></td><td>Slide đào tạo hãng, bản sao (nghiên cứu trước)</td><td>Med</td></tr>
+<tr id="FS-10"><td>FS-10</td><td>Huawei SCharger điều khiển được qua OCPP (evcc, chỉ dimming)</td><td><a href="https://docs.evcc.io/en/chargers/huawei-scharger-7ks-s0.md">evcc docs</a></td><td>Tài liệu OSS (nghiên cứu trước)</td><td>Med</td></tr>
+<tr id="FS-11"><td>FS-11</td><td>Sungrow tự công bố 45% phân khúc mái nhà Việt Nam (2020)</td><td><a href="https://www.pv-magazine.com/press-releases/sungrow-hit-2-gw-shipment-of-sg110cx-for-vietnam-rooftops/">pv-magazine 12/2020</a></td><td>Thông cáo hãng (nghiên cứu trước)</td><td>Low</td></tr>
+<tr id="FS-12"><td>FS-12</td><td>Solar-Log Base: feed-in reduction, điều khiển P/Q từ xa</td><td><a href="https://solar-distribution.baywa-re.de/out/media/1-SL_Base_SolarLog_Datasheet_Solar-Log_Base_EN.pdf">datasheet (BayWa r.e.)</a></td><td>Datasheet (nghiên cứu trước)</td><td>Med</td></tr>
+<tr id="FS-13"><td>FS-13</td><td>QĐ 1570: Modbus TCP + IEC 104, IEC 62056 (tóm tắt của vendor có lợi ích)</td><td><a href="https://www.advantech.com/vi-vn/resources/industry-focus/quyet-dinh-1570qd-evn-dien-mat-troi-mai-nha-dieu-can-biet">Advantech VN</a></td><td>Trang vendor (nghiên cứu trước)</td><td>Low</td></tr>
+<tr id="FS-14"><td>FS-14</td><td>Huawei Smart PV Plant Management (utility): RESTful API và IEC 104 cho SCADA bên thứ ba</td><td><a href="https://solar.huawei.com/en/products/smart-pv-plant-management-system/">solar.huawei.com plant mgmt</a></td><td>Trang hãng (nghiên cứu trước)</td><td>Med</td></tr>
+<tr id="FS-15"><td>FS-15</td><td>Release notes FusionSolar:
+  <ul>
+    <li>2026-03-31: C&amp;I có template, thiết lập giá điện, phân tích doanh thu, SmartEMO demand charge theo TOU.</li>
+    <li>2025-12-31: máy phát sạc được ESS.</li>
+    <li>2025-09-30: EMMA đổi tên thành SmartAssistant; installer mời owner khi tạo plant.</li>
+  </ul>
+</td><td>Không có URL công khai; quan sát trực tiếp trên web portal, ghi tại <code>fusionsolar/04_ghi_chu_nghien_cuu/2_phan_ra_san_pham/demo_observations.md</code> §7</td><td>Quan sát trực tiếp (nghiên cứu trước)</td><td>Med</td></tr>
+</tbody></table></div>
+
+<h3 id="truy-vet">13.3 Truy vết đề xuất PR-B (ghi chú B) sang tài liệu này</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Mã tạm (B)</th><th>Nội dung gốc</th><th>Trạng thái sau K</th><th>Nơi xử lý</th></tr></thead>
+<tbody>
+<tr><td>PR-B01</td><td>Edge-first; vòng PCC ≤ 2/5 s</td><td>Giữ. Ưu tiên <code>control_owner = NATIVE</code>; số Huawei chỉ là tham chiếu</td><td>§9; <a href="06-system-architecture.html">06</a></td></tr>
+<tr><td>PR-B02</td><td>Lịch ≥ 48 h + fallback</td><td>Giữ (K §6 số 17)</td><td>§9; <a href="10-security-and-reliability.md">10</a></td></tr>
+<tr><td>PR-B03</td><td>Một bộ phân xử công suất</td><td>Thay bằng arbiter 12 mức của K R-07</td><td><a href="08-energy-optimization.md">08</a></td></tr>
+<tr><td>PR-B04</td><td>API lệnh async</td><td>Mở rộng thành envelope K §6 số 21</td><td><a href="06-system-architecture.html">06</a></td></tr>
+<tr><td>PR-B05</td><td>Gói chiến lược MVP, peak shaving P0</td><td><strong>Sửa:</strong> trần nhập P0; demand peak shaving P1; luật TOU (tầng 2) P0</td><td>D-B03, D-B11; <a href="11-mvp-and-roadmap.html">11</a></td></tr>
+<tr><td>PR-B06</td><td>Lập lịch dựa trên dự báo P1</td><td>Giữ; tầng 3, bật sau backtest</td><td>D-B11</td></tr>
+<tr><td>PR-B07</td><td>Driver profile: chế độ, quirk</td><td>Giữ; ma trận chế độ chỉ theo đúng phạm vi tài liệu (K R-20)</td><td><a href="07-device-integration.md">07</a></td></tr>
+<tr><td>PR-B08</td><td>Thư viện driver là tài sản chính</td><td>Giữ; thêm danh sách tương thích có trạng thái kiểm chứng; thứ tự chờ K G-08</td><td>D-B07; <a href="07-device-integration.md">07</a></td></tr>
+<tr><td>PR-B09</td><td>Phân quyền chia sẻ kiểu SolarEdge</td><td>Hợp nhất với RBAC + PDP của K §6 số 29</td><td><a href="10-security-and-reliability.md">10</a>, <a href="09-ux-ui-specification.html">09</a></td></tr>
+<tr><td>PR-B10</td><td>NOC "giám sát hộ"</td><td>Cảnh báo → ticket cơ bản P0 (đề xuất); SLA/NOC P1; chờ K G-01</td><td>D-B05</td></tr>
+<tr><td>PR-B11</td><td>EV OCPP P1</td><td>Giữ; OCPP 1.6J Security Profile ≥ 2</td><td>D-B12</td></tr>
+<tr><td>PR-B12</td><td>Microgrid chỉ giám sát, P2</td><td>Giữ</td><td>§4.3</td></tr>
+<tr><td>PR-B13</td><td>Bảo mật theo IEC 62443/ISO 27001</td><td>"Thiết kế theo tinh thần"; không tuyên bố tuân thủ khi chưa có chứng chỉ</td><td><a href="10-security-and-reliability.md">10</a></td></tr>
+<tr><td>PR-B14</td><td>Hook DR/thị trường P2</td><td>Giữ; "VPP-capable"</td><td>D-B13</td></tr>
+<tr><td>PR-B15</td><td>Báo cáo "giá trị đã tạo" P1</td><td><strong>Nâng lên P0</strong> dưới dạng hóa đơn bóng (giá trị số 2; báo cáo R1/R2/R3/R8 là P0)</td><td>D-B04</td></tr>
+<tr><td>PR-B16</td><td>OpenEMS Edge làm nền edge</td><td>UNKNOWN; chặn bởi giấy phép (K R-21)</td><td><a href="06-system-architecture.html">06</a> ADR</td></tr>
+</tbody></table></div>
+
+</article>
+</div>
+</main>
+
+<footer class="docfoot">
+  Tài liệu 02 · Phân tích thị trường và đối thủ · v1.0 · 2026-10-10 · Agent B.
+  Ràng buộc bởi <a href="notes/K-review-round1.md">K vòng 1</a>. Mọi URL thấy qua kết quả tìm kiếm hoặc trong nghiên cứu FusionSolar trước; không URL nào được mở trực tiếp.
+  Liên quan: <a href="00-executive-summary.html">00</a> · <a href="03-functional-catalog.html">03</a> · <a href="04-business-requirements.md">04</a> · <a href="11-mvp-and-roadmap.html">11</a> · <a href="13-open-questions-and-risks.md">13</a> · <a href="14-source-register.md">14</a>.
+</footer>
+</body>
+</html>
