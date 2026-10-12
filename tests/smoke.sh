@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# LEGACY (2026-10-10): kept until tests/system e2e (pytest, marker e2e) covers D1-D6 with JUnit output;
+# then removed. Run via `make test-smoke-legacy`. See docs/testing/02-strategy.md (regression).
 # Smoke test tự động cho PoC hạ tầng EMS (bước 2–4 của README "Kết quả chạy thử").
 #   tests/smoke.sh          # stack đã chạy (docker compose up -d trong infra/)
 #   tests/smoke.sh --up     # tự build + up trước

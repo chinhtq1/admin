@@ -1,0 +1,7 @@
+{
+  "_comment": "Ratchet baseline for gates G4/G6 (docs/testing/02-strategy.md §6). Update only by PR with the metrics.md that justifies it. null = not measured yet (gate not enforced).",
+  "core_branch_pct": null,
+  "mutation_score_pct": null,
+  "measured_at": null,
+  "commit": null
+}

@@ -1,0 +1,33 @@
+# Test tooling for the EMS framework (pinned; chosen and verified in docs/testing/notes/A3-tooling.md).
+# Install:  make venv   (creates .venv and installs this file + every component's requirements.txt)
+# Python 3.12 (containers) and 3.13 (host) both supported.
+
+# ---- runner and plugins
+pytest==9.1.1
+pytest-xdist==3.8.0          # parallel unit/contract runs (-n auto)
+pytest-timeout==2.4.0        # every test has a timeout (hung MQTT/Modbus sockets)
+pytest-cov==7.1.0            # line+branch coverage of core modules
+pytest-randomly==5.0.0       # random order + printed seed: exposes order dependence (disabled for system tests)
+pytest-rerunfailures==16.7   # ONLY in the flake-detection job (EMS_FLAKE_JOB=1); forbidden in gating runs
+pytest-repeat==0.9.4         # flake hunting: --count N in the nightly flake job
+pytest-html==4.2.0           # self-contained HTML report artifact
+
+# ---- test techniques
+hypothesis==6.168.5          # property-based tests (aggregator windows, codec round trips, physics invariants)
+jsonschema==4.26.0           # contract tests against 07 §7.3 schemas (Draft-7)
+testcontainers==4.15.0       # ephemeral Mosquitto / TimescaleDB for db + integration tests
+aiomqtt==2.5.1               # asyncio MQTT 5 load generator (perf); wraps paho 2
+playwright==1.56.0           # docs/wireframe checks; must match browsers in PLAYWRIGHT_BROWSERS_PATH (1.56)
+pytest-playwright==0.10.0
+
+# ---- static / security / mutation
+ruff==0.17.0
+bandit==1.9.4
+pip-audit==2.10.1
+mutmut==3.8.0                # nightly mutation score on core modules
+
+# ---- product runtime deps used directly by test helpers (same pins as component requirements.txt)
+paho-mqtt==2.1.0
+pymodbus==3.15.0
+psycopg[binary]==3.2.10
+PyYAML==6.0.3

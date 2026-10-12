@@ -2,3 +2,9 @@ __pycache__/
 *.pyc
 .venv/
 test-results/
+# test framework (docs/testing/README.md)
+.hypothesis/
+mutants/
+.pytest_cache/
+.ruff_cache/
+.coverage*

@@ -1,0 +1,56 @@
+# Requirements with a yes/partial implementation in the Python PoC = denominator of
+# "requirement coverage over implemented scope". Source (FACT): docs/testing/notes/A2-requirements-map.md §6
+# (31 FR + 21 NFR = 52 ids, counted 2026-10-10). Update when the implemented scope changes
+# (new PoC feature, Java backend, React frontend) and say so in the PR.
+FR-MON-001
+FR-MON-002
+FR-HIST-001
+FR-HIST-002
+FR-HIST-003
+FR-HIST-004
+FR-HIST-007
+FR-HIST-009
+FR-HIST-013
+FR-BESS-001
+FR-BESS-005
+FR-BESS-007
+FR-BESS-008
+FR-BESS-009
+FR-EV-001
+FR-EV-002
+FR-EV-005
+FR-INT-003
+FR-INT-004
+FR-INT-007
+FR-INT-008
+FR-INT-009
+FR-INT-011
+FR-INT-014
+FR-INT-018
+FR-SEC-004
+FR-SEC-006
+FR-SEC-008
+FR-SEC-009
+FR-SEC-010
+FR-SEC-015
+NFR-PERF-003
+NFR-PERF-005
+NFR-REL-001
+NFR-REL-002
+NFR-REL-003
+NFR-REL-007
+NFR-REL-008
+NFR-REL-012
+NFR-REL-014
+NFR-REL-016
+NFR-DATA-001
+NFR-DATA-002
+NFR-DATA-003
+NFR-DATA-004
+NFR-DATA-005
+NFR-OBS-002
+NFR-SEC-003
+NFR-SEC-004
+NFR-SEC-010
+NFR-SEC-011
+NFR-SEC-021

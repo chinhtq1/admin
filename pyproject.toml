@@ -1,0 +1,115 @@
+# Tool configuration only (no packaging). Product components keep their own requirements.txt / Dockerfile.
+# Test framework: docs/testing/README.md · strategy: docs/testing/02-strategy.md
+
+[tool.pytest.ini_options]
+minversion = "9.0"
+testpaths = ["tests"]
+# Product packages on sys.path without changing product code (same layout as the Dockerfiles:
+# bridge -> /app, maps -> /app/maps). Order matters: tests first for the `framework` package.
+pythonpath = [
+  "tests",
+  "edge/bridge",
+  "simulators/vsite/maps",
+  "simulators/vsite",
+  "ingest",
+  "tools",
+  "simulators/evse/csms",
+]
+addopts = [
+  "-ra",
+  "--strict-markers",
+  "--strict-config",
+  "--import-mode=importlib",
+]
+cache_dir = "test-results/.pytest_cache"
+required_plugins = ["pytest-timeout>=2.4", "pytest-xdist>=3.8", "pytest-cov>=7.0"]
+# Safety net only; per-level defaults are applied by framework.plugins.levels.
+timeout = 300
+timeout_method = "thread"
+xfail_strict = true
+junit_family = "xunit2"
+junit_suite_name = "ems"
+log_level = "INFO"
+filterwarnings = [
+  "error::pytest.PytestUnraisableExceptionWarning",
+  "error::pytest.PytestUnhandledThreadExceptionWarning",
+]
+markers = [
+  "unit: pure logic, no network/process/container I/O, < 1 s each (tests/unit)",
+  "property: property-based (hypothesis) invariants (tests/property)",
+  "contract: wire contracts — JSON Schema, MQTT 5 properties, golden vectors (tests/contract)",
+  "db: real PostgreSQL/TimescaleDB in an ephemeral container — schema, SQL, migrations (tests/db)",
+  "integration: 1-2 components + real broker/DB/Modbus, ephemeral infrastructure (tests/system)",
+  "e2e: full emspoc stack via its public interfaces (tests/system)",
+  "resilience: fault injection on the stack — broker/DB/edge down, network faults (tests/resilience)",
+  "security: ACL/authz/identity/secret/SAST checks (tests/security)",
+  "perf: load and latency measurements against NFR-PERF targets (tests/perf)",
+  "docs: documentation/wireframe checks — links, JS errors, ID consistency (tests/docs)",
+  "slow: takes > 10 s; excluded from PR fast lane",
+  "quarantine(reason, issue): known flaky; skipped in gating runs, run in the flake job (--run-quarantined)",
+  "req(*ids): requirement ids from docs/research/ems/04 (FR-XXX-NNN / NFR-XXX-NNN) verified by the test",
+  "bug(*ids): known product bug ids (A1-BUG-NN, B-NN) — combine with xfail(strict=True) until fixed",
+]
+
+# ---------------------------------------------------------------------------------------------
+[tool.coverage.run]
+branch = true
+# Core modules (risk ranking in docs/testing/01-assessment.md). CLI/csms/vsite entrypoints included
+# for visibility; the gate in 02-strategy.md applies to the core list only.
+source = [
+  "edge/bridge/bridge",
+  "ingest",
+  "simulators/vsite/maps",
+  "simulators/vsite/vsite",
+  "simulators/evse/csms",
+  "tools",
+]
+omit = ["*/profiles/*", "*/__main__.py"]
+data_file = ".coverage"   # repo root (git-ignored); coverage 7.16 erase() rmdirs an empty data dir
+parallel = true
+relative_files = true
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+precision = 1
+exclude_also = [
+  "if __name__ == .__main__.:",
+  "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+]
+
+[tool.coverage.html]
+directory = "test-results/coverage-html"
+
+[tool.coverage.xml]
+output = "test-results/coverage.xml"
+
+[tool.coverage.json]
+output = "test-results/coverage.json"
+
+# ---------------------------------------------------------------------------------------------
+[tool.ruff]
+target-version = "py312"          # containers run 3.12; host 3.13 must stay compatible
+line-length = 120
+extend-exclude = ["mutants", "docs", "test-results"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "ASYNC", "PT", "S", "PL", "RET", "TID"]
+ignore = [
+  "PLR0913",  # many keyword args are normal for test helpers/builders
+  "PLR2004",  # magic values are the point of golden vectors
+  "PLR0912", "PLR0915", "PLW0603",
+  "S101",     # asserts are how pytest works (product code is not linted with this config as a gate)
+  "RET504",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S311", "S105", "S106", "PLC0415", "S603", "S607"]  # fixed-argv subprocess (git/docker) in test infra
+
+[tool.ruff.lint.isort]
+known-first-party = ["framework", "bridge", "regmap", "vsite", "ingest", "ems_cli", "csms"]
+
+# ---------------------------------------------------------------------------------------------
+# Mutation testing (nightly, core modules): `make mutation`. mutmut 3.8 needs one import root, so
+# tests/framework/mutation_ws.py builds a workspace in test-results/mutation with its own mutmut section.
